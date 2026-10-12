@@ -1,0 +1,263 @@
+﻿@model List<ECommerce.Application.DTOs.Slider.SliderListeDto>
+@{
+    ViewData["Title"] = "Slider Yönetimi";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .t-page {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .t-hero {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 28px;
+    }
+
+    .t-eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #9a1640;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+    }
+
+    .t-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0 0 6px;
+        letter-spacing: -.5px;
+    }
+
+    .t-subtitle {
+        margin: 0;
+        color: #85818c;
+        font-size: .95rem;
+    }
+
+    .t-table-card {
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #eee9ed;
+        box-shadow: 0 8px 25px rgba(35,28,40,.04);
+        overflow: hidden;
+        padding: 20px;
+    }
+
+    .t-table {
+        width: 100%;
+        margin: 0;
+        border-collapse: collapse;
+    }
+
+        .t-table th {
+            background: #fdf8f9;
+            padding: 18px 20px;
+            font-size: .85rem;
+            font-weight: 600;
+            color: #9a1640;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid #f0edef;
+            text-align: left;
+        }
+
+        .t-table td {
+            padding: 16px 20px;
+            border-bottom: 1px solid #f0edef;
+            color: #403b46;
+            font-size: .95rem;
+            vertical-align: middle;
+        }
+
+        .t-table tr:hover td {
+            background: #faf9fa;
+        }
+
+    .t-btn-primary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        background: linear-gradient(135deg,#8b0028,#a70b3b);
+        border: 0;
+        border-radius: 12px;
+        color: #fff;
+        padding: 12px 20px;
+        font-size: .9rem;
+        font-weight: 600;
+        text-decoration: none;
+        box-shadow: 0 8px 22px rgba(139,0,40,.2);
+        transition: all .2s ease;
+    }
+
+        .t-btn-primary:hover {
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(139,0,40,.28);
+        }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 12px;
+        border-radius: 8px;
+        font-size: .8rem;
+        font-weight: 700;
+    }
+
+    .status-active {
+        background: #edf9f4;
+        color: #287c5d;
+        border: 1px solid #d4f0e5;
+    }
+
+    .status-passive {
+        background: #fff0f2;
+        color: #a4364b;
+        border: 1px solid #fce8ed;
+    }
+
+    .action-links {
+        display: flex;
+        gap: 8px;
+        justify-content: flex-end;
+    }
+
+    .t-btn-action {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        transition: all .2s ease;
+        border: 0;
+        cursor: pointer;
+    }
+
+    .btn-edit {
+        background: #f4f5f7;
+        color: #24213d;
+    }
+
+        .btn-edit:hover {
+            background: #e5e7eb;
+            color: #111827;
+        }
+
+    .btn-delete {
+        background: #fff0f2;
+        color: #a4364b;
+    }
+
+        .btn-delete:hover {
+            background: #fce8ed;
+            color: #8b0028;
+        }
+</style>
+
+<div class="t-page">
+    <div class="t-hero">
+        <div class="t-hero-content">
+            <div class="t-eyebrow"><i class="bi bi-images"></i> Vitrin Yönetimi</div>
+            <h1 class="t-title">Slider (Manşet) Görselleri</h1>
+            <p class="t-subtitle">Ana sayfada dönen manşet görsellerini, sıralarını ve yönlendirme linklerini yönetin.</p>
+        </div>
+        <a asp-action="Ekle" class="t-btn-primary">
+            <i class="bi bi-plus-lg"></i> Yeni Slider Ekle
+        </a>
+    </div>
+
+    @if (TempData["BasariliMesaj"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius:12px; background: #edf9f4; color: #287c5d; border: 1px solid #d4f0e5;">
+            <i class="bi bi-check-circle-fill me-2"></i>@TempData["BasariliMesaj"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["HataMesaji"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius:12px;">
+            <i class="bi bi-exclamation-circle-fill me-2"></i>@TempData["HataMesaji"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="t-table-card">
+        <div class="table-responsive">
+            <table id="sliderTablosu" class="t-table w-100">
+                <thead>
+                    <tr>
+                        <th style="width: 100px;">Görsel</th>
+                        <th>Başlık</th>
+                        <th>Sıra</th>
+                        <th>Durum</th>
+                        <th style="text-align: right;">İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                <img src="@item.ResimUrl" class="rounded-3 shadow-sm" style="width: 80px; height: 45px; object-fit: cover;" alt="Slider" />
+                            </td>
+                            <td><strong>@item.Baslik</strong></td>
+                            <td><span class="badge bg-light text-dark border">#@item.SiraNo</span></td>
+                            <td>
+                                @if (item.AktifMi)
+                                {
+                                    <span class="status-badge status-active"><i class="bi bi-check-circle-fill"></i> Aktif</span>
+                                }
+                                else
+                                {
+                                    <span class="status-badge status-passive"><i class="bi bi-x-circle-fill"></i> Pasif</span>
+                                }
+                            </td>
+                            <td>
+                                <div class="action-links">
+                                    <a asp-action="Guncelle" asp-route-id="@item.Id" class="t-btn-action btn-edit" title="Düzenle">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    <form asp-action="Sil" asp-route-id="@item.Id" method="post" onsubmit="return confirm('Bu slider görselini silmek istediğinize emin misiniz?');" style="display:inline;">
+                                        <button type="submit" class="t-btn-action btn-delete" title="Sil">
+                                            <i class="bi bi-trash3"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#sliderTablosu').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/tr.json",
+                    "emptyTable": "Henüz eklenmiş bir slider bulunmuyor."
+                },
+                "pageLength": 10,
+                "responsive": true,
+                "ordering": true
+            });
+        });
+    </script>
+}

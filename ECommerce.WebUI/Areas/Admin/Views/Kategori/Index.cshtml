@@ -1,0 +1,460 @@
+﻿@model IEnumerable<ECommerce.Application.DTOs.Kategori.KategoriListeDto>
+@{
+    ViewData["Title"] = "Kategori Yönetimi";
+    var kategoriler = Model?.ToList() ?? new List<ECommerce.Application.DTOs.Kategori.KategoriListeDto>();
+    var toplamKategori = kategoriler.Count;
+    var aktifKategori = kategoriler.Count(x => x.AktifMi);
+    var pasifKategori = kategoriler.Count(x => !x.AktifMi);
+
+    // Ana kategorileri ve alt kategorileri ayırıyoruz (Hiyerarşi için)
+    var anaKategoriler = kategoriler.Where(x => string.IsNullOrEmpty(x.UstKategoriAdi)).ToList();
+}
+
+<style>
+    .kategori-page {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .kategori-hero {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 28px;
+    }
+
+    .kategori-eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #9a1640;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+    }
+
+    .kategori-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0 0 6px;
+        letter-spacing: -.5px;
+    }
+
+    .kategori-subtitle {
+        margin: 0;
+        color: #85818c;
+        font-size: .95rem;
+    }
+
+    .kategori-add-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        background: linear-gradient(135deg,#8b0028,#a70b3b);
+        border: 0;
+        border-radius: 13px;
+        color: #fff;
+        padding: 13px 20px;
+        font-size: .9rem;
+        font-weight: 600;
+        text-decoration: none;
+        box-shadow: 0 8px 22px rgba(139,0,40,.2);
+        transition: all .2s ease;
+        white-space: nowrap;
+    }
+
+        .kategori-add-btn:hover {
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(139,0,40,.28);
+        }
+
+    .kategori-stats {
+        display: grid;
+        grid-template-columns: repeat(3,1fr);
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    .kategori-stat {
+        background: #fff;
+        border: 1px solid #f0edf0;
+        border-radius: 17px;
+        padding: 20px 22px;
+        box-shadow: 0 7px 25px rgba(35,28,40,.055);
+    }
+
+    .kategori-stat-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+    }
+
+    .kategori-stat-label {
+        font-size: .72rem;
+        font-weight: 700;
+        color: #908b95;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+    }
+
+    .kategori-stat-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fff2f5;
+        color: #9a1640;
+        font-size: 1.1rem;
+    }
+
+    .kategori-stat-number {
+        font-size: 1.8rem;
+        line-height: 1;
+        font-weight: 700;
+        color: #24213d;
+        margin-bottom: 5px;
+    }
+
+    .kategori-stat-description {
+        font-size: .78rem;
+        color: #98939c;
+    }
+
+    .kategori-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 20px;
+    }
+
+    .kategori-search {
+        position: relative;
+        flex: 1;
+        max-width: 430px;
+    }
+
+        .kategori-search i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa5ae;
+            font-size: 1rem;
+        }
+
+        .kategori-search input {
+            width: 100%;
+            height: 46px;
+            border: 1px solid #e9e5e9;
+            border-radius: 13px;
+            background: #fff;
+            padding: 0 15px 0 42px;
+            color: #24213d;
+            font-size: .88rem;
+            outline: 0;
+        }
+
+            .kategori-search input:focus {
+                border-color: #c98ca0;
+                box-shadow: 0 0 0 4px rgba(139,0,40,.06);
+            }
+
+    /* Tablo & Ağaç Yapısı Stilleri */
+    .kategori-table-container {
+        background: #fff;
+        border: 1px solid #eee9ed;
+        border-radius: 19px;
+        box-shadow: 0 8px 28px rgba(35,28,40,.055);
+        overflow: hidden;
+    }
+
+    .kategori-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+    }
+
+        .kategori-table th {
+            background: #faf9fa;
+            color: #77727d;
+            font-size: .75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 16px 20px;
+            border-bottom: 1px solid #eee9ed;
+        }
+
+        .kategori-table td {
+            padding: 14px 20px;
+            border-bottom: 1px solid #f4f2f4;
+            color: #24213d;
+            font-size: .9rem;
+            vertical-align: middle;
+        }
+
+        .kategori-table tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .kategori-table tr:hover td {
+            background: #fcfbfe;
+        }
+
+    /* Alt Kategori Girintisi */
+    .tr-ana-kategori {
+        font-weight: 600;
+    }
+
+    .tr-alt-kategori td:first-child {
+        padding-left: 50px;
+        position: relative;
+    }
+
+        .tr-alt-kategori td:first-child::before {
+            content: "↳";
+            position: absolute;
+            left: 25px;
+            color: #c98ca0;
+            font-weight: bold;
+        }
+
+    .badge-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 7px;
+        font-size: .75rem;
+        font-weight: 600;
+    }
+
+    .badge-active {
+        background: #edf9f4;
+        color: #288661;
+    }
+
+    .badge-passive {
+        background: #f4f2f4;
+        color: #8d8790;
+    }
+
+    .action-buttons {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        justify-content: flex-end;
+    }
+
+    .btn-action {
+        width: 34px;
+        height: 34px;
+        border: 0;
+        border-radius: 9px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all .2s;
+        text-decoration: none;
+    }
+
+    .btn-edit {
+        background: #f4f5f7;
+        color: #24213d;
+    }
+
+        .btn-edit:hover {
+            background: #e5e7eb;
+        }
+
+    .btn-view {
+        background: #edf9f4;
+        color: #287c5d;
+    }
+
+        .btn-view:hover {
+            background: #d4f0e5;
+        }
+
+    .btn-delete {
+        background: #fff3f4;
+        color: #b64a5d;
+    }
+
+        .btn-delete:hover {
+            background: #fbe1e5;
+        }
+
+    .kategori-empty {
+        background: #fff;
+        border: 1px dashed #ddd5da;
+        border-radius: 20px;
+        padding: 65px 25px;
+        text-align: center;
+    }
+</style>
+
+<div class="kategori-page">
+    <div class="kategori-hero">
+        <div class="kategori-hero-content">
+            <div class="kategori-eyebrow"><i class="bi bi-flower1"></i> Mağaza Yönetimi</div>
+            <h1 class="kategori-title">Kategoriler</h1>
+            <p class="kategori-subtitle">Ana ve alt kategori hiyerarşisini düzenli bir tablo görünümünde yönetin.</p>
+        </div>
+        <a asp-action="Ekle" class="kategori-add-btn"><i class="bi bi-plus-lg"></i><span>Yeni Kategori</span></a>
+    </div>
+
+    @if (TempData["BasariliMesaj"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" style="border-radius:13px;" role="alert"><i class="bi bi-check-circle me-2"></i>@TempData["BasariliMesaj"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+    @if (TempData["HataMesaji"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" style="border-radius:13px;" role="alert"><i class="bi bi-exclamation-circle me-2"></i>@TempData["HataMesaji"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+
+    <div class="kategori-stats">
+        <div class="kategori-stat">
+            <div class="kategori-stat-top"><span class="kategori-stat-label">Toplam Kategori</span><div class="kategori-stat-icon"><i class="bi bi-grid-3x3-gap"></i></div></div>
+            <div class="kategori-stat-number">@toplamKategori</div>
+            <div class="kategori-stat-description">Sistemde kayıtlı toplam</div>
+        </div>
+        <div class="kategori-stat">
+            <div class="kategori-stat-top"><span class="kategori-stat-label">Aktif</span><div class="kategori-stat-icon"><i class="bi bi-check2-circle"></i></div></div>
+            <div class="kategori-stat-number">@aktifKategori</div>
+            <div class="kategori-stat-description">Yayında olanlar</div>
+        </div>
+        <div class="kategori-stat">
+            <div class="kategori-stat-top"><span class="kategori-stat-label">Pasif</span><div class="kategori-stat-icon"><i class="bi bi-eye-slash"></i></div></div>
+            <div class="kategori-stat-number">@pasifKategori</div>
+            <div class="kategori-stat-description">Gizli tutulanlar</div>
+        </div>
+    </div>
+
+    <div class="kategori-toolbar">
+        <div class="kategori-search">
+            <i class="bi bi-search"></i>
+            <input type="text" id="kategoriSearch" placeholder="Kategori adına göre filtrele...">
+        </div>
+    </div>
+
+    <div class="kategori-table-container">
+        @if (kategoriler.Any())
+        {
+            <table class="kategori-table" id="kategoriTable">
+                <thead>
+                    <tr>
+                        <th>Kategori Adı</th>
+                        <th>SEO URL (Slug)</th>
+                        <th>Tür / Hiyerarşi</th>
+                        <th>Durum</th>
+                        <th class="text-end">İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var ana in anaKategoriler.OrderBy(x => x.Ad))
+                    {
+                        // Ana Kategori Satırı
+                        <tr class="tr-ana-kategori" data-name="@ana.Ad.ToLowerInvariant()">
+                            <td>
+                                <i class="bi bi-folder-fill text-danger me-2"></i>
+                                <strong>@ana.Ad</strong>
+                            </td>
+                            <td><code class="text-muted">/@ana.SeoUrl</code></td>
+                            <td><span class="badge bg-light text-dark border">Ana Kategori</span></td>
+                            <td>
+                                @if (ana.AktifMi)
+                                {
+                                    <span class="badge-status badge-active">Aktif</span>
+                                }
+                                else
+                                {
+                                    <span class="badge-status badge-passive">Pasif</span>
+                                }
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a asp-action="Guncelle" asp-route-id="@ana.Id" class="btn-action btn-edit" title="Düzenle"><i class="bi bi-pencil"></i></a>
+                                    <a asp-action="Detay" asp-route-id="@ana.Id" class="btn-action btn-view" title="İncele"><i class="bi bi-eye"></i></a>
+                                    <form asp-action="Sil" asp-route-id="@ana.Id" method="post" onsubmit="return confirm('Bu kategoriyi silmek istediğinize emin misiniz?');" style="display:inline;">
+                                        <button type="submit" class="btn-action btn-delete" title="Sil"><i class="bi bi-trash3"></i></button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+
+                        // Bu Ana Kategorinin Alt Kategorileri (Varsa hemen altına sıralanır)
+                        var altKategoriler = kategoriler.Where(x => x.UstKategoriAdi == ana.Ad).OrderBy(x => x.Ad).ToList();
+                        foreach (var alt in altKategoriler)
+                        {
+                            <tr class="tr-alt-kategori" data-name="@alt.Ad.ToLowerInvariant()">
+                                <td>
+                                    <span>@alt.Ad</span>
+                                </td>
+                                <td><code class="text-muted">/@alt.SeoUrl</code></td>
+                                <td><span class="badge bg-white border text-secondary">Alt Kategori (@ana.Ad)</span></td>
+                                <td>
+                                    @if (alt.AktifMi)
+                                    {
+                                        <span class="badge-status badge-active">Aktif</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge-status badge-passive">Pasif</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <a asp-action="Guncelle" asp-route-id="@alt.Id" class="btn-action btn-edit" title="Düzenle"><i class="bi bi-pencil"></i></a>
+                                        <a asp-action="Detay" asp-route-id="@alt.Id" class="btn-action btn-view" title="İncele"><i class="bi bi-eye"></i></a>
+                                        <form asp-action="Sil" asp-route-id="@alt.Id" method="post" onsubmit="return confirm('Bu kategoriyi silmek istediğinize emin misiniz?');" style="display:inline;">
+                                            <button type="submit" class="btn-action btn-delete" title="Sil"><i class="bi bi-trash3"></i></button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="kategori-empty p-5 text-center">
+                <i class="bi bi-folder2-open display-4 text-muted"></i>
+                <h3 class="mt-3">Henüz kategori bulunmuyor</h3>
+                <p class="text-muted">Mağazanızı düzenlemek için ilk kategorinizi oluşturabilirsiniz.</p>
+                <a asp-action="Ekle" class="kategori-add-btn mt-2"><i class="bi bi-plus-lg"></i> İlk Kategoriyi Oluştur</a>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.getElementById("kategoriSearch");
+        const rows = document.querySelectorAll("#kategoriTable tbody tr");
+
+        searchInput?.addEventListener("input", function () {
+            const query = this.value.toLowerCase().trim();
+            rows.forEach(row => {
+                const name = row.getAttribute("data-name") || "";
+                if (name.includes(query)) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        });
+    });
+</script>

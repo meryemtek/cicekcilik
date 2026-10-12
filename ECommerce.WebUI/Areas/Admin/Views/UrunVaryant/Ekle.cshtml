@@ -1,0 +1,274 @@
+﻿@model ECommerce.Application.DTOs.UrunVaryant.UrunVaryantEkleDto
+@{
+    ViewData["Title"] = "Yeni Varyant Ekle";
+}
+
+<style>
+    .urun-form-page {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .urun-form-header {
+        margin-bottom: 28px;
+    }
+
+    .urun-form-eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #9a1640;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+    }
+
+    .urun-form-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0 0 6px;
+        letter-spacing: -.5px;
+    }
+
+    .urun-form-subtitle {
+        font-size: .92rem;
+        color: #85818c;
+        margin: 0;
+    }
+
+    .urun-form-card {
+        background: #fff;
+        border: 1px solid #eee9ed;
+        border-radius: 20px;
+        box-shadow: 0 8px 28px rgba(35,28,40,.055);
+        padding: 32px;
+        margin-bottom: 22px;
+    }
+
+    .urun-form-card-title {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 25px;
+    }
+
+    .urun-form-card-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        background: #fff2f5;
+        color: #8b0028;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+    }
+
+    .urun-form-card-title h2 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0;
+    }
+
+    .urun-form-card-title p {
+        font-size: .78rem;
+        color: #99949d;
+        margin: 3px 0 0;
+    }
+
+    .urun-field {
+        margin-bottom: 20px;
+    }
+
+        .urun-field label {
+            display: block;
+            color: #403b46;
+            font-size: .8rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+            .urun-field label span {
+                color: #b24a60;
+            }
+
+    .urun-input {
+        width: 100%;
+        height: 48px;
+        border: 1px solid #e4dfe4;
+        border-radius: 12px;
+        background: #fff;
+        padding: 0 15px;
+        color: #24213d;
+        font-size: .88rem;
+        outline: 0;
+        transition: all .2s ease;
+    }
+
+        .urun-input:focus {
+            border-color: #c98ca0;
+            box-shadow: 0 0 0 4px rgba(139,0,40,.06);
+        }
+
+    .urun-help {
+        display: block;
+        color: #9d98a0;
+        font-size: .7rem;
+        margin-top: 7px;
+    }
+
+    .urun-validation {
+        color: #b53d53;
+        font-size: .72rem;
+        margin-top: 6px;
+        display: block;
+    }
+
+    .urun-switch {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        border: 1px solid #eee9ed;
+        background: #faf9fa;
+        border-radius: 13px;
+        padding: 15px 16px;
+    }
+
+    .urun-switch-text strong {
+        display: block;
+        font-size: .82rem;
+        color: #3e3943;
+        margin-bottom: 3px;
+    }
+
+    .urun-switch-text span {
+        font-size: .7rem;
+        color: #99949d;
+    }
+
+    .urun-switch input {
+        width: 42px;
+        height: 23px;
+        cursor: pointer;
+        accent-color: #8b0028;
+    }
+
+    .urun-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 22px;
+    }
+
+    .urun-cancel-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 46px;
+        padding: 0 18px;
+        border: 1px solid #e5e0e5;
+        border-radius: 12px;
+        background: #fff;
+        color: #716c75;
+        text-decoration: none;
+        font-size: .82rem;
+        font-weight: 600;
+    }
+
+        .urun-cancel-btn:hover {
+            background: #f8f6f8;
+            color: #403b46;
+        }
+
+    .urun-save-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        height: 46px;
+        padding: 0 20px;
+        border: 0;
+        border-radius: 12px;
+        background: linear-gradient(135deg,#8b0028,#a70b3b);
+        color: #fff;
+        font-size: .82rem;
+        font-weight: 600;
+        box-shadow: 0 7px 20px rgba(139,0,40,.2);
+        cursor: pointer;
+    }
+
+        .urun-save-btn:hover {
+            color: #fff;
+            transform: translateY(-1px);
+        }
+</style>
+
+<div class="urun-form-page">
+    <div class="urun-form-header">
+        <div class="urun-form-eyebrow"><i class="bi bi-diagram-2"></i> Varyant Yönetimi</div>
+        <h1 class="urun-form-title">Yeni Varyant Oluştur</h1>
+        <p class="urun-form-subtitle">Müşterilerinize ürünün alternatif seçeneklerini (boyut, renk, vs.) sunun.</p>
+    </div>
+
+    <form asp-action="Ekle" method="post">
+        @Html.AntiForgeryToken()
+        <input asp-for="UrunId" type="hidden" />
+
+        <div class="urun-form-card">
+            <div class="urun-form-card-title">
+                <div class="urun-form-card-icon"><i class="bi bi-node-plus"></i></div>
+                <div><h2>Varyant Detayları</h2><p>İsim, stok ve varsa fiyat farkını tanımlayın.</p></div>
+            </div>
+
+            <div class="urun-field">
+                <label asp-for="VaryantAdi">Varyant Seçenek Adı <span>*</span></label>
+                <input asp-for="VaryantAdi" class="urun-input" placeholder="Örn: Büyük Boy (Lux) veya Kırmızı Gül" autocomplete="off" />
+                <span class="urun-help">Müşteri arayüzünde tam olarak bu isimle görünecektir.</span>
+                <span asp-validation-for="VaryantAdi" class="urun-validation"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="urun-field">
+                        <label asp-for="FiyatFarki">Fiyat Farkı (₺) <span>*</span></label>
+                        <input asp-for="FiyatFarki" type="number" step="0.01" class="urun-input" placeholder="0.00" />
+                        <span class="urun-help">Ana ürün fiyatına eklenecek tutar. (Fark yoksa 0 yazın)</span>
+                        <span asp-validation-for="FiyatFarki" class="urun-validation"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="urun-field">
+                        <label asp-for="StokMiktari">Stok Miktarı <span>*</span></label>
+                        <input asp-for="StokMiktari" type="number" class="urun-input" placeholder="0" />
+                        <span class="urun-help">Sadece bu varyant için geçerli olan özel stok adedi.</span>
+                        <span asp-validation-for="StokMiktari" class="urun-validation"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="urun-field">
+                <div class="urun-switch">
+                    <div class="urun-switch-text">
+                        <strong>Varyantı Satışa Aç (Yayında)</strong>
+                        <span>Kapalı varyantlar müşteri seçim ekranında gösterilmez.</span>
+                    </div>
+                    <input asp-for="AktifMi" type="checkbox" />
+                </div>
+            </div>
+        </div>
+
+        <div class="urun-actions">
+            <a asp-action="Index" asp-route-urunId="@Model.UrunId" class="urun-cancel-btn">Vazgeç</a>
+            <button type="submit" class="urun-save-btn"><i class="bi bi-check2"></i> Varyantı Kaydet</button>
+        </div>
+    </form>
+</div>
+
+@* @section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+} *@

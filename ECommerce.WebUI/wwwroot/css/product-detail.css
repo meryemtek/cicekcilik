@@ -1,0 +1,352 @@
+﻿.product-detail-container
+
+{
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.product-image-box {
+    background: #f9f9f9;
+    border-radius: 20px;
+    overflow: hidden;
+    position: sticky;
+    top: 20px;
+    text-align: center;
+    padding: 10px;
+}
+
+    .product-image-box img {
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+        border-radius: 16px;
+    }
+
+.static-badge {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background-color: #fff9c4;
+    color: #f57f17;
+    padding: 6px 16px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.product-info-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 5px 30px rgba(35,28,40,.03);
+    border: 1px solid #f4f2f4;
+}
+
+.top-delivery-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background-color: #f5f0f6;
+    color: #702b84;
+    padding: 6px 14px;
+    border-radius: 30px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.product-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #24213d;
+    margin-bottom: 5px;
+}
+
+.product-code {
+    font-size: 0.8rem;
+    color: #7a7585;
+    margin-bottom: 15px;
+    display: block;
+}
+
+.product-price-wrapper {
+    display: flex;
+    align-items: baseline;
+    gap: 5px;
+    margin-bottom: 15px;
+}
+
+.product-price {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #1a1a1a;
+}
+
+.product-currency {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+.vertical-marquee-box {
+    height: 34px;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 25px;
+    background: #fafbfc;
+    border-radius: 8px;
+    padding: 0 10px;
+}
+
+.vertical-marquee-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    transition: transform 0.5s ease-in-out;
+}
+
+    .vertical-marquee-list li {
+        height: 34px;
+        display: flex;
+        align-items: center;
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: #333;
+        gap: 8px;
+    }
+
+.action-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.stock-inquiry-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #fdf5f7;
+    color: #702b84;
+    border: 1px solid #ebdced;
+    padding: 8px 16px;
+    border-radius: 30px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+    .stock-inquiry-btn:hover {
+        background: #f5e6f7;
+        color: #551c66;
+    }
+
+.quantity-box {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ebdced;
+    border-radius: 30px;
+    overflow: hidden;
+    background: #fff;
+}
+
+    .quantity-box button {
+        background: transparent;
+        border: none;
+        color: #702b84;
+        font-size: 1.2rem;
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+
+    .quantity-box input {
+        border: none;
+        width: 40px;
+        text-align: center;
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: #333;
+        pointer-events: none;
+    }
+
+.form-select, .form-control {
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    padding: 12px 15px;
+    font-size: 0.9rem;
+}
+
+    .form-select:focus, .form-control:focus {
+        border-color: #702b84;
+        box-shadow: none;
+    }
+
+.delivery-trigger-box {
+    background: #fbf9fb;
+    border: 2px dashed #ebdced;
+    border-radius: 14px;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 15px;
+}
+
+    .delivery-trigger-box:hover {
+        border-color: #702b84;
+        background: #f5eef6;
+    }
+
+.delivery-info-text h6 {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #24213d;
+    margin: 0 0 2px 0;
+}
+
+.delivery-info-text p {
+    font-size: 0.78rem;
+    color: #666;
+    margin: 0;
+}
+
+.vip-delivery-box {
+    background-color: #fffdf0;
+    border: 1px solid #ffeeba;
+    border-radius: 14px;
+    padding: 18px;
+    margin-bottom: 20px;
+    transition: all 0.3s;
+}
+
+.date-type-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.date-type-card {
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 12px 8px;
+    text-align: center;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #444;
+}
+
+    .date-type-card input {
+        display: none;
+    }
+
+    .date-type-card.active {
+        border-color: #3b1154;
+        background: #2a0a3a;
+        color: #fff;
+    }
+
+.btn-main-order {
+    background-color: #3b1154;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 16px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    width: 100%;
+    transition: 0.2s;
+    margin-bottom: 12px;
+}
+
+    .btn-main-order:hover {
+        background-color: #2a0a3a;
+        color: #fff;
+    }
+
+.btn-whatsapp-order {
+    background-color: #25d366;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 16px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    width: 100%;
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+    .btn-whatsapp-order:hover {
+        background-color: #1ebe57;
+        color: #fff;
+    }
+
+.product-tabs-container {
+    margin-top: 40px;
+}
+
+.nav-tabs {
+    border-bottom: 2px solid #eee;
+    gap: 10px;
+}
+
+    .nav-tabs .nav-link {
+        border: none;
+        background: #f4f2f5;
+        color: #555;
+        font-weight: 700;
+        font-size: 0.9rem;
+        padding: 12px 24px;
+        border-radius: 12px 12px 0 0;
+        transition: all 0.2s;
+    }
+
+        .nav-tabs .nav-link:hover {
+            color: #3b1154;
+            background: #eae4ed;
+        }
+
+        .nav-tabs .nav-link.active {
+            background: #3b1154;
+            color: #fff;
+        }
+
+.tab-content-box {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 0 16px 16px 16px;
+    padding: 30px;
+    box-shadow: 0 5px 20px rgba(35,28,40,.02);
+}
+
+.review-card {
+    background: #faf9fb;
+    border-radius: 12px;
+    padding: 15px 20px;
+    margin-bottom: 15px;
+    border: 1px solid #f0eaf2;
+}
+
+.installment-table th {
+    background-color: #f8f5f9;
+    color: #3b1154;
+    font-weight: 700;
+}

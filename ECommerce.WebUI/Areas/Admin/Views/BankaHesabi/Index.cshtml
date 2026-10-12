@@ -1,0 +1,332 @@
+﻿@model IEnumerable<ECommerce.Application.DTOs.BankaHesabi.BankaHesabiListeDto>
+@{
+    ViewData["Title"] = "Banka Hesapları";
+    var hesaplar = Model?.ToList() ?? new List<ECommerce.Application.DTOs.BankaHesabi.BankaHesabiListeDto>();
+}
+
+<style>
+    .banka-page {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .banka-hero {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 30px;
+    }
+
+    .banka-eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #9a1640;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+    }
+
+    .banka-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0 0 6px;
+        letter-spacing: -.5px;
+    }
+
+    .banka-subtitle {
+        margin: 0;
+        color: #85818c;
+        font-size: .95rem;
+    }
+
+    .banka-add-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        background: linear-gradient(135deg,#8b0028,#a70b3b);
+        border: 0;
+        border-radius: 13px;
+        color: #fff;
+        padding: 13px 20px;
+        font-size: .9rem;
+        font-weight: 600;
+        text-decoration: none;
+        box-shadow: 0 8px 22px rgba(139,0,40,.2);
+        transition: all .2s ease;
+    }
+
+        .banka-add-btn:hover {
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(139,0,40,.28);
+        }
+
+    .banka-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 25px;
+    }
+
+    .bank-card {
+        background: #fff;
+        border: 1px solid #eee9ed;
+        border-radius: 20px;
+        padding: 25px;
+        box-shadow: 0 10px 30px rgba(35,28,40,.06);
+        position: relative;
+        overflow: hidden;
+        transition: transform .2s ease, border-color .2s ease;
+    }
+
+        .bank-card:hover {
+            transform: translateY(-4px);
+            border-color: #d9cbd1;
+        }
+
+    .bank-card-bg-icon {
+        position: absolute;
+        right: -20px;
+        bottom: -20px;
+        font-size: 8rem;
+        color: #fff5f7;
+        z-index: 0;
+        transform: rotate(-15deg);
+    }
+
+    .bank-card-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    .bank-card-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 25px;
+    }
+
+    .bank-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        background: linear-gradient(145deg,#fff2f5,#fbe3e9);
+        color: #8b0028;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+    }
+
+    .bank-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 12px;
+        border-radius: 8px;
+        font-size: .75rem;
+        font-weight: 700;
+    }
+
+    .status-active {
+        background: #edf9f4;
+        color: #287c5d;
+    }
+
+    .status-passive {
+        background: #f2f0f3;
+        color: #716c75;
+    }
+
+    .bank-name {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0 0 5px;
+    }
+
+    .bank-iban {
+        font-size: 1rem;
+        color: #554f5c;
+        font-family: monospace;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        margin-bottom: 20px;
+        background: #f8f6f8;
+        padding: 8px 12px;
+        border-radius: 8px;
+        word-break: break-all;
+    }
+
+    .bank-card-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: 15px;
+        border-top: 1px solid #f0edef;
+    }
+
+    .btn-edit {
+        color: #8b0028;
+        text-decoration: none;
+        font-size: .85rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .btn-delete {
+        width: 34px;
+        height: 34px;
+        border: 0;
+        border-radius: 9px;
+        background: #fff3f4;
+        color: #b64a5d;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background .2s;
+    }
+
+        .btn-delete:hover {
+            background: #fbe1e5;
+            color: #9e253c;
+        }
+
+    .banka-empty {
+        background: #fff;
+        border: 1px dashed #d9cbd1;
+        border-radius: 20px;
+        padding: 60px 20px;
+        text-align: center;
+        grid-column: 1/-1;
+    }
+
+        .banka-empty > i {
+            font-size: 2.5rem;
+            color: #9a1640;
+            margin-bottom: 15px;
+            display: inline-block;
+            padding: 20px;
+            background: #fff2f5;
+            border-radius: 20px;
+        }
+
+        .banka-empty h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #24213d;
+            margin-bottom: 8px;
+        }
+
+        .banka-empty p {
+            color: #85818c;
+            font-size: .9rem;
+            margin-bottom: 20px;
+        }
+
+    .urun-alert {
+        border: 0;
+        border-radius: 13px;
+        padding: 13px 16px;
+        font-size: .84rem;
+        margin-bottom: 18px;
+    }
+
+    .urun-alert-success {
+        background: #edf9f4;
+        color: #287c5d;
+    }
+
+    .urun-alert-danger {
+        background: #fff0f2;
+        color: #a4364b;
+    }
+
+    @@media(max-width:1100px) {
+        .banka-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @@media(max-width:768px) {
+        .banka-hero {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .banka-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="banka-page">
+    <div class="banka-hero">
+        <div>
+            <div class="banka-eyebrow"><i class="bi bi-wallet2"></i> Finans Yönetimi</div>
+            <h1 class="banka-title">Banka Hesapları</h1>
+            <p class="banka-subtitle">Müşterilerinize Havale/EFT seçeneklerinde sunulacak firma banka hesaplarını yönetin.</p>
+        </div>
+        <a asp-action="Ekle" class="banka-add-btn"><i class="bi bi-plus-lg"></i> Yeni Hesap Ekle</a>
+    </div>
+
+    @if (TempData["BasariliMesaj"] != null)
+    {
+        <div class="alert urun-alert urun-alert-success alert-dismissible fade show"><i class="bi bi-check-circle me-2"></i>@TempData["BasariliMesaj"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+
+    @if (TempData["HataMesaji"] != null)
+    {
+        <div class="alert urun-alert urun-alert-danger alert-dismissible fade show"><i class="bi bi-exclamation-circle me-2"></i>@TempData["HataMesaji"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+
+    <div class="banka-grid">
+        @if (hesaplar.Any())
+        {
+            foreach (var item in hesaplar)
+            {
+                <div class="bank-card">
+                    <i class="bi bi-bank bank-card-bg-icon"></i>
+                    <div class="bank-card-content">
+                        <div class="bank-card-top">
+                            <div class="bank-icon"><i class="bi bi-building"></i></div>
+                            @if (item.AktifMi)
+                            {
+                                <span class="bank-status status-active"><i class="bi bi-check-circle-fill"></i> Yayında</span>
+                            }
+                            else
+                            {
+                                <span class="bank-status status-passive"><i class="bi bi-eye-slash-fill"></i> Pasif</span>
+                            }
+                        </div>
+                        <h3 class="bank-name">@item.BankaAdi</h3>
+                        <div class="bank-iban">@item.Iban</div>
+
+                        <div class="bank-card-footer">
+                            <a asp-action="Guncelle" asp-route-id="@item.Id" class="btn-edit"><i class="bi bi-pencil"></i> Düzenle</a>
+                            <form asp-action="Sil" asp-route-id="@item.Id" method="post" onsubmit="return confirm('Bu banka hesabını silmek istediğinize emin misiniz?');">
+                                <button type="submit" class="btn-delete" title="Sil"><i class="bi bi-trash3"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="banka-empty">
+                <i class="bi bi-bank2"></i>
+                <h3>Henüz Banka Hesabı Eklenmemiş</h3>
+                <p>Müşterilerinizin havale ve EFT yapabilmesi için hesap bilgilerinizi sisteme tanımlayın.</p>
+                <a asp-action="Ekle" class="banka-add-btn"><i class="bi bi-plus-lg"></i> İlk Hesabı Ekle</a>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,29 @@
+﻿<!-- ================= TESLİMAT KONUMU SEÇİM MODALI ================= -->
+<div class="modal fade" id="teslimatModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold">Teslimat Konumu Seçimi</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-start">
+                <div class="mb-3">
+                    <label class="form-label small fw-bold text-muted">İl</label>
+                    <select id="modalIl" class="form-select fw-semibold" onchange="ilDegisti()"><option value="">İl Seçiniz</option></select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-bold text-muted">İlçe</label>
+                    <select id="modalIlce" class="form-select fw-semibold" onchange="ilceDegisti()"><option value="">İlçe Seçiniz</option></select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-bold text-muted">Mahalle / Semt</label>
+                    <select id="modalMahalle" class="form-select fw-semibold"><option value="" data-fark="0">Mahalle Seçiniz...</option></select>
+                </div>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-light rounded-3 px-4" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn text-white px-4" style="background: #3b1154; border-radius: 12px;" onclick="konumBilgileriniKaydet()">Seçimi Onayla</button>
+            </div>
+        </div>
+    </div>
+</div>

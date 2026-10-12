@@ -1,0 +1,61 @@
+﻿@model ECommerce.Application.DTOs.SiparisGorselOnay.SiparisGorselOnayDto
+@{
+    ViewData["Title"] = "Sipariş Onayı";
+    Layout = "~/Views/Shared/_Layout.cshtml"; // Müşteri tarafı layout'unuzu belirtin
+}
+
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+                <div class="card-header bg-primary text-white text-center py-3">
+                    <h5 class="mb-0 fw-bold">Sipariş Görsel Onayı</h5>
+                </div>
+
+                <div class="card-body p-0 text-center bg-light">
+                    @if (!string.IsNullOrEmpty(Model.GorselUrl))
+                    {
+                        <img src="@Model.GorselUrl" alt="Siparişiniz" class="img-fluid w-100" style="max-height: 400px; object-fit: cover;" />
+                    }
+                </div>
+
+                <div class="card-footer bg-white p-4 text-center">
+
+                    @if (TempData["BasariliMesaj"] != null)
+                    {
+                        <div class="alert alert-success rounded-3 mb-3">
+                            <i class="bi bi-check-circle-fill me-2"></i>@TempData["BasariliMesaj"]
+                        </div>
+                        <p class="text-muted small">Bu pencereyi kapatabilirsiniz.</p>
+                    }
+                    else if (TempData["HataMesaji"] != null)
+                    {
+                        <div class="alert alert-danger rounded-3 mb-3">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["HataMesaji"]
+                        </div>
+                    }
+
+                    @if (Model.MusteriOnayladiMi)
+                    {
+                        <div class="bg-success text-white rounded-3 p-3 mb-2 shadow-sm">
+                            <i class="bi bi-check-circle fs-3 d-block mb-1"></i>
+                            <span class="fw-bold fs-5">Sipariş Onaylandı</span>
+                        </div>
+                        <p class="text-muted small mt-2">İlginiz için teşekkür ederiz.</p>
+                    }
+                    else
+                    {
+                        <p class="text-muted mb-4">Siparişinizin gönderimi sağlanmadan önce hazırlanan görseli yukarıdadır. Lütfen onaylayınız.</p>
+
+                        <form asp-action="OnayVer" method="post">
+                            <input type="hidden" name="siparisId" value="@Model.SiparisId" />
+                            <button type="submit" class="btn btn-success btn-lg w-100 fw-bold shadow-sm rounded-pill py-3">
+                                <i class="bi bi-check-lg me-2"></i> Görseli Onaylıyorum
+                            </button>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

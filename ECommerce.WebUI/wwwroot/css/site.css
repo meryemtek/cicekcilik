@@ -1,0 +1,130 @@
+:root {
+    /* Admin panelinden gelmezse varsayýlan olarak bu renk kullanýlýr */
+    --site-primary: #8b0028;
+    --site-primary-hover: #a70b3b;
+}
+
+html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    /* Odaklanma (focus) halkasýný da dinamik tema rengine uyarladýk */
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem var(--site-primary);
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px;
+}
+/* =========================================================
+   ANA SAYFA DEKORATÝF LOGO ALANI
+   Kategori Bandý'nýn altýndan baþlar
+========================================================= */
+
+.homepage-decorative-area {
+    position: relative;
+    overflow: hidden;
+    background: #fff;
+}
+
+
+    /* Ýçerik dekoratif logolarýn üzerinde kalýr */
+
+    .homepage-decorative-area > section,
+    .homepage-decorative-area > div:not(.decorative-logo) {
+        position: relative;
+        z-index: 2;
+    }
+
+
+/* =========================================================
+   DEKORATÝF LOGOLAR
+========================================================= */
+
+.decorative-logo {
+    position: absolute;
+    z-index: 1;
+    width: 220px;
+    height: auto;
+    opacity: 0.045;
+    pointer-events: none;
+    user-select: none;
+    filter: contrast(0.8);
+    transform-origin: center center;
+    transition: opacity 0.3s ease;
+}
+
+
+/* Sol üst */
+
+.decorative-logo-1 {
+    width: 260px;
+    left: -95px;
+    top: 90px;
+    transform: rotate(-12deg);
+}
+
+
+/* Sað üst */
+
+.decorative-logo-2 {
+    width: 190px;
+    right: -65px;
+    top: 210px;
+    transform: rotate(18deg);
+}
+
+
+/* Sol orta */
+
+.decorative-logo-3 {
+    width: 150px;
+    left: 30px;
+    top: 650px;
+    transform: rotate(8deg);
+    opacity: 1;
+}
+
+
+/* Sað orta */
+
+.decorative-logo-4 {
+    width: 280px;
+    right: -120px;
+    top: 850px;
+    transform: rotate(-14deg);
+    opacity: 1;
+}
+
+
+/* Sol alt */
+
+.decorative-logo-5 {
+    width: 210px;
+    left: -70px;
+    top: 1250px;
+    transform: rotate(15deg);
+    opacity: 1;
+}
+
+
+/* Sað alt */
+
+.decorative-logo-6 {
+    width: 170px;
+    right: 20px;
+    top: 1550px;
+    transform: rotate(-8deg);
+    opacity: 1;
+}

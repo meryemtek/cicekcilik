@@ -1,0 +1,209 @@
+﻿@model ECommerce.WebUI.Models.FooterViewModel
+
+<footer class="site-footer text-white pt-5 pb-3" style="background-color: var(--site-primary);">
+    <div class="container py-4">
+        <div class="row g-4 justify-content-between align-items-start">
+
+            <!-- 1. KOLON: Logo, Slogan ve İletişim Bilgileri -->
+            <div class="col-lg-3 col-md-6">
+                @if (!string.IsNullOrEmpty(Model.LogoUrl))
+                {
+                    <div class="mb-3 d-inline-block p-2 bg-white rounded-3 shadow-sm footer-logo-wrapper">
+                        <img src="@Model.LogoUrl" alt="@Model.FirmaAdi" style="max-height: 50px; width: auto; object-fit: contain;" />
+                    </div>
+                }
+                else
+                {
+                    <h4 class="fw-bold text-white mb-3" style="letter-spacing: 0.5px;">@Model.FirmaAdi</h4>
+                }
+
+                <p class="small text-white-50 mb-4" style="line-height: 1.7;">
+                    En şık ve hızlı teslimatlı çiçekçiniz olarak siparişlerinizi web sitemizden hızlı ve güvenli şekilde gerçekleştirebilirsiniz.
+                </p>
+
+                <ul class="list-unstyled small text-white-50 d-flex flex-column gap-2 mb-0">
+                    @if (!string.IsNullOrEmpty(Model.Adres))
+                    {
+                        <li class="d-flex align-items-start gap-2">
+                            <i class="bi bi-geo-alt-fill mt-1 text-white"></i>
+                            <span>@Model.Adres</span>
+                        </li>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.Telefon1))
+                    {
+                        <li class="d-flex align-items-center gap-2">
+                            <i class="bi bi-telephone-fill text-white"></i>
+                            <a href="tel:@Model.Telefon1" class="text-white text-decoration-none">@Model.Telefon1</a>
+                        </li>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.Email))
+                    {
+                        <li class="d-flex align-items-center gap-2">
+                            <i class="bi bi-envelope-fill text-white"></i>
+                            <a href="mailto:@Model.Email" class="text-white text-decoration-none">@Model.Email</a>
+                        </li>
+                    }
+                </ul>
+            </div>
+
+            <!-- 2. KOLON: Kurumsal (Admin Menü Yönetiminden Dinamik - Konum: FooterKurumsal) -->
+            <div class="col-lg-2 col-md-6 col-6">
+                <h6 class="fw-bold mb-3 text-white text-uppercase" style="font-size: 0.95rem; letter-spacing: 1px;">Kurumsal</h6>
+                @await Component.InvokeAsync("Menu", new { konum = "FooterKurumsal" })
+            </div>
+
+            <!-- 3. KOLON: Hızlı Erişim / Popüler (Admin Menü Yönetiminden Dinamik - Konum: Footer) -->
+            <div class="col-lg-2 col-md-6 col-6">
+                <h6 class="fw-bold mb-3 text-white text-uppercase" style="font-size: 0.95rem; letter-spacing: 1px;">Hızlı Erişim</h6>
+                @await Component.InvokeAsync("Menu", new { konum = "Footer" })
+            </div>
+
+            <!-- 4. KOLON: WhatsApp Destek Kutusu -->
+            <div class="col-lg-4 col-md-6">
+                <div class="p-4 rounded-4 shadow-sm border border-white border-opacity-10" style="background: rgba(0, 0, 0, 0.15);">
+                    <div class="d-flex align-items-center gap-2 mb-2 text-white">
+                        <i class="bi bi-whatsapp fs-4 text-success"></i>
+                        <h6 class="fw-bold mb-0 text-white">WhatsApp Destek Hattı</h6>
+                    </div>
+                    <p class="small text-white-50 mb-3" style="font-size: 0.85rem;">
+                        Sorularınız için WhatsApp destek hattımızdan bize ulaşabilirsiniz.
+                    </p>
+
+                    @{
+                        string waNumara = !string.IsNullOrEmpty(Model.AdminWhatsAppNumarasi) ? Model.AdminWhatsAppNumarasi : Model.Telefon1;
+                        if (string.IsNullOrEmpty(waNumara)) waNumara = "05345268550";
+
+                        var temizTel = waNumara.Replace(" ", "").Replace("-", "").Replace("(", "").Replace(")", "").Replace("+", "");
+                        if (!temizTel.StartsWith("90")) temizTel = "90" + temizTel;
+                    }
+
+                    <a href="https://wa.me/@temizTel" target="_blank" class="whatsapp-btn text-white fw-bold rounded-pill py-3 px-4 mb-3 shadow-sm d-flex align-items-center justify-content-center gap-2 text-decoration-none" style="font-size: 1rem;">
+                        <i class="bi bi-whatsapp fs-5"></i> WhatsApp'tan Mesaj Gönder
+                    </a>
+
+                    <div class="d-flex align-items-center gap-2 text-white small p-2.5 rounded-3" style="background-color: rgba(255, 255, 255, 0.1);">
+                        <i class="bi bi-clock fs-5 text-white-50"></i>
+                        <span>Çalışma Saatleri: <strong>Her gün: 09:00-20:00</strong></span>
+                    </div>
+                </div>
+
+                <!-- Sosyal Medya -->
+                <div class="d-flex align-items-center justify-content-between mt-3 flex-wrap gap-2">
+                    <div class="d-flex gap-2">
+                        @if (!string.IsNullOrEmpty(Model.InstagramUrl))
+                        {
+                            <a href="@Model.InstagramUrl" target="_blank" class="social-icon-btn"><i class="bi bi-instagram"></i></a>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.FacebookUrl))
+                        {
+                            <a href="@Model.FacebookUrl" target="_blank" class="social-icon-btn"><i class="bi bi-facebook"></i></a>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.TwitterUrl))
+                        {
+                            <a href="@Model.TwitterUrl" target="_blank" class="social-icon-btn"><i class="bi bi-twitter-x"></i></a>
+                        }
+                    </div>
+                    <div class="d-flex gap-2">
+                        <span class="badge bg-white bg-opacity-10 text-white px-3 py-2 rounded-pill small border border-white border-opacity-10">Elazığ Çiçekçi</span>
+                        <span class="badge bg-white bg-opacity-10 text-white px-3 py-2 rounded-pill small border border-white border-opacity-10">Merkez Çiçek</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <hr class="border-white border-opacity-25 my-4">
+
+        <!-- ALT TELİF VE ÖDEME LOGOLARI ŞERİDİ -->
+        <div class="row align-items-center justify-content-between gy-3">
+            <div class="col-md-4 text-center text-md-start small text-white-50">
+                &copy; 2026 @Model.FirmaAdi. Tüm Hakları Saklıdır.
+            </div>
+
+            <div class="col-md-4 text-center">
+                <div class="d-flex justify-content-center align-items-center gap-3 bg-white py-2 px-3 rounded-pill shadow-sm d-inline-flex">
+                    <span class="fw-bold text-dark small" style="font-size: 0.75rem; letter-spacing: 0.5px;">GÜVENLİ ÖDEME</span>
+                    <span class="text-muted">|</span>
+                    <span class="fw-bold text-primary small">iyzico</span>
+                    <span class="text-danger fw-bold small">mastercard</span>
+                    <span class="text-primary fw-bold small">VISA</span>
+                    <span class="text-dark fw-bold small">TROY</span>
+                </div>
+            </div>
+
+            <div class="col-md-4 text-center text-md-end small text-white-50">
+                Kodlama ve Tasarım <i class="bi bi-heart-fill text-danger"></i> by
+                <a href="https://www.hayatisleri.com.tr" target="_blank" class="text-white text-decoration-none fw-bold footer-brand-link">
+                    Hayat İşleri İşletme Çözümleri
+                </a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<style>
+    .footer-link {
+        transition: all 0.2s ease;
+    }
+
+        .footer-link:hover {
+            color: #ffffff !important;
+            padding-left: 4px;
+        }
+
+    /* WhatsApp Butonu */
+    .whatsapp-btn {
+        background-color: #25d366 !important;
+        color: #ffffff !important;
+        border: none !important;
+        transition: all 0.3s ease;
+        width: 100%;
+        display: flex;
+    }
+
+        .whatsapp-btn:hover {
+            background-color: #128c7e !important;
+            color: #ffffff !important;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4) !important;
+        }
+
+    /* Siyah/Çizim Logolar İçin Şık Beyaz Zemin Kutusu */
+    .footer-logo-wrapper {
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    /* Sosyal Medya Yuvarlak Butonları */
+    .social-icon-btn {
+        width: 38px;
+        height: 38px;
+        background-color: #ffffff;
+        color: #24213d;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        font-size: 1.1rem;
+        transition: all 0.25s ease;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+        .social-icon-btn:hover {
+            background-color: var(--site-primary);
+            color: #ffffff;
+            transform: translateY(-2px);
+        }
+
+    /* Firma Linki Hover Efekti */
+    .footer-brand-link {
+        transition: color 0.2s ease;
+    }
+
+        .footer-brand-link:hover {
+            color: #f8f9fa !important;
+            text-decoration: underline !important;
+        }
+</style>

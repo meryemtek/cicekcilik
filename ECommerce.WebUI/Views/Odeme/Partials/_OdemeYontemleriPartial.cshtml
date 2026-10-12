@@ -1,0 +1,92 @@
+﻿@model ECommerce.WebUI.Models.OdemeViewModel
+
+<div class="payment-card p-4">
+    <h5 class="fw-bold text-dark mb-3 pb-2 border-bottom">
+        <i class="bi bi-wallet2 me-2" style="color: #3b1154;"></i> 5. Ödeme Yöntemi
+    </h5>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-6">
+            <div class="payment-method-box active" id="krediKartiBox" onclick="odemeYontemiSec('KrediKarti')">
+                <div class="form-check m-0">
+                    <input class="form-check-input" type="radio" name="OdemeYontemi" id="odemeKrediKarti" value="KrediKarti" checked>
+                    <label class="form-check-label fw-bold text-dark ms-2" for="odemeKrediKarti" style="cursor: pointer;">
+                        <i class="bi bi-credit-card me-1 text-primary"></i> Kredi Kartı / Banka Kartı (PayTR)
+                    </label>
+                </div>
+                <small class="text-muted d-block mt-1 ms-4">256-bit SSL güvencesiyle anında ödeme</small>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="payment-method-box" id="havaleBox" onclick="odemeYontemiSec('Havale')">
+                <div class="form-check m-0">
+                    <input class="form-check-input" type="radio" name="OdemeYontemi" id="odemeHavale" value="Havale">
+                    <label class="form-check-label fw-bold text-dark ms-2" for="odemeHavale" style="cursor: pointer;">
+                        <i class="bi bi-bank me-1 text-success"></i> Havale / EFT ile Ödeme
+                    </label>
+                </div>
+                <small class="text-muted d-block mt-1 ms-4">Banka hesaplarımıza havale yapın</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- KREDİ KARTI ALANI (PAYTR) -->
+    <div id="krediKartiAlan" class="p-3 bg-light rounded-3 border">
+        <div class="text-center mb-3 text-muted small">
+            <i class="bi bi-shield-lock-fill text-success"></i> PayTR Güvenli Sanal POS Altyapısı
+        </div>
+        <div class="row g-3">
+            <div class="col-12">
+                <label class="form-label small fw-bold text-muted">Kart Üzerindeki İsim</label>
+                <input type="text" name="KartSahibi" class="form-control" placeholder="AD SOYAD" />
+            </div>
+            <div class="col-12">
+                <label class="form-label small fw-bold text-muted">Kart Numarası</label>
+                <input type="text" name="KartNumarasi" class="form-control" maxlength="19" placeholder="XXXX XXXX XXXX XXXX" />
+            </div>
+            <div class="col-md-4">
+                <label class="form-label small fw-bold text-muted">Ay</label>
+                <select name="SonKullanmaAy" class="form-select">
+                    <option value="">Ay</option>
+                    @for (int i = 1; i <= 12; i++)
+                    {
+                        <option value="@i.ToString("D2")">@i.ToString("D2")</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label small fw-bold text-muted">Yıl</label>
+                <select name="SonKullanmaYil" class="form-select">
+                    <option value="">Yıl</option>
+                    @for (int i = 2026; i <= 2036; i++)
+                    {
+                        <option value="@i">@i</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label small fw-bold text-muted">CVV</label>
+                <input type="password" name="Cvv" class="form-control" maxlength="4" placeholder="CVC" />
+            </div>
+        </div>
+    </div>
+
+    <!-- HAVALE / EFT BİLGİLERİ (DİNAMİK BANKALAR) -->
+    <div id="havaleAlan" class="p-4 bg-light rounded-3 border" style="display: none;">
+        <h6 class="fw-bold text-dark mb-2"><i class="bi bi-info-circle text-primary me-1"></i> Banka Hesap Bilgilerimiz</h6>
+        <p class="text-muted small mb-3">Siparişinizi oluşturduktan sonra aşağıdaki hesaplarımıza EFT/Havale yapabilirsiniz.</p>
+
+        <div class="row g-3">
+            @foreach (var banka in Model.Bankalar)
+            {
+                <div class="col-md-6">
+                    <div class="bg-white p-3 rounded border h-100 shadow-sm">
+                        <div class="fw-bold text-dark mb-1">@banka.BankaAdi</div>
+                        <div class="text-muted small">Alıcı: @banka.AliciAdSoyad</div>
+                        <div class="text-primary small font-monospace mt-2 bg-light p-2 rounded">@banka.Iban</div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

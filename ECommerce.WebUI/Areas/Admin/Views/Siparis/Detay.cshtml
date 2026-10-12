@@ -1,0 +1,149 @@
+﻿@model ECommerce.Application.DTOs.Siparis.SiparisDetayDto
+@{
+    ViewData["Title"] = $"Sipariş Detayı - {Model.SiparisNumarasi}";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .t-page {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .t-hero {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 28px;
+    }
+
+    .t-eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #9a1640;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+    }
+
+    .t-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0 0 6px;
+        letter-spacing: -.5px;
+    }
+
+    .card-custom {
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #eee9ed;
+        box-shadow: 0 8px 25px rgba(35,28,40,.04);
+        padding: 25px;
+        margin-bottom: 24px;
+    }
+</style>
+
+<div class="t-page">
+    <div class="t-hero">
+        <div class="t-hero-content">
+            <div class="t-eyebrow"><i class="bi bi-file-text-fill"></i> Sipariş Yönetimi</div>
+            <h1 class="t-title">Sipariş No: @Model.SiparisNumarasi</h1>
+            <p class="text-muted">Sipariş Tarihi: @Model.SiparisTarihi.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</p>
+        </div>
+        <div>
+            <a href="/Admin/Siparis" class="btn btn-outline-secondary rounded-pill px-4">
+                <i class="bi bi-arrow-left me-1"></i> Listeye Dön
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["BasariliMesaj"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius:12px;">
+            <i class="bi bi-check-circle-fill me-2"></i>@TempData["BasariliMesaj"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["HataMesaji"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius:12px;">
+            <i class="bi bi-exclamation-circle-fill me-2"></i>@TempData["HataMesaji"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row">
+        <!-- MÜŞTERİ VE ADRES BİLGİLERİ -->
+        <div class="col-lg-6">
+            <div class="card-custom">
+                <h5 class="fw-bold text-dark mb-3"><i class="bi bi-person-badge text-danger me-2"></i> Müşteri ve Teslimat Bilgileri</h5>
+                <p class="mb-2"><strong>Ad Soyad:</strong> @Model.MusteriAd @Model.MusteriSoyad</p>
+                <p class="mb-2"><strong>Telefon:</strong> @Model.MusteriTelefon</p>
+                <p class="mb-2"><strong>E-Posta:</strong> @Model.MusteriEmail</p>
+                <p class="mb-2"><strong>Teslimat Adresi:</strong> @Model.TeslimatAdresi</p>
+                <p class="mb-0"><strong>Fatura Adresi:</strong> @Model.FaturaAdresi</p>
+            </div>
+        </div>
+
+        <!-- SİPARİŞ DURUMU GÜNCELLEME -->
+        <div class="col-lg-6">
+            <div class="card-custom">
+                <h5 class="fw-bold text-dark mb-3"><i class="bi bi-gear-fill text-secondary me-2"></i> Sipariş Durumunu Yönet</h5>
+                <form asp-action="DurumGuncelle" method="post">
+                    <input type="hidden" name="Id" value="@Model.Id" />
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Mevcut Durum: <span class="text-danger">@Model.Durum</span></label>
+                        <select name="YeniDurum" class="form-select rounded-3">
+                            @foreach (var durum in Enum.GetValues(typeof(ECommerce.Domain.Enums.SiparisDurumu)))
+                            {
+                                <option value="@durum" selected="@(Model.Durum.ToString() == durum.ToString())">@durum</option>
+                            }
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-dark w-100 rounded-3 py-2 fw-bold">Durumu Güncelle</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- SİPARİŞ KALEMLERİ -->
+    <div class="card-custom">
+        <h5 class="fw-bold text-dark mb-4"><i class="bi bi-box-seam text-primary me-2"></i> Sipariş Edilen Ürünler</h5>
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Ürün Adı</th>
+                        <th>Varyant</th>
+                        <th>Adet</th>
+                        <th>Birim Fiyat</th>
+                        <th class="text-end">Toplam</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Kalemler != null)
+                    {
+                        @foreach (var kalem in Model.Kalemler)
+                        {
+                            <tr>
+                                <td class="fw-bold">@kalem.UrunAdi</td>
+                                <td>@(string.IsNullOrEmpty(kalem.VaryantAdi) ? "Standart" : kalem.VaryantAdi)</td>
+                                <td>@kalem.Miktar</td>
+                                <td>@kalem.BirimFiyat.ToString("N2") ₺</td>
+                                <td class="text-end fw-bold">@kalem.ToplamFiyat.ToString("N2") ₺</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="d-flex justify-content-end mt-3 border-top pt-3">
+            <h4 class="fw-bold text-dark">Genel Toplam: <span class="text-danger" style="color: var(--site-primary) !important;">@Model.ToplamTutar.ToString("N2") ₺</span></h4>
+        </div>
+    </div>
+</div>

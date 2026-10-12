@@ -1,0 +1,384 @@
+﻿@model ECommerce.Application.DTOs.SiteAyari.SiteAyariDto
+@{
+    ViewData["Title"] = "Site Ayarları & Entegrasyonlar";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .t-page {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .t-hero {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 24px;
+    }
+
+    .t-eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #9a1640;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+    }
+
+    .t-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0 0 6px;
+        letter-spacing: -.5px;
+    }
+
+    .t-subtitle {
+        margin: 0;
+        color: #85818c;
+        font-size: .95rem;
+    }
+
+    .nav-tabs {
+        border-bottom: 2px solid #eee9ed;
+        gap: 10px;
+        margin-bottom: 25px;
+    }
+
+        .nav-tabs .nav-link {
+            border: 0;
+            border-radius: 12px 12px 0 0;
+            padding: 12px 24px;
+            font-weight: 600;
+            color: #85818c;
+            background: #f8f6f8;
+            transition: all .2s ease;
+        }
+
+            .nav-tabs .nav-link:hover {
+                color: #8b0028;
+                background: #fdf2f4;
+            }
+
+            .nav-tabs .nav-link.active {
+                color: #8b0028;
+                background: #fff;
+                border-bottom: 3px solid #8b0028;
+                box-shadow: 0 -4px 15px rgba(35,28,40,.02);
+            }
+
+    .t-card {
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #eee9ed;
+        box-shadow: 0 8px 25px rgba(35,28,40,.04);
+        padding: 25px;
+        margin-bottom: 20px;
+    }
+
+    .t-card-header {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #24213d;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border-bottom: 1px solid #eee9ed;
+        padding-bottom: 12px;
+    }
+
+    .t-btn-primary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        background: linear-gradient(135deg,#8b0028,#a70b3b);
+        border: 0;
+        border-radius: 12px;
+        color: #fff;
+        padding: 14px 28px;
+        font-size: 1rem;
+        font-weight: 600;
+        text-decoration: none;
+        box-shadow: 0 8px 22px rgba(139,0,40,.2);
+        transition: all .2s ease;
+        cursor: pointer;
+    }
+
+        .t-btn-primary:hover {
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(139,0,40,.28);
+        }
+
+    .form-label {
+        font-size: .9rem;
+        font-weight: 600;
+        color: #403b46;
+        margin-bottom: 6px;
+    }
+
+    .form-control {
+        border-radius: 10px;
+        border: 1px solid #e5e0e5;
+        padding: 10px 15px;
+        font-size: .95rem;
+    }
+
+        .form-control:focus {
+            border-color: #8b0028;
+            box-shadow: 0 0 0 3px rgba(139,0,40,.1);
+        }
+</style>
+
+<div class="t-page">
+    <div class="t-hero">
+        <div class="t-hero-content">
+            <div class="t-eyebrow"><i class="bi bi-sliders"></i> Sistem Yönetimi</div>
+            <h1 class="t-title">Site Ayarları & Entegrasyonlar</h1>
+            <p class="t-subtitle">Mağazanızın kurumsal kimliğini ve dış dünya entegrasyonlarını sekmeler üzerinden yönetin.</p>
+        </div>
+    </div>
+
+    @if (TempData["BasariliMesaj"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius:12px; background: #edf9f4; color: #287c5d; border: 1px solid #d4f0e5;">
+            <i class="bi bi-check-circle-fill me-2"></i>@TempData["BasariliMesaj"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["HataMesaji"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius:12px;">
+            <i class="bi bi-exclamation-circle-fill me-2"></i>@TempData["HataMesaji"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <form asp-action="Guncelle" method="post" enctype="multipart/form-data">
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="LogoUrl" />
+
+        <!-- SEKME BAŞLIKLARI -->
+        <ul class="nav nav-tabs" id="ayarTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="kurumsal-tab" data-bs-toggle="tab" data-bs-target="#kurumsal" type="button" role="tab"><i class="bi bi-shop me-2"></i>Kurumsal & Vitrin</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="entegrasyon-tab" data-bs-toggle="tab" data-bs-target="#entegrasyon" type="button" role="tab"><i class="bi bi-cpu me-2"></i>Entegrasyonlar Paneli</button>
+            </li>
+        </ul>
+
+        <!-- SEKME İÇERİKLERİ -->
+        <div class="tab-content" id="ayarTabContent">
+
+            <!-- 1. SEKME: KURUMSAL & VİTRİN -->
+            <div class="tab-pane fade show active" id="kurumsal" role="tabpanel" aria-labelledby="kurumsal-tab">
+                <div class="row g-4">
+                    <div class="col-lg-7">
+                        <div class="t-card">
+                            <div class="t-card-header"><i class="bi bi-info-circle text-primary"></i> Temel Bilgiler</div>
+                            <div class="mb-3">
+                                <label class="form-label">Firma Adı</label>
+                                <input type="text" asp-for="FirmaAdi" class="form-control" />
+                            </div>
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">Telefon 1</label>
+                                    <input type="text" asp-for="Telefon1" class="form-control" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Telefon 2</label>
+                                    <input type="text" asp-for="Telefon2" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">E-Posta Adresi</label>
+                                <input type="email" asp-for="Email" class="form-control" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Açık Adres</label>
+                                <textarea asp-for="Adres" class="form-control" rows="3"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="t-card">
+                            <div class="t-card-header"><i class="bi bi-megaphone text-danger"></i> Ürün Detay & Vitrin Ayarları</div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Ürün Detay Kayan Duyuru Bandı</label>
+                                <textarea asp-for="UrunDetayDuyurulari" class="form-control" rows="3" placeholder="Örn: Trend ürünler arasında!, Sınırlı Stok, Aynı Gün Teslimat"></textarea>
+                                <small class="text-muted mt-1 d-block">Farklı duyuruları ayırmak için aralarına <strong>virgül (,)</strong> veya <strong>alt satıra (Enter)</strong> geçerek yazın. Tüm ürün detay sayfalarında animasyonlu dönecektir.</small>
+                            </div>
+
+                            <!-- VIP TESLİMAT ÜCRETİ AYARI -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold text-dark"><i class="bi bi-star-fill text-warning"></i> VIP Teslimat Ek Ücreti (₺)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light fw-bold">₺</span>
+                                    <input type="number" step="0.01" asp-for="VipTeslimatUcreti" class="form-control fw-bold text-dark" placeholder="199.00" />
+                                </div>
+                                <small class="text-muted mt-1 d-block">Müşteriler ürün detay sayfasında VIP teslimat seçtiğinde sepete eklenecek sabit tutardır.</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-5">
+                        <div class="t-card mb-4">
+                            <div class="t-card-header"><i class="bi bi-image text-success"></i> Logo Yükleme & Tasarım</div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Mağaza Logosu</label>
+                                @if (!string.IsNullOrEmpty(Model.LogoUrl))
+                                {
+                                    <div class="mb-2 p-2 border rounded text-center bg-light">
+                                        <img src="@Model.LogoUrl" alt="Mevcut Logo" style="max-height: 50px; object-fit: contain;" />
+                                    </div>
+                                }
+                                <input type="file" name="logoDosyasi" class="form-control" accept="image/*" />
+                                <small class="text-muted mt-1 d-block">Yeni logo seçerseniz eskisiyle değiştirilir.</small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Ön Yüz Tema Rengi</label>
+                                <div class="input-group">
+                                    <input type="color" class="form-control form-control-color p-1" style="width: 50px; height: 42px;" value="@(string.IsNullOrEmpty(Model.TemaRengiHex) ? "#8b0028" : Model.TemaRengiHex)" oninput="document.getElementById('TemaRengiHexInput').value = this.value" />
+                                    <input type="text" asp-for="TemaRengiHex" id="TemaRengiHexInput" class="form-control" placeholder="#8b0028" />
+                                    <button type="button" class="btn btn-outline-secondary" onclick="resetColor()">Varsayılana Dön</button>
+                                </div>
+                                <small class="text-muted mt-1 d-block">Renk değişimleri kaydedildikten sonra tüm sitede uygulanır.</small>
+                            </div>
+
+                            <script>
+                                function resetColor() {
+                                    document.getElementById('TemaRengiHexInput').value = "#8b0028";
+                                }
+                            </script>
+                        </div>
+
+                        <div class="t-card">
+                            <div class="t-card-header"><i class="bi bi-globe text-info"></i> Sosyal Medya & Harita</div>
+                            <div class="mb-3">
+                                <label class="form-label"><i class="bi bi-instagram"></i> Instagram URL</label>
+                                <input type="text" asp-for="InstagramUrl" class="form-control" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><i class="bi bi-facebook"></i> Facebook URL</label>
+                                <input type="text" asp-for="FacebookUrl" class="form-control" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Google Maps Embed Kodu</label>
+                                <textarea asp-for="GoogleMapsEmbedKodu" class="form-control" rows="2"></textarea>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!-- 2. SEKME: ENTEGRASYONLAR PANELI (KATEGORİZE) -->
+            <div class="tab-pane fade" id="entegrasyon" role="tabpanel" aria-labelledby="entegrasyon-tab">
+                <div class="row g-4">
+
+                    <!-- Kategori 1: Ön Muhasebe Entegrasyonu (HiCari) -->
+                    <div class="col-lg-6">
+                        <div class="t-card h-100 border-primary shadow-sm" style="border-width: 2px !important;">
+                            <div class="t-card-header text-primary"><i class="bi bi-calculator"></i> Ön Muhasebe Entegrasyonu (HiCari)</div>
+
+                            <div class="mb-3 form-check form-switch">
+                                <input class="form-check-input" type="checkbox" asp-for="HiCariEntegrasyonAktifMi" id="hiCariSwitch" style="width: 45px; height: 22px; cursor: pointer;">
+                                <label class="form-check-label fw-bold ms-2 mt-1" for="hiCariSwitch">HiCari Entegrasyonunu Etkinleştir</label>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">HiCari API URL (Canlı Servis Adresi)</label>
+                                <input type="text" asp-for="HiCariApiUrl" class="form-control" placeholder="https://api.hicari.com/" />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">HiCari API Key (Güvenlik Anahtarı)</label>
+                                <input type="password" asp-for="HiCariApiKey" class="form-control" placeholder="hicari_sec_key_..." />
+                                <small class="text-muted mt-1 d-block">Sipariş alındığında veriler bu anahtarla HiCari servisine iletilir.</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Kategori 2: Bildirim & İletişim Entegrasyonları -->
+                    <div class="col-lg-6">
+                        <div class="t-card h-100">
+                            <div class="t-card-header"><i class="bi bi-chat-dots text-success"></i> Bildirim & İletişim (SMS / WhatsApp)</div>
+
+                            <div class="mb-3 p-3 rounded-3" style="background: #f0fdf4; border: 1px solid #bbf7d0;">
+                                <label class="form-label text-success"><i class="bi bi-whatsapp"></i> Admin WhatsApp Bildirim Numarası</label>
+                                <input type="text" asp-for="AdminWhatsAppNumarasi" class="form-control border-success" placeholder="Örn: 905xxxxxxxxx" />
+                                <small class="text-muted mt-1 d-block">Sisteme yeni sipariş düştüğünde bu numaraya anlık WhatsApp bildirimi gider.</small>
+                            </div>
+
+                            <div class="mb-2">
+                                <label class="form-label">NetGSM Kullanıcı Adı</label>
+                                <input type="text" asp-for="NetGsmKullaniciAdi" class="form-control" />
+                            </div>
+                            <div class="row g-2 mb-2">
+                                <div class="col-md-6">
+                                    <label class="form-label">NetGSM Şifre</label>
+                                    <input type="password" asp-for="NetGsmSifre" class="form-control" value="@Model.NetGsmSifre" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">SMS Başlığı</label>
+                                    <input type="text" asp-for="NetGsmBaslik" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Kategori 3: Ödeme Sistemleri -->
+                    <div class="col-lg-6">
+                        <div class="t-card h-100">
+                            <div class="t-card-header"><i class="bi bi-credit-card text-primary"></i> Ödeme Entegrasyonları (PayTR)</div>
+
+                            <div class="mb-3">
+                                <label class="form-label">PayTR Merchant ID</label>
+                                <input type="text" asp-for="PaytrMerchantId" class="form-control" />
+                            </div>
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">PayTR Merchant Key</label>
+                                    <input type="text" asp-for="PaytrMerchantKey" class="form-control" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">PayTR Merchant Salt</label>
+                                    <input type="text" asp-for="PaytrMerchantSalt" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Kategori 4: Yapay Zeka & Gelecek Entegrasyonları -->
+                    <div class="col-lg-6">
+                        <div class="t-card h-100">
+                            <div class="t-card-header"><i class="bi bi-cpu text-danger"></i> Yapay Zeka & Asistan</div>
+                            <div class="mb-3">
+                                <label class="form-label">OpenAI API Key</label>
+                                <input type="password" asp-for="OpenAiApiKey" class="form-control" value="@Model.OpenAiApiKey" placeholder="sk-..." />
+                                <small class="text-muted mt-1 d-block">Yapay zeka tabanlı kart notu ve ürün önerileri için kullanılır.</small>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Kaydet Butonu -->
+        <div class="d-flex justify-content-end mt-4 mb-5">
+            <button type="submit" class="t-btn-primary px-5">
+                <i class="bi bi-save2"></i> Tüm Ayarları Kaydet
+            </button>
+        </div>
+    </form>
+</div>

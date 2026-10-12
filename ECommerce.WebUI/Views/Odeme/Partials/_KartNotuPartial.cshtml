@@ -1,0 +1,45 @@
+﻿@model ECommerce.WebUI.Models.OdemeViewModel
+
+<div class="payment-card p-4 mb-4">
+    <h5 class="fw-bold text-dark mb-3 pb-2 border-bottom">
+        <i class="bi bi-heart-fill me-2" style="color: #3b1154;"></i> 3. Çiçek Kart Notu
+    </h5>
+    <div class="mb-3">
+        <label class="form-label small fw-bold text-muted">Hazır Kart Notu Şablonu Seç</label>
+        <select class="form-select" id="hazirNotSecimi" onchange="hazirNotSecildi(this)">
+            <option value="">-- Hazır Not Seçiniz (İsteğe Bağlı) --</option>
+            @foreach (var grup in Model.KartNotlari.GroupBy(x => x.Kategori))
+            {
+                <optgroup label="@grup.Key">
+                    @foreach (var notSablonu in grup)
+                    {
+                        <option value="@notSablonu.MesajIcerigi">@notSablonu.MesajIcerigi</option>
+                    }
+                </optgroup>
+            }
+        </select>
+    </div>
+    <div class="mb-2">
+        <label class="form-label small fw-bold text-muted">Kart Notunuz (Maksimum 500 Karakter)</label>
+        <textarea name="KartNotu" id="kartNotuInput" class="form-control" rows="3" maxlength="500" placeholder="Çiçeğin üzerine yazılacak notunuzu buraya yazabilirsiniz..."></textarea>
+        <div class="form-text text-end small" id="karakterSayaci">0 / 500</div>
+    </div>
+</div>
+
+<!-- 4. GÖNDEREN KİMİSİ GÖSTERİLSİN? -->
+<div class="payment-card p-4 mb-4">
+    <h5 class="fw-bold text-dark mb-3 pb-2 border-bottom">
+        <i class="bi bi-shield-shaded me-2" style="color: #3b1154;"></i> 4. Gönderen Bilgisi Görünürlüğü
+    </h5>
+    <div class="row align-items-center g-3">
+        <div class="col-md-7">
+            <input type="text" name="GonderenGorunenAd" id="gonderenAdInput" class="form-control" placeholder="Kartta görünecek isim / imza" />
+        </div>
+        <div class="col-md-5">
+            <div class="form-check form-switch pt-md-2">
+                <input class="form-check-input" type="checkbox" id="isimsizGonderToggle" onchange="isimsizToggle(this)" style="width: 45px; height: 22px; cursor: pointer;">
+                <label class="form-check-label fw-bold small ms-2 pt-1" for="isimsizGonderToggle" style="cursor: pointer;">İsimsiz Gönder (Gizli)</label>
+            </div>
+        </div>
+    </div>
+</div>

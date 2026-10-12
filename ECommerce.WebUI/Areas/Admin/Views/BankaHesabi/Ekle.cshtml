@@ -1,0 +1,276 @@
+﻿@model ECommerce.Application.DTOs.BankaHesabi.BankaHesabiEkleDto
+@{
+    ViewData["Title"] = "Yeni Banka Hesabı";
+}
+
+<style>
+    .form-page {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .form-header {
+        margin-bottom: 28px;
+    }
+
+    .form-eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #9a1640;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+    }
+
+    .form-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0 0 6px;
+        letter-spacing: -.5px;
+    }
+
+    .form-subtitle {
+        font-size: .92rem;
+        color: #85818c;
+        margin: 0;
+    }
+
+    .form-card {
+        background: #fff;
+        border: 1px solid #eee9ed;
+        border-radius: 20px;
+        box-shadow: 0 8px 28px rgba(35,28,40,.055);
+        padding: 32px;
+        margin-bottom: 22px;
+    }
+
+    .form-card-title {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #f0edf0;
+    }
+
+    .form-card-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        background: #fff2f5;
+        color: #8b0028;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+    }
+
+    .form-card-title h2 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0;
+    }
+
+    .form-card-title p {
+        font-size: .78rem;
+        color: #99949d;
+        margin: 3px 0 0;
+    }
+
+    .form-field {
+        margin-bottom: 20px;
+    }
+
+        .form-field label {
+            display: block;
+            color: #403b46;
+            font-size: .8rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+    .form-input {
+        width: 100%;
+        height: 48px;
+        border: 1px solid #e4dfe4;
+        border-radius: 12px;
+        background: #fff;
+        padding: 0 15px;
+        color: #24213d;
+        font-size: .88rem;
+        outline: 0;
+        transition: all .2s ease;
+    }
+
+        .form-input:focus {
+            border-color: #c98ca0;
+            box-shadow: 0 0 0 4px rgba(139,0,40,.06);
+        }
+
+    .form-validation {
+        color: #b53d53;
+        font-size: .72rem;
+        margin-top: 6px;
+        display: block;
+    }
+
+    .form-help {
+        font-size: .75rem;
+        color: #9d98a0;
+        margin-top: 6px;
+        display: block;
+    }
+
+    .form-switch {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        border: 1px solid #eee9ed;
+        background: #faf9fa;
+        border-radius: 13px;
+        padding: 15px 16px;
+        margin-top: 10px;
+    }
+
+    .form-switch-text strong {
+        display: block;
+        font-size: .85rem;
+        color: #3e3943;
+        margin-bottom: 3px;
+    }
+
+    .form-switch-text span {
+        font-size: .75rem;
+        color: #99949d;
+    }
+
+    .form-switch input {
+        width: 42px;
+        height: 23px;
+        cursor: pointer;
+        accent-color: #8b0028;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 22px;
+    }
+
+    .btn-cancel {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 46px;
+        padding: 0 20px;
+        border: 1px solid #e5e0e5;
+        border-radius: 12px;
+        background: #fff;
+        color: #716c75;
+        font-size: .85rem;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+        .btn-cancel:hover {
+            background: #f8f6f8;
+        }
+
+    .btn-submit {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        height: 46px;
+        padding: 0 24px;
+        border: 0;
+        border-radius: 12px;
+        background: linear-gradient(135deg,#8b0028,#a70b3b);
+        color: #fff;
+        font-size: .85rem;
+        font-weight: 600;
+        box-shadow: 0 7px 20px rgba(139,0,40,.2);
+        cursor: pointer;
+    }
+
+        .btn-submit:hover {
+            transform: translateY(-1px);
+        }
+</style>
+
+<div class="form-page">
+    <div class="form-header">
+        <div class="form-eyebrow"><i class="bi bi-wallet2"></i> Finans Yönetimi</div>
+        <h1 class="form-title">Yeni Banka Hesabı Ekle</h1>
+        <p class="form-subtitle">Müşterilerinize ödeme sayfasında gösterilecek havale/EFT bilgilerini tanımlayın.</p>
+    </div>
+
+    <form asp-action="Ekle" method="post">
+        @Html.AntiForgeryToken()
+
+        <div class="form-card">
+            <div class="form-card-title">
+                <div class="form-card-icon"><i class="bi bi-bank"></i></div>
+                <div><h2>Hesap Detayları</h2><p>Banka adı, şube, hesap no ve IBAN bilgilerini eksiksiz girin.</p></div>
+            </div>
+
+            <div class="form-field">
+                <label asp-for="BankaAdi">Banka Adı</label>
+                <input asp-for="BankaAdi" class="form-input" placeholder="Örn: Garanti BBVA" autocomplete="off" />
+                <span asp-validation-for="BankaAdi" class="form-validation"></span>
+            </div>
+
+            <div class="form-field">
+                <label asp-for="AliciAdSoyad">Alıcı Adı Soyadı / Firma Ünvanı</label>
+                <input asp-for="AliciAdSoyad" class="form-input" placeholder="Örn: Lidya Çiçekçilik Tic. Ltd. Şti." autocomplete="off" />
+                <span class="form-help">Müşterinin para transferinde alıcı kısmına yazması gereken isimdir.</span>
+                <span asp-validation-for="AliciAdSoyad" class="form-validation"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-field">
+                        <label asp-for="SubeKodu">Şube Kodu</label>
+                        <input asp-for="SubeKodu" class="form-input" placeholder="Örn: 1025" autocomplete="off" />
+                        <span asp-validation-for="SubeKodu" class="form-validation"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-field">
+                        <label asp-for="HesapNo">Hesap Numarası</label>
+                        <input asp-for="HesapNo" class="form-input" placeholder="Örn: 1234567" autocomplete="off" />
+                        <span asp-validation-for="HesapNo" class="form-validation"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-field">
+                <label asp-for="Iban">IBAN Numarası</label>
+                <input asp-for="Iban" class="form-input" placeholder="TR00 0000 0000 0000 0000 0000 00" autocomplete="off" />
+                <span asp-validation-for="Iban" class="form-validation"></span>
+            </div>
+
+            <div class="form-field">
+                <div class="form-switch">
+                    <div class="form-switch-text">
+                        <strong>Hesabı Kullanıma Aç (Yayında)</strong>
+                        <span>Aktif olan banka hesapları ödeme ekranında müşterilere listelenir.</span>
+                    </div>
+                    <input asp-for="AktifMi" type="checkbox" />
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <a asp-action="Index" class="btn-cancel">Vazgeç</a>
+            <button type="submit" class="btn-submit"><i class="bi bi-check2"></i> Hesabı Kaydet</button>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,31 @@
+﻿@model List<ECommerce.Application.DTOs.Kampanya.KampanyaUrunDto>
+
+@if (Model != null && Model.Any())
+{
+    <section class="kampanya-kancasi-section py-4">
+        <div class="container" style="max-width: 1400px;">
+            <div class="p-4 p-md-5 rounded-4 text-white shadow-sm position-relative overflow-hidden d-flex flex-column flex-md-row align-items-center justify-content-between gap-4" style="background: linear-gradient(135deg, #8b0028 0%, #a70b3b 100%);">
+
+                <!-- Sol Taraf: İkon ve Başlık -->
+                <div class="d-flex align-items-center gap-3 text-center text-md-start flex-column flex-md-row">
+                    <div style="font-size: 3rem; background: rgba(255,255,255,0.15); width: 80px; height: 80px; border-radius: 20px; display: flex; align-items: center; justify-content: center;">
+                        <i class="bi bi-gift-fill text-warning"></i>
+                    </div>
+                    <div>
+                        <span class="badge bg-warning text-dark mb-1 px-2 py-1 fw-bold" style="font-size: 0.7rem;">SEPETE ÖZEL FIRSATLAR</span>
+                        <h3 class="fw-bold mb-1" style="font-size: 1.6rem;">Kaçırılmayacak Kampanyalar Sizi Bekliyor!</h3>
+                        <p class="mb-0 text-white-50 small">İkinci ürüne indirimler, kategori fırsatları ve sepette ek avantajları hemen keşfedin.</p>
+                    </div>
+                </div>
+
+                <!-- Sağ Taraf: Tüm Kampanyalar Sayfasına Yönlendirme Butonu -->
+                <div>
+                    <a href="/kampanyalar" class="btn btn-light text-dark fw-bold px-4 py-3 rounded-3 text-uppercase shadow-sm d-inline-flex align-items-center gap-2" style="font-size: 0.9rem; transition: transform 0.2s;">
+                        <i class="bi bi-stars text-danger"></i> Tüm Kampanyaları İncele
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </section>
+}

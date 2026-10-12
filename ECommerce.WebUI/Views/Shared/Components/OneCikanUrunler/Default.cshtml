@@ -1,0 +1,111 @@
+﻿@model List<ECommerce.Application.DTOs.Urun.UrunListeDto>
+
+@if (Model != null && Model.Any())
+{
+    <section class="store-showcase-section py-5">
+        <div class="showcase-container" style="max-width: 1400px; margin: 0 auto; padding: 0 20px;">
+
+            <div class="showcase-header text-center mb-4">
+                <span class="showcase-eyebrow d-block text-uppercase fw-bold mb-1" style="font-size: 0.85rem; letter-spacing: 1px; color: var(--site-primary);">Özel Seçimler</span>
+                <h2 class="showcase-title fw-bold text-dark display-6">
+                    <i class="bi bi-suit-heart-fill" style="color: var(--site-primary);"></i> Size Özel Çiçeklerimiz
+                </h2>
+            </div>
+
+            <div class="product-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px;">
+                @foreach (var urun in Model)
+                {
+                    <div class="product-card bg-white border rounded-4 overflow-hidden position-relative shadow-sm transition-all" style="display: flex; flex-direction: column;">
+
+                        <div class="product-image-wrapper position-relative w-100" style="padding-top: 130%; background: #f9f9f9; overflow: hidden;">
+                            <!-- GÜNCELLENEN FAVORİ BUTONU -->
+                            <button type="button" class="btn-favori wishlist-btn position-absolute top-0 end-0 m-3 rounded-circle border-0 bg-white shadow-sm d-flex align-items-center justify-content-center" style="width: 38px; height: 38px; z-index: 2; color: #a09ca4;" data-urun-id="@urun.Id" title="Favorilere Ekle / Çıkar">
+                                <i class="bi bi-heart"></i>
+                            </button>
+
+                            <a href="/urun/@urun.SeoUrl">
+                                @if (!string.IsNullOrEmpty(urun.GorselUrl))
+                                {
+                                    <img src="@urun.GorselUrl" alt="@urun.Ad" class="position-absolute top-0 start-0 w-100 h-100 object-fit-cover" style="transition: transform 0.5s ease;" />
+                                }
+                                else
+                                {
+                                    <img src="/images/no-image.jpg" alt="@urun.Ad" class="position-absolute top-0 start-0 w-100 h-100 object-fit-cover" />
+                                }
+                            </a>
+
+                            @if (!string.IsNullOrEmpty(urun.Etiket))
+                            {
+                                string badgeColor = urun.Etiket.ToLower() switch
+                                {
+                                    var e when e.Contains("fırsat") => "#d97706",
+                                    var e when e.Contains("satan") => "#059669",
+                                    var e when e.Contains("yeni") => "#2563eb",
+                                    var e when e.Contains("özel") => "#db2777",
+                                    _ => "var(--site-primary)"
+                                };
+
+                                <div class="opportunity-badge position-absolute top-0 start-0 m-3 text-white fw-bold px-3 py-1 rounded-3 small shadow-sm text-center" style="font-size: 0.75rem; background-color: @badgeColor; z-index: 2;">
+                                    @urun.Etiket
+                                </div>
+                            }
+                        </div>
+
+                        <div class="delivery-banner py-2 fw-semibold small border-top border-bottom text-center justify-content-center gap-2" style="color: var(--site-primary) !important; background-color: #fafafa !important; display: flex; align-items: center; font-size: 0.8rem;">
+                            <i class="bi bi-truck"></i> Aynı Gün Teslimat
+                        </div>
+
+                        <div class="product-info p-3 text-center d-flex flex-column justify-content-between flex-grow-1">
+                            <div>
+                                @if (!string.IsNullOrEmpty(urun.UrunKodu))
+                                {
+                                    <div class="product-code text-muted mb-1" style="font-size: 0.78rem;">
+                                        Ürün Kodu: @urun.UrunKodu
+                                    </div>
+                                }
+
+                                <a href="/urun/@urun.SeoUrl" class="product-name text-decoration-none text-dark fw-medium mb-2" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 42px; font-size: 0.95rem;">
+                                    @urun.Ad
+                                </a>
+                            </div>
+
+                            <div class="product-price fw-bold fs-5 text-dark my-2">
+                                @urun.Fiyat.ToString("N2") ₺
+                            </div>
+
+                            <a href="/urun/@urun.SeoUrl" class="btn btn-gunu-guzellestir w-100 text-white fw-bold py-2 rounded-3 text-uppercase shadow-sm d-flex align-items-center justify-content-center gap-2" style="font-size: 0.85rem;">
+                                <i class="bi bi-heart-fill"></i> GÜNÜ GÜZELLEŞTİR
+                            </a>
+                        </div>
+
+                    </div>
+                }
+            </div>
+
+        </div>
+    </section>
+
+    <style>
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(139, 0, 40, 0.12) !important;
+            border-color: var(--site-primary) !important;
+        }
+
+            .product-card:hover img {
+                transform: scale(1.06);
+            }
+
+        .btn-gunu-guzellestir {
+            background-color: var(--site-primary) !important;
+            border-color: var(--site-primary) !important;
+            transition: all 0.2s ease;
+        }
+
+            .btn-gunu-guzellestir:hover {
+                opacity: 0.9;
+                color: #fff !important;
+                transform: translateY(-1px);
+            }
+    </style>
+}

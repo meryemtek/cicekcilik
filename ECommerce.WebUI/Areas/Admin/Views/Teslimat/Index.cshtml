@@ -1,0 +1,353 @@
+﻿
+@{
+    ViewData["Title"] = "Teslimat ve Semt Yönetimi";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .t-page {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .t-hero {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 28px;
+    }
+
+    .t-eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #9a1640;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+    }
+
+    .t-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0 0 6px;
+        letter-spacing: -.5px;
+    }
+
+    .t-subtitle {
+        margin: 0;
+        color: #85818c;
+        font-size: .95rem;
+    }
+
+    .t-add-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        background: linear-gradient(135deg,#8b0028,#a70b3b);
+        border: 0;
+        border-radius: 13px;
+        color: #fff;
+        padding: 13px 20px;
+        font-size: .9rem;
+        font-weight: 600;
+        text-decoration: none;
+        box-shadow: 0 8px 22px rgba(139,0,40,.2);
+        transition: all .2s ease;
+    }
+
+        .t-add-btn:hover {
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(139,0,40,.28);
+        }
+
+    .t-table-card {
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #eee9ed;
+        box-shadow: 0 8px 25px rgba(35,28,40,.04);
+        overflow: hidden;
+        padding: 20px;
+    }
+
+    .t-table {
+        width: 100%;
+        margin: 0;
+        border-collapse: collapse;
+    }
+
+        .t-table th {
+            background: #fdf8f9;
+            padding: 18px 20px;
+            font-size: .85rem;
+            font-weight: 600;
+            color: #9a1640;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid #f0edef;
+            text-align: left;
+        }
+
+        .t-table td {
+            padding: 16px 20px;
+            border-bottom: 1px solid #f0edef;
+            color: #403b46;
+            font-size: .95rem;
+            vertical-align: middle;
+        }
+
+        .t-table tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .t-table tr:hover td {
+            background: #faf9fa;
+        }
+
+    .fee-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 8px;
+        background: #fff4f7;
+        color: #8b0028;
+        font-weight: 700;
+        font-size: .95rem;
+        border: 1px solid #fce8ed;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 10px;
+        border-radius: 8px;
+        font-size: .75rem;
+        font-weight: 700;
+    }
+
+    .status-active {
+        background: #edf9f4;
+        color: #287c5d;
+    }
+
+    .status-passive {
+        background: #f2f1f3;
+        color: #85808a;
+    }
+
+    .action-links {
+        display: flex;
+        gap: 8px;
+        justify-content: flex-end;
+    }
+
+    .t-btn-action {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        transition: all .2s ease;
+        border: 0;
+        cursor: pointer;
+    }
+
+    .btn-edit {
+        background: #fff4f7;
+        color: #8b0028;
+    }
+
+        .btn-edit:hover {
+            background: #fce8ed;
+            color: #65001f;
+        }
+
+    .btn-delete {
+        background: #fff;
+        border: 1px solid #e5e0e5;
+        color: #716c75;
+    }
+
+        .btn-delete:hover {
+            background: #fff0f2;
+            border-color: #fce8ed;
+            color: #a4364b;
+        }
+
+    /* DataTables Özelleştirmeleri */
+    .dataTables_wrapper .dataTables_filter input {
+        border: 1px solid #eee9ed;
+        border-radius: 8px;
+        padding: 6px 12px;
+        margin-bottom: 15px;
+        outline: none;
+    }
+
+        .dataTables_wrapper .dataTables_filter input:focus {
+            border-color: #8b0028;
+        }
+
+    .dataTables_wrapper .dataTables_length select {
+        border: 1px solid #eee9ed;
+        border-radius: 8px;
+        padding: 6px;
+        outline: none;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        border-radius: 8px !important;
+        padding: 5px 10px !important;
+    }
+</style>
+
+<div class="t-page">
+    <div class="t-hero">
+        <div class="t-hero-content">
+            <div class="t-eyebrow"><i class="bi bi-geo-alt-fill"></i> Sipariş Yönetimi</div>
+            <h1 class="t-title">Teslimat Bölgeleri</h1>
+            <p class="t-subtitle">Hizmet verdiğiniz ilçe ve mahalleleri, kurye maliyetlerinize göre fiyatlandırın.</p>
+        </div>
+        <a asp-action="Ekle" class="t-add-btn"><i class="bi bi-plus-lg"></i><span>Yeni Bölge Ekle</span></a>
+    </div>
+
+    @if (TempData["BasariliMesaj"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius:12px;">
+            <i class="bi bi-check-circle me-2"></i>@TempData["BasariliMesaj"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["HataMesaji"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius:12px;">
+            <i class="bi bi-exclamation-circle me-2"></i>@TempData["HataMesaji"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Silme formları için gerekli olan güvenlik tokeni -->
+    @Html.AntiForgeryToken()
+
+    <div class="t-table-card">
+        <div class="table-responsive">
+            <table id="teslimatTablosu" class="t-table w-100">
+                <thead>
+                    <tr>
+                        <th>İl</th>
+                        <th>İlçe</th>
+                        <th>Mahalle</th>
+                        <th>Ek Ücret (TL)</th>
+                        <th>Durum</th>
+                        <th style="text-align: right;">İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Veriler Ajax ile DataTables üzerinden gelecek -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            var antiForgeryToken = $('input[name="__RequestVerificationToken"]').val();
+
+            $('#teslimatTablosu').DataTable({
+                "processing": true,
+                "serverSide": true,
+                "ajax": {
+                    "url": "@Url.Action("DataTablesVeriGetir", "Teslimat", new { area = "Admin" })",
+                    "type": "POST"
+                },
+                "createdRow": function (row, data, dataIndex) {
+                    if (!data.aktifMi) {
+                        $(row).css('opacity', '0.6');
+                    }
+                },
+                "columns": [
+                    {
+                        "data": "ilAdi",
+                        "name": "IlAdi",
+                        "orderable": false
+                    },
+                    {
+                        "data": "ilceAdi",
+                        "name": "IlceAdi",
+                        "orderable": false
+                    },
+                    {
+                        "data": "mahalleAdi",
+                        "name": "MahalleAdi",
+                        "orderable": false,
+                        "render": function (data) {
+                            return `<strong>${data}</strong>`; // Mahalleyi vurgulamak için kalın yaptık
+                        }
+                    },
+                    {
+                        "data": "ekTeslimatUcreti",
+                        "name": "EkTeslimatUcreti",
+                        "orderable": false,
+                        "searchable": false,
+                        "render": function (data) {
+                            if (data > 0) {
+                                var formatted = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(data);
+                                return `<span class="fee-badge">+ ${formatted}</span>`;
+                            } else {
+                                return `<span class="fee-badge" style="background:#edf9f4; color:#287c5d; border-color:#d4f0e5;">Ücretsiz</span>`;
+                            }
+                        }
+                    },
+                    {
+                        "data": "aktifMi",
+                        "name": "AktifMi",
+                        "orderable": false,
+                        "searchable": false,
+                        "render": function (data) {
+                            if (data) {
+                                return `<span class="status-badge status-active"><i class="bi bi-check2-circle"></i> Teslimata Açık</span>`;
+                            } else {
+                                return `<span class="status-badge status-passive"><i class="bi bi-dash-circle"></i> Gönderim Yok</span>`;
+                            }
+                        }
+                    },
+                    {
+                        "data": "id",
+                        "orderable": false,
+                        "searchable": false,
+                        "render": function (data) {
+                            var guncelleUrl = '@Url.Action("Guncelle", "Teslimat", new { area = "Admin" })/' + data;
+                            var silUrl = '@Url.Action("Sil", "Teslimat", new { area = "Admin" })/' + data;
+
+                            return `
+                                        <div class="action-links">
+                                            <a href="${guncelleUrl}" class="t-btn-action btn-edit" title="Düzenle"><i class="bi bi-pencil"></i></a>
+                                            <form action="${silUrl}" method="post" onsubmit="return confirm('Bu teslimat bölgesini silmek istediğinize emin misiniz?');" style="margin:0; display:inline;">
+                                                <input type="hidden" name="__RequestVerificationToken" value="${antiForgeryToken}" />
+                                                <button type="submit" class="t-btn-action btn-delete" title="Sil"><i class="bi bi-trash3"></i></button>
+                                            </form>
+                                        </div>
+                                    `;
+                        }
+                    }
+                ],
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/tr.json",
+                    "emptyTable": "Henüz teslimat bölgesi eklenmemiş. Lütfen yeni bölge ekleyin.",
+                    "search": "Ara (İl, İlçe, Mahalle):"
+                },
+                "pageLength": 10,
+                "responsive": true,
+                "ordering": false
+            });
+        });
+    </script>
+}

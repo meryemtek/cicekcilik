@@ -1,0 +1,174 @@
+﻿@model ECommerce.Application.DTOs.Duyuru.DuyuruEkleDto
+
+@{
+    ViewData["Title"] = "Yeni Duyuru Ekle";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .s-page {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .s-hero {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 28px;
+    }
+
+    .s-eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #9a1640;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+    }
+
+    .s-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0 0 6px;
+        letter-spacing: -.5px;
+    }
+
+    .s-subtitle {
+        margin: 0;
+        color: #85818c;
+        font-size: .95rem;
+    }
+
+    .s-add-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        background: linear-gradient(135deg,#8b0028,#a70b3b);
+        border: 0;
+        border-radius: 13px;
+        color: #fff;
+        padding: 13px 24px;
+        font-size: .9rem;
+        font-weight: 600;
+        text-decoration: none;
+        box-shadow: 0 8px 22px rgba(139,0,40,.2);
+        transition: all .2s ease;
+        cursor: pointer;
+    }
+
+        .s-add-btn:hover {
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(139,0,40,.28);
+        }
+
+    .s-card {
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #eee9ed;
+        box-shadow: 0 8px 25px rgba(35,28,40,.04);
+        padding: 32px;
+    }
+
+    .s-form-group {
+        margin-bottom: 22px;
+    }
+
+    .s-label {
+        display: block;
+        font-size: .88rem;
+        font-weight: 700;
+        color: #24213d;
+        margin-bottom: 8px;
+    }
+
+    .s-input {
+        width: 100%;
+        height: 48px;
+        border: 1px solid #e5e0e5;
+        border-radius: 12px;
+        padding: 0 16px;
+        font-size: .95rem;
+        color: #24213d;
+        transition: all .2s ease;
+        background: #fff;
+    }
+
+        .s-input:focus {
+            border-color: #8b0028;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(139,0,40,.08);
+        }
+
+    .s-back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #fff;
+        border: 1px solid #e5e0e5;
+        border-radius: 12px;
+        color: #716c75;
+        padding: 11px 18px;
+        font-size: .88rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all .2s ease;
+    }
+
+        .s-back-btn:hover {
+            background: #f8f6f8;
+            color: #24213d;
+            border-color: #d8d0d8;
+        }
+</style>
+
+<div class="s-page">
+    <div class="s-hero">
+        <div>
+            <div class="s-eyebrow"><i class="bi bi-bullhorn"></i> Duyuru Yönetimi</div>
+            <h1 class="s-title">Yeni Duyuru Ekle</h1>
+            <p class="s-subtitle">Üst bantta akacak yeni kampanya metnini ve isteğe bağlı yönlendirme bağlantısını tanımlayın.</p>
+        </div>
+        <a asp-action="Index" class="s-back-btn"><i class="bi bi-arrow-left"></i> Listeye Dön</a>
+    </div>
+
+    <div class="s-card">
+        <form asp-action="Ekle" method="post">
+            <div class="s-form-group">
+                <label class="s-label">Duyuru Metni</label>
+                <input asp-for="Metin" class="s-input" placeholder="Örn: İLK ÜYELİĞE ÖZEL 100TL İNDİRİM!" required />
+                <span asp-validation-for="Metin" class="text-danger small"></span>
+            </div>
+
+            <div class="s-form-group">
+                <label class="s-label">Yönlendirme Linki (Opsiyonel)</label>
+                <input asp-for="LinkUrl" class="s-input" placeholder="Örn: /kampanyalar veya https://..." />
+                <span asp-validation-for="LinkUrl" class="text-danger small"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 s-form-group">
+                    <label class="s-label">Sıra No</label>
+                    <input asp-for="SiraNo" type="number" class="s-input" value="1" />
+                </div>
+                <div class="col-md-6 s-form-group d-flex align-items-center">
+                    <div class="form-check form-switch mt-4">
+                        <input asp-for="AktifMi" class="form-check-input" type="checkbox" checked style="width: 3em; height: 1.5em; cursor: pointer;" />
+                        <label class="form-check-label ms-2 fw-bold text-dark pt-1" style="font-size: .9rem;">Duyuru Aktif (Yayında)</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-3 pt-3 border-top mt-4">
+                <a asp-action="Index" class="s-back-btn">İptal</a>
+                <button type="submit" class="s-add-btn"><i class="bi bi-check-lg"></i><span>Kaydet</span></button>
+            </div>
+        </form>
+    </div>
+</div>

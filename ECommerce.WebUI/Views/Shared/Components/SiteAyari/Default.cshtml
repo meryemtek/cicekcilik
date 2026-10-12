@@ -1,0 +1,11 @@
+﻿@model ECommerce.Application.DTOs.SiteAyari.SiteAyariDto
+@{
+    var temaRengi = !string.IsNullOrEmpty(Model?.TemaRengiHex) ? Model.TemaRengiHex : "#8b0028";
+}
+
+<style>
+    :root {
+        --site-primary: @temaRengi !important;
+        --site-primary-hover: @(temaRengi)dd !important;
+    }
+</style>

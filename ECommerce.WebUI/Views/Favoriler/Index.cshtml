@@ -1,0 +1,60 @@
+﻿@model List<ECommerce.Application.DTOs.Favori.FavoriListeDto>
+
+@{
+    ViewData["Title"] = "Favorilerim";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container my-5">
+    <div class="mb-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-1">
+                <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-muted">Anasayfa</a></li>
+                <li class="breadcrumb-item active text-dark fw-bold" aria-current="page">Favorilerim</li>
+            </ol>
+        </nav>
+        <h1 class="fw-bold text-dark" style="font-size: 1.8rem; letter-spacing: -0.5px;">Favori Ürünlerim</h1>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
+            @foreach (var item in Model)
+            {
+                <div class="col" id="favori-item-@item.UrunId">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden position-relative">
+                        <!-- Kaldırma / Favori Butonu -->
+                        <button type="button" class="btn-favori position-absolute top-0 end-0 m-3 rounded-circle bg-white shadow-sm border-0 d-flex align-items-center justify-content-center"
+                                style="width: 36px; height: 36px; z-index: 3;"
+                                data-urun-id="@item.UrunId">
+                            <i class="bi bi-heart-fill text-danger" style="font-size: 1.1rem;"></i>
+                        </button>
+
+                        <a href="/urun/@item.SeoUrl" class="text-decoration-none text-dark">
+                            <div style="height: 250px; background: #f8f9fa;" class="overflow-hidden">
+                                <img src="@item.GorselUrl" alt="@item.UrunAdi" class="w-100 h-100 object-fit-cover" />
+                            </div>
+                            <div class="card-body d-flex flex-column p-4">
+                                <h5 class="card-title fw-bold fs-6 mb-2">@item.UrunAdi</h5>
+                                <div class="mt-auto d-flex align-items-center justify-content-between">
+                                    <span class="fw-bold text-dark fs-5">@item.Fiyat.ToString("N2") ₺</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="text-center py-5">
+            <div class="mb-3">
+                <i class="bi bi-heart text-muted" style="font-size: 4rem;"></i>
+            </div>
+            <h3 class="fw-bold text-dark">Favori Listeniz Boş</h3>
+            <p class="text-muted mb-4">Henüz favorilerinize ürün eklemediniz. Beğendiğiniz ürünlerin üzerindeki kalp ikonuna tıklayarak favorilerinize ekleyebilirsiniz.</p>
+            <a href="/" class="btn text-white fw-bold px-4 py-2 rounded-3" style="background-color: #8b0028;">Alışverişe Başla</a>
+        </div>
+    }
+</div>

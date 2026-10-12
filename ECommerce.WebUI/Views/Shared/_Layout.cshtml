@@ -1,0 +1,557 @@
+﻿@inject IHttpClientFactory HttpClientFactory
+@using System.Text.Json
+@using ECommerce.Application.DTOs.SiteAyari
+
+@{
+    string temaRengi = "#8b0028"; // Varsayılan Bordo
+    try
+    {
+        var client = HttpClientFactory.CreateClient("ApiClient");
+        var response = client.GetAsync("siteayarlari/site-ayarlari").Result;
+        if (response.IsSuccessStatusCode)
+        {
+            var content = response.Content.ReadAsStringAsync().Result;
+            var ayarlar = JsonSerializer.Deserialize<SiteAyariDto>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            if (ayarlar != null && !string.IsNullOrEmpty(ayarlar.TemaRengiHex))
+            {
+                temaRengi = ayarlar.TemaRengiHex;
+            }
+        }
+    }
+    catch
+    {
+        // Bağlantı hatası durumunda varsayılan renk ile devam eder
+    }
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>@ViewData["Title"] - Lidya Çiçekçilik | Elazığ Çiçekçi</title>
+
+    <meta name="description"
+          content="Lidya Çiçekçilik, Elazığ'da çiçek siparişi ve çiçek gönderimi hizmeti sunar. Gül, buket, orkide, aranjman ve özel gün çiçekleri için Lidya Çiçekçilik." />
+
+    <meta name="robots" content="index, follow" />
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet"
+          href="~/css/site.css"
+          asp-append-version="true" />
+
+    <style>
+        /* =========================================================
+                       DİNAMİK TEMA RENGİ ENTEGRASYONU
+                       ========================================================= */
+        :root {
+            --site-primary: @temaRengi !important;
+            --site-primary-hover: @(temaRengi)dd !important;
+        }
+
+        .announcement-bar {
+            background-color: var(--site-primary) !important;
+        }
+
+        .search-box-container .input-group {
+            border: 2px solid var(--site-primary) !important;
+        }
+
+        .search-box-container button {
+            background-color: var(--site-primary) !important;
+        }
+
+            .search-box-container button:hover {
+                background-color: var(--site-primary-hover) !important;
+            }
+
+        .header-top-bar a:hover,
+        .user-actions a:hover,
+        .header-nav .nav-link:hover {
+            color: var(--site-primary) !important;
+        }
+
+        .btn-primary,
+        .slider-action-btn,
+        .category-banner-card span,
+        .card .btn,
+        button[type="submit"],
+        .btn-success {
+            background: linear-gradient(135deg, var(--site-primary), var(--site-primary-hover)) !important;
+            border-color: var(--site-primary) !important;
+            background-color: var(--site-primary) !important;
+        }
+
+            .btn-primary:hover,
+            .slider-action-btn:hover,
+            .card .btn:hover {
+                background-color: var(--site-primary-hover) !important;
+                border-color: var(--site-primary-hover) !important;
+            }
+
+        .btn-gunu-guzellestir {
+            background-color: var(--site-primary) !important;
+            border-color: var(--site-primary) !important;
+            color: #fff !important;
+            transition: all 0.3s ease;
+        }
+
+            .btn-gunu-guzellestir:hover {
+                background-color: var(--site-primary-hover) !important;
+            }
+
+        .teslimat-metni {
+            color: var(--site-primary) !important;
+            font-weight: 500;
+        }
+
+        .teslimat-ikonu {
+            color: var(--site-primary) !important;
+        }
+
+        /* =========================================================
+                       YAPIŞKAN (STICKY) HEADER MİMARİSİ
+                       ========================================================= */
+        .sticky-header-wrapper {
+            position: sticky;
+            top: 0;
+            z-index: 1030;
+            background-color: #fff;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        }
+
+        /* =========================================================
+                       MOBİL OFFCANVAS MENÜ ÖZELLEŞTİRMELERİ
+                       ========================================================= */
+        #mobileMenuOffcanvas .navbar-nav {
+            flex-direction: column !important;
+            width: 100%;
+            gap: 0 !important;
+        }
+
+        #mobileMenuOffcanvas .nav-item {
+            border-bottom: 1px solid #f2edeo;
+            width: 100%;
+        }
+
+        #mobileMenuOffcanvas .nav-link {
+            padding: 12px 20px !important;
+            font-weight: 600;
+            color: #333 !important;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+            #mobileMenuOffcanvas .nav-link:hover {
+                background-color: #faf7fa;
+                color: var(--site-primary) !important;
+            }
+
+        /* =========================================================
+                       DİĞER ÖN YÜZ STİLLERİ
+                       ========================================================= */
+        .header-top-bar {
+            background-color: #f8f9fa;
+            font-size: 0.85rem;
+            color: #6c757d;
+            border-bottom: 1px solid #eaeaea;
+        }
+
+            .header-top-bar a {
+                color: #6c757d;
+                text-decoration: none;
+                transition: color 0.2s;
+            }
+
+        .announcement-bar {
+            color: #fff;
+            font-size: 0.85rem;
+            font-weight: 500;
+            padding: 8px 0;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .announcement-content {
+            display: inline-block;
+            animation: marquee 25s linear infinite;
+        }
+
+        @@keyframes marquee {
+            0% {
+                transform: translateX(100%);
+            }
+
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+        .header-main {
+            padding: 15px 0;
+            background: #fff;
+        }
+
+        .search-box-container input {
+            border: none;
+            box-shadow: none !important;
+            padding-left: 20px;
+        }
+
+        .search-box-container button {
+            color: #fff;
+            border: none;
+            padding: 0 25px;
+        }
+
+        .user-actions a {
+            color: #333;
+            text-decoration: none;
+            font-size: 0.85rem;
+            text-align: center;
+            transition: color 0.2s;
+        }
+
+        .user-actions i {
+            font-size: 1.25rem;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .header-nav {
+            border-top: 1px solid #eaeaea;
+            border-bottom: 1px solid #eaeaea;
+            background: #fff;
+        }
+
+            .header-nav .navbar-nav {
+                gap: 20px;
+                margin: 0 auto;
+            }
+
+            .header-nav .nav-link {
+                font-weight: 600;
+                color: #333 !important;
+                text-transform: uppercase;
+                font-size: 0.9rem;
+                padding: 12px 0 !important;
+                transition: color 0.2s;
+            }
+
+        .local-seo-section {
+            background: #fbfafc;
+            border-top: 1px solid #eeeaf0;
+            border-bottom: 1px solid #eeeaf0;
+            padding: 55px 0 50px;
+            margin-top: 20px;
+        }
+
+        .local-seo-wrapper {
+            max-width: 1180px;
+            margin: 0 auto;
+        }
+
+        .local-seo-content {
+            background: #fff;
+            border: 1px solid #eee9ef;
+            border-radius: 18px;
+            padding: 35px 40px;
+            box-shadow: 0 8px 30px rgba(50, 35, 60, 0.035);
+        }
+
+        .local-seo-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            color: var(--site-primary);
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 1.4px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .local-seo-title {
+            color: #292336;
+            font-size: 1.55rem;
+            font-weight: 700;
+            line-height: 1.35;
+            margin-bottom: 16px;
+        }
+
+        .local-seo-content p {
+            color: #69636d;
+            font-size: 0.94rem;
+            line-height: 1.85;
+            margin-bottom: 14px;
+        }
+
+        .local-seo-content h3 {
+            color: #393143;
+            font-size: 1.08rem;
+            font-weight: 700;
+            margin-top: 28px;
+            margin-bottom: 9px;
+        }
+
+        .local-seo-content strong {
+            color: #44394b;
+            font-weight: 600;
+        }
+
+        .local-seo-divider {
+            height: 1px;
+            background: #eeeaf0;
+            margin: 25px 0;
+        }
+
+        .site-footer {
+            background: #29252d;
+            color: #fff;
+        }
+
+            .site-footer a {
+                transition: color .2s ease;
+            }
+
+                .site-footer a:hover {
+                    color: var(--site-primary) !important;
+                }
+
+        body, h1, h2, h3, h4, h5, h6, span, a, p, button, input, textarea {
+            font-family: 'Outfit', sans-serif !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- =========================================================
+         1. ÜST BAR
+    ========================================================= -->
+    @await Component.InvokeAsync("HeaderInfo")
+
+
+    <!-- =========================================================
+         2. DUYURU BANDI
+    ========================================================= -->
+    @await Component.InvokeAsync("DuyuruBand")
+
+
+    <!-- =========================================================
+         YAPIŞKAN ALAN BAŞLANGICI (LOGO/ARAMA + ANA MENÜ)
+    ========================================================= -->
+    <div class="sticky-header-wrapper">
+
+        <!-- 3. LOGO / ARAMA / KULLANICI -->
+        @await Component.InvokeAsync("HeaderMain")
+
+
+        <!-- 4. ANA MENÜ (Masaüstü Normal / Mobil Offcanvas) -->
+        <nav class="header-nav navbar navbar-expand-lg py-0">
+            <div class="container">
+                <!-- Mobil Hamburger Butonu (Offcanvas Tetikleyici) -->
+                <button class="navbar-toggler my-2 d-lg-none border-0 shadow-none"
+                        type="button"
+                        data-bs-toggle="offcanvas"
+                        data-bs-target="#mobileMenuOffcanvas"
+                        aria-controls="mobileMenuOffcanvas">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Masaüstü Normal Menü -->
+                <div class="collapse navbar-collapse justify-content-center d-none d-lg-flex"
+                     id="mainMenu">
+                    @await Component.InvokeAsync("Menu", new { konum = "Header" })
+                </div>
+            </div>
+        </nav>
+
+    </div>
+    <!-- =========================================================
+         YAPIŞKAN ALAN BİTİŞİ
+    ========================================================= -->
+    <!-- =========================================================
+         MOBİL OFF-CANVAS MENÜ ÇEKMECESİ (DRAWER)
+    ========================================================= -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileMenuOffcanvas" aria-labelledby="mobileMenuOffcanvasLabel">
+        <div class="offcanvas-header border-bottom px-4 py-3">
+            <h5 class="offcanvas-title fw-bold" id="mobileMenuOffcanvasLabel" style="color: var(--site-primary);">Lidya Çiçekçilik</h5>
+            <button type="button" class="btn-close shadow-none" data-bs-dismiss="offcanvas" aria-label="Kapat"></button>
+        </div>
+        <div class="offcanvas-body p-0">
+            <!-- Mobil Hızlı İşlemler Kısmı -->
+            <div class="p-3 bg-light border-bottom d-flex justify-content-around text-center">
+                <a href="/Uye-Girisi" class="text-decoration-none text-dark small">
+                    <i class="bi bi-person fs-5 d-block text-secondary"></i> Hesabım
+                </a>
+                <a href="/Sepet" class="text-decoration-none text-dark small">
+                    <i class="bi bi-cart3 fs-5 d-block text-secondary"></i> Sepet
+                </a>
+                <a href="/Favoriler" class="text-dark text-decoration-none position-relative d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                    <i class="bi bi-heart fs-5"></i>
+                    <!-- İsteğe bağlı sayaç rozeti eklemek istersen: -->
+                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="favoriSayac">0</span>
+                </a>
+            </div>
+
+            <!-- Dinamik Menü Öğeleri -->
+            <div class="mobile-menu-container">
+                @await Component.InvokeAsync("Menu", new { konum = "Header" })
+            </div>
+        </div>
+    </div>
+
+
+    <!-- =========================================================
+         ANA İÇERİK
+    ========================================================= -->
+    <main role="main" class="pb-5">
+        @RenderBody()
+    </main>
+
+    <!-- =========================================================
+         FOOTER
+    ========================================================= -->
+    @await Component.InvokeAsync("Footer")
+
+    <!-- Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('click', function (e) {
+            const button = e.target.closest('.btn-favori');
+            if (!button) return;
+
+            const urunId = button.getAttribute('data-urun-id');
+            const icon = button.querySelector('i');
+
+            if (!urunId) return;
+
+            fetch('/Favoriler/Toggle', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({ urunId: urunId })
+            })
+                .then(async res => {
+                    console.log("Sunucu Yanıt Durumu (Status):", res.status);
+
+                    if (res.status === 401 || res.redirected) {
+                        window.location.href = '/Hesap/Giris';
+                        return null;
+                    }
+
+                    const text = await res.text();
+                    try {
+                        return JSON.parse(text);
+                    } catch (err) {
+                        console.error("JSON Ayrıştırma Hatası. Sunucudan Gelen Ham Metin:", text);
+                        return null;
+                    }
+                })
+                .then(data => {
+                    if (!data) return;
+
+                    if (data.eklendiMi) {
+                        icon.classList.remove('bi-heart');
+                        icon.classList.add('bi-heart-fill');
+                        icon.style.color = '#dc3545';
+                    } else {
+                        icon.classList.remove('bi-heart-fill');
+                        icon.classList.add('bi-heart');
+                        icon.style.color = '';
+                    }
+                })
+                .catch(err => console.error('Fetch Kritik Hatası:', err));
+        });
+    </script>
+    <script>
+        // Sayfa yüklendiğinde favori ürünleri kontrol edip kalpleri senkronize eder
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch('/Favoriler/GetFavoriIdList')
+                .then(res => res.json())
+                .then(favoriIds => {
+                    if (!Array.isArray(favoriIds)) return;
+
+                    document.querySelectorAll('.btn-favori').forEach(button => {
+                        const urunId = button.getAttribute('data-urun-id');
+                        const icon = button.querySelector('i');
+                        if (!urunId || !icon) return;
+
+                        // Eğer ürün kullanıcının favorilerindeyse kalbi doldur
+                        if (favoriIds.includes(urunId)) {
+                            icon.classList.remove('bi-heart');
+                            icon.classList.add('bi-heart-fill');
+                            icon.style.color = '#dc3545';
+                        } else {
+                            icon.classList.remove('bi-heart-fill');
+                            icon.classList.add('bi-heart');
+                            icon.style.color = '';
+                        }
+                    });
+                })
+                .catch(err => console.error("Favori senkronizasyon hatası:", err));
+        });
+
+        // Kalp butonuna tıklandığında ekleme/çıkarma işlemini yöneten global dinleyici
+        document.addEventListener('click', function (e) {
+            const button = e.target.closest('.btn-favori');
+            if (!button) return;
+
+            const urunId = button.getAttribute('data-urun-id');
+            const icon = button.querySelector('i');
+
+            if (!urunId) return;
+
+            fetch('/Favoriler/Toggle', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({ urunId: urunId })
+            })
+                .then(async res => {
+                    if (res.status === 401 || res.redirected) {
+                        return null;
+                    }
+                    const text = await res.text();
+                    try {
+                        return JSON.parse(text);
+                    } catch (err) {
+                        return null;
+                    }
+                })
+                .then(data => {
+                    if (!data) return;
+
+                    if (data.eklendiMi) {
+                        icon.classList.remove('bi-heart');
+                        icon.classList.add('bi-heart-fill');
+                        icon.style.color = '#dc3545';
+                    } else {
+                        icon.classList.remove('bi-heart-fill');
+                        icon.classList.add('bi-heart');
+                        icon.style.color = '';
+                    }
+                })
+                .catch(err => console.error('Fetch Kritik Hatası:', err));
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>

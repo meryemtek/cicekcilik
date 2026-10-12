@@ -1,0 +1,49 @@
+﻿@model ECommerce.Application.DTOs.TeslimatSaati.TeslimatSaatiDto
+@{
+    ViewData["Title"] = "Teslimat Saatini Düzenle";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="t-page" style="max-width: 800px; margin: 0 auto;">
+    <div class="t-card" style="background: #fff; border-radius: 16px; border: 1px solid #eee9ed; padding: 25px;">
+        <h3 class="fw-bold mb-4">Teslimat Saatini Düzenle</h3>
+        <form asp-action="Guncelle" method="post">
+            <input type="hidden" asp-for="Id" />
+            <div class="mb-3">
+                <label class="form-label fw-bold small">Teslimat Grubu</label>
+                <select asp-for="TeslimatGrubu" class="form-select" required>
+                    <option value="@ECommerce.Domain.Enums.TeslimatGrubu.Normal">Normal Teslimat</option>
+                    <option value="@ECommerce.Domain.Enums.TeslimatGrubu.Vip">VIP Teslimat</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-bold small">Başlangıç Saati</label>
+                <input type="text" asp-for="BaslangicSaati" class="form-control" required />
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-bold small">Bitiş Saati</label>
+                <input type="text" asp-for="BitisSaati" class="form-control" required />
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-bold small">Açıklama / Etiket</label>
+                <input type="text" asp-for="Aciklama" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-bold small">Günlük Sipariş Kotası</label>
+                <input type="number" asp-for="GunlukKota" class="form-control" required />
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-bold small">Görüntüleme Sırası</label>
+                <input type="number" asp-for="Sira" class="form-control" required />
+            </div>
+            <div class="mb-3 form-check">
+                <input type="checkbox" asp-for="AktifMi" class="form-check-input" />
+                <label class="form-check-label fw-bold small">Müşterilere Gösterilsin (Aktif)</label>
+            </div>
+            <div class="d-flex justify-content-between mt-4">
+                <a href="/Admin/TeslimatSaati" class="btn btn-light rounded-3 px-4">Geri Dön</a>
+                <button type="submit" class="btn text-white px-5" style="background: linear-gradient(135deg,#8b0028,#a70b3b); border-radius:12px;">Değişiklikleri Kaydet</button>
+            </div>
+        </form>
+    </div>
+</div>

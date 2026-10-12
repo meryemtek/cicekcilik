@@ -1,0 +1,733 @@
+﻿@model IEnumerable<ECommerce.Application.DTOs.Urun.UrunListeDto>
+@{
+    ViewData["Title"] = "Ürün Yönetimi";
+    var urunler = Model?.ToList() ?? new List<ECommerce.Application.DTOs.Urun.UrunListeDto>();
+    var toplamUrun = urunler.Count;
+    var aktifUrun = urunler.Count(x => x.AktifMi);
+    var toplamStok = urunler.Sum(x => x.StokMiktari);
+}
+
+<style>
+    .urun-page {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .urun-hero {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 28px;
+    }
+
+    .urun-hero-content {
+        min-width: 0;
+    }
+
+    .urun-eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #9a1640;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+    }
+
+        .urun-eyebrow i {
+            font-size: 1rem;
+        }
+
+    .urun-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0 0 6px;
+        letter-spacing: -.5px;
+    }
+
+    .urun-subtitle {
+        margin: 0;
+        color: #85818c;
+        font-size: .95rem;
+    }
+
+    .urun-action-group {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+    }
+
+    .urun-import-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        background: #fff;
+        border: 1px solid #e5e0e5;
+        border-radius: 13px;
+        color: #403b46;
+        padding: 13px 20px;
+        font-size: .9rem;
+        font-weight: 600;
+        text-decoration: none;
+        box-shadow: 0 4px 12px rgba(0,0,0,.03);
+        transition: all .2s ease;
+        white-space: nowrap;
+    }
+
+        .urun-import-btn:hover {
+            border-color: #c98ca0;
+            color: #8b0028;
+            background: #fff4f7;
+        }
+
+    .urun-add-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        background: linear-gradient(135deg,#8b0028,#a70b3b);
+        border: 0;
+        border-radius: 13px;
+        color: #fff;
+        padding: 13px 20px;
+        font-size: .9rem;
+        font-weight: 600;
+        text-decoration: none;
+        box-shadow: 0 8px 22px rgba(139,0,40,.2);
+        transition: all .2s ease;
+        white-space: nowrap;
+    }
+
+        .urun-add-btn:hover {
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(139,0,40,.28);
+        }
+
+    .urun-stats {
+        display: grid;
+        grid-template-columns: repeat(3,1fr);
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    .urun-stat {
+        position: relative;
+        overflow: hidden;
+        background: #fff;
+        border: 1px solid #f0edf0;
+        border-radius: 17px;
+        padding: 20px 22px;
+        box-shadow: 0 7px 25px rgba(35,28,40,.055);
+    }
+
+        .urun-stat::after {
+            content: "";
+            position: absolute;
+            width: 85px;
+            height: 85px;
+            right: -28px;
+            bottom: -34px;
+            border-radius: 50%;
+            background: rgba(139,0,40,.045);
+        }
+
+    .urun-stat-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+    }
+
+    .urun-stat-label {
+        font-size: .72rem;
+        font-weight: 700;
+        color: #908b95;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+    }
+
+    .urun-stat-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fff2f5;
+        color: #9a1640;
+        font-size: 1.1rem;
+    }
+
+    .urun-stat-number {
+        font-size: 1.8rem;
+        line-height: 1;
+        font-weight: 700;
+        color: #24213d;
+        margin-bottom: 5px;
+    }
+
+    .urun-stat-description {
+        font-size: .78rem;
+        color: #98939c;
+    }
+
+    .urun-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 20px;
+    }
+
+    .urun-search {
+        position: relative;
+        flex: 1;
+        max-width: 430px;
+    }
+
+        .urun-search i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa5ae;
+            font-size: 1rem;
+            pointer-events: none;
+        }
+
+        .urun-search input {
+            width: 100%;
+            height: 46px;
+            border: 1px solid #e9e5e9;
+            border-radius: 13px;
+            background: #fff;
+            padding: 0 15px 0 42px;
+            color: #24213d;
+            font-size: .88rem;
+            outline: 0;
+            transition: all .2s ease;
+        }
+
+            .urun-search input:focus {
+                border-color: #c98ca0;
+                box-shadow: 0 0 0 4px rgba(139,0,40,.06);
+            }
+
+    .urun-filter {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+    }
+
+    .urun-filter-btn {
+        height: 40px;
+        border: 1px solid #ebe7eb;
+        background: #fff;
+        border-radius: 10px;
+        padding: 0 13px;
+        color: #77727d;
+        font-size: .78rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all .2s ease;
+    }
+
+        .urun-filter-btn:hover {
+            border-color: #d4b2bd;
+            color: #8b0028;
+        }
+
+        .urun-filter-btn.active {
+            background: #8b0028;
+            border-color: #8b0028;
+            color: #fff;
+        }
+
+    .urun-grid {
+        display: grid;
+        grid-template-columns: repeat(3,minmax(0,1fr));
+        gap: 18px;
+    }
+
+    .urun-card {
+        position: relative;
+        overflow: hidden;
+        background: #fff;
+        border: 1px solid #eee9ed;
+        border-radius: 19px;
+        padding: 22px;
+        box-shadow: 0 8px 28px rgba(35,28,40,.055);
+        transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+    }
+
+        .urun-card:hover {
+            transform: translateY(-4px);
+            border-color: #e5d5db;
+            box-shadow: 0 15px 35px rgba(35,28,40,.09);
+        }
+
+    .urun-card-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        margin-bottom: 12px;
+    }
+
+    /* Sol üstteki orijinal çiçek ikonu */
+    .urun-flower-icon {
+        width: 46px;
+        height: 46px;
+        border-radius: 13px;
+        background: linear-gradient(145deg,#fff2f5,#fbe3e9);
+        color: #8b0028;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.35rem;
+    }
+
+    /* Yuvarlak ürün görsel alanı (bilgilerle dikeyde ortalanmış) */
+    .urun-card-thumb {
+        width: 58px;
+        height: 58px;
+        min-width: 58px;
+        min-height: 58px;
+        border-radius: 50%;
+        overflow: hidden;
+        background: #fdf8f9;
+        border: 2px solid #fce8ed;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 14px rgba(139,0,40,.08);
+    }
+
+        .urun-card-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+    .urun-card-main-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        margin-bottom: 12px;
+    }
+
+    .urun-card-name {
+        font-size: 1.08rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0 0 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .urun-card-sku {
+        font-size: .75rem;
+        color: #9a959e;
+        margin-bottom: 6px;
+    }
+
+    .urun-card-price {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #8b0028;
+        margin-bottom: 4px;
+    }
+
+    .urun-card-stock {
+        font-size: .78rem;
+        color: #9a959e;
+    }
+
+    .urun-card-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        font-size: .76rem;
+        font-weight: 600;
+    }
+
+    .urun-status-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .urun-status-active {
+        color: #288661;
+    }
+
+        .urun-status-active .urun-status-dot {
+            background: #36a978;
+            box-shadow: 0 0 0 4px rgba(54,169,120,.1);
+        }
+
+    .urun-status-passive {
+        color: #8d8790;
+    }
+
+        .urun-status-passive .urun-status-dot {
+            background: #aaa5ad;
+        }
+
+    .urun-card-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #f0edef;
+    }
+
+    .urun-card-actions-left {
+        display: flex;
+        gap: 12px;
+    }
+
+    .urun-action-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        text-decoration: none;
+        font-size: .8rem;
+        font-weight: 600;
+    }
+
+    .urun-btn-detail {
+        color: #287c5d;
+    }
+
+        .urun-btn-detail:hover {
+            color: #1e5e46;
+        }
+
+    .urun-btn-edit {
+        color: #8b0028;
+    }
+
+        .urun-btn-edit:hover {
+            color: #65001f;
+        }
+
+    .urun-delete-btn {
+        width: 34px;
+        height: 34px;
+        border: 0;
+        border-radius: 9px;
+        background: #fff3f4;
+        color: #b64a5d;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all .2s ease;
+    }
+
+        .urun-delete-btn:hover {
+            background: #fbe1e5;
+            color: #9e253c;
+        }
+
+    .urun-empty {
+        background: #fff;
+        border: 1px dashed #ddd5da;
+        border-radius: 20px;
+        padding: 65px 25px;
+        text-align: center;
+        grid-column: 1/-1;
+    }
+
+    .urun-empty-icon {
+        width: 70px;
+        height: 70px;
+        border-radius: 22px;
+        background: #fff2f5;
+        color: #9a1640;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        margin: 0 auto 18px;
+    }
+
+    .urun-empty h3 {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #24213d;
+        margin-bottom: 7px;
+    }
+
+    .urun-empty p {
+        color: #99949d;
+        font-size: .85rem;
+        margin-bottom: 20px;
+    }
+
+    .urun-alert {
+        border: 0;
+        border-radius: 13px;
+        padding: 13px 16px;
+        font-size: .84rem;
+        margin-bottom: 18px;
+    }
+
+    .urun-alert-success {
+        background: #edf9f4;
+        color: #287c5d;
+    }
+
+    .urun-alert-danger {
+        background: #fff0f2;
+        color: #a4364b;
+    }
+
+    @@media(max-width:1100px) {
+        .urun-grid {
+            grid-template-columns: repeat(2,minmax(0,1fr));
+        }
+    }
+
+    @@media(max-width:768px) {
+        .urun-hero {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .urun-action-group {
+            width: 100%;
+            flex-direction: column;
+        }
+
+        .urun-add-btn, .urun-import-btn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .urun-stats {
+            grid-template-columns: 1fr;
+        }
+
+        .urun-toolbar {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .urun-search {
+            max-width: none;
+        }
+
+        .urun-filter {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .urun-filter-btn {
+            flex: 1;
+            min-width: 80px;
+        }
+
+        .urun-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="urun-page">
+    <div class="urun-hero">
+        <div class="urun-hero-content">
+            <div class="urun-eyebrow"><i class="bi bi-flower1"></i> Mağaza Yönetimi</div>
+            <h1 class="urun-title">Ürünler</h1>
+            <p class="urun-subtitle">Çiçek ve aranjman stoklarınızı, fiyatlarınızı ve vitrin durumunuzu yönetin.</p>
+        </div>
+        <div class="urun-action-group">
+            <a asp-action="XmlImport" class="urun-import-btn"><i class="bi bi-filetype-xml"></i><span>XML İçe Aktar</span></a>
+            <a asp-action="Ekle" class="urun-add-btn"><i class="bi bi-plus-lg"></i><span>Yeni Ürün Ekle</span></a>
+        </div>
+    </div>
+
+    @if (TempData["BasariliMesaj"] != null)
+    {
+        <div class="alert urun-alert urun-alert-success alert-dismissible fade show" role="alert"><i class="bi bi-check-circle me-2"></i>@TempData["BasariliMesaj"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+
+    @if (TempData["HataMesaji"] != null)
+    {
+        <div class="alert urun-alert urun-alert-danger alert-dismissible fade show" role="alert"><i class="bi bi-exclamation-circle me-2"></i>@TempData["HataMesaji"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+
+    <div class="urun-stats">
+        <div class="urun-stat">
+            <div class="urun-stat-top"><span class="urun-stat-label">Toplam Ürün</span><div class="urun-stat-icon"><i class="bi bi-box-seam"></i></div></div>
+            <div class="urun-stat-number">@toplamUrun</div>
+            <div class="urun-stat-description">Sistemde kayıtlı ürün</div>
+        </div>
+        <div class="urun-stat">
+            <div class="urun-stat-top"><span class="urun-stat-label">Yayında Olan</span><div class="urun-stat-icon"><i class="bi bi-check2-circle"></i></div></div>
+            <div class="urun-stat-number">@aktifUrun</div>
+            <div class="urun-stat-description">Mağazada satışta</div>
+        </div>
+        <div class="urun-stat">
+            <div class="urun-stat-top"><span class="urun-stat-label">Toplam Stok</span><div class="urun-stat-icon"><i class="bi bi-stack"></i></div></div>
+            <div class="urun-stat-number">@toplamStok</div>
+            <div class="urun-stat-description">Adet ürün stoğu</div>
+        </div>
+    </div>
+
+    <div class="urun-toolbar">
+        <div class="urun-search">
+            <i class="bi bi-search"></i>
+            <input type="text" id="urunSearch" placeholder="Ürün adı veya kodu ara...">
+        </div>
+        <div class="urun-filter">
+            <button type="button" class="urun-filter-btn active" data-filter="all">Tümü</button>
+            <button type="button" class="urun-filter-btn" data-filter="active">Yayında</button>
+            <button type="button" class="urun-filter-btn" data-filter="passive">Gizli</button>
+        </div>
+    </div>
+
+    <div class="urun-grid" id="urunGrid">
+        @if (urunler.Any())
+        {
+            foreach (var item in urunler)
+            {
+                <div class="urun-card" data-name="@item.Ad.ToLowerInvariant()" data-sku="@(item.UrunKodu?.ToLowerInvariant() ?? "")" data-status="@(item.AktifMi ? "active" : "passive")">
+                    <!-- Üst kısım: Sol üstte orijinal çiçek ikonu, Sağ üstte aktiflik switch'i -->
+                    <div class="urun-card-top">
+                        <div class="urun-flower-icon">
+                            <i class="bi bi-flower1"></i>
+                        </div>
+                        <div class="form-check form-switch d-flex align-items-center gap-2 mb-0">
+                            <input class="form-check-input hizli-durum-switch" type="checkbox" role="switch" data-id="@item.Id" @(item.AktifMi ? "checked" : "") style="cursor: pointer; width: 40px; height: 20px; accent-color: #8b0028;" />
+                            <div class="urun-card-status @(item.AktifMi ? "urun-status-active" : "urun-status-passive") mb-0">
+                                <span class="urun-status-dot"></span><span class="durum-metin">@(item.AktifMi ? "Yayında" : "Gizli")</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Orta Alan: Sol tarafta ürün bilgileri, sağ tarafta dikeyde ortalanmış yuvarlak ürün görseli -->
+                    <div class="urun-card-main-content">
+                        <div style="flex: 1; min-width: 0;">
+                            <h3 class="urun-card-name">@item.Ad</h3>
+                            <div class="urun-card-sku">SKU: @(string.IsNullOrEmpty(item.UrunKodu) ? "Yok" : item.UrunKodu)</div>
+                            <div class="urun-card-price">@item.Fiyat.ToString("C2")</div>
+                            <div class="urun-card-stock">Stok Miktarı: <strong>@item.StokMiktari</strong> adet</div>
+                        </div>
+
+                        @if (!string.IsNullOrWhiteSpace(item.GorselUrl))
+                        {
+                            <div class="urun-card-thumb">
+                                <img src="@item.GorselUrl" alt="@item.Ad" />
+                            </div>
+                        }
+                    </div>
+
+                    <div class="urun-card-footer">
+                        <div class="urun-card-actions-left">
+                            <a asp-action="Detay" asp-route-id="@item.Id" class="urun-action-link urun-btn-detail"><i class="bi bi-eye"></i> İncele</a>
+                            <a asp-action="Guncelle" asp-route-id="@item.Id" class="urun-action-link urun-btn-edit"><i class="bi bi-pencil"></i> Düzenle</a>
+                            <a asp-controller="UrunVaryant" asp-action="Index" asp-route-urunId="@item.Id" class="urun-action-link" style="color:#e67e22;"><i class="bi bi-diagram-2"></i> Seçenekler</a>
+                        </div>
+                        <form asp-action="Sil" asp-route-id="@item.Id" method="post" onsubmit="return confirm('Bu ürünü silmek istediğinize emin misiniz?');">
+                            <button type="submit" class="urun-delete-btn" title="Sil"><i class="bi bi-trash3"></i></button>
+                        </form>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="urun-empty">
+                <div class="urun-empty-icon"><i class="bi bi-flower1"></i></div>
+                <h3>Henüz ürün bulunmuyor</h3>
+                <p>Mağazanızda sergilemek için ilk ürününüzü ekleyebilirsiniz.</p>
+                <div class="urun-action-group" style="justify-content:center; margin-top:20px;">
+                    <a asp-action="XmlImport" class="urun-import-btn"><i class="bi bi-filetype-xml"></i> XML ile Yükle</a>
+                    <a asp-action="Ekle" class="urun-add-btn"><i class="bi bi-plus-lg"></i> İlk Ürünü Oluştur</a>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const search = document.getElementById("urunSearch");
+        const cards = document.querySelectorAll(".urun-card");
+        const filterButtons = document.querySelectorAll(".urun-filter-btn");
+        let currentFilter = "all";
+
+        function filterCards() {
+            const query = (search?.value || "").toLowerCase().trim();
+            cards.forEach(card => {
+                const matchesSearch = card.dataset.name.includes(query) || card.dataset.sku.includes(query);
+                const matchesFilter = currentFilter === "all" || card.dataset.status === currentFilter;
+                card.style.display = matchesSearch && matchesFilter ? "" : "none";
+            });
+        }
+
+        search?.addEventListener("input", filterCards);
+
+        filterButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                filterButtons.forEach(x => x.classList.remove("active"));
+                this.classList.add("active");
+                currentFilter = this.dataset.filter;
+                filterCards();
+            });
+        });
+
+        // Hızlı durum değiştirici Ajax isteği
+        document.querySelectorAll(".hizli-durum-switch").forEach(sw => {
+            sw.addEventListener("change", async function () {
+                const id = this.dataset.id;
+                const aktifMi = this.checked;
+                const statusContainer = this.closest('.urun-card').querySelector('.urun-card-status');
+                const label = statusContainer.querySelector('.durum-metin');
+                const card = this.closest('.urun-card');
+
+                try {
+                    const response = await fetch('@Url.Action("HizliDurumDegistir", "Urun", new { area = "Admin" })?id=' + id + '&aktifMi=' + aktifMi, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
+                        }
+                    });
+
+                    const result = await response.json();
+                    if (result.success) {
+                        if (aktifMi) {
+                            label.textContent = "Yayında";
+                            statusContainer.classList.remove("urun-status-passive");
+                            statusContainer.classList.add("urun-status-active");
+                            card.dataset.status = "active";
+                        } else {
+                            label.textContent = "Gizli";
+                            statusContainer.classList.remove("urun-status-active");
+                            statusContainer.classList.add("urun-status-passive");
+                            card.dataset.status = "passive";
+                        }
+                    } else {
+                        alert(result.mesaj);
+                        this.checked = !aktifMi;
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert("Durum değiştirilirken bir bağlantı hatası oluştu.");
+                    this.checked = !aktifMi;
+                }
+            });
+        });
+    });
+</script>

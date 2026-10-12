@@ -1,0 +1,388 @@
+﻿@using ECommerce.Application.DTOs.Kategori
+@using ECommerce.Application.DTOs.Sayfa
+@model List<ECommerce.Application.DTOs.Menu.MenuItemListeDto>
+@{
+    ViewData["Title"] = "Menü Öğeleri Yönetimi";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    var grupId = ViewBag.GrupId;
+    var grupAdi = ViewBag.GrupAdi;
+}
+
+<style>
+    .t-page {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .t-hero {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 28px;
+    }
+
+    .t-eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #9a1640;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+    }
+
+    .t-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0 0 6px;
+        letter-spacing: -.5px;
+    }
+
+    .t-subtitle {
+        margin: 0;
+        color: #85818c;
+        font-size: .95rem;
+    }
+
+    .t-card {
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #eee9ed;
+        box-shadow: 0 8px 25px rgba(35,28,40,.04);
+        padding: 25px;
+    }
+
+    .t-btn-primary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        background: linear-gradient(135deg,#8b0028,#a70b3b);
+        border: 0;
+        border-radius: 12px;
+        color: #fff;
+        padding: 12px 24px;
+        font-size: .95rem;
+        font-weight: 600;
+        text-decoration: none;
+        box-shadow: 0 8px 22px rgba(139,0,40,.2);
+        cursor: pointer;
+    }
+
+    .t-btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        background: #fff;
+        border: 1px solid #e5e0e5;
+        color: #403b46;
+        border-radius: 12px;
+        padding: 12px 20px;
+        font-size: .95rem;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #403b46;
+        font-size: .85rem;
+        margin-bottom: 5px;
+    }
+
+    .form-control, .form-select {
+        border-radius: 10px;
+        border: 1px solid #e5e0e5;
+        padding: 10px 14px;
+        font-size: .9rem;
+    }
+
+    .menu-item-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #faf9fa;
+        border: 1px solid #e5e0e5;
+        padding: 12px 18px;
+        border-radius: 12px;
+        margin-bottom: 10px;
+    }
+
+    .menu-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .menu-icon {
+        width: 35px;
+        height: 35px;
+        border-radius: 8px;
+        background: #fff2f5;
+        color: #8b0028;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+    }
+</style>
+
+<div class="t-page">
+    <div class="t-hero">
+        <div>
+            <div class="t-eyebrow"><i class="bi bi-list-nested"></i> @grupAdi - Menü İçeriği</div>
+            <h1 class="t-title">Öğe Yönetimi</h1>
+            <p class="t-subtitle">Bu menü grubuna ait bağlantıları (linkleri) ve alt menüleri yönetin.</p>
+        </div>
+        <a asp-action="Index" class="t-btn-secondary"><i class="bi bi-arrow-left"></i> Gruplara Geri Dön</a>
+    </div>
+
+    @if (TempData["BasariliMesaj"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius:12px; background: #edf9f4; color: #287c5d; border: 1px solid #d4f0e5;">
+            <i class="bi bi-check-circle-fill me-2"></i>@TempData["BasariliMesaj"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row g-4">
+        <!-- SOL TARAF: Yeni Öğe Ekleme Formu -->
+        <div class="col-md-4">
+            <div class="t-card">
+                <h5 class="fw-bold mb-3" style="color:#24213d;"><i class="bi bi-plus-circle me-1 text-danger"></i> Yeni Öğe Ekle</h5>
+                <form asp-action="OgeEkle" method="post" id="menuEkleForm">
+                    <input type="hidden" name="MenuGrupId" value="@grupId" />
+
+                    <!-- KAYNAK SEÇİMİ (PRO ÖZELLİK) -->
+                    <div class="mb-3">
+                        <label class="form-label">Bağlantı Kaynağı</label>
+                        <select id="baglantiKaynagi" class="form-select fw-semibold" style="background-color: #fdf8f9; border-color: #f2d6dc;">
+                            <option value="manuel">Özel URL (Manuel Gir)</option>
+                            <option value="kategori">Sistem Kategorilerinden Seç</option>
+                            <option value="sayfa">Kurumsal Sayfalardan Seç</option>
+                            <option value="sabit_tum_urunler">Tüm Ürünler Sayfası</option>
+                        </select>
+                    </div>
+
+                    <!-- 1. KATEGORİ SEÇİCİ -->
+                    <div class="mb-3 d-none" id="kategoriSecimAlani">
+                        <label class="form-label">Kategori Seçin</label>
+                        <select id="kategoriSelect" class="form-select">
+                            <option value="">-- Kategori Seçin --</option>
+                            @if (ViewBag.Kategoriler != null)
+                            {
+                                foreach (var kat in (List<KategoriListeDto>)ViewBag.Kategoriler)
+                                {
+                                    <!-- DİKKAT: Burada @kat.Id yerine @kat.SeoUrl kullanıyoruz -->
+                                    <option value="/kategori/@kat.SeoUrl" data-baslik="@kat.Ad">@kat.Ad</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <!-- 2. SAYFA SEÇİCİ (Başlangıçta gizli) -->
+                    <div class="mb-3 d-none" id="sayfaSecimAlani">
+                        <label class="form-label">Kurumsal Sayfa Seçin</label>
+                        <select id="sayfaSelect" class="form-select">
+                            <option value="">-- Sayfa Seçin --</option>
+                            @if (ViewBag.Sayfalar != null)
+                            {
+                                foreach (var sayfa in (List<SayfaListeDto>)ViewBag.Sayfalar)
+                                {
+                                    <option value="/sayfa/@sayfa.SayfaKodu" data-baslik="@sayfa.Baslik">@sayfa.Baslik</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Bağlı Olduğu Üst Menü (İsteğe Bağlı)</label>
+                        <select name="ParentId" class="form-select">
+                            <option value="">-- Ana Menü Olarak Ekle --</option>
+                            @if (Model != null)
+                            {
+                                foreach (var anaItem in Model)
+                                {
+                                    <option value="@anaItem.Id">@anaItem.Baslik</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Menü Başlığı</label>
+                        <input type="text" name="Baslik" id="menuBaslik" class="form-control" placeholder="Örn: Sevgiliye Çiçekler" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Gidilecek URL</label>
+                        <input type="text" name="Url" id="menuUrl" class="form-control" placeholder="Örn: /kategori/sevgiliye" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">İkon Sınıfı (İsteğe Bağlı)</label>
+                        <input type="text" name="IconClass" class="form-control" placeholder="Örn: bi-heart, bi-gift" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Sıra No</label>
+                        <input type="number" name="SiraNo" class="form-control" value="1" />
+                    </div>
+
+                    <button type="submit" class="t-btn-primary w-100 mt-2">
+                        <i class="bi bi-plus-lg"></i> Menüye Ekle
+                    </button>
+                </form>
+            </div>
+        </div>
+        <!-- SAĞ TARAF: Eklenen Öğelerin Listesi -->
+        <div class="col-md-8">
+            <div class="t-card">
+                <h5 class="fw-bold mb-3" style="color:#24213d;"><i class="bi bi-link-45deg me-1 text-danger"></i> Mevcut Bağlantılar</h5>
+
+                @if (Model != null && Model.Any())
+                {
+                    <div class="menu-list">
+                        @foreach (var item in Model)
+                        {
+                            <!-- Ana Menü -->
+                            <div class="menu-item-row">
+                                <div class="menu-info">
+                                    <div class="menu-icon"><i class="bi @(string.IsNullOrEmpty(item.IconClass) ? "bi-link" : item.IconClass)"></i></div>
+                                    <div>
+                                        <div class="fw-bold text-dark">@item.Baslik <span class="badge bg-light text-muted border ms-2">Sıra: @item.SiraNo</span></div>
+                                        <small class="text-muted">@item.Url</small>
+                                    </div>
+                                </div>
+                                <form asp-action="OgeSil" method="post" onsubmit="return confirm('Bu öğeyi silmek istediğinize emin misiniz?');">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <input type="hidden" name="grupId" value="@grupId" />
+                                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Öğeyi Sil"><i class="bi bi-trash3"></i></button>
+                                </form>
+                            </div>
+
+                            <!-- Alt Menüler (Varsa) -->
+                            @if (item.AltMenuler != null && item.AltMenuler.Any())
+                            {
+                                foreach (var alt in item.AltMenuler)
+                                {
+                                    <div class="menu-item-row ms-4" style="background: #f4f2f4; border-left: 3px solid #8b0028;">
+                                        <div class="menu-info">
+                                            <div class="menu-icon" style="background:#fff; font-size:0.9rem;"><i class="bi @(string.IsNullOrEmpty(alt.IconClass) ? "bi-arrow-return-right" : alt.IconClass)"></i></div>
+                                            <div>
+                                                <div class="fw-semibold text-dark" style="font-size:0.9rem;">↳ @alt.Baslik <span class="badge bg-light text-muted border ms-2">Sıra: @alt.SiraNo</span></div>
+                                                <small class="text-muted">@alt.Url</small>
+                                            </div>
+                                        </div>
+                                        <form asp-action="OgeSil" method="post" onsubmit="return confirm('Bu alt öğeyi silmek istediğinize emin misiniz?');">
+                                            <input type="hidden" name="id" value="@alt.Id" />
+                                            <input type="hidden" name="grupId" value="@grupId" />
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Öğeyi Sil"><i class="bi bi-trash3"></i></button>
+                                        </form>
+                                    </div>
+                                }
+                            }
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-5 text-muted">
+                        <i class="bi bi-folder2-open" style="font-size: 2.5rem; color: #e5e0e5;"></i>
+                        <p class="mt-2 small">Bu gruba henüz hiç bağlantı eklenmemiş.</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- AKILLI FORM YÖNETİMİ İÇİN JAVASCRIPT -->
+<script>
+    function seoUyumluYap(metin) {
+        if (!metin) return "";
+        return metin
+            .toString()
+            .toLowerCase()
+            .replace(/ğ/g, 'g')
+            .replace(/ü/g, 'u')
+            .replace(/ş/g, 's')
+            .replace(/ı/g, 'i')
+            .replace(/ö/g, 'o')
+            .replace(/ç/g, 'c')
+            .replace(/[\s_-]+/g, '-')
+            .replace(/^-+|-+$/g, '');
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const kaynakSelect = document.getElementById("baglantiKaynagi");
+        const kategoriAlan = document.getElementById("kategoriSecimAlani");
+        const sayfaAlan = document.getElementById("sayfaSecimAlani");
+        const baslikInput = document.getElementById("menuBaslik");
+        const urlInput = document.getElementById("menuUrl");
+        const kategoriSelect = document.getElementById("kategoriSelect");
+        const sayfaSelect = document.getElementById("sayfaSelect");
+
+        kaynakSelect.addEventListener("change", function () {
+            const secim = this.value;
+
+            kategoriAlan.classList.add("d-none");
+            sayfaAlan.classList.add("d-none");
+
+            if (secim === "kategori") {
+                kategoriAlan.classList.remove("d-none");
+                baslikInput.value = "";
+                urlInput.value = "";
+            } else if (secim === "sayfa") {
+                sayfaAlan.classList.remove("d-none");
+                baslikInput.value = "";
+                urlInput.value = "";
+            } else if (secim === "sabit_tum_urunler") {
+                baslikInput.value = "Tüm Ürünler";
+                urlInput.value = "/urunler";
+            } else {
+                baslikInput.value = "";
+                urlInput.value = "";
+            }
+        });
+
+        // Kategori seçildiğinde otomatik doldur (SeoUrl kullanarak)
+        kategoriSelect.addEventListener("change", function () {
+            const selectedOption = this.options[this.selectedIndex];
+            if (this.value) {
+                // value içinde /kategori/seo-url şeklinde gelecek
+                urlInput.value = seoUyumluYap(this.value);
+                baslikInput.value = selectedOption.getAttribute("data-baslik");
+            }
+        });
+
+        // Sayfa seçildiğinde otomatik doldur
+        sayfaSelect.addEventListener("change", function () {
+            const selectedOption = this.options[this.selectedIndex];
+            if (this.value) {
+                urlInput.value = selectedOption.value;
+                baslikInput.value = selectedOption.getAttribute("data-baslik");
+            }
+        });
+
+        // Kullanıcı manuel URL alanına büyük harfle veya Türkçe karakterle bir şey yazarsa otomatik düzelt
+        urlInput.addEventListener("blur", function () {
+            // Eğer /kategori/ ile başlıyorsa sadece slug kısmını düzeltelim ki yol bozulmasın
+            let val = this.value.trim();
+            if (val.startsWith("/kategori/")) {
+                let slug = val.replace("/kategori/", "");
+                this.value = "/kategori/" + seoUyumluYap(slug);
+            } else if (val.startsWith("/sayfa/")) {
+                let slug = val.replace("/sayfa/", "");
+                this.value = "/sayfa/" + seoUyumluYap(slug);
+            } else {
+                this.value = "/" + seoUyumluYap(val);
+            }
+        });
+    });
+</script>

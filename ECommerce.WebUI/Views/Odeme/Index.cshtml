@@ -1,0 +1,153 @@
+﻿@model ECommerce.WebUI.Models.OdemeViewModel
+@{
+    ViewData["Title"] = "Güvenli Ödeme";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .payment-card {
+        background: #fff;
+        border: 1px solid #eaeaea;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+    }
+
+    .form-check-input:checked {
+        background-color: #3b1154;
+        border-color: #3b1154;
+    }
+
+    .btn-primary-custom {
+        background-color: #3b1154;
+        border-color: #3b1154;
+        color: white;
+        border-radius: 12px;
+        transition: all 0.2s ease-in-out;
+    }
+
+        .btn-primary-custom:hover {
+            background-color: #2c0d3f;
+            border-color: #2c0d3f;
+            color: white;
+        }
+
+    .payment-method-box {
+        border: 2px solid #eaeaea;
+        border-radius: 12px;
+        padding: 15px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+        .payment-method-box.active {
+            border-color: #3b1154;
+            background-color: #fcf8ff;
+        }
+</style>
+
+<div class="container my-5">
+    <div class="mb-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-1">
+                <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-muted">Anasayfa</a></li>
+                <li class="breadcrumb-item"><a href="/Sepet" class="text-decoration-none text-muted">Sepetim</a></li>
+                <li class="breadcrumb-item active text-dark fw-bold" aria-current="page">Ödeme ve Tamamlama</li>
+            </ol>
+        </nav>
+        <h1 class="fw-bold text-dark" style="font-size: 1.8rem; letter-spacing: -0.5px;">Siparişi Tamamla</h1>
+    </div>
+
+    @if (TempData["HataMesaji"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm rounded-3 mb-4" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["HataMesaji"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+        </div>
+    }
+
+    <form asp-action="Tamamla" method="post" id="siparisForm">
+        @Html.AntiForgeryToken()
+        <div class="row g-4">
+            <!-- SOL TARAF: FORM ALANLARI (PARTIALS) -->
+            <div class="col-lg-8">
+                <partial name="Partials/_AliciBilgileriPartial" model="Model" />
+                <partial name="Partials/_GondericiBilgileriPartial" model="Model" />
+                <partial name="Partials/_KartNotuPartial" model="Model" />
+                <partial name="Partials/_OdemeYontemleriPartial" model="Model" />
+            </div>
+
+            <!-- SAĞ TARAF: SİPARİŞ ÖZETİ VE ONAY (PARTIAL) -->
+            <div class="col-lg-4">
+                <partial name="Partials/_SiparisOzetiPartial" model="Model" />
+                <partial name="Partials/_SozlesmeModallariPartial" model="Model" />
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Karakter sayacı
+    const kartNotuInput = document.getElementById('kartNotuInput');
+    const karakterSayaci = document.getElementById('karakterSayaci');
+    if (kartNotuInput) {
+        kartNotuInput.addEventListener('input', function () {
+            const uzunluk = this.value.length;
+            karakterSayaci.textContent = `${uzunluk} / 500`;
+        });
+    }
+
+    // Hazır not seçimi
+    function hazirNotSecildi(select) {
+        if (select.value && kartNotuInput) {
+            kartNotuInput.value = select.value;
+            kartNotuInput.dispatchEvent(new Event('input'));
+        }
+    }
+
+    // Fatura tipi değiştiğinde kurumsal alanları aç/kapat
+    function faturaTipiDegisti(select) {
+        const kurumsalAlan = document.getElementById('kurumsalAlan');
+        if (select.value === 'Kurumsal') {
+            kurumsalAlan.style.display = 'block';
+        } else {
+            kurumsalAlan.style.display = 'none';
+        }
+    }
+
+    // İsimsiz gönder toggle
+    function isimsizToggle(checkbox) {
+        const gonderenInput = document.getElementById('gonderenAdInput');
+        if (checkbox.checked) {
+            gonderenInput.value = "Gizli Gönderici (İsimsiz)";
+            gonderenInput.disabled = true;
+        } else {
+            gonderenInput.value = "";
+            gonderenInput.disabled = false;
+        }
+    }
+
+    // Ödeme yöntemi seçimi (Kredi Kartı / Havale)
+    function odemeYontemiSec(yontem) {
+        const krediKartiBox = document.getElementById('krediKartiBox');
+        const havaleBox = document.getElementById('havaleBox');
+        const krediKartiAlan = document.getElementById('krediKartiAlan');
+        const havaleAlan = document.getElementById('havaleAlan');
+
+        const radioKredi = document.getElementById('odemeKrediKarti');
+        const radioHavale = document.getElementById('odemeHavale');
+
+        if (yontem === 'KrediKarti') {
+            krediKartiBox.classList.add('active');
+            havaleBox.classList.remove('active');
+            radioKredi.checked = true;
+            krediKartiAlan.style.display = 'block';
+            havaleAlan.style.display = 'none';
+        } else {
+            havaleBox.classList.add('active');
+            krediKartiBox.classList.remove('active');
+            radioHavale.checked = true;
+            havaleAlan.style.display = 'block';
+            krediKartiAlan.style.display = 'none';
+        }
+    }
+</script>

@@ -1,0 +1,176 @@
+﻿@model List<ECommerce.Application.DTOs.TeslimatSaati.TeslimatSaatiDto>
+@{
+    ViewData["Title"] = "Teslimat Saatleri Yönetimi";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .t-page {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .t-hero {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 24px;
+    }
+
+    .t-eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #9a1640;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+    }
+
+    .t-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0 0 6px;
+        letter-spacing: -.5px;
+    }
+
+    .t-subtitle {
+        margin: 0;
+        color: #85818c;
+        font-size: .95rem;
+    }
+
+    .t-card {
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #eee9ed;
+        box-shadow: 0 8px 25px rgba(35,28,40,.04);
+        padding: 25px;
+    }
+
+    .t-btn-primary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        background: linear-gradient(135deg,#8b0028,#a70b3b);
+        border: 0;
+        border-radius: 12px;
+        color: #fff;
+        padding: 12px 24px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        text-decoration: none;
+        box-shadow: 0 8px 22px rgba(139,0,40,.2);
+        transition: all .2s ease;
+        cursor: pointer;
+    }
+
+        .t-btn-primary:hover {
+            color: #fff;
+            transform: translateY(-2px);
+        }
+</style>
+
+<div class="t-page">
+    <div class="t-hero">
+        <div class="t-hero-content">
+            <div class="t-eyebrow"><i class="bi bi-clock-history"></i> Operasyonel Yönetim</div>
+            <h1 class="t-title">Teslimat Saatleri ve Kotalar</h1>
+            <p class="t-subtitle">Müşterilerin sipariş esnasında seçebileceği günlük zaman dilimlerini, gruplarını ve kapasitelerini yönetin.</p>
+        </div>
+        <div>
+            <a href="/Admin/TeslimatSaati/Ekle" class="t-btn-primary">
+                <i class="bi bi-plus-lg"></i> Yeni Saat Aralığı Ekle
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["BasariliMesaj"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius:12px; background: #edf9f4; color: #287c5d; border: 1px solid #d4f0e5;">
+            <i class="bi bi-check-circle-fill me-2"></i>@TempData["BasariliMesaj"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["HataMesaji"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius:12px;">
+            <i class="bi bi-exclamation-circle-fill me-2"></i>@TempData["HataMesaji"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="t-card">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Sıra</th>
+                        <th>Grup</th>
+                        <th>Saat Aralığı</th>
+                        <th>Açıklama / Başlık</th>
+                        <th>Günlük Kota</th>
+                        <th>Durum</th>
+                        <th class="text-end">İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td><span class="badge bg-secondary">@item.Sira</span></td>
+                                <td>
+                                    @if (item.TeslimatGrubu == ECommerce.Domain.Enums.TeslimatGrubu.Vip)
+                                    {
+                                        <span class="badge bg-warning text-dark fw-bold">VIP</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-primary">Normal</span>
+                                    }
+                                </td>
+                                <td class="fw-bold text-dark">@item.BaslangicSaati - @item.BitisSaati</td>
+                                <td>@item.Aciklama</td>
+                                <td><span class="badge bg-info text-dark">@item.GunlukKota Sipariş</span></td>
+                                <td>
+                                    @if (item.AktifMi)
+                                    {
+                                        <span class="badge bg-success">Aktif</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Pasif</span>
+                                    }
+                                </td>
+                                <td class="text-end">
+                                    <a href="/Admin/TeslimatSaati/Guncelle/@item.Id" class="btn btn-sm btn-outline-primary rounded-3 me-1">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <form asp-action="Sil" method="post" class="d-inline" onsubmit="return confirm('Bu saat aralığını silmek istediğinize emin misiniz?');">
+                                        <input type="hidden" name="id" value="@item.Id" />
+                                        <button type="submit" class="btn btn-sm btn-outline-danger rounded-3">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center text-muted py-4">Henüz tanımlanmış bir teslimat saati bulunmuyor.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,8 @@
+﻿@{
+    int sayi = ViewBag.OkunmamisMesajSayisi ?? 0;
+}
+
+@if (sayi > 0)
+{
+    <span class="badge bg-danger rounded-pill" style="font-size: 0.7rem;">@sayi</span>
+}

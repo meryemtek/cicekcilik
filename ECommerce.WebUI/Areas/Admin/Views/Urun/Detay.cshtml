@@ -1,0 +1,404 @@
+﻿@model ECommerce.Application.DTOs.Urun.UrunGuncelleDto
+@{
+    ViewData["Title"] = "Ürün Detayları";
+    var kategoriAdi = ViewBag.KategoriAdi as string ?? "Kategori Belirtilmemiş";
+}
+
+<style>
+    .urun-detail-page {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .urun-detail-header {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 28px;
+    }
+
+    .urun-detail-header-content {
+        min-width: 0;
+    }
+
+    .urun-detail-eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #9a1640;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+    }
+
+    .urun-detail-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0 0 6px;
+        letter-spacing: -.5px;
+    }
+
+    .urun-detail-subtitle {
+        margin: 0;
+        color: #85818c;
+        font-size: .95rem;
+    }
+
+    .urun-detail-actions {
+        display: flex;
+        gap: 12px;
+    }
+
+    .btn-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #fff;
+        border: 1px solid #e5e0e5;
+        border-radius: 12px;
+        color: #403b46;
+        padding: 11px 18px;
+        font-size: .85rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all .2s ease;
+    }
+
+        .btn-back:hover {
+            background: #fcfafb;
+            color: #24213d;
+            border-color: #d9cbd1;
+        }
+
+    .btn-edit {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: linear-gradient(135deg,#8b0028,#a70b3b);
+        border: 0;
+        border-radius: 12px;
+        color: #fff;
+        padding: 11px 18px;
+        font-size: .85rem;
+        font-weight: 600;
+        text-decoration: none;
+        box-shadow: 0 6px 18px rgba(139,0,40,.2);
+        transition: all .2s ease;
+    }
+
+        .btn-edit:hover {
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+    .urun-detail-grid {
+        display: grid;
+        grid-template-columns: 350px 1fr;
+        gap: 25px;
+        align-items: start;
+    }
+
+    .urun-detail-card {
+        background: #fff;
+        border: 1px solid #eee9ed;
+        border-radius: 20px;
+        box-shadow: 0 8px 28px rgba(35,28,40,.055);
+        overflow: hidden;
+    }
+
+    .urun-image-wrapper {
+        width: 100%;
+        aspect-ratio: 4/5;
+        background: #fbf9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-bottom: 1px solid #eee9ed;
+    }
+
+        .urun-image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+    .urun-image-placeholder {
+        color: #d9cbd1;
+        font-size: 4rem;
+    }
+
+    .urun-status-bar {
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #fff;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: .75rem;
+        font-weight: 700;
+    }
+
+    .status-active {
+        background: #edf9f4;
+        color: #287c5d;
+    }
+
+    .status-passive {
+        background: #f2f0f3;
+        color: #716c75;
+    }
+
+    .stock-badge {
+        font-size: .8rem;
+        font-weight: 600;
+        color: #403b46;
+    }
+
+        .stock-badge span {
+            color: #8b0028;
+            font-weight: 700;
+        }
+
+    .urun-info-section {
+        padding: 28px;
+    }
+
+    .urun-info-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #f0edf0;
+    }
+
+    .urun-info-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        background: #fff2f5;
+        color: #8b0028;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.15rem;
+    }
+
+    .urun-info-title h2 {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0;
+    }
+
+    .urun-info-title p {
+        font-size: .75rem;
+        color: #99949d;
+        margin: 3px 0 0;
+    }
+
+    .data-list {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .data-item {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .data-label {
+        font-size: .75rem;
+        font-weight: 600;
+        color: #908b95;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .data-value {
+        font-size: .95rem;
+        font-weight: 600;
+        color: #24213d;
+        word-break: break-all;
+    }
+
+    .data-price {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: #8b0028;
+    }
+
+    .description-box {
+        background: #fbf9fa;
+        border: 1px solid #e4dfe4;
+        border-radius: 15px;
+        padding: 22px;
+    }
+
+    .description-box-title {
+        font-size: .85rem;
+        font-weight: 700;
+        color: #403b46;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+    }
+
+        .description-box-title i {
+            color: #9a1640;
+        }
+
+    .description-content {
+        font-size: .9rem;
+        color: #554f5c;
+        line-height: 1.6;
+    }
+
+        /* Zengin metin editöründen gelen etiketlerin admin panelinde düzgün görünmesi için */
+        .description-content p {
+            margin-bottom: 10px;
+        }
+
+        .description-content ul, .description-content ol {
+            padding-left: 20px;
+            margin-bottom: 10px;
+        }
+
+        .description-content h1, .description-content h2, .description-content h3 {
+            font-size: 1.1rem;
+            color: #24213d;
+            margin: 15px 0 10px;
+        }
+
+        .description-content strong {
+            color: #24213d;
+        }
+
+    @@media(max-width: 992px) {
+        .urun-detail-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .urun-image-wrapper {
+            max-width: 350px;
+            margin: 0 auto;
+            border-bottom: 0;
+        }
+
+        .data-list {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="urun-detail-page">
+    <div class="urun-detail-header">
+        <div class="urun-detail-header-content">
+            <div class="urun-detail-eyebrow"><i class="bi bi-flower1"></i> Mağaza Yönetimi</div>
+            <h1 class="urun-detail-title">Ürün İnceleme</h1>
+            <p class="urun-detail-subtitle">Sisteme kayıtlı ürün verilerini ve vitrinde görünecek zengin metinleri kontrol edin.</p>
+        </div>
+        <div class="urun-detail-actions">
+            <a asp-action="Index" class="btn-back"><i class="bi bi-arrow-left"></i> Listeye Dön</a>
+            <a asp-action="Guncelle" asp-route-id="@Model.Id" class="btn-edit"><i class="bi bi-pencil"></i> Düzenle</a>
+        </div>
+    </div>
+
+    <div class="urun-detail-grid">
+
+        <!-- Sol Kolon: Medya ve Durum -->
+        <div class="urun-detail-card">
+            <div class="urun-image-wrapper">
+                @if (!string.IsNullOrWhiteSpace(Model.GorselUrl))
+                {
+                    <img src="@Model.GorselUrl" alt="@Model.Ad" />
+                }
+                else
+                {
+                    <div class="urun-image-placeholder"><i class="bi bi-image"></i></div>
+                }
+            </div>
+            <div class="urun-status-bar">
+                @if (Model.AktifMi)
+                {
+                    <div class="status-badge status-active"><i class="bi bi-check-circle-fill"></i> Yayında</div>
+                }
+                else
+                {
+                    <div class="status-badge status-passive"><i class="bi bi-eye-slash-fill"></i> Gizli</div>
+                }
+                <div class="stock-badge">Stok: <span>@Model.StokMiktari</span> Adet</div>
+            </div>
+        </div>
+
+        <!-- Sağ Kolon: Sistem Verileri -->
+        <div class="urun-detail-card urun-info-section">
+            <div class="urun-info-title">
+                <div class="urun-info-icon"><i class="bi bi-info-square"></i></div>
+                <div>
+                    <h2>Sistem ve Entegrasyon Verileri</h2>
+                    <p>Müşteriye sunulacak tüm başlık, fiyat ve SEO verileri.</p>
+                </div>
+            </div>
+
+            <div class="data-list">
+                <div class="data-item">
+                    <span class="data-label">Ürün Adı</span>
+                    <span class="data-value">@Model.Ad</span>
+                </div>
+
+                <div class="data-item">
+                    <span class="data-label">Satış Fiyatı</span>
+                    <span class="data-value data-price">@Model.Fiyat.ToString("C2")</span>
+                </div>
+
+                <div class="data-item">
+                    <span class="data-label">Bağlı Olduğu Kategori</span>
+                    <span class="data-value">@kategoriAdi</span>
+                </div>
+
+                <div class="data-item">
+                    <span class="data-label">Ürün Kodu (SKU)</span>
+                    <span class="data-value">@(string.IsNullOrWhiteSpace(Model.UrunKodu) ? "Atanmadı" : Model.UrunKodu)</span>
+                </div>
+
+                <div class="data-item" style="grid-column: 1 / -1;">
+                    <span class="data-label">SEO URL (Kalıcı Bağlantı)</span>
+                    <span class="data-value" style="color: #287c5d;"><i class="bi bi-link-45deg"></i> /urun/@Model.SeoUrl</span>
+                </div>
+            </div>
+
+            <div class="description-box">
+                <div class="description-box-title">
+                    <i class="bi bi-text-paragraph"></i> Vitrin Açıklaması (Zengin İçerik)
+                </div>
+                <div class="description-content">
+                    @if (!string.IsNullOrWhiteSpace(Model.Aciklama))
+                    {
+                        @Html.Raw(Model.Aciklama)
+                    }
+                    else
+                    {
+                        <span style="color: #9a959e; font-style: italic;">Bu ürün için henüz bir metin veya yapay zeka açıklaması girilmemiştir.</span>
+                    }
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

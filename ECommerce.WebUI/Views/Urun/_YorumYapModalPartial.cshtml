@@ -1,0 +1,42 @@
+﻿@model ECommerce.Application.DTOs.Urun.UrunDetayDto
+
+<!-- ================= YORUM YAPMA MODALI ================= -->
+<div class="modal fade" id="yorumModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+            <form asp-controller="Urun" asp-action="YorumEkle" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="UrunId" value="@Model.Id" />
+                <input type="hidden" name="SeoUrl" value="@Model.SeoUrl" />
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold">Ürüne Yorum Yap</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-start">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">Adınız Soyadınız</label>
+                        <input type="text" name="YorumcuAd" class="form-control" required placeholder="Adınız" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">Puanınız</label>
+                        <select name="Puan" class="form-select fw-semibold" required>
+                            <option value="5">⭐⭐⭐⭐⭐ (5 - Mükemmel)</option>
+                            <option value="4">⭐⭐⭐⭐ (4 - Çok İyi)</option>
+                            <option value="3">⭐⭐⭐ (3 - Normal)</option>
+                            <option value="2">⭐⭐ (2 - Geliştirilmeli)</option>
+                            <option value="1">⭐ (1 - Beğenmedim)</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">Yorumunuz</label>
+                        <textarea name="YorumMetni" class="form-control" rows="4" required placeholder="Ürün hakkındaki düşünceleriniz..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-light rounded-3 px-4" data-bs-dismiss="modal">İptal</button>
+                    <button type="submit" class="btn text-white px-4" style="background: #3b1154; border-radius: 12px;">Yorumu Gönder</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

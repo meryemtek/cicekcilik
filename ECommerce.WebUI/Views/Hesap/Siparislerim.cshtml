@@ -1,0 +1,65 @@
+﻿@model List<ECommerce.Application.DTOs.Siparis.SiparisListeDto>
+@{
+    ViewData["Title"] = "Tüm Siparişlerim";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["AktifMenu"] = "Siparislerim";
+}
+
+<div class="container my-5">
+    <div class="row">
+        <!-- Sol Menü (Ortak Partial) -->
+        <div class="col-lg-3 mb-4">
+            @await Html.PartialAsync("_HesapMenuPartial")
+        </div>
+
+        <!-- Sağ İçerik (Sipariş Listesi) -->
+        <div class="col-lg-9">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                <h3 class="fw-bold text-dark mb-3">Tüm Siparişlerim</h3>
+                <p class="text-muted small mb-4">Verdiğiniz tüm siparişleri bu alandan detaylı olarak inceleyebilirsiniz.</p>
+
+                @if (Model != null && Model.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <thead class="table-light rounded-3">
+                                <tr>
+                                    <th class="py-3 ps-3">Sipariş No</th>
+                                    <th class="py-3">Tarih</th>
+                                    <th class="py-3">Toplam Tutar</th>
+                                    <th class="py-3">Durum</th>
+                                    <th class="py-3 text-end pe-3">İşlem</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var siparis in Model)
+                                {
+                                    <tr>
+                                        <td class="ps-3 fw-bold text-dark">@siparis.SiparisNumarasi</td>
+                                        <td class="text-muted small">@siparis.SiparisTarihi.ToString("dd.MM.yyyy HH:mm")</td>
+                                        <td class="fw-bold text-success">@siparis.ToplamTutar.ToString("N2") ₺</td>
+                                        <td>
+                                            <span class="badge bg-light text-dark border px-3 py-2 rounded-pill">@siparis.Durum</span>
+                                        </td>
+                                        <td class="text-end pe-3">
+                                            <a href="/Hesap/SiparisDetay/@siparis.Id" class="btn btn-sm btn-outline-dark rounded-pill px-3">Detay</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-5 text-muted">
+                        <i class="bi bi-box-seam fs-1 text-secondary mb-3 d-block"></i>
+                        <h5 class="fw-bold text-dark">Henüz bir siparişiniz bulunmuyor</h5>
+                        <p class="small text-muted mb-4">Sevdiklerinizi mutlu etmek için hemen harika bir çiçek siparişi verin.</p>
+                        <a href="/" class="btn text-white rounded-pill px-4 py-2 fw-semibold shadow-sm" style="background-color: #8b0028;">Alışverişe Başla</a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

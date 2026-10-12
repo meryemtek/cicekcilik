@@ -1,0 +1,264 @@
+﻿@model ECommerce.WebUI.Models.BankaHesaplariViewModel
+@{
+    ViewData["Title"] = "Banka Hesap Numaraları ve Ödeme Bildirimi";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Google reCAPTCHA Script -->
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+<style>
+    .t-page-container {
+        max-width: 1300px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    .t-hero-section {
+        text-align: center;
+        margin-bottom: 45px;
+    }
+
+    .t-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #9a1640;
+        font-size: .75rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+    }
+
+    .t-title {
+        font-size: 2.3rem;
+        font-weight: 700;
+        color: #24213d;
+        margin-bottom: 10px;
+        letter-spacing: -.5px;
+    }
+
+    .t-card {
+        background: #fff;
+        border-radius: 20px;
+        border: 1px solid #eee9ed;
+        box-shadow: 0 10px 30px rgba(35,28,40,.04);
+        padding: 30px;
+        height: 100%;
+    }
+
+    .bank-card {
+        background: #faf9fa;
+        border: 1px solid #eee9ed;
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 20px;
+        transition: all 0.2s;
+    }
+
+    .iban-box {
+        background: #fff;
+        border: 1px dashed #d9cbd1;
+        border-radius: 10px;
+        padding: 10px 14px;
+        font-family: monospace;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #8b0028;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 10px;
+    }
+
+    .copy-btn {
+        background: #fff;
+        border: 1px solid #e5e0e5;
+        border-radius: 6px;
+        padding: 4px 10px;
+        font-size: .75rem;
+        font-weight: 600;
+        color: #403b46;
+        cursor: pointer;
+    }
+
+        .copy-btn:hover {
+            background: #8b0028;
+            color: #fff;
+        }
+
+    .form-label {
+        font-weight: 600;
+        color: #403b46;
+        font-size: .85rem;
+        margin-bottom: 6px;
+    }
+
+    .form-control, .form-select {
+        border-radius: 10px;
+        border: 1px solid #e5e0e5;
+        padding: 10px 15px;
+        font-size: .9rem;
+    }
+
+    .t-btn-primary {
+        background: linear-gradient(135deg,#8b0028,#a70b3b);
+        border: 0;
+        border-radius: 10px;
+        color: #fff;
+        padding: 12px 24px;
+        font-size: .95rem;
+        font-weight: 600;
+        width: 100%;
+        cursor: pointer;
+        box-shadow: 0 6px 20px rgba(139,0,40,.2);
+    }
+</style>
+
+<div class="t-page-container">
+    <div class="t-hero-section">
+        <div class="t-eyebrow"><i class="bi bi-wallet2"></i> Havale / EFT İşlemleri</div>
+        <h1 class="t-title">Banka Hesapları ve Ödeme Bildirimi</h1>
+        <p class="text-muted">Ödemenizi gerçekleştirdikten sonra aşağıdaki form aracılığıyla bize bildirim gönderebilirsiniz.</p>
+    </div>
+
+    @if (TempData["BasariliMesaj"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show mb-4" role="alert" style="border-radius:14px; background: #edf9f4; color: #287c5d;">
+            <i class="bi bi-check-circle-fill me-2"></i>@TempData["BasariliMesaj"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["HataMesaji"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert" style="border-radius:14px;">
+            <i class="bi bi-exclamation-circle-fill me-2"></i>@TempData["HataMesaji"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row g-4 align-items-stretch">
+        <!-- SOL TARAF: Banka Hesapları -->
+        <div class="col-lg-5">
+            <div class="t-card">
+                <h4 class="fw-bold mb-4" style="color: #24213d;"><i class="bi bi-bank me-2 text-danger"></i>Banka Hesaplarımız</h4>
+                @if (Model.Bankalar != null && Model.Bankalar.Any())
+                {
+                    @foreach (var banka in Model.Bankalar)
+                    {
+                        <div class="bank-card">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h5 class="fw-bold text-dark mb-0">@banka.BankaAdi</h5>
+                                <span class="badge bg-danger bg-opacity-10 text-danger small">TL</span>
+                            </div>
+                            <div class="small text-muted mb-1"><strong>Alıcı:</strong> @banka.AliciAdSoyad</div>
+                            <div class="small text-muted mb-2"><strong>Şube/Hesap:</strong> @banka.SubeKodu / @banka.HesapNo</div>
+                            <div>
+                                <small class="text-muted" style="font-size: 0.75rem;">IBAN Numarası</small>
+                                <div class="iban-box">
+                                    <span id="iban-@banka.Id">@banka.Iban</span>
+                                    <button type="button" class="copy-btn" onclick="ibanKopyala('iban-@banka.Id', this)">
+                                        <i class="bi bi-clipboard me-1"></i> Kopyala
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+
+        <!-- SAĞ TARAF: Ödeme Bildirim Formu (EncType eklendi) -->
+        <div class="col-lg-7">
+            <div class="t-card">
+                <h4 class="fw-bold mb-4" style="color: #24213d;"><i class="bi bi-send-check me-2 text-danger"></i>Ödeme Bildirim Formu</h4>
+
+                <form asp-controller="BankaHesaplari" asp-action="Index" method="post" enctype="multipart/form-data">
+                    <div class="row g-3">
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label">Sipariş No</label>
+                            <input type="text" asp-for="BildirimDto.SiparisNo" class="form-control" placeholder="Örn: SIP-1024" required />
+                        </div>
+
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label">Gönderen Ad Soyad</label>
+                            <input type="text" asp-for="BildirimDto.AdSoyad" class="form-control" placeholder="Ad Soyad" required />
+                        </div>
+
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label">Telefon Numaranız</label>
+                            <input type="text" asp-for="BildirimDto.Telefon" class="form-control" placeholder="0532..." required />
+                        </div>
+
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label">E-Posta Adresiniz</label>
+                            <input type="email" asp-for="BildirimDto.Email" class="form-control" placeholder="ornek@mail.com" />
+                        </div>
+
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label">Ödeme Yapılan Banka</label>
+                            <select asp-for="BildirimDto.BankaAdi" class="form-select" required>
+                                <option value="">Banka Seçiniz...</option>
+                                @if (Model.Bankalar != null)
+                                {
+                                    @foreach (var b in Model.Bankalar)
+                                    {
+                                        <option value="@b.BankaAdi">@b.BankaAdi</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label">Yatırılan Tutar (TL)</label>
+                            <input type="number" step="0.01" asp-for="BildirimDto.Tutar" class="form-control" placeholder="0.00" required />
+                        </div>
+
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label">Ödeme Tarihi</label>
+                            <input type="datetime-local" asp-for="BildirimDto.OdemeTarihi" class="form-control" required />
+                        </div>
+
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label">Dekont Yükle (Görsel veya PDF)</label>
+                            <input type="file" asp-for="BildirimDto.Dekont" class="form-control" accept=".jpg, .jpeg, .png, .pdf" />
+                        </div>
+
+                        <div class="col-12 mb-3">
+                            <label class="form-label">Açıklama / Not</label>
+                            <textarea asp-for="BildirimDto.Aciklama" class="form-control" rows="3" placeholder="Eklemek istedikleriniz..."></textarea>
+                        </div>
+
+                        <!-- Google reCAPTCHA Alanı -->
+                        <div class="col-12 mb-3">
+                            <div class="g-recaptcha" data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"></div>
+                            <small class="text-muted d-block mt-1">Not: Test aşaması için Google'ın varsayılan test anahtarı kullanılmıştır.</small>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="t-btn-primary">
+                        <i class="bi bi-check-lg me-1"></i> Ödeme Bildirimini Gönder
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function ibanKopyala(elementId, btn) {
+        const ibanText = document.getElementById(elementId).innerText;
+        navigator.clipboard.writeText(ibanText).then(() => {
+            const orijinalMetin = btn.innerHTML;
+            btn.innerHTML = '<i class="bi bi-check2 me-1"></i> Kopyalandı';
+            btn.style.background = '#287c5d';
+            btn.style.color = '#fff';
+            setTimeout(() => {
+                btn.innerHTML = orijinalMetin;
+                btn.style.background = '#fff';
+                btn.style.color = '#403b46';
+            }, 2000);
+        });
+    }
+</script>

@@ -1,0 +1,138 @@
+﻿@model ECommerce.Application.DTOs.SiteAyari.SiteAyariDto
+
+<div class="header-main py-3 py-lg-4 border-bottom bg-white">
+    <div class="container">
+        <div class="row align-items-center g-3">
+            
+            <!-- 1. LOGO ALANI -->
+            <div class="col-6 col-lg-3 d-flex align-items-center">
+                <div class="logo-wrapper">
+                    <a href="/" class="d-block text-decoration-none">
+                        @if (!string.IsNullOrEmpty(Model?.LogoUrl))
+                        {
+                            <img src="@Model.LogoUrl" alt="@Model.FirmaAdi" class="header-logo img-fluid" />
+                        }
+                        else
+                        {
+                            <div class="d-flex align-items-center gap-2 text-dark">
+                                <i class="bi bi-flower1 fs-2 fs-lg-1 text-brand"></i>
+                                <div>
+                                    <strong class="fs-4 fs-lg-3 d-block" style="line-height: 1; font-weight: 800; color: #24213d;">LİDYA</strong>
+                                    <small style="letter-spacing: 2px; font-size: 0.65rem; color: #85818c;">ÇİÇEKLERİ</small>
+                                </div>
+                            </div>
+                        }
+                    </a>
+                </div>
+            </div>
+
+            <!-- 3. KULLANICI İŞLEMLERİ (Sağ Menü) -->
+            <div class="col-6 col-lg-4 d-flex align-items-center justify-content-end order-lg-3">
+                <div class="user-actions d-flex gap-2 gap-lg-4">
+                    
+                    @{
+                        bool girisYapildiMi = Context.Request.Cookies.ContainsKey("JWToken");
+                    }
+
+                    @if (girisYapildiMi)
+                    {
+                        <a href="/Hesap/Index" class="action-item text-decoration-none">
+                            <i class="bi bi-person-check action-icon" style="color: #8b0028;"></i>
+                            <span class="action-text d-none d-sm-inline fw-bold" style="color: #8b0028;">Profilim</span>
+                        </a>
+                    }
+                    else
+                    {
+                        <a href="/Hesap/Giris" class="action-item text-decoration-none">
+                            <i class="bi bi-person action-icon"></i>
+                            <span class="action-text d-none d-sm-inline">Üye Girişi</span>
+                        </a>
+                    }
+
+                    <a href="/Odeme" class="action-item text-decoration-none d-none d-md-flex">
+                        <i class="bi bi-credit-card action-icon"></i>
+                        <span class="action-text">Ödeme</span>
+                    </a>
+                    <a href="/Favoriler" class="action-item text-decoration-none">
+                        <i class="bi bi-heart action-icon"></i>
+                        <span class="action-text d-none d-sm-inline">Favoriler</span>
+                    </a>
+                    <a href="/Sepet" class="action-item text-decoration-none position-relative">
+                        <i class="bi bi-cart3 action-icon"></i>
+                        <span class="action-text d-none d-sm-inline">Sepet</span>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-brand cart-badge">
+                            0
+                        </span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- 2. ARAMA KUTUSU VE ETİKETLER -->
+            <div class="col-12 col-lg-5 order-lg-2">
+                <div class="search-wrapper w-100">
+                    <form action="/Arama" method="get" class="search-form d-flex position-relative">
+                        <input type="text" name="q" class="form-control search-input shadow-none" placeholder="Çiçek, Buket veya Hediye Kutusu Ara..." required />
+                        <button type="submit" class="btn search-btn"><i class="bi bi-search"></i></button>
+                    </form>
+                    <div class="popular-searches mt-2 text-truncate">
+                        <span class="text-muted me-1">Popüler:</span>
+                        <a href="/Arama?q=Gül" class="popular-link">Gül</a>,
+                        <a href="/Arama?q=Orkide" class="popular-link">Orkide</a>,
+                        <a href="/Arama?q=Saksı Çiçeği" class="popular-link">Saksı Çiçeği</a>,
+                        <a href="/Arama?q=Karışık Buket" class="popular-link">Karışık Buket</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+    :root {
+        --brand-color: #8b0028;
+        --brand-hover: #6a001f;
+    }
+    .text-brand { color: var(--brand-color); }
+    .bg-brand { background-color: var(--brand-color) !important; color: #fff; }
+    .logo-wrapper { display: flex; align-items: center; }
+    .header-logo { height: auto; max-height: 70px; max-width: 200px; object-fit: contain; display: block; }
+    @@media (min-width: 992px) {
+        .header-logo { max-height: 95px; max-width: 280px; }
+    }
+    .search-wrapper { width: 100%; }
+    .search-form { border: 2px solid var(--brand-color); border-radius: 40px; overflow: hidden; background: #fff; }
+    .search-input { border: none; padding: 0.7rem 1rem; font-size: 0.9rem; border-radius: 40px 0 0 40px; color: #24213d; background: transparent; }
+    @@media (min-width: 992px) {
+        .search-input { padding: 0.85rem 1.4rem; font-size: 0.95rem; }
+    }
+    .search-input::placeholder { color: #9a959e; }
+    .search-btn { background-color: var(--brand-color); color: white; border: none; padding: 0 1.5rem; border-radius: 0 40px 40px 0; transition: background 0.2s ease; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; }
+    @@media (min-width: 992px) {
+        .search-btn { padding: 0 2rem; }
+    }
+    .search-btn:hover { background-color: var(--brand-hover); color: white; }
+    .popular-searches { font-size: 0.75rem; color: #716c75; padding-left: 10px; }
+    @@media (min-width: 992px) {
+        .popular-searches { font-size: 0.8rem; padding-left: 15px; }
+    }
+    .popular-link { color: #5275a5; text-decoration: none; font-weight: 500; transition: color 0.2s ease; }
+    .popular-link:hover { color: var(--brand-color); text-decoration: underline; }
+    .user-actions { display: flex; align-items: center; }
+    .action-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: #495057; transition: all 0.2s ease; gap: 2px; padding: 0 4px; }
+    @@media (min-width: 992px) {
+        .action-item { gap: 4px; padding: 0; }
+    }
+    .action-icon { font-size: 1.25rem; color: #24213d; transition: transform 0.2s ease, color 0.2s ease; }
+    @@media (min-width: 992px) {
+        .action-icon { font-size: 1.4rem; }
+    }
+    .action-text { font-size: 0.75rem; font-weight: 500; transition: color 0.2s ease; }
+    @@media (min-width: 992px) {
+        .action-text { font-size: 0.82rem; }
+    }
+    .cart-badge { font-size: 0.6rem; padding: 0.3em 0.5em; border: 2px solid #fff; }
+    .action-item:hover .action-icon,
+    .action-item:hover .action-text { color: var(--brand-color); }
+    .action-item:hover .action-icon { transform: translateY(-2px); }
+</style>

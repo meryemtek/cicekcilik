@@ -1,0 +1,315 @@
+﻿@model ECommerce.Application.DTOs.Kampanya.KampanyaUrunGuncelleDto
+@{
+    ViewData["Title"] = "Kampanya Düzenle";
+}
+
+<style>
+    .s-page {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .s-hero {
+        margin-bottom: 28px;
+    }
+
+    .s-eyebrow {
+        color: #9a1640;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .s-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0 0 6px;
+        letter-spacing: -.5px;
+    }
+
+    .f-card {
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #eee9ed;
+        box-shadow: 0 8px 25px rgba(35,28,40,.04);
+        padding: 40px;
+    }
+
+    .f-label {
+        font-weight: 600;
+        color: #24213d;
+        margin-bottom: 8px;
+        font-size: 0.95rem;
+    }
+
+    .f-input {
+        border-radius: 12px;
+        border: 1px solid #ddd5da;
+        padding: 12px 16px;
+        background: #faf9fa;
+        transition: all 0.2s ease;
+        box-shadow: none;
+    }
+
+        .f-input:focus {
+            background: #fff;
+            border-color: #8b0028;
+            box-shadow: 0 0 0 4px rgba(139,0,40,0.08);
+            outline: none;
+        }
+
+    .s-submit-btn {
+        background: linear-gradient(135deg,#8b0028,#a70b3b);
+        border: 0;
+        border-radius: 12px;
+        color: #fff;
+        padding: 12px 28px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        box-shadow: 0 6px 18px rgba(139,0,40,.2);
+        transition: all .2s ease;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .s-submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 22px rgba(139,0,40,.28);
+            color: #fff;
+        }
+
+    .button-group {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-top: 30px;
+    }
+
+    .s-cancel-link {
+        color: #85818c;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: color 0.2s;
+    }
+
+        .s-cancel-link:hover {
+            color: #24213d;
+        }
+
+    .product-preview {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 15px 20px;
+        background: #fff2f5;
+        border-radius: 12px;
+        margin-bottom: 30px;
+        border: 1px solid #fbe3e9;
+    }
+
+        .product-preview img {
+            width: 65px;
+            height: 65px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+    .product-preview-text {
+        font-weight: 700;
+        color: #8b0028;
+        font-size: 1.15rem;
+    }
+
+    .dynamic-box {
+        background: #fff8f9;
+        border: 1px dashed #e5d5db;
+        border-radius: 14px;
+        padding: 20px;
+        margin-top: 15px;
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="s-page mt-4">
+    <div class="s-hero">
+        <div class="s-eyebrow"><i class="bi bi-arrow-left"></i> <a asp-action="Index" style="color: inherit; text-decoration: none;">Kampanyalara Dön</a></div>
+        <h1 class="s-title">Kampanya Düzenle</h1>
+    </div>
+
+    <div class="f-card">
+        <div class="product-preview">
+            @if (!string.IsNullOrEmpty(ViewBag.Gorsel as string))
+            {
+                <img src="@ViewBag.Gorsel" alt="Ürün" />
+            }
+            else
+            {
+                <div style="width: 65px; height: 65px; background: #fff; border-radius: 10px; display: flex; align-items: center; justify-content: center;"><i class="bi bi-image text-muted fs-4"></i></div>
+            }
+            <div class="product-preview-text">
+                @(ViewBag.UrunAdi ?? "Kampanya Bilgisi")
+            </div>
+        </div>
+
+        <form asp-action="Guncelle" method="post">
+            <input type="hidden" asp-for="Id" />
+
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <label class="f-label">Kampanya Adı <span class="text-danger">*</span></label>
+                    <input type="text" asp-for="KampanyaAdi" class="form-control f-input" required />
+                </div>
+                <div class="col-md-6">
+                    <label class="f-label">Kampanya Varyasyonu / Senaryo</label>
+                    <select asp-for="KampanyaVaryasyonu" class="form-select f-input" id="varyasyonSelect">
+                        <option value="DuzIndirim">Standart Fiyat İndirimi (% veya Tutar)</option>
+                        <option value="IkinciUrunIndirimli">Birinci Ürüne Karşılık İkinci Ürün İndirimi / Bedava</option>
+                        <option value="KategoriCapraz">Belirli Kategoriden Alışverişe Çapraz İndirim</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Tetikleyici Kategori Alanı (Çapraz Senaryo İçin) -->
+            <div class="mb-4" id="tetikleyiciKategoriAlani" style="display: none;">
+                <label class="f-label">Tetikleyici (Alışveriş Yapılacak) Kategori <span class="text-danger">*</span></label>
+                <select asp-for="TetikleyiciKategoriId" class="form-select f-input">
+                    <option value="">-- Kategori Seçin --</option>
+                    @if (ViewBag.Kategoriler != null)
+                    {
+                        foreach (var item in (List<SelectListItem>)ViewBag.Kategoriler)
+                        {
+                            <option value="@item.Value">@item.Text</option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <!-- Hedef Kapsam Alanı -->
+            <div id="hedefKapsamAlani" class="dynamic-box" style="display: none;">
+                <h6 class="fw-bold text-danger mb-2"><i class="bi bi-gift"></i> İndirim Uygulanacak Hedef Kapsam</h6>
+                <p class="text-muted small mb-3">Ana ürün veya kategoriden alışveriş yapıldığında, aşağıdaki hedef kategori veya ürünlerden alınacak ikinci ürüne indirim uygulanır.</p>
+
+                <div class="mb-3">
+                    <label class="f-label">Hedef Kategori</label>
+                    <select asp-for="HedefKategoriId" class="form-select f-input">
+                        <option value="">-- Hedef Kategori Seçin (Opsiyonel) --</option>
+                        @if (ViewBag.Kategoriler != null)
+                        {
+                            foreach (var item in (List<SelectListItem>)ViewBag.Kategoriler)
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="mb-2">
+                    <label class="f-label">Veya Spesifik Hedef Ürün(ler)</label>
+                    <select asp-for="HedefUrunIds" class="form-control select2-multiple" multiple="multiple" style="width: 100%;">
+                        @if (ViewBag.Urunler != null)
+                        {
+                            foreach (var item in (List<SelectListItem>)ViewBag.Urunler)
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <label class="f-label">İndirim Türü</label>
+                    <select asp-for="IndirimTipi" class="form-select f-input">
+                        <option value="Yuzde">Yüzde İndirim (%)</option>
+                        <option value="Tutar">Net Tutar İndirimi (₺)</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="f-label">İndirim Değeri <span class="text-danger">*</span></label>
+                    <input type="number" step="0.01" asp-for="IndirimDegeri" class="form-control f-input" required />
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="f-label">Kampanya Etiketi / Açıklaması</label>
+                <input type="text" asp-for="KampanyaAciklamasi" class="form-control f-input" />
+            </div>
+
+            <!-- Kupon Birleştirme Ayarı -->
+            <div class="mb-4">
+                <div class="form-check form-switch p-3 bg-light rounded-3 border">
+                    <input class="form-check-input ms-0 me-2" type="checkbox" asp-for="KuponlarlaBirlesebilirMi" id="kuponCheckGuncelle" style="width: 2.5em; height: 1.25em;" />
+                    <label class="form-check-label f-label fw-bold mb-0" for="kuponCheckGuncelle">
+                        Bu kampanya sepet kuponlarıyla birleştirilebilir mi?
+                    </label>
+                    <div class="form-text mt-1 text-muted">Eğer pasif bırakılırsa, bu ürüne kupon indirimi uygulanmaz.</div>
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <label class="f-label">Gösterim Sırası</label>
+                    <input type="number" asp-for="Sira" class="form-control f-input" required />
+                </div>
+                <div class="col-md-4">
+                    <label class="f-label">Başlangıç Tarihi</label>
+                    <input type="datetime-local" asp-for="BaslangicTarihi" class="form-control f-input" />
+                </div>
+                <div class="col-md-4">
+                    <label class="f-label">Bitiş Tarihi (Opsiyonel)</label>
+                    <input type="datetime-local" asp-for="BitisTarihi" class="form-control f-input" />
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="f-label">Yayın Durumu</label>
+                <select asp-for="AktifMi" class="form-select f-input">
+                    <option value="true">Aktif (Vitrin'de Göster)</option>
+                    <option value="false">Pasif (Gizle)</option>
+                </select>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="s-submit-btn"><i class="bi bi-check-circle"></i> Değişiklikleri Kaydet</button>
+                <a asp-action="Index" class="s-cancel-link">Vazgeç</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('.select2-multiple').select2({ placeholder: "Ürün seçmek için tıklayın veya arayın...", allowClear: true });
+
+            function kontrolEt(val) {
+                if (val === 'KategoriCapraz') {
+                    $('#tetikleyiciKategoriAlani').show();
+                    $('#hedefKapsamAlani').show();
+                } else if (val === 'IkinciUrunIndirimli') {
+                    $('#tetikleyiciKategoriAlani').hide();
+                    $('#hedefKapsamAlani').show();
+                } else {
+                    $('#tetikleyiciKategoriAlani').hide();
+                    $('#hedefKapsamAlani').hide();
+                }
+            }
+
+            var initialVal = $('#varyasyonSelect').val();
+            kontrolEt(initialVal);
+
+            $('#varyasyonSelect').change(function () {
+                kontrolEt($(this).val());
+            });
+        });
+    </script>
+}

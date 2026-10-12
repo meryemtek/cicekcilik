@@ -1,0 +1,362 @@
+﻿@{
+    ViewData["Title"] = "Toplu İşlemler Yönetimi";
+}
+
+<style>
+    .toplu-page {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .toplu-header {
+        margin-bottom: 28px;
+    }
+
+    .toplu-eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #9a1640;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+    }
+
+    .toplu-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0 0 6px;
+        letter-spacing: -.5px;
+    }
+
+    .toplu-subtitle {
+        font-size: .92rem;
+        color: #85818c;
+        margin: 0;
+    }
+
+    .toplu-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 25px;
+        align-items: start;
+    }
+
+    .toplu-card {
+        background: #fff;
+        border: 1px solid #eee9ed;
+        border-radius: 20px;
+        box-shadow: 0 8px 28px rgba(35,28,40,.055);
+        padding: 32px;
+    }
+
+    .toplu-card-title {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #f0edf0;
+    }
+
+    .toplu-card-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+    }
+
+    .icon-price {
+        background: #fff2f5;
+        color: #8b0028;
+    }
+
+    .icon-status {
+        background: #f0f4f8;
+        color: #2c3e50;
+    }
+
+    .toplu-card-title h2 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0;
+    }
+
+    .toplu-card-title p {
+        font-size: .78rem;
+        color: #99949d;
+        margin: 3px 0 0;
+    }
+
+    .urun-field {
+        margin-bottom: 20px;
+    }
+
+        .urun-field label {
+            display: block;
+            color: #403b46;
+            font-size: .8rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+    .urun-select, .urun-input {
+        width: 100%;
+        height: 48px;
+        border: 1px solid #e4dfe4;
+        border-radius: 12px;
+        background: #fff;
+        padding: 0 15px;
+        color: #24213d;
+        font-size: .88rem;
+        outline: 0;
+        transition: all .2s ease;
+    }
+
+        .urun-select:focus, .urun-input:focus {
+            border-color: #c98ca0;
+            box-shadow: 0 0 0 4px rgba(139,0,40,.06);
+        }
+
+    .radio-group {
+        display: flex;
+        gap: 15px;
+    }
+
+    .radio-label {
+        flex: 1;
+        position: relative;
+        cursor: pointer;
+    }
+
+        .radio-label input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+    .radio-box {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 12px;
+        background: #fbf9fa;
+        border: 1px solid #e4dfe4;
+        border-radius: 12px;
+        font-size: .85rem;
+        font-weight: 600;
+        color: #554f5c;
+        transition: all .2s ease;
+    }
+
+    .radio-label input:checked ~ .radio-box {
+        background: #fff4f7;
+        border-color: #8b0028;
+        color: #8b0028;
+    }
+
+    .radio-label-status input:checked ~ .radio-box-active {
+        background: #edf9f4;
+        border-color: #287c5d;
+        color: #287c5d;
+    }
+
+    .radio-label-status input:checked ~ .radio-box-passive {
+        background: #f2f0f3;
+        border-color: #716c75;
+        color: #403b46;
+    }
+
+    .urun-help {
+        display: block;
+        color: #9d98a0;
+        font-size: .7rem;
+        margin-top: 7px;
+    }
+
+    .toplu-submit-btn {
+        width: 100%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        height: 48px;
+        border: 0;
+        border-radius: 12px;
+        font-size: .85rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all .2s ease;
+        margin-top: 10px;
+    }
+
+    .btn-price {
+        background: linear-gradient(135deg,#8b0028,#a70b3b);
+        color: #fff;
+        box-shadow: 0 7px 20px rgba(139,0,40,.2);
+    }
+
+        .btn-price:hover {
+            transform: translateY(-2px);
+        }
+
+    .btn-status {
+        background: #2c3e50;
+        color: #fff;
+        box-shadow: 0 7px 20px rgba(44,62,80,.2);
+    }
+
+        .btn-status:hover {
+            transform: translateY(-2px);
+        }
+
+    .urun-alert {
+        border: 0;
+        border-radius: 13px;
+        padding: 13px 16px;
+        font-size: .84rem;
+        margin-bottom: 18px;
+    }
+
+    .urun-alert-success {
+        background: #edf9f4;
+        color: #287c5d;
+    }
+
+    .urun-alert-danger {
+        background: #fff0f2;
+        color: #a4364b;
+    }
+
+    @@media(max-width: 900px) {
+        .toplu-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="toplu-page">
+    <div class="toplu-header">
+        <div class="toplu-eyebrow"><i class="bi bi-layers"></i> Mağaza Yönetimi</div>
+        <h1 class="toplu-title">Toplu İşlemler</h1>
+        <p class="toplu-subtitle">Tüm mağaza veya belirli bir kategori üzerinde tek tıkla fiyat ve durum güncellemeleri yapın.</p>
+    </div>
+
+    @if (TempData["BasariliMesaj"] != null)
+    {
+        <div class="alert urun-alert urun-alert-success alert-dismissible fade show" role="alert"><i class="bi bi-check-circle me-2"></i>@TempData["BasariliMesaj"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+
+    @if (TempData["HataMesaji"] != null)
+    {
+        <div class="alert urun-alert urun-alert-danger alert-dismissible fade show" role="alert"><i class="bi bi-exclamation-circle me-2"></i>@TempData["HataMesaji"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+
+    <div class="toplu-grid">
+
+        <!-- FİYAT GÜNCELLEME KARTI -->
+        <div class="toplu-card">
+            <div class="toplu-card-title">
+                <div class="toplu-card-icon icon-price"><i class="bi bi-tags"></i></div>
+                <div><h2>Toplu Fiyat Değişimi</h2><p>Zam veya indirim operasyonları uygulayın.</p></div>
+            </div>
+
+            <form asp-action="FiyatGuncelle" method="post" onsubmit="return confirm('Bu fiyat değişikliği işlemi geri alınamaz. Onaylıyor musunuz?');">
+                <div class="urun-field">
+                    <label>Kategori Seçimi</label>
+                    <select name="KategoriId" class="urun-select" asp-items="ViewBag.Kategoriler">
+                        <option value="">-- Tüm Ürünlere Uygula --</option>
+                    </select>
+                    <span class="urun-help">Seçilmezse işlem mağazadaki tüm ürünleri etkiler.</span>
+                </div>
+
+                <div class="urun-field">
+                    <label>İşlem Türü</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="ArtisMi" value="true" checked />
+                            <div class="radio-box"><i class="bi bi-graph-up-arrow"></i> Zam (Artış)</div>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="ArtisMi" value="false" />
+                            <div class="radio-box"><i class="bi bi-graph-down-arrow"></i> İndirim (Azalış)</div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="urun-field">
+                    <label>Birim Tipi</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="YuzdelikMi" value="true" checked />
+                            <div class="radio-box"><i class="bi bi-percent"></i> Yüzdelik (%)</div>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="YuzdelikMi" value="false" />
+                            <div class="radio-box"><i class="bi bi-cash"></i> Net Tutar (₺)</div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="urun-field">
+                    <label>Oran veya Miktar Değeri</label>
+                    <input type="number" step="0.01" name="OranVeyaMiktar" class="urun-input" placeholder="Örn: 15" required />
+                    <span class="urun-help">Yüzde veya TL olarak eklenecek/çıkarılacak tam değer.</span>
+                </div>
+
+                <button type="submit" class="toplu-submit-btn btn-price">
+                    <i class="bi bi-check2-circle"></i> Fiyatları Güncelle
+                </button>
+            </form>
+        </div>
+
+        <!-- DURUM DEĞİŞTİRME KARTI -->
+        <div class="toplu-card">
+            <div class="toplu-card-title">
+                <div class="toplu-card-icon icon-status"><i class="bi bi-sliders"></i></div>
+                <div><h2>Toplu Durum Yönetimi</h2><p>Ürünleri vitrine alın veya tamamen gizleyin.</p></div>
+            </div>
+
+            <form asp-action="DurumDegistir" method="post" onsubmit="return confirm('Ürünlerin yayın durumları değiştirilecektir. Emin misiniz?');">
+                <div class="urun-field">
+                    <label>Kategori Seçimi</label>
+                    <select name="kategoriId" class="urun-select" asp-items="ViewBag.Kategoriler">
+                        <option value="">-- Tüm Ürünlere Uygula --</option>
+                    </select>
+                    <span class="urun-help">Sadece seçilen kategorideki ürünler etkilenir.</span>
+                </div>
+
+                <div class="urun-field" style="margin-bottom: 35px;">
+                    <label>Yeni Görünürlük Durumu</label>
+                    <div class="radio-group">
+                        <label class="radio-label radio-label-status">
+                            <input type="radio" name="aktifMi" value="true" checked />
+                            <div class="radio-box radio-box-active"><i class="bi bi-eye-fill"></i> Satışa Aç (Yayında)</div>
+                        </label>
+                        <label class="radio-label radio-label-status">
+                            <input type="radio" name="aktifMi" value="false" />
+                            <div class="radio-box radio-box-passive"><i class="bi bi-eye-slash-fill"></i> Satışa Kapat (Gizle)</div>
+                        </label>
+                    </div>
+                </div>
+
+                <div style="padding: 15px; background: #fffcf2; border: 1px solid #ffeba1; border-radius: 12px; margin-bottom: 25px; font-size: .8rem; color: #856404;">
+                    <i class="bi bi-info-circle-fill me-1"></i> Gizlenen ürünler müşteri arayüzünde görünmez ve satın alınamazlar. Kampanya hazırlıkları için uygundur.
+                </div>
+
+                <button type="submit" class="toplu-submit-btn btn-status">
+                    <i class="bi bi-power"></i> Durumları Uygula
+                </button>
+            </form>
+        </div>
+
+    </div>
+</div>

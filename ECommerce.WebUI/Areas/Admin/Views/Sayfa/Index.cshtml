@@ -1,0 +1,295 @@
+﻿@model IEnumerable<ECommerce.Application.DTOs.Sayfa.SayfaListeDto>
+@{
+    ViewData["Title"] = "Sayfa Yönetimi";
+}
+
+<style>
+    .s-page {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .s-hero {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 28px;
+    }
+
+    .s-eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #9a1640;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+    }
+
+    .s-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0 0 6px;
+        letter-spacing: -.5px;
+    }
+
+    .s-subtitle {
+        margin: 0;
+        color: #85818c;
+        font-size: .95rem;
+    }
+
+    .s-add-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        background: linear-gradient(135deg,#8b0028,#a70b3b);
+        border: 0;
+        border-radius: 13px;
+        color: #fff;
+        padding: 13px 20px;
+        font-size: .9rem;
+        font-weight: 600;
+        text-decoration: none;
+        box-shadow: 0 8px 22px rgba(139,0,40,.2);
+        transition: all .2s ease;
+    }
+
+        .s-add-btn:hover {
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(139,0,40,.28);
+        }
+
+    .s-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 20px;
+    }
+
+    .s-card {
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #eee9ed;
+        box-shadow: 0 8px 25px rgba(35,28,40,.04);
+        padding: 24px;
+        transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+        display: flex;
+        flex-direction: column;
+    }
+
+        .s-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 35px rgba(35,28,40,.08);
+            border-color: #e5d5db;
+        }
+
+    .s-card-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        margin-bottom: 15px;
+    }
+
+    .s-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        background: linear-gradient(145deg,#fff2f5,#fbe3e9);
+        color: #8b0028;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+    }
+
+    .s-card-title {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0 0 5px;
+    }
+
+    .s-card-code {
+        font-size: .8rem;
+        font-weight: 600;
+        color: #9a959e;
+        margin-bottom: 12px;
+    }
+
+    .s-card-url {
+        font-size: .8rem;
+        color: #5275a5;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        margin-bottom: 15px;
+    }
+
+    .s-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 10px;
+        border-radius: 8px;
+        font-size: .75rem;
+        font-weight: 700;
+    }
+
+    .status-active {
+        background: #edf9f4;
+        color: #287c5d;
+    }
+
+    .status-passive {
+        background: #f2f1f3;
+        color: #85808a;
+    }
+
+    .s-card-footer {
+        display: flex;
+        gap: 10px;
+        padding-top: 15px;
+        margin-top: auto;
+        border-top: 1px solid #f0edef;
+    }
+
+    .s-btn {
+        flex: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        height: 38px;
+        border-radius: 9px;
+        font-size: .82rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all .2s ease;
+    }
+
+    .s-btn-edit {
+        background: #fff4f7;
+        color: #8b0028;
+    }
+
+        .s-btn-edit:hover {
+            background: #fce8ed;
+            color: #65001f;
+        }
+
+    .s-btn-delete {
+        background: #fff;
+        border: 1px solid #e5e0e5;
+        color: #716c75;
+        width: 42px;
+        flex: none;
+    }
+
+        .s-btn-delete:hover {
+            background: #fff0f2;
+            border-color: #fce8ed;
+            color: #a4364b;
+        }
+
+    .s-empty {
+        background: #fff;
+        border: 1px dashed #ddd5da;
+        border-radius: 20px;
+        padding: 65px 25px;
+        text-align: center;
+        grid-column: 1/-1;
+    }
+
+        .s-empty > i {
+            font-size: 2.5rem;
+            color: #9a1640;
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+
+    @@media(max-width:1100px) {
+        .s-grid {
+            grid-template-columns: repeat(2, minmax(0,1fr));
+        }
+    }
+
+    @@media(max-width:768px) {
+        .s-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .s-hero {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+</style>
+
+<div class="s-page">
+    <div class="s-hero">
+        <div class="s-hero-content">
+            <div class="s-eyebrow"><i class="bi bi-file-earmark-text"></i> İçerik Yönetimi</div>
+            <h1 class="s-title">Sayfalar</h1>
+            <p class="s-subtitle">Müşterilerinizi bilgilendirmek için statik sayfalarınızı (Hakkımızda, KVKK vb.) yönetin.</p>
+        </div>
+        <a asp-action="Ekle" class="s-add-btn"><i class="bi bi-plus-lg"></i><span>Yeni Sayfa Ekle</span></a>
+    </div>
+
+    @if (TempData["BasariliMesaj"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius:12px;"><i class="bi bi-check-circle me-2"></i>@TempData["BasariliMesaj"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+    @if (TempData["HataMesaji"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius:12px;"><i class="bi bi-exclamation-circle me-2"></i>@TempData["HataMesaji"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+
+    <div class="s-grid">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var item in Model)
+            {
+                <div class="s-card" style="opacity: @(item.AktifMi ? "1" : "0.7");">
+                    <div class="s-card-top">
+                        <div class="s-icon"><i class="bi bi-file-earmark-richtext"></i></div>
+                        @if (item.AktifMi)
+                        {
+                            <span class="s-status status-active"><i class="bi bi-check2-circle"></i> Yayında</span>
+                        }
+                        else
+                        {
+                            <span class="s-status status-passive"><i class="bi bi-eye-slash"></i> Gizli</span>
+                        }
+                    </div>
+
+                    <h3 class="s-card-title">@item.Baslik</h3>
+                    <div class="s-card-code">Sistem Kodu: @item.SayfaKodu</div>
+                    <div class="s-card-url"><i class="bi bi-link-45deg"></i> /@item.SeoUrl</div>
+
+                    <div class="s-card-footer">
+                        <a asp-action="Guncelle" asp-route-id="@item.Id" class="s-btn s-btn-edit"><i class="bi bi-pencil"></i> Düzenle</a>
+                        <form asp-action="Sil" asp-route-id="@item.Id" method="post" onsubmit="return confirm('Bu sayfayı silmek istediğinize emin misiniz?');" style="margin:0;">
+                            <button type="submit" class="s-btn s-btn-delete" title="Sil"><i class="bi bi-trash3"></i></button>
+                        </form>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="s-empty">
+                <i class="bi bi-file-earmark-plus"></i>
+                <h3>Henüz sayfa oluşturulmamış</h3>
+                <p>Müşterilerinize işletmeniz hakkında bilgi vermek için ilk sayfanızı oluşturun.</p>
+                <div style="display: flex; justify-content: center; margin-top: 20px;">
+                    <a asp-action="Ekle" class="s-add-btn" style="display: inline-flex !important; width: auto !important; padding: 13px 24px;"><i class="bi bi-plus-lg"></i><span>İlk Sayfayı Oluştur</span></a>
+                </div>
+            </div>
+        }
+    </div>
+</div>

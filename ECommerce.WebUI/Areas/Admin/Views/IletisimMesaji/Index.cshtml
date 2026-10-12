@@ -1,0 +1,326 @@
+﻿@model IEnumerable<ECommerce.Application.DTOs.IletisimMesaji.IletisimMesajiListeDto>
+@{
+    ViewData["Title"] = "Gelen Kutusu";
+    var mesajlar = Model?.ToList() ?? new List<ECommerce.Application.DTOs.IletisimMesaji.IletisimMesajiListeDto>();
+}
+
+<style>
+    .inbox-page {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .inbox-hero {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 28px;
+    }
+
+    .inbox-eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #9a1640;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+    }
+
+    .inbox-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0 0 6px;
+        letter-spacing: -.5px;
+    }
+
+    .inbox-subtitle {
+        margin: 0;
+        color: #85818c;
+        font-size: .95rem;
+    }
+
+    .inbox-list {
+        background: #fff;
+        border: 1px solid #eee9ed;
+        border-radius: 20px;
+        box-shadow: 0 8px 28px rgba(35,28,40,.055);
+        overflow: hidden;
+    }
+
+    .msg-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 18px 25px;
+        border-bottom: 1px solid #f0edf0;
+        text-decoration: none;
+        color: inherit;
+        transition: background .2s ease;
+        position: relative;
+    }
+
+        .msg-item:last-child {
+            border-bottom: 0;
+        }
+
+        .msg-item:hover {
+            background: #fcfafb;
+        }
+
+    .msg-unread {
+        background: #fffafb;
+        font-weight: 700 !important;
+    }
+
+        .msg-unread::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: #8b0028;
+        }
+
+    .msg-avatar {
+        width: 46px;
+        height: 46px;
+        border-radius: 12px;
+        background: #fff2f5;
+        color: #8b0028;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+
+    .msg-unread .msg-avatar {
+        background: linear-gradient(135deg,#8b0028,#a70b3b);
+        color: #fff;
+    }
+
+    .msg-content {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+    }
+
+    .msg-info {
+        width: 250px;
+        flex-shrink: 0;
+    }
+
+    .msg-sender {
+        font-size: 1rem;
+        color: #24213d;
+        margin: 0 0 3px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-weight: 500;
+    }
+
+    .msg-unread .msg-sender {
+        font-weight: 700;
+    }
+
+    .msg-email {
+        font-size: .8rem;
+        color: #85818c;
+        margin: 0;
+        font-weight: 400;
+    }
+
+    .msg-subject {
+        flex: 1;
+        min-width: 0;
+        color: #554f5c;
+        font-size: .95rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-weight: 400;
+    }
+
+    .msg-unread .msg-subject {
+        color: #24213d;
+        font-weight: 600;
+    }
+
+    .msg-date {
+        width: 120px;
+        flex-shrink: 0;
+        text-align: right;
+        font-size: .82rem;
+        color: #85818c;
+        font-weight: 500;
+    }
+
+    .msg-actions {
+        opacity: 0;
+        transition: opacity .2s ease;
+        display: flex;
+        gap: 8px;
+    }
+
+    .msg-item:hover .msg-actions {
+        opacity: 1;
+    }
+
+    .btn-delete {
+        width: 34px;
+        height: 34px;
+        border: 0;
+        border-radius: 9px;
+        background: #fff3f4;
+        color: #b64a5d;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background .2s;
+    }
+
+        .btn-delete:hover {
+            background: #fbe1e5;
+            color: #9e253c;
+        }
+
+    .inbox-empty {
+        padding: 60px 20px;
+        text-align: center;
+    }
+
+        .inbox-empty i {
+            font-size: 2.5rem;
+            color: #9a1640;
+            margin-bottom: 15px;
+            display: inline-block;
+            padding: 20px;
+            background: #fff2f5;
+            border-radius: 20px;
+        }
+
+        .inbox-empty h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #24213d;
+            margin-bottom: 8px;
+        }
+
+        .inbox-empty p {
+            color: #85818c;
+            font-size: .9rem;
+            margin-bottom: 0;
+        }
+
+    .urun-alert {
+        border: 0;
+        border-radius: 13px;
+        padding: 13px 16px;
+        font-size: .84rem;
+        margin-bottom: 18px;
+    }
+
+    .urun-alert-success {
+        background: #edf9f4;
+        color: #287c5d;
+    }
+
+    .urun-alert-danger {
+        background: #fff0f2;
+        color: #a4364b;
+    }
+
+    @@media(max-width:768px) {
+        .msg-content {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 6px;
+        }
+
+        .msg-info {
+            width: 100%;
+        }
+
+        .msg-date {
+            text-align: left;
+        }
+
+        .msg-actions {
+            opacity: 1;
+            position: absolute;
+            right: 20px;
+            top: 20px;
+        }
+    }
+</style>
+
+<div class="inbox-page">
+    <div class="inbox-hero">
+        <div>
+            <div class="inbox-eyebrow"><i class="bi bi-envelope-paper"></i> İletişim Yönetimi</div>
+            <h1 class="inbox-title">Gelen Kutusu</h1>
+            <p class="inbox-subtitle">Müşterilerinizden gelen soru, istek ve şikayetleri buradan takip edebilirsiniz.</p>
+        </div>
+    </div>
+
+    @if (TempData["BasariliMesaj"] != null)
+    {
+        <div class="alert urun-alert urun-alert-success alert-dismissible fade show"><i class="bi bi-check-circle me-2"></i>@TempData["BasariliMesaj"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+
+    @if (TempData["HataMesaji"] != null)
+    {
+        <div class="alert urun-alert urun-alert-danger alert-dismissible fade show"><i class="bi bi-exclamation-circle me-2"></i>@TempData["HataMesaji"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+
+    <div class="inbox-list">
+        @if (mesajlar.Any())
+        {
+            foreach (var item in mesajlar)
+            {
+                <a asp-action="Detay" asp-route-id="@item.Id" class="msg-item @(!item.OkunduMu ? "msg-unread" : "")">
+                    <div class="msg-avatar">
+                        @(string.IsNullOrEmpty(item.GonderenAdSoyad) ? "?" : item.GonderenAdSoyad.Substring(0, 1).ToUpper())
+                    </div>
+                    <div class="msg-content">
+                        <div class="msg-info">
+                            <h3 class="msg-sender">@item.GonderenAdSoyad</h3>
+                            <p class="msg-email">@item.GonderenEmail</p>
+                        </div>
+                        <div class="msg-subject">
+                            @item.Konu
+                        </div>
+                        <div class="msg-date">
+                            @item.OlusturulmaTarihi.ToString("dd MMM yyyy")
+                        </div>
+                    </div>
+                    <div class="msg-actions">
+                        <form asp-action="Sil" asp-route-id="@item.Id" method="post" onclick="event.stopPropagation();" onsubmit="return confirm('Bu mesajı silmek istediğinize emin misiniz?');">
+                            <button type="submit" class="btn-delete" title="Sil"><i class="bi bi-trash3"></i></button>
+                        </form>
+                    </div>
+                </a>
+            }
+        }
+        else
+        {
+            <div class="inbox-empty">
+                <i class="bi bi-inbox"></i>
+                <h3>Gelen Kutusu Boş</h3>
+                <p>Şu an için okunacak yeni bir iletişim mesajı bulunmuyor.</p>
+            </div>
+        }
+    </div>
+</div>

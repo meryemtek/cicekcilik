@@ -1,0 +1,212 @@
+﻿@model ECommerce.Application.DTOs.KartNotuSablonu.KartNotuSablonuEkleDto
+@{
+    ViewData["Title"] = "Yeni Kart Notu Ekle";
+    var mevcutKategoriler = ViewBag.Kategoriler as List<string> ?? new List<string>();
+}
+
+<style>
+    .form-page {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .form-header {
+        margin-bottom: 28px;
+    }
+
+    .form-eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #9a1640;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+    }
+
+    .form-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0 0 6px;
+        letter-spacing: -.5px;
+    }
+
+    .form-card {
+        background: #fff;
+        border: 1px solid #eee9ed;
+        border-radius: 20px;
+        box-shadow: 0 8px 28px rgba(35,28,40,.055);
+        padding: 32px;
+        margin-bottom: 22px;
+    }
+
+    .form-field {
+        margin-bottom: 20px;
+    }
+
+        .form-field label {
+            display: block;
+            color: #403b46;
+            font-size: .85rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+    .form-input, .form-textarea {
+        width: 100%;
+        border: 1px solid #e4dfe4;
+        border-radius: 12px;
+        background: #fff;
+        padding: 12px 15px;
+        color: #24213d;
+        font-size: .9rem;
+        outline: 0;
+        transition: all .2s ease;
+    }
+
+    .form-input {
+        height: 48px;
+    }
+
+    .form-textarea {
+        resize: vertical;
+        min-height: 120px;
+        line-height: 1.5;
+        font-style: italic;
+    }
+
+        .form-input:focus, .form-textarea:focus {
+            border-color: #c98ca0;
+            box-shadow: 0 0 0 4px rgba(139,0,40,.06);
+        }
+
+    .form-validation {
+        color: #b53d53;
+        font-size: .75rem;
+        margin-top: 6px;
+        display: block;
+    }
+
+    .form-switch {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border: 1px solid #eee9ed;
+        background: #faf9fa;
+        border-radius: 13px;
+        padding: 15px 16px;
+        margin-top: 10px;
+    }
+
+    .form-switch-text strong {
+        display: block;
+        font-size: .9rem;
+        color: #3e3943;
+        margin-bottom: 3px;
+    }
+
+    .form-switch-text span {
+        font-size: .8rem;
+        color: #99949d;
+    }
+
+    .form-switch input {
+        width: 42px;
+        height: 23px;
+        cursor: pointer;
+        accent-color: #8b0028;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 22px;
+    }
+
+    .btn-cancel {
+        display: inline-flex;
+        align-items: center;
+        height: 46px;
+        padding: 0 20px;
+        border: 1px solid #e5e0e5;
+        border-radius: 12px;
+        background: #fff;
+        color: #716c75;
+        font-size: .9rem;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .btn-submit {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        height: 46px;
+        padding: 0 24px;
+        border: 0;
+        border-radius: 12px;
+        background: linear-gradient(135deg,#8b0028,#a70b3b);
+        color: #fff;
+        font-size: .9rem;
+        font-weight: 600;
+        cursor: pointer;
+    }
+</style>
+
+<div class="form-page">
+    <div class="form-header">
+        <div class="form-eyebrow"><i class="bi bi-chat-square-quote"></i> Kart Notları</div>
+        <h1 class="form-title">Yeni Not Ekle</h1>
+    </div>
+
+    <form asp-action="Ekle" method="post">
+        @Html.AntiForgeryToken()
+
+        <div class="form-card">
+            <div class="form-field">
+                <label asp-for="Kategori">Kategori Adı</label>
+                <!-- Kullanıcı serbestçe yazabilir veya Datalist ile sistemdeki önceki kategorileri seçebilir -->
+                <input asp-for="Kategori" list="kategoriListesi" class="form-input" placeholder="Örn: Doğum Günü, Yıldönümü, Özür Dilerim..." autocomplete="off" required />
+                <datalist id="kategoriListesi">
+                    @foreach (var kat in mevcutKategoriler)
+                    {
+                        <option value="@kat"></option>
+                    }
+                </datalist>
+                <span asp-validation-for="Kategori" class="form-validation"></span>
+            </div>
+
+            <div class="form-field">
+                <label asp-for="MesajIcerigi">Mesaj İçeriği</label>
+                <textarea asp-for="MesajIcerigi" class="form-textarea" placeholder="Müşterinin kartına basılacak olan anlamlı metni buraya yazın..." required></textarea>
+                <span asp-validation-for="MesajIcerigi" class="form-validation"></span>
+            </div>
+
+            <div class="form-field">
+                <label asp-for="SiraNo">Gösterim Sırası</label>
+                <input asp-for="SiraNo" type="number" class="form-input" min="1" />
+                <span style="font-size: .75rem; color:#99949d;">Müşteri ekranında bu mesaj kaçıncı sırada görünsün? (1 en üstte)</span>
+                <span asp-validation-for="SiraNo" class="form-validation"></span>
+            </div>
+
+            <div class="form-field">
+                <div class="form-switch">
+                    <div class="form-switch-text">
+                        <strong>Aktif Olarak Göster</strong>
+                        <span>Kapatırsanız bu mesaj müşterilerin seçim ekranında görünmez.</span>
+                    </div>
+                    <input asp-for="AktifMi" type="checkbox" />
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <a asp-action="Index" class="btn-cancel">Vazgeç</a>
+            <button type="submit" class="btn-submit"><i class="bi bi-check2"></i> Şablonu Kaydet</button>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,241 @@
+﻿@model ECommerce.Application.DTOs.IletisimMesaji.IletisimMesajiDetayDto
+@{
+    ViewData["Title"] = "Mesaj Detayı";
+}
+
+<style>
+    .read-page {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .read-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 25px;
+    }
+
+    .btn-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #716c75;
+        font-size: .9rem;
+        font-weight: 600;
+        text-decoration: none;
+        padding: 10px 16px;
+        border-radius: 10px;
+        background: #fff;
+        border: 1px solid #e5e0e5;
+        transition: all .2s;
+    }
+
+        .btn-back:hover {
+            background: #f8f6f8;
+            color: #24213d;
+        }
+
+    .toolbar-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .btn-reply {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        height: 42px;
+        padding: 0 20px;
+        border: 0;
+        border-radius: 10px;
+        background: linear-gradient(135deg,#8b0028,#a70b3b);
+        color: #fff;
+        font-size: .85rem;
+        font-weight: 600;
+        text-decoration: none;
+        box-shadow: 0 4px 15px rgba(139,0,40,.15);
+    }
+
+        .btn-reply:hover {
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+    .btn-delete {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        height: 42px;
+        padding: 0 20px;
+        border: 1px solid #fbe1e5;
+        border-radius: 10px;
+        background: #fff3f4;
+        color: #b64a5d;
+        font-size: .85rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background .2s;
+    }
+
+        .btn-delete:hover {
+            background: #fbe1e5;
+            color: #9e253c;
+        }
+
+    .read-card {
+        background: #fff;
+        border: 1px solid #eee9ed;
+        border-radius: 20px;
+        box-shadow: 0 8px 28px rgba(35,28,40,.055);
+        padding: 35px;
+    }
+
+    .read-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding-bottom: 25px;
+        border-bottom: 1px solid #f0edf0;
+        margin-bottom: 25px;
+    }
+
+    .sender-info {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+    }
+
+    .sender-avatar {
+        width: 56px;
+        height: 56px;
+        border-radius: 16px;
+        background: linear-gradient(135deg,#8b0028,#a70b3b);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: 700;
+        box-shadow: 0 5px 15px rgba(139,0,40,.2);
+    }
+
+    .sender-details h2 {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0 0 5px;
+    }
+
+    .sender-contacts {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        font-size: .85rem;
+        color: #716c75;
+    }
+
+        .sender-contacts a {
+            color: #c98ca0;
+            text-decoration: none;
+        }
+
+            .sender-contacts a:hover {
+                text-decoration: underline;
+            }
+
+        .sender-contacts i {
+            font-size: .95rem;
+            margin-right: 4px;
+            color: #9a959e;
+        }
+
+    .msg-time {
+        text-align: right;
+    }
+
+    .msg-date {
+        display: block;
+        font-size: .95rem;
+        font-weight: 600;
+        color: #403b46;
+        margin-bottom: 3px;
+    }
+
+    .msg-hour {
+        font-size: .8rem;
+        color: #99949d;
+    }
+
+    .msg-subject {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0 0 25px;
+        padding: 18px 22px;
+        background: #fcfafb;
+        border-radius: 12px;
+        border-left: 4px solid #8b0028;
+    }
+
+    .msg-body {
+        font-size: .98rem;
+        color: #403b46;
+        line-height: 1.7;
+        white-space: pre-wrap;
+        padding: 0 5px;
+    }
+
+    @@media(max-width:768px) {
+        .read-header {
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .msg-time {
+            text-align: left;
+        }
+    }
+</style>
+
+<div class="read-page">
+    <div class="read-toolbar">
+        <a asp-action="Index" class="btn-back"><i class="bi bi-arrow-left"></i> Gelen Kutusuna Dön</a>
+
+        <div class="toolbar-actions">
+            <a href="mailto:@Model.GonderenEmail?subject=RE: @Model.Konu" class="btn-reply"><i class="bi bi-reply-fill"></i> Yanıtla</a>
+            <form asp-action="Sil" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('Bu mesajı tamamen silmek istediğinize emin misiniz?');">
+                <button type="submit" class="btn-delete"><i class="bi bi-trash3"></i> Sil</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="read-card">
+        <div class="read-header">
+            <div class="sender-info">
+                <div class="sender-avatar">
+                    @(string.IsNullOrEmpty(Model.GonderenAdSoyad) ? "?" : Model.GonderenAdSoyad.Substring(0, 1).ToUpper())
+                </div>
+                <div class="sender-details">
+                    <h2>@Model.GonderenAdSoyad</h2>
+                    <div class="sender-contacts">
+                        <span><i class="bi bi-envelope"></i> <a href="mailto:@Model.GonderenEmail">@Model.GonderenEmail</a></span>
+                        @if (!string.IsNullOrEmpty(Model.Telefon))
+                        {
+                            <span><i class="bi bi-telephone"></i> <a href="tel:@Model.Telefon">@Model.Telefon</a></span>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="msg-time">
+                <span class="msg-date">@Model.OlusturulmaTarihi.ToString("dd MMMM yyyy")</span>
+                <span class="msg-hour">@Model.OlusturulmaTarihi.ToString("HH:mm")</span>
+            </div>
+        </div>
+
+        <h1 class="msg-subject">@Model.Konu</h1>
+
+        <div class="msg-body">@Model.Mesaj</div>
+    </div>
+</div>

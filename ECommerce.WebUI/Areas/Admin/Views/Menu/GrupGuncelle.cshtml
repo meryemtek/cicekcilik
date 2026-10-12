@@ -1,0 +1,153 @@
+﻿@model ECommerce.Application.DTOs.Menu.MenuGrupGuncelleDto
+@{
+    ViewData["Title"] = "Menü Grubunu Düzenle";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .t-page {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .t-hero {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 28px;
+    }
+
+    .t-eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #9a1640;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+    }
+
+    .t-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0 0 6px;
+        letter-spacing: -.5px;
+    }
+
+    .t-subtitle {
+        margin: 0;
+        color: #85818c;
+        font-size: .95rem;
+    }
+
+    .t-card {
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #eee9ed;
+        box-shadow: 0 8px 25px rgba(35,28,40,.04);
+        padding: 30px;
+    }
+
+    .t-btn-primary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        background: linear-gradient(135deg,#8b0028,#a70b3b);
+        border: 0;
+        border-radius: 12px;
+        color: #fff;
+        padding: 12px 24px;
+        font-size: 1rem;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        box-shadow: 0 8px 22px rgba(139,0,40,.2);
+    }
+
+    .t-btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        background: #fff;
+        border: 1px solid #e5e0e5;
+        color: #403b46;
+        border-radius: 12px;
+        padding: 12px 24px;
+        font-size: 1rem;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #403b46;
+        font-size: .9rem;
+        margin-bottom: 6px;
+    }
+
+    .form-control, .form-select {
+        border-radius: 10px;
+        border: 1px solid #e5e0e5;
+        padding: 11px 15px;
+        font-size: .95rem;
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #8b0028;
+            box-shadow: 0 0 0 3px rgba(139,0,40,.1);
+        }
+</style>
+
+<div class="t-page">
+    <div class="t-hero">
+        <div class="t-hero-content">
+            <div class="t-eyebrow"><i class="bi bi-diagram-3"></i> Site Navigasyonu</div>
+            <h1 class="t-title">Menü Grubunu Düzenle</h1>
+            <p class="t-subtitle">Seçili menü grubunun adını veya konumunu güncelleyin.</p>
+        </div>
+        <a asp-action="Index" class="t-btn-secondary"><i class="bi bi-arrow-left"></i> Geri Dön</a>
+    </div>
+
+    <div class="t-card">
+        <form asp-action="GrupGuncelle" method="post">
+            <input type="hidden" asp-for="Id" />
+
+            <div class="row g-3">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Menü Grubu Adı</label>
+                    <input type="text" asp-for="Baslik" class="form-control" required />
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Konum</label>
+                    <select asp-for="Konum" class="form-select">
+                        <option value="Header">Header (Üst Alan)</option>
+                        <option value="Footer">Footer Hızlı Erişim (Alt Alan)</option>
+                        <option value="FooterKurumsal">Footer Kurumsal Alanı</option>
+                        <option value="Sidebar">Sidebar (Yan Menü)</option>
+                    </select>
+                </div>
+
+                <div class="col-12 mt-2 mb-4">
+                    <div class="form-check form-switch p-3 rounded-3" style="background: #faf9fa; border: 1px solid #eee9ed;">
+                        <input class="form-check-input ms-0 mt-1" type="checkbox" asp-for="AktifMi" id="aktifSwitch" style="width: 45px; height: 22px; cursor: pointer;">
+                        <label class="form-check-label fw-bold ms-5" for="aktifSwitch" style="position:relative; top:2px;">Aktif Mi?</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2">
+                <a asp-action="Index" class="t-btn-secondary">İptal</a>
+                <button type="submit" class="t-btn-primary">
+                    <i class="bi bi-save2"></i> Değişiklikleri Kaydet
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,290 @@
+﻿@model List<ECommerce.Application.DTOs.KategoriBanner.KategoriBannerDto>
+@{
+    ViewData["Title"] = "Kategori Banner Yönetimi";
+}
+
+<style>
+    .s-page {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .s-hero {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 28px;
+    }
+
+    .s-eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #9a1640;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+    }
+
+    .s-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0 0 6px;
+        letter-spacing: -.5px;
+    }
+
+    .s-subtitle {
+        margin: 0;
+        color: #85818c;
+        font-size: .95rem;
+    }
+
+    .s-add-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        background: linear-gradient(135deg,#8b0028,#a70b3b);
+        border: 0;
+        border-radius: 13px;
+        color: #fff;
+        padding: 13px 20px;
+        font-size: .9rem;
+        font-weight: 600;
+        text-decoration: none;
+        box-shadow: 0 8px 22px rgba(139,0,40,.2);
+        transition: all .2s ease;
+    }
+
+        .s-add-btn:hover {
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(139,0,40,.28);
+        }
+
+    .s-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 20px;
+    }
+
+    .s-card {
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #eee9ed;
+        box-shadow: 0 8px 25px rgba(35,28,40,.04);
+        padding: 20px;
+        transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+        display: flex;
+        flex-direction: column;
+    }
+
+        .s-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 35px rgba(35,28,40,.08);
+            border-color: #e5d5db;
+        }
+
+    .s-card-img {
+        width: 100%;
+        height: 130px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #f0edef;
+    }
+
+    .s-card-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        margin-bottom: 12px;
+    }
+
+    .s-card-title {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0 0 4px;
+    }
+
+    .s-card-desc {
+        font-size: .85rem;
+        color: #85818c;
+        margin-bottom: 12px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .s-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 10px;
+        border-radius: 8px;
+        font-size: .75rem;
+        font-weight: 700;
+    }
+
+    .status-active {
+        background: #edf9f4;
+        color: #287c5d;
+    }
+
+    .status-passive {
+        background: #f2f1f3;
+        color: #85808a;
+    }
+
+    .s-card-footer {
+        display: flex;
+        gap: 10px;
+        padding-top: 15px;
+        margin-top: auto;
+        border-top: 1px solid #f0edef;
+    }
+
+    .s-btn {
+        flex: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        height: 38px;
+        border-radius: 9px;
+        font-size: .82rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all .2s ease;
+    }
+
+    .s-btn-edit {
+        background: #fff4f7;
+        color: #8b0028;
+    }
+
+        .s-btn-edit:hover {
+            background: #fce8ed;
+            color: #65001f;
+        }
+
+    .s-btn-delete {
+        background: #fff;
+        border: 1px solid #e5e0e5;
+        color: #716c75;
+        width: 42px;
+        flex: none;
+    }
+
+        .s-btn-delete:hover {
+            background: #fff0f2;
+            border-color: #fce8ed;
+            color: #a4364b;
+        }
+
+    .s-empty {
+        background: #fff;
+        border: 1px dashed #ddd5da;
+        border-radius: 20px;
+        padding: 65px 25px;
+        text-align: center;
+        grid-column: 1/-1;
+    }
+
+        .s-empty > i {
+            font-size: 2.5rem;
+            color: #9a1640;
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+
+    @@media(max-width:1100px) {
+        .s-grid {
+            grid-template-columns: repeat(2, minmax(0,1fr));
+        }
+    }
+
+    @@media(max-width:768px) {
+        .s-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .s-hero {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+</style>
+
+<div class="s-page">
+    <div class="s-hero">
+        <div class="s-hero-content">
+            <div class="s-eyebrow"><i class="bi bi-images"></i> Site Tasarımı</div>
+            <h1 class="s-title">Kategori Banner Yönetimi</h1>
+            <p class="s-subtitle">Anasayfada gösterilen 710x340 özel kategori banner alanlarını yönetin.</p>
+        </div>
+        <a asp-action="Ekle" class="s-add-btn"><i class="bi bi-plus-lg"></i><span>Yeni Banner Ekle</span></a>
+    </div>
+
+    @if (TempData["BasariliMesaj"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius:12px;"><i class="bi bi-check-circle me-2"></i>@TempData["BasariliMesaj"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+    @if (TempData["HataMesaji"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius:12px;"><i class="bi bi-exclamation-circle me-2"></i>@TempData["HataMesaji"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+
+    <div class="s-grid">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var item in Model)
+            {
+                <div class="s-card" style="opacity: @(item.AktifMi ? "1" : "0.7");">
+                    <!-- GÖRSEL YOLU KONTROLÜ -->
+                    <img src="@(string.IsNullOrEmpty(item.GorselUrl) ? "/images/no-image.jpg" : item.GorselUrl)" alt="@item.Baslik" class="s-card-img" />
+
+                    <div class="s-card-top">
+                        <span class="badge bg-light text-dark border px-2 py-1" style="font-size: 0.72rem;"><i class="bi bi-tag-fill text-danger me-1"></i> @item.KategoriAdi</span>
+                        @if (item.AktifMi)
+                        {
+                            <span class="s-status status-active"><i class="bi bi-check2-circle"></i> Aktif</span>
+                        }
+                        else
+                        {
+                            <span class="s-status status-passive"><i class="bi bi-eye-slash"></i> Pasif</span>
+                        }
+                    </div>
+
+                    <h3 class="s-card-title">@item.Baslik</h3>
+                    <p class="s-card-desc">@item.Aciklama</p>
+                    <div class="text-muted small mb-3" style="font-size: 0.75rem;">Sıra: <strong>@item.Sira</strong></div>
+
+                    <div class="s-card-footer">
+                        <a asp-action="Guncelle" asp-route-id="@item.Id" class="s-btn s-btn-edit"><i class="bi bi-pencil"></i> Düzenle</a>
+                        <form asp-action="Sil" asp-route-id="@item.Id" method="post" onsubmit="return confirm('Bu banner\'ı silmek istediğinize emin misiniz?');" style="margin:0;">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="s-btn s-btn-delete" title="Sil"><i class="bi bi-trash3"></i></button>
+                        </form>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="s-empty">
+                <i class="bi bi-image"></i>
+                <h3>Henüz kategori banner'ı eklenmemiş</h3>
+                <p>Anasayfanızı şıklaştırmak için ilk kategori banner'ınızı hemen oluşturun.</p>
+                <div style="display: flex; justify-content: center; margin-top: 20px;">
+                    <a asp-action="Ekle" class="s-add-btn" style="display: inline-flex !important; width: auto !important; padding: 13px 24px;"><i class="bi bi-plus-lg"></i><span>İlk Banner'ı Ekle</span></a>
+                </div>
+            </div>
+        }
+    </div>
+</div>

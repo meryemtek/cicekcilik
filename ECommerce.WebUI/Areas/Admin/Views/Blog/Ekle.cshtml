@@ -1,0 +1,236 @@
+﻿@model ECommerce.Application.DTOs.Blog.BlogEkleDto
+@{
+    ViewData["Title"] = "Yeni Blog Yazısı";
+}
+
+<style>
+    .s-page {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .s-hero {
+        margin-bottom: 28px;
+    }
+
+    .s-eyebrow {
+        color: #9a1640;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .s-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0 0 6px;
+        letter-spacing: -.5px;
+    }
+
+    .f-card {
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #eee9ed;
+        box-shadow: 0 8px 25px rgba(35,28,40,.04);
+        padding: 40px;
+    }
+
+    .f-label {
+        font-weight: 600;
+        color: #24213d;
+        margin-bottom: 8px;
+        font-size: 0.95rem;
+        display: block;
+    }
+
+    .f-input {
+        border-radius: 12px;
+        border: 1px solid #ddd5da;
+        padding: 12px 16px;
+        background: #faf9fa;
+        transition: all 0.2s ease;
+        box-shadow: none;
+        width: 100%;
+        display: block;
+    }
+
+        .f-input:focus {
+            background: #fff;
+            border-color: #8b0028;
+            box-shadow: 0 0 0 4px rgba(139,0,40,0.08);
+            outline: none;
+        }
+
+    .s-submit-btn {
+        background: linear-gradient(135deg,#8b0028,#a70b3b);
+        border: 0;
+        border-radius: 12px;
+        color: #fff;
+        padding: 12px 28px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        box-shadow: 0 6px 18px rgba(139,0,40,.2);
+        transition: all .2s ease;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .s-submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 22px rgba(139,0,40,.28);
+            color: #fff;
+        }
+
+    .button-group {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-top: 30px;
+    }
+
+    .s-cancel-link {
+        color: #85818c;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: color 0.2s;
+    }
+
+        .s-cancel-link:hover {
+            color: #24213d;
+        }
+
+    .section-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #8b0028;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eee9ed;
+    }
+
+    /* CKEditor Özelleştirmeleri */
+    .ck-editor__editable_inline {
+        min-height: 400px;
+        border-bottom-left-radius: 12px !important;
+        border-bottom-right-radius: 12px !important;
+    }
+
+    .ck-toolbar {
+        border-top-left-radius: 12px !important;
+        border-top-right-radius: 12px !important;
+        background: #faf9fa !important;
+        border-color: #ddd5da !important;
+    }
+</style>
+
+<div class="s-page mt-4">
+    <div class="s-hero">
+        <div class="s-eyebrow"><i class="bi bi-arrow-left"></i> <a asp-action="Index" style="color: inherit; text-decoration: none;">Blog Listesine Dön</a></div>
+        <h1 class="s-title">Yeni Blog Yazısı</h1>
+    </div>
+
+    <div class="f-card">
+        <form asp-action="Ekle" method="post" enctype="multipart/form-data">
+
+            <div class="section-title"><i class="bi bi-pencil-square"></i> Temel Bilgiler</div>
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <label class="f-label">Blog Başlığı <span class="text-danger">*</span></label>
+                    <input type="text" asp-for="Baslik" class="f-input" id="Baslik" placeholder="Örn: 2026 Yılı Teknolojik Gelişmeler" required />
+                </div>
+                <div class="col-md-6">
+                    <label class="f-label">SEO URL (Kalıcı Bağlantı) <span class="text-danger">*</span></label>
+                    <input type="text" asp-for="SeoUrl" class="f-input" id="SeoUrl" placeholder="orn-2026-yili-teknolojik-gelismeler" required />
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <label class="f-label">Kapak Görseli</label>
+                    <input type="file" name="gorselDosyasi" class="f-input bg-white" accept="image/*" />
+                    <div class="form-text mt-1 text-muted small">Listede ve detay sayfasının üstünde görünecek ana resim.</div>
+                </div>
+                <div class="col-md-3">
+                    <label class="f-label">Yayınlanma Tarihi</label>
+                    <input type="datetime-local" asp-for="YayinlanmaTarihi" class="f-input" required />
+                </div>
+                <div class="col-md-3">
+                    <label class="f-label">Yayın Durumu</label>
+                    <select asp-for="AktifMi" class="f-input">
+                        <option value="true">Yayında (Aktif)</option>
+                        <option value="false">Taslak (Pasif)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="f-label">Kısa Özet <span class="text-danger">*</span></label>
+                <textarea asp-for="Ozet" class="f-input" rows="3" placeholder="Blog listesinde görünecek kısa ve ilgi çekici özet cümlesi..." required></textarea>
+            </div>
+
+            <div class="section-title mt-5"><i class="bi bi-layout-text-window"></i> Yazı İçeriği</div>
+            <div class="mb-4">
+                <label class="f-label">Tam İçerik (Görsel ve Biçimlendirme Ekleyebilirsiniz)</label>
+                <textarea asp-for="Icerik" id="IcerikEditor"></textarea>
+            </div>
+
+            <div class="section-title mt-5"><i class="bi bi-google"></i> Arama Motoru Optimizasyonu (SEO)</div>
+            <div class="row mb-4">
+                <div class="col-md-12 mb-3">
+                    <label class="f-label">Meta Başlık (Sayfa Sekmesinde Görünür)</label>
+                    <input type="text" asp-for="MetaBaslik" class="f-input" placeholder="Örn: 2026 Teknoloji Trendleri | Şirketiniz" />
+                </div>
+                <div class="col-md-12">
+                    <label class="f-label">Meta Açıklama (Google Arama Sonucunda Görünür)</label>
+                    <textarea asp-for="MetaAciklama" class="f-input" rows="2" placeholder="Google aramalarında başlığın hemen altında görünecek olan açıklama yazısı..."></textarea>
+                </div>
+            </div>
+
+            <div class="button-group border-top pt-4 mt-2">
+                <button type="submit" class="s-submit-btn"><i class="bi bi-check2-circle"></i> Yazıyı Yayınla</button>
+                <a asp-action="Index" class="s-cancel-link">İptal Et</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- CKEditor 5 Classic Build -->
+    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+    <script>
+        // Başlıktan otomatik SEO URL üreten basit fonksiyon
+        document.getElementById('Baslik').addEventListener('keyup', function () {
+            var text = this.value;
+            var trMap = { 'ç': 'c', 'ğ': 'g', 'ş': 's', 'ü': 'u', 'ı': 'i', 'ö': 'o', 'Ç': 'C', 'Ğ': 'G', 'Ş': 'S', 'Ü': 'U', 'İ': 'I', 'Ö': 'O' };
+            for (var key in trMap) {
+                text = text.replace(new RegExp(key, 'g'), trMap[key]);
+            }
+            var seo = text.toLowerCase()
+                .replace(/[^a-z0-9\s-]/g, '')
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-');
+            document.getElementById('SeoUrl').value = seo;
+        });
+
+        // Editör Kurulumu ve Görsel Yükleme Adaptörü
+        ClassicEditor
+            .create(document.querySelector('#IcerikEditor'), {
+                ckfinder: {
+                    // Controller'da yazdığımız editör görsel yükleme metodu
+                    uploadUrl: '/Admin/Blog/UploadEditorImage'
+                }
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    </script>
+}

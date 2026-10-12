@@ -1,0 +1,155 @@
+﻿@model ECommerce.WebUI.Models.LoginViewModel
+
+@{
+    Layout = null; 
+}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Giriş - @Model.FirmaAdi</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            background: url('https://images.unsplash.com/photo-1563241598-a28a1eb3d1bd?q=80&w=1920&auto=format&fit=crop') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 15px;
+        }
+        .bg-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.45);
+            z-index: 1;
+        }
+        .login-card {
+            position: relative;
+            z-index: 2;
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            max-width: 420px;
+            width: 100%;
+            padding: 3rem 2.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+        .brand-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            color: #1a3622;
+            font-weight: 600;
+            margin-bottom: 0;
+        }
+        .brand-subtitle {
+            color: #5c6c61;
+            font-size: 0.85rem;
+            margin-bottom: 2rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+        .form-floating label { color: #6c757d; font-size: 0.95rem; }
+        .form-control { border-radius: 12px; border: 1px solid #ced4da; background-color: rgba(255, 255, 255, 0.9); }
+        .form-control:focus { border-color: #2e8b57; box-shadow: 0 0 0 0.25rem rgba(46, 139, 87, 0.2); background-color: #ffffff; }
+        .btn-login { background: linear-gradient(135deg, #2e8b57 0%, #175231 100%); border: none; color: white; font-weight: 500; border-radius: 12px; padding: 0.9rem; transition: all 0.3s ease; }
+        .btn-login:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(46, 139, 87, 0.4); color: white; }
+        .fade-in-up { animation: fadeInUp 0.8s ease-out; }
+        @@keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .forgot-link { text-decoration: none; font-size: 0.85rem; color: #2e8b57; font-weight: 500; }
+        .forgot-link:hover { color: #175231; }
+        /* Dinamik Logo Sınıfı */
+        .dynamic-logo { max-height: 70px; object-fit: contain; margin-bottom: 10px; }
+
+        /* "Beni Hatırla" Checkbox Düzeltmesi */
+        .form-check-input {
+            width: 1.2rem;
+            height: 1.2rem;
+            cursor: pointer;
+            border: 1px solid #ced4da;
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+            .form-check-input:checked {
+                background-color: #2e8b57 !important;
+                border-color: #2e8b57 !important;
+            }
+    </style>
+</head>
+<body>
+    <div class="bg-overlay"></div>
+    
+    <div class="login-card fade-in-up">
+        <div class="text-center">
+            
+            <!-- LOGO KONTROLÜ: Veritabanında logo varsa resmi bas, yoksa standart ikonu göster -->
+            @if (!string.IsNullOrEmpty(Model.LogoUrl))
+            {
+                <img src="@Model.LogoUrl" alt="@Model.FirmaAdi" class="dynamic-logo" />
+            }
+            else
+            {
+                <i class="bi bi-flower1" style="font-size: 3rem; color: #2e8b57;"></i>
+            }
+            
+            <!-- FİRMA ADI KONTROLÜ: API'den gelen dinamik ismi basar -->
+            <h2 class="brand-title mt-2">@Model.FirmaAdi</h2>
+            <p class="brand-subtitle">Yönetim Paneli</p>
+        </div>
+        
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger rounded-3" role="alert" style="font-size: 0.85rem;">
+                @Html.ValidationSummary(false, "", new { @class = "mb-0 list-unstyled" })
+            </div>
+        }
+
+        <form asp-area="Admin" asp-controller="Auth" asp-action="Login" method="post">
+            
+            <div class="form-floating mb-3">
+                <input asp-for="Email" type="email" class="form-control" id="floatingEmail" placeholder="ornek@mail.com" required />
+                <label for="floatingEmail"><i class="bi bi-envelope me-2"></i>E-Posta Adresi</label>
+            </div>
+            
+            <div class="form-floating mb-4">
+                <input asp-for="Sifre" type="password" class="form-control" id="floatingPassword" placeholder="Şifreniz" required />
+                <label for="floatingPassword"><i class="bi bi-shield-lock me-2"></i>Şifre</label>
+            </div>
+            
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="form-check">
+                    <!-- class tanımını sadeleştirdik -->
+                    <input asp-for="BeniHatirla" class="form-check-input" id="beniHatirlaCheck" />
+                    <label asp-for="BeniHatirla" class="form-check-label text-muted" for="beniHatirlaCheck" style="font-size: 0.9rem; cursor: pointer;">
+                        Beni Hatırla
+                    </label>
+                </div>
+                <a href="#" class="forgot-link">Şifremi Unuttum</a>
+            </div>
+            
+            <button type="submit" class="btn btn-login w-100">
+                GİRİŞ YAP <i class="bi bi-arrow-right-short ms-1" style="font-size:1.2rem; vertical-align: middle;"></i>
+            </button>
+        </form>
+        
+        <div class="text-center mt-4 pt-3 border-top" style="border-color: rgba(0,0,0,0.05) !important;">
+            <small class="text-muted" style="font-size: 0.75rem;">
+                &copy; @DateTime.Now.Year @Model.FirmaAdi <br />
+                Tüm Hakları Saklıdır.
+            </small>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

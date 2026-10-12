@@ -1,0 +1,595 @@
+﻿@model ECommerce.Application.DTOs.Kategori.KategoriGuncelleDto
+@{
+    ViewData["Title"] = "Kategori Düzenle";
+    var ustKategoriler = ViewBag.UstKategoriler as SelectList;
+}
+
+<style>
+    .kategori-form-page {
+        max-width: 1180px;
+        margin: 0 auto;
+    }
+
+    .kategori-form-header {
+        margin-bottom: 28px;
+    }
+
+    .kategori-form-eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #9a1640;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+    }
+
+    .kategori-form-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0 0 6px;
+        letter-spacing: -.5px;
+    }
+
+    .kategori-form-subtitle {
+        font-size: .92rem;
+        color: #85818c;
+        margin: 0;
+    }
+
+    .kategori-form-layout {
+        display: grid;
+        grid-template-columns: minmax(0,1.25fr) minmax(300px,.75fr);
+        gap: 22px;
+        align-items: start;
+    }
+
+    .kategori-form-card {
+        background: #fff;
+        border: 1px solid #eee9ed;
+        border-radius: 20px;
+        box-shadow: 0 8px 28px rgba(35,28,40,.055);
+        padding: 28px;
+    }
+
+    .kategori-form-card-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 25px;
+    }
+
+    .kategori-form-card-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        background: #fff2f5;
+        color: #8b0028;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.15rem;
+    }
+
+    .kategori-form-card-title h2 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0;
+    }
+
+    .kategori-form-card-title p {
+        font-size: .75rem;
+        color: #99949d;
+        margin: 3px 0 0;
+    }
+
+    .kategori-field {
+        margin-bottom: 20px;
+    }
+
+        .kategori-field label {
+            display: block;
+            color: #403b46;
+            font-size: .8rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+            .kategori-field label span {
+                color: #b24a60;
+            }
+
+    .kategori-input, .kategori-select {
+        width: 100%;
+        height: 48px;
+        border: 1px solid #e4dfe4;
+        border-radius: 12px;
+        background: #fff;
+        padding: 0 15px;
+        color: #24213d;
+        font-size: .88rem;
+        outline: 0;
+        transition: all .2s ease;
+    }
+
+        .kategori-input:focus, .kategori-select:focus {
+            border-color: #c98ca0;
+            box-shadow: 0 0 0 4px rgba(139,0,40,.06);
+        }
+
+    .kategori-help {
+        display: block;
+        color: #9d98a0;
+        font-size: .7rem;
+        margin-top: 7px;
+    }
+
+    .kategori-validation {
+        color: #b53d53;
+        font-size: .72rem;
+        margin-top: 6px;
+        display: block;
+    }
+
+    .kategori-switch {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        border: 1px solid #eee9ed;
+        background: #faf9fa;
+        border-radius: 13px;
+        padding: 15px 16px;
+    }
+
+    .kategori-switch-text strong {
+        display: block;
+        font-size: .82rem;
+        color: #3e3943;
+        margin-bottom: 3px;
+    }
+
+    .kategori-switch-text span {
+        font-size: .7rem;
+        color: #99949d;
+    }
+
+    .kategori-switch input {
+        width: 42px;
+        height: 23px;
+        cursor: pointer;
+        accent-color: #8b0028;
+    }
+
+    .kategori-image-upload {
+        border: 1px dashed #d9cbd1;
+        border-radius: 15px;
+        background: #fcfafb;
+        padding: 15px;
+    }
+
+    .kategori-image-preview {
+        position: relative;
+        width: 100%;
+        height: 190px;
+        border-radius: 12px;
+        overflow: hidden;
+        background: #f7f3f5;
+        margin-bottom: 12px;
+    }
+
+        .kategori-image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+    .kategori-image-remove {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 32px;
+        height: 32px;
+        border: 0;
+        border-radius: 9px;
+        background: rgba(255,255,255,.92);
+        color: #9a1640;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0,0,0,.12);
+    }
+
+    .kategori-file-label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        min-height: 72px;
+        border-radius: 11px;
+        background: #fff;
+        color: #77717b;
+        font-size: .78rem;
+        font-weight: 600;
+        cursor: pointer;
+        text-align: center;
+        transition: all .2s ease;
+    }
+
+        .kategori-file-label:hover {
+            background: #fff4f7;
+            color: #8b0028;
+        }
+
+        .kategori-file-label i {
+            font-size: 1.3rem;
+            color: #9a1640;
+        }
+
+    .kategori-file-input {
+        display: none;
+    }
+
+    .kategori-preview {
+        position: sticky;
+        top: 20px;
+    }
+
+    .kategori-preview-label {
+        font-size: .72rem;
+        font-weight: 700;
+        color: #908b95;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+        margin-bottom: 12px;
+    }
+
+    .kategori-preview-card {
+        position: relative;
+        overflow: hidden;
+        background: #fff;
+        border: 1px solid #eee9ed;
+        border-radius: 20px;
+        padding: 25px;
+        box-shadow: 0 12px 35px rgba(35,28,40,.08);
+    }
+
+    .kategori-preview-decoration {
+        position: absolute;
+        right: -25px;
+        top: -25px;
+        width: 115px;
+        height: 115px;
+        border-radius: 50%;
+        background: #fff4f7;
+    }
+
+        .kategori-preview-decoration::after {
+            content: "";
+            position: absolute;
+            left: 27px;
+            bottom: 17px;
+            width: 45px;
+            height: 45px;
+            border: 1px solid rgba(139,0,40,.12);
+            border-radius: 50% 50% 50% 10%;
+            transform: rotate(35deg);
+        }
+
+    .kategori-preview-top {
+        position: relative;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 25px;
+    }
+
+    .kategori-preview-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 15px;
+        background: linear-gradient(145deg,#fff2f5,#fbe3e9);
+        color: #8b0028;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.55rem;
+        overflow: hidden;
+    }
+
+        .kategori-preview-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+    .kategori-preview-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        border-radius: 20px;
+        padding: 7px 10px;
+        font-size: .7rem;
+        font-weight: 600;
+    }
+
+        .kategori-preview-status.active {
+            background: #edf9f4;
+            color: #287c5d;
+        }
+
+        .kategori-preview-status.passive {
+            background: #f2f1f3;
+            color: #85808a;
+        }
+
+        .kategori-preview-status i {
+            font-size: .45rem;
+        }
+
+    .kategori-preview-name {
+        position: relative;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0 0 6px;
+        word-break: break-word;
+    }
+
+    .kategori-preview-seo {
+        position: relative;
+        font-size: .78rem;
+        color: #99949d;
+        margin-bottom: 22px;
+        word-break: break-all;
+    }
+
+    .kategori-preview-line {
+        height: 1px;
+        background: #f0edef;
+        margin: 0 0 18px;
+    }
+
+    .kategori-preview-description {
+        font-size: .72rem;
+        color: #aaa5ad;
+        margin: 0;
+    }
+
+    .kategori-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 22px;
+    }
+
+    .kategori-cancel-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        height: 46px;
+        padding: 0 18px;
+        border: 1px solid #e5e0e5;
+        border-radius: 12px;
+        background: #fff;
+        color: #716c75;
+        text-decoration: none;
+        font-size: .82rem;
+        font-weight: 600;
+    }
+
+        .kategori-cancel-btn:hover {
+            background: #f8f6f8;
+            color: #403b46;
+        }
+
+    .kategori-save-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        height: 46px;
+        padding: 0 20px;
+        border: 0;
+        border-radius: 12px;
+        background: linear-gradient(135deg,#8b0028,#a70b3b);
+        color: #fff;
+        font-size: .82rem;
+        font-weight: 600;
+        box-shadow: 0 7px 20px rgba(139,0,40,.2);
+    }
+
+        .kategori-save-btn:hover {
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+    @@media(max-width:900px) {
+        .kategori-form-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .kategori-preview {
+            position: relative;
+            top: auto;
+        }
+    }
+</style>
+
+<div class="kategori-form-page">
+    <div class="kategori-form-header">
+        <div class="kategori-form-eyebrow"><i class="bi bi-flower1"></i> Mağaza Yönetimi</div>
+        <h1 class="kategori-form-title">Kategoriyi Düzenle</h1>
+        <p class="kategori-form-subtitle">Mevcut kategori bilgilerini ve hiyerarşisini güncelleyin.</p>
+    </div>
+
+    <form asp-action="Guncelle" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+        <input asp-for="Id" type="hidden" />
+        <input asp-for="GorselUrl" type="hidden" />
+
+        <div class="kategori-form-layout">
+            <div>
+                <div class="kategori-form-card">
+                    <div class="kategori-form-card-title">
+                        <div class="kategori-form-card-icon"><i class="bi bi-pencil-square"></i></div>
+                        <div><h2>Kategori Bilgileri</h2><p>Kategorinizin bilgilerini düzenleyin.</p></div>
+                    </div>
+
+                    <!-- ÜST KATEGORİ SEÇİMİ EKLENDİ -->
+                    <div class="kategori-field">
+                        <label asp-for="UstKategoriId">Ana Kategori (Opsiyonel)</label>
+                        <select asp-for="UstKategoriId" asp-items="ustKategoriler" class="kategori-select">
+                            <option value="">-- Ana Kategori (En Üst Seviye) --</option>
+                        </select>
+                        <span class="kategori-help">Kategorinin bağlı olduğu üst kategoriyi değiştirebilirsiniz.</span>
+                        <span asp-validation-for="UstKategoriId" class="kategori-validation"></span>
+                    </div>
+
+                    <div class="kategori-field">
+                        <label asp-for="Ad">Kategori Adı <span>*</span></label>
+                        <input asp-for="Ad" class="kategori-input" id="kategoriAd" autocomplete="off" />
+                        <span asp-validation-for="Ad" class="kategori-validation"></span>
+                    </div>
+
+                    <div class="kategori-field">
+                        <label asp-for="SeoUrl">SEO URL <span>*</span></label>
+                        <input asp-for="SeoUrl" class="kategori-input" id="kategoriSeo" autocomplete="off" />
+                        <span class="kategori-help">Arama motorları için kullanılacak temiz URL adresidir.</span>
+                        <span asp-validation-for="SeoUrl" class="kategori-validation"></span>
+                    </div>
+
+                    <div class="kategori-field">
+                        <label>Kategori Görseli</label>
+                        <div class="kategori-image-upload">
+                            <div class="kategori-image-preview" id="imagePreview" style="@(string.IsNullOrWhiteSpace(Model.GorselUrl) ? "display:none;" : "")">
+                                <img id="previewImage" src="@Model.GorselUrl" alt="@Model.Ad" />
+                                <button type="button" class="kategori-image-remove" id="removeImage"><i class="bi bi-x-lg"></i></button>
+                            </div>
+                            <label class="kategori-file-label" for="gorselDosyasi">
+                                <i class="bi bi-cloud-arrow-up"></i>
+                                <span>Yeni görsel seçmek için tıklayın<br><small>JPG, JPEG, PNG veya WEBP</small></span>
+                            </label>
+                            <input type="file" name="gorselDosyasi" id="gorselDosyasi" class="kategori-file-input" accept="image/jpeg,image/png,image/webp" />
+                        </div>
+                        <span class="kategori-help">Yeni görsel seçmezseniz mevcut görsel korunur.</span>
+                    </div>
+
+                    <div class="kategori-field">
+                        <div class="kategori-switch">
+                            <div class="kategori-switch-text">
+                                <strong>Kategoriyi aktif et</strong>
+                                <span>Aktif kategoriler mağazanızda gösterilir.</span>
+                            </div>
+                            <input asp-for="AktifMi" type="checkbox" id="kategoriAktif" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="kategori-actions">
+                    <a asp-action="Index" class="kategori-cancel-btn">Vazgeç</a>
+                    <button type="submit" class="kategori-save-btn"><i class="bi bi-check2"></i> Değişiklikleri Kaydet</button>
+                </div>
+            </div>
+
+            <div class="kategori-preview">
+                <div class="kategori-preview-label">Canlı Önizleme</div>
+                <div class="kategori-preview-card">
+                    <div class="kategori-preview-decoration"></div>
+                    <div class="kategori-preview-top">
+                        <div class="kategori-preview-icon">
+                            @if (!string.IsNullOrWhiteSpace(Model.GorselUrl))
+                            {
+                                <img id="cardPreviewImage" src="@Model.GorselUrl" alt="@Model.Ad" />
+                                <i class="bi bi-flower1" id="previewIcon" style="display:none"></i>
+                            }
+                            else
+                            {
+                                <i class="bi bi-flower1" id="previewIcon"></i>
+                                <img id="cardPreviewImage" src="" alt="" style="display:none" />
+                            }
+                        </div>
+                        <div class="kategori-preview-status @(Model.AktifMi ? "active" : "passive")" id="previewStatus">
+                            <i class="bi bi-circle-fill"></i>
+                            <span id="previewStatusText">@(Model.AktifMi ? "Aktif" : "Pasif")</span>
+                        </div>
+                    </div>
+                    <h3 class="kategori-preview-name" id="previewName">@Model.Ad</h3>
+                    <div class="kategori-preview-seo" id="previewSeo">/@Model.SeoUrl</div>
+                    <div class="kategori-preview-line"></div>
+                    <p class="kategori-preview-description">Bu kart, kategorinizin yönetim panelinde nasıl görüneceğini gösterir.</p>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const name = document.getElementById("kategoriAd");
+            const seo = document.getElementById("kategoriSeo");
+            const active = document.getElementById("kategoriAktif");
+            const file = document.getElementById("gorselDosyasi");
+            const imagePreview = document.getElementById("imagePreview");
+            const previewImage = document.getElementById("previewImage");
+            const cardPreviewImage = document.getElementById("cardPreviewImage");
+            const previewIcon = document.getElementById("previewIcon");
+            const removeImage = document.getElementById("removeImage");
+            const previewName = document.getElementById("previewName");
+            const previewSeo = document.getElementById("previewSeo");
+            const previewStatus = document.getElementById("previewStatus");
+            const previewStatusText = document.getElementById("previewStatusText");
+
+            function updatePreview() {
+                previewName.textContent = name.value.trim() || "Kategori Adı";
+                previewSeo.textContent = "/" + (seo.value.trim() || "kategori-url");
+                if (active.checked) {
+                    previewStatus.classList.remove("passive");
+                    previewStatus.classList.add("active");
+                    previewStatusText.textContent = "Aktif";
+                } else {
+                    previewStatus.classList.remove("active");
+                    previewStatus.classList.add("passive");
+                    previewStatusText.textContent = "Pasif";
+                }
+            }
+
+            name?.addEventListener("input", updatePreview);
+            seo?.addEventListener("input", updatePreview);
+            active?.addEventListener("change", updatePreview);
+
+            file?.addEventListener("change", function () {
+                const selected = this.files[0];
+                if (!selected) return;
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    previewImage.src = e.target.result;
+                    imagePreview.style.display = "block";
+                    cardPreviewImage.src = e.target.result;
+                    cardPreviewImage.style.display = "block";
+                    previewIcon.style.display = "none";
+                };
+                reader.readAsDataURL(selected);
+            });
+
+            removeImage?.addEventListener("click", function () {
+                file.value = "";
+                previewImage.src = "";
+                imagePreview.style.display = "none";
+                cardPreviewImage.src = "";
+                cardPreviewImage.style.display = "none";
+                previewIcon.style.display = "block";
+
+                // Form submit edilirken eski görselin silinmesi için değeri temizle
+                document.querySelector('input[name="GorselUrl"]').value = "";
+            });
+        });
+    </script>
+}

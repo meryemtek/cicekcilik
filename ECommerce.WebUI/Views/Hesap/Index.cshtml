@@ -1,0 +1,49 @@
+﻿@{
+    ViewData["Title"] = "Hesabım";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["AktifMenu"] = "KontrolPaneli";
+}
+
+<div class="container my-5">
+    <div class="row">
+        <!-- Sol Menü (Ortak Partial) -->
+        <div class="col-lg-3 mb-4">
+            @await Html.PartialAsync("_HesapMenuPartial")
+        </div>
+
+        <!-- Sağ İçerik Alanı -->
+        <div class="col-lg-9">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                <h3 class="fw-bold text-dark mb-3">Hesap Paneli</h3>
+                <p class="text-muted">Bu alandan siparişlerinizi takip edebilir, favori ürünlerinize göz atabilir ve tüm hesap bilgilerinizi güvenle yönetebilirsiniz.</p>
+
+                <div class="row g-3 mt-3">
+                    <div class="col-md-4">
+                        <div class="p-4 rounded-4 bg-light border-0">
+                            <i class="bi bi-heart-fill text-danger fs-3 mb-2 d-block"></i>
+                            <h5 class="fw-bold text-dark">Favorilerim</h5>
+                            <p class="text-muted small mb-3">Beğendiğiniz ürünlerin listesi.</p>
+                            <a href="/Favoriler" class="btn btn-sm btn-outline-dark rounded-pill px-3">Görüntüle</a>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-4 rounded-4 bg-light border-0">
+                            <i class="bi bi-box-seam text-primary fs-3 mb-2 d-block"></i>
+                            <h5 class="fw-bold text-dark">Siparişlerim</h5>
+                            <p class="text-muted small mb-3">Geçmiş sipariş durumları.</p>
+                            <a href="/Hesap/Siparislerim" class="btn btn-sm btn-outline-dark rounded-pill px-3">İncele</a>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-4 rounded-4 bg-light border-0">
+                            <i class="bi bi-geo-alt text-success fs-3 mb-2 d-block"></i>
+                            <h5 class="fw-bold text-dark">Adreslerim</h5>
+                            <p class="text-muted small mb-3">Teslimat adres yönetimi.</p>
+                            <a href="/Hesap/Adreslerim" class="btn btn-sm btn-outline-dark rounded-pill px-3">Yönet</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

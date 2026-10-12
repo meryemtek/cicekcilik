@@ -1,0 +1,44 @@
+﻿@model ECommerce.WebUI.Models.OdemeViewModel
+
+<div class="payment-card p-4 mb-4">
+    <h5 class="fw-bold text-dark mb-3 pb-2 border-bottom">
+        <i class="bi bi-person-badge-fill me-2" style="color: #3b1154;"></i> 2. Gönderici Bilgileri
+    </h5>
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label class="form-label small fw-bold text-muted">Ad Soyad</label>
+            <input type="text" name="MusteriAdSoyad" class="form-control" required placeholder="Adınız Soyadınız" />
+        </div>
+        <div class="col-md-6">
+            <label class="form-label small fw-bold text-muted">Telefon</label>
+            <input type="tel" name="MusteriTelefon" class="form-control" required placeholder="05XXXXXXXXX" />
+        </div>
+        <div class="col-md-6">
+            <label class="form-label small fw-bold text-muted">E-Posta Adresi</label>
+            <input type="email" name="MusteriEmail" class="form-control" required placeholder="ornek@mail.com" />
+        </div>
+        <div class="col-md-6">
+            <label class="form-label small fw-bold text-muted">Fatura Tipi</label>
+            <select name="FaturaTipi" class="form-select" id="faturaTipiSelect" onchange="faturaTipiDegisti(this)">
+                <option value="Bireysel">Bireysel</option>
+                <option value="Kurumsal">Kurumsal</option>
+            </select>
+        </div>
+        <div class="col-12" id="kurumsalAlan" style="display: none;">
+            <div class="p-3 bg-light rounded-3 border">
+                <div class="row g-2">
+                    <div class="col-md-6">
+                        <input type="text" name="FirmaAdi" class="form-control" placeholder="Firma Ünvanı" />
+                    </div>
+                    <div class="col-md-6">
+                        <input type="text" name="VergiNo" class="form-control" placeholder="Vergi Numarası / Vergi Dairesi" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <label class="form-label small fw-bold text-muted">Fatura Adresi</label>
+            <textarea name="FaturaAdresi" class="form-control" rows="2" required placeholder="Fatura adresiniz"></textarea>
+        </div>
+    </div>
+</div>

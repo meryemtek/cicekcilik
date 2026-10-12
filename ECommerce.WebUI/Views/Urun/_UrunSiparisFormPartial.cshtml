@@ -1,0 +1,225 @@
+﻿@model ECommerce.Application.DTOs.Urun.UrunDetayDto
+@{
+    string rawWhatsapp = ViewBag.WhatsappNo as string ?? "905010146623";
+    string stokSormaMesaji = Uri.EscapeDataString($"Merhaba, {Model.UrunKodu} kodlu {Model.Ad} ürünü için stok durumu öğrenebilir miyim?");
+
+    var duyurular = ViewBag.Duyurular as List<string> ?? new List<string>
+    {
+        "Trend ürünler arasında yerini aldı!",
+        "Özel günlerin vazgeçilmezi.",
+        "Özenle seçilmiş birinci kalite çiçekler."
+    };
+
+    var ikonlar = new List<string> { "🔥", "✨", "🌸", "💎", "⭐", "🎁" };
+    var teslimatSaatleriListesi = ViewBag.TeslimatSaatleri as List<ECommerce.Application.DTOs.TeslimatSaati.TeslimatSaatiDto> ?? new List<ECommerce.Application.DTOs.TeslimatSaati.TeslimatSaatiDto>();
+    decimal vipUcret = ViewBag.VipUcreti != null ? Convert.ToDecimal(ViewBag.VipUcreti) : 0m;
+}
+
+<div class="col-lg-6">
+    <div class="product-info-card">
+        <div class="top-delivery-badge">
+            <i class="bi bi-truck"></i> Her Gün Hızlı ve Anında Teslimat
+        </div>
+
+        <!-- BAŞLIK VE FAVORİ BUTONU YANYANA -->
+        <div class="d-flex justify-content-between align-items-start mb-2">
+            <h1 class="product-title mb-0">@Model.Ad</h1>
+            <button type="button" class="btn-favori btn btn-light rounded-circle shadow-sm border-0 d-flex align-items-center justify-content-center"
+                    style="width: 42px; height: 42px; flex-shrink: 0;"
+                    data-urun-id="@Model.Id"
+                    title="Favorilere Ekle / Çıkar">
+                <i class="bi bi-heart text-danger fs-5"></i>
+            </button>
+        </div>
+        <span class="product-code">Ürün Kodu: @(Model.UrunKodu ?? "CK-" + Model.Id.ToString().Substring(0, 6).ToUpper())</span>
+
+        <!-- YILDIZ DEĞERLENDİRME ÖZETİ -->
+        <div class="d-flex align-items-center gap-2 mb-3">
+            <div class="text-warning">
+                @for (int i = 1; i <= 5; i++)
+                {
+                    if (i <= Math.Round(Model.OrtalamaPuan))
+                    {
+                        <i class="bi bi-star-fill"></i>
+                    }
+                    else
+                    {
+                        <i class="bi bi-star"></i>
+                    }
+                }
+            </div>
+            <span class="fw-bold small text-dark">@Model.OrtalamaPuan / 5.0</span>
+            <span class="text-muted small">(@Model.ToplamYorumSayisi Değerlendirme)</span>
+        </div>
+
+        <div class="product-price-wrapper">
+            <span class="product-price" id="urunFiyatDisplay" data-base-price="@Model.Fiyat.ToString(System.Globalization.CultureInfo.InvariantCulture)">@Model.Fiyat.ToString("N2")</span>
+            <span class="product-currency">₺</span>
+        </div>
+
+        @if (duyurular.Any())
+        {
+            <div class="vertical-marquee-box">
+                <ul class="vertical-marquee-list" id="marqueeList">
+                    @for (int i = 0; i < duyurular.Count; i++)
+                    {
+                        string ikon = ikonlar[i % ikonlar.Count];
+                        <li><span>@ikon</span> @duyurular[i]</li>
+                    }
+                </ul>
+            </div>
+        }
+
+        <form asp-controller="Sepet" asp-action="Ekle" method="post" id="siparisFormu">
+            <input type="hidden" name="UrunId" value="@Model.Id" />
+            <input type="hidden" name="Adet" id="gercekAdetInput" value="1" />
+
+            <!-- Stok Sorma ve Adet -->
+            <div class="action-row">
+                <a href="https://api.whatsapp.com/send?phone=@rawWhatsapp&text=@stokSormaMesaji" target="_blank" class="stock-inquiry-btn">
+                    <i class="bi bi-check-circle-fill" style="color: #4caf50;"></i> Stok Sormak İçin Tıklayınız
+                </a>
+
+                <div class="quantity-box">
+                    <button type="button" onclick="adetDegistir(-1)">-</button>
+                    <input type="text" id="gorselAdet" value="1" readonly />
+                    <button type="button" onclick="adetDegistir(1)">+</button>
+                </div>
+            </div>
+
+            <!-- VARYANTLAR -->
+            @if (Model.Varyantlar != null && Model.Varyantlar.Any())
+            {
+                <div class="mb-3">
+                    <label class="form-label small fw-bold text-muted">Model / Boyut Seçimi</label>
+                    <select name="VaryantId" class="form-select fw-semibold" onchange="fiyatGuncelle()">
+                        <option value="" data-fark="0">Standart Boy / Model</option>
+                        @foreach (var v in Model.Varyantlar)
+                        {
+                            <option value="@v.Id" data-fark="@v.FiyatFarki.ToString(System.Globalization.CultureInfo.InvariantCulture)">@v.VaryantAdi (+@v.FiyatFarki.ToString("N2") ₺)</option>
+                        }
+                    </select>
+                </div>
+            }
+
+            <!-- KOMPAKT TESLİMAT SEÇİM BUTONU -->
+            <div class="delivery-trigger-box mb-4" id="deliveryTriggerBox" data-bs-toggle="modal" data-bs-target="#teslimatModal">
+                <div class="d-flex align-items-center gap-3">
+                    <i class="bi bi-geo-alt-fill text-danger fs-4"></i>
+                    <div class="delivery-info-text">
+                        <h6 id="secilenAdresOzet">Gönderim Adresini Seçiniz</h6>
+                        <p id="secilenZamanOzet" class="mb-0">İl, ilçe ve mahalle belirleyin</p>
+                    </div>
+                </div>
+                <i class="bi bi-chevron-right text-muted"></i>
+            </div>
+
+            <!-- TARİH VE SAAT SEÇİM ALANI -->
+            <div class="mb-4">
+                <label class="form-label fw-bold text-dark mb-3"><i class="bi bi-calendar-event text-purple me-2"></i>Teslimat Tarihi ve Saati</label>
+
+                <div class="date-type-grid">
+                    <label class="date-type-card active" onclick="tarihTuruSec(this, 'Bugun')">
+                        <input type="radio" name="GorselTeslimatGunu" value="Bugun" checked />
+                        <i class="bi bi-truck d-block fs-5 mb-1"></i> Bugün
+                    </label>
+                    <label class="date-type-card" onclick="tarihTuruSec(this, 'Yarin')">
+                        <input type="radio" name="GorselTeslimatGunu" value="Yarin" />
+                        <i class="bi bi-calendar-check d-block fs-5 mb-1"></i> Yarın
+                    </label>
+                    <label class="date-type-card" onclick="tarihTuruSec(this, 'TarihSec')">
+                        <input type="radio" name="GorselTeslimatGunu" value="TarihSec" />
+                        <i class="bi bi-calendar-plus d-block fs-5 mb-1"></i> Tarih Seç
+                    </label>
+                </div>
+
+                <div id="ozelTarihBox" class="mb-3" style="display: none;">
+                    <input type="date" id="ozelTarihInput" class="form-control" onchange="ozelTarihDegisti()" />
+                </div>
+
+                <div id="normalSaatKutusu" class="mb-3">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white"><i class="bi bi-clock text-muted"></i></span>
+                        <select id="normalSaatSelect" class="form-select fw-semibold time-select" onchange="saatDegisti()">
+                            <option value="">Normal teslimat saati seçin</option>
+                            @if (teslimatSaatleriListesi.Any(x => x.TeslimatGrubu == ECommerce.Domain.Enums.TeslimatGrubu.Normal))
+                            {
+                                foreach (var saat in teslimatSaatleriListesi.Where(x => x.TeslimatGrubu == ECommerce.Domain.Enums.TeslimatGrubu.Normal))
+                                {
+                                    string text = string.IsNullOrEmpty(saat.Aciklama) ? $"{saat.BaslangicSaati} - {saat.BitisSaati}" : $"{saat.Aciklama} ({saat.BaslangicSaati} - {saat.BitisSaati})";
+                                    <option value="@saat.BaslangicSaati - @saat.BitisSaati" data-baslangic="@saat.BaslangicSaati">@text</option>
+                                }
+                            }
+                            else
+                            {
+                                <option value="">Tanımlı normal saat bulunamadı</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <!-- VIP TESLİMAT KUTUSU -->
+                <div class="vip-delivery-box" id="vipDeliveryContainer">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div>
+                            <span class="badge bg-warning text-dark fw-bold px-2 py-1 me-1">VİP</span>
+                            <strong class="text-dark">Özel VIP Teslimat</strong>
+                        </div>
+                        <span class="fw-bold text-dark">+@vipUcret.ToString("N2") ₺</span>
+                    </div>
+                    <p class="small text-muted mb-3" style="line-height: 1.4;">
+                        Özel VIP teslimat ile istediğiniz saatte tam zamanında teslimat garantisi.
+                    </p>
+
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" name="VipTeslimatAktifMi" value="true" id="vipCheckbox" onchange="vipDurumuDegisti()" />
+                        <label class="form-check-label fw-bold small text-dark" for="vipCheckbox">
+                            VIP Teslimat İstiyorum
+                        </label>
+                    </div>
+
+                    <div id="vipSaatKutusu" style="display: none;">
+                        <hr class="my-3 border-warning border-dashed" style="border-style: dashed; opacity: 0.5;" />
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-warning"><i class="bi bi-clock text-muted"></i></span>
+                            <select id="vipSaatSelect" class="form-select border-warning fw-semibold time-select" onchange="saatDegisti()">
+                                <option value="">VIP teslimat saati seçin</option>
+                                @if (teslimatSaatleriListesi.Any(x => x.TeslimatGrubu == ECommerce.Domain.Enums.TeslimatGrubu.Vip))
+                                {
+                                    foreach (var saat in teslimatSaatleriListesi.Where(x => x.TeslimatGrubu == ECommerce.Domain.Enums.TeslimatGrubu.Vip))
+                                    {
+                                        string text = string.IsNullOrEmpty(saat.Aciklama) ? $"{saat.BaslangicSaati} - {saat.BitisSaati}" : $"{saat.Aciklama} ({saat.BaslangicSaati} - {saat.BitisSaati})";
+                                        <option value="@saat.BaslangicSaati - @saat.BitisSaati" data-baslangic="@saat.BaslangicSaati">@text</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GİZLİ INPUTLAR -->
+            <input type="hidden" name="Il" id="gizliIl" value="" />
+            <input type="hidden" name="Ilce" id="gizliIlce" value="" />
+            <input type="hidden" name="Mahalle" id="gizliMahalle" value="" />
+            <input type="hidden" name="TeslimatGunu" id="gizliTeslimatGunu" value="Bugun" />
+            <input type="hidden" name="TeslimatSaati" id="gizliTeslimatSaati" value="" />
+
+            <!-- Ek Ücretler için name atamaları -->
+            <input type="hidden" name="MahalleFarki" id="gizliMahalleFark" value="0" />
+            <input type="hidden"
+                   name="VipFarki"
+                   id="gizliVipFark"
+                   value="0"
+                   data-ucret="@vipUcret.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
+
+            <button type="submit" class="btn-main-order" id="siparisVerBtn">
+                <i class="bi bi-cart3 me-2"></i> Sipariş Ver
+            </button>
+
+            <a href="javascript:void(0)" onclick="whatsappSiparis()" class="btn-whatsapp-order">
+                <i class="bi bi-whatsapp"></i> WhatsApp Sipariş
+            </a>
+        </form>
+    </div>
+</div>

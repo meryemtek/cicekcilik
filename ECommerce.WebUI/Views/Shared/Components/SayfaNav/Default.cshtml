@@ -1,0 +1,99 @@
+﻿@model ECommerce.WebUI.Models.SayfaNavViewModel
+
+@if (Model.Sayfalar != null && Model.Sayfalar.Any())
+{
+    <!-- 1. HIZLI LİNKLER MENÜSÜ -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4 quick-links-card">
+        <div class="p-3 text-white fw-bold d-flex align-items-center gap-2" style="background-color: var(--site-primary); font-size: 0.95rem; letter-spacing: 0.5px;">
+            <i class="bi bi-list-nested"></i> Hızlı Linkler
+        </div>
+
+        <div class="list-group list-group-flush">
+            @foreach (var sayfa in Model.Sayfalar)
+            {
+                bool isActive = Context.Request.Path.ToString().Contains(sayfa.SayfaKodu, StringComparison.OrdinalIgnoreCase);
+
+                <a href="/sayfa/@sayfa.SayfaKodu" class="list-group-item list-group-item-action py-3 px-4 d-flex align-items-center justify-content-between text-decoration-none quick-link-item @(isActive ? "active-quick-link" : "")">
+                    <span class="fw-semibold link-text @(isActive ? "active-text" : "text-dark")">
+                        @sayfa.Baslik
+                    </span>
+                    <i class="bi bi-chevron-right small text-muted arrow-icon"></i>
+                </a>
+            }
+        </div>
+    </div>
+}
+
+<!-- 2. PRO SEVİYE DİNAMİK DESTEK KUTUSU -->
+<div class="card border-0 shadow-sm rounded-4 p-4 text-center text-white" style="background: var(--site-primary);">
+    <div class="mb-2">
+        <i class="bi bi-headset fs-1 text-white opacity-75"></i>
+    </div>
+    <h6 class="fw-bold mb-1 text-white" style="font-size: 1.05rem;">Yardıma mı ihtiyacınız var?</h6>
+    <p class="small text-white-50 mb-3" style="font-size: 0.85rem; line-height: 1.4;">Müşteri hizmetlerimiz size yardımcı olmaktan mutluluk duyar.</p>
+
+    <!-- Şık, Okunabilir Beyaz Telefon Butonu -->
+    <a href="tel:@Model.DestekTelefonu" class="btn bg-white text-dark btn-sm rounded-pill px-4 py-2 fw-bold shadow-sm d-inline-flex align-items-center justify-content-center gap-2 text-decoration-none support-phone-btn">
+        <i class="bi bi-telephone-fill text-danger small"></i>
+        <span style="color: #fff; font-weight: 700;">@Model.DestekTelefonu</span>
+    </a>
+</div>
+
+<style>
+    .quick-links-card {
+        border: 1px solid #eee9ed !important;
+    }
+
+    .quick-link-item {
+        border-bottom: 1px solid #f1f0f2 !important;
+        transition: all 0.25s ease;
+        background-color: #fff;
+    }
+
+        .quick-link-item:last-child {
+            border-bottom: none !important;
+        }
+
+        .quick-link-item:hover {
+            background-color: #faf6f8;
+            padding-left: 1.5rem !important;
+        }
+
+            .quick-link-item:hover .link-text {
+                color: var(--site-primary) !important;
+            }
+
+            .quick-link-item:hover .arrow-icon {
+                color: var(--site-primary) !important;
+                transform: translateX(3px);
+            }
+
+    .arrow-icon {
+        transition: transform 0.2s ease, color 0.2s ease;
+    }
+
+    .active-quick-link {
+        background-color: #fff !important;
+        border-left: 4px solid var(--site-primary) !important;
+    }
+
+    .active-text {
+        color: var(--site-primary) !important;
+        font-weight: 700 !important;
+    }
+
+    .active-quick-link .arrow-icon {
+        color: var(--site-primary) !important;
+    }
+
+    /* Telefon Butonu Hover Efekti */
+    .support-phone-btn {
+        transition: all 0.25s ease;
+    }
+
+        .support-phone-btn:hover {
+            background-color: #f8f9fa !important;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15) !important;
+        }
+</style>

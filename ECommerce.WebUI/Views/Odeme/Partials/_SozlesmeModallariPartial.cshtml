@@ -1,0 +1,45 @@
+﻿@model ECommerce.WebUI.Models.OdemeViewModel
+
+<!-- ================= MESAFELİ SATIŞ SÖZLEŞMESİ MODALI ================= -->
+<div class="modal fade" id="mesafeliSatisModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+            <div class="modal-header text-white border-0 py-3" style="background-color: #3b1154;">
+                <h5 class="modal-title fw-bold fs-6">
+                    <i class="bi bi-file-text me-2"></i> @Model.MesafeliSatisBaslik
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body p-4 text-muted small" style="line-height: 1.6;">
+                @Html.Raw(Model.MesafeliSatisIcerigi)
+            </div>
+            <div class="modal-footer border-0 justify-content-center pb-4 pt-0">
+                <button type="button" class="btn text-white px-5 py-2 rounded-pill fw-semibold" style="background-color: #3b1154;" data-bs-dismiss="modal">
+                    Kapat
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ================= GİZLİLİK POLİTİKASI MODALI ================= -->
+<div class="modal fade" id="gizlilikModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+            <div class="modal-header text-white border-0 py-3" style="background-color: #3b1154;">
+                <h5 class="modal-title fw-bold fs-6">
+                    <i class="bi bi-shield-lock me-2"></i> @Model.GizlilikBaslik
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body p-4 text-muted small" style="line-height: 1.6;">
+                @Html.Raw(Model.GizlilikPolitikasiIcerigi)
+            </div>
+            <div class="modal-footer border-0 justify-content-center pb-4 pt-0">
+                <button type="button" class="btn text-white px-5 py-2 rounded-pill fw-semibold" style="background-color: #3b1154;" data-bs-dismiss="modal">
+                    Kapat
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

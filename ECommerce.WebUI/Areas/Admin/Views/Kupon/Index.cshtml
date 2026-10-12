@@ -1,0 +1,371 @@
+﻿@model IEnumerable<ECommerce.Application.DTOs.Kupon.KuponListeDto>
+@{
+    ViewData["Title"] = "Kupon Yönetimi";
+    var kuponlar = Model?.OrderByDescending(x => x.AktifMi).ThenBy(x => x.BitisTarihi).ToList() ?? new List<ECommerce.Application.DTOs.Kupon.KuponListeDto>();
+    var toplamKupon = kuponlar.Count;
+    var aktifKupon = kuponlar.Count(x => x.AktifMi && x.BitisTarihi > DateTime.Now);
+}
+
+<style>
+    .kupon-page {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .kupon-hero {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 28px;
+    }
+
+    .kupon-eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #9a1640;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+    }
+
+    .kupon-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0 0 6px;
+        letter-spacing: -.5px;
+    }
+
+    .kupon-subtitle {
+        margin: 0;
+        color: #85818c;
+        font-size: .95rem;
+    }
+
+    .kupon-add-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        background: linear-gradient(135deg,#8b0028,#a70b3b);
+        border: 0;
+        border-radius: 13px;
+        color: #fff;
+        padding: 13px 20px;
+        font-size: .9rem;
+        font-weight: 600;
+        text-decoration: none;
+        box-shadow: 0 8px 22px rgba(139,0,40,.2);
+        transition: all .2s ease;
+    }
+
+        .kupon-add-btn:hover {
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(139,0,40,.28);
+        }
+
+    .kupon-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 20px;
+    }
+
+    /* Gerçek bir indirim kuponu (bilet) görünümü */
+    .kupon-card {
+        position: relative;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 8px 25px rgba(35,28,40,.06);
+        display: flex;
+        flex-direction: column;
+        transition: transform .22s ease, box-shadow .22s ease;
+        overflow: hidden;
+    }
+
+        .kupon-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 35px rgba(35,28,40,.1);
+        }
+
+    .kupon-card-top {
+        background: linear-gradient(135deg, #fff2f5, #fbe3e9);
+        padding: 24px;
+        text-align: center;
+        border-bottom: 2px dashed #e6c5d0;
+        position: relative;
+    }
+
+        /* Bilet çentikleri */
+        .kupon-card-top::before, .kupon-card-top::after {
+            content: "";
+            position: absolute;
+            bottom: -12px;
+            width: 24px;
+            height: 24px;
+            background: #f7f5f7;
+            border-radius: 50%;
+            box-shadow: inset 0 3px 5px rgba(0,0,0,.03);
+        }
+
+        .kupon-card-top::before {
+            left: -12px;
+        }
+
+        .kupon-card-top::after {
+            right: -12px;
+        }
+
+    .kupon-value {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: #8b0028;
+        line-height: 1;
+        margin-bottom: 5px;
+    }
+
+    .kupon-type {
+        font-size: .85rem;
+        font-weight: 600;
+        color: #b05a75;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .kupon-card-body {
+        padding: 24px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        background: #fff;
+    }
+
+    .kupon-code-box {
+        background: #faf9fa;
+        border: 1px solid #e5e0e5;
+        border-radius: 10px;
+        padding: 12px;
+        text-align: center;
+        margin-bottom: 15px;
+    }
+
+    .kupon-code {
+        font-family: monospace;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #24213d;
+        letter-spacing: 2px;
+    }
+
+    .kupon-detail-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        font-size: .85rem;
+    }
+
+    .kupon-detail-label {
+        color: #9a959e;
+        font-weight: 500;
+    }
+
+    .kupon-detail-val {
+        color: #403b46;
+        font-weight: 600;
+    }
+
+    .kupon-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 10px;
+        border-radius: 8px;
+        font-size: .75rem;
+        font-weight: 700;
+    }
+
+    .status-active {
+        background: #edf9f4;
+        color: #287c5d;
+    }
+
+    .status-passive {
+        background: #f2f1f3;
+        color: #85808a;
+    }
+
+    .status-expired {
+        background: #fff0f2;
+        color: #a4364b;
+    }
+
+    .kupon-card-footer {
+        display: flex;
+        gap: 10px;
+        padding-top: 15px;
+        margin-top: auto;
+        border-top: 1px solid #f0edef;
+    }
+
+    .kupon-btn {
+        flex: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        height: 38px;
+        border-radius: 9px;
+        font-size: .82rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all .2s ease;
+    }
+
+    .kupon-btn-edit {
+        background: #fff4f7;
+        color: #8b0028;
+    }
+
+        .kupon-btn-edit:hover {
+            background: #fce8ed;
+            color: #65001f;
+        }
+
+    .kupon-btn-delete {
+        background: #fff;
+        border: 1px solid #e5e0e5;
+        color: #716c75;
+        width: 42px;
+        flex: none;
+    }
+
+        .kupon-btn-delete:hover {
+            background: #fff0f2;
+            border-color: #fce8ed;
+            color: #a4364b;
+        }
+
+    .kupon-empty {
+        background: #fff;
+        border: 1px dashed #ddd5da;
+        border-radius: 20px;
+        padding: 65px 25px;
+        text-align: center;
+        grid-column: 1/-1;
+    }
+
+    .kupon-empty-icon {
+        width: 70px;
+        height: 70px;
+        border-radius: 22px;
+        background: #fff2f5;
+        color: #9a1640;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        margin: 0 auto 18px;
+    }
+
+    @@media(max-width:1100px) {
+        .kupon-grid {
+            grid-template-columns: repeat(2, minmax(0,1fr));
+        }
+    }
+
+    @@media(max-width:768px) {
+        .kupon-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .kupon-hero {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+</style>
+
+<div class="kupon-page">
+    <div class="kupon-hero">
+        <div class="kupon-hero-content">
+            <div class="kupon-eyebrow"><i class="bi bi-ticket-perforated"></i> Kampanya Yönetimi</div>
+            <h1 class="kupon-title">İndirim Kuponları</h1>
+            <p class="kupon-subtitle">Müşterilerinize özel promosyon kodları oluşturun ve yönetin.</p>
+        </div>
+        <a asp-action="Ekle" class="kupon-add-btn"><i class="bi bi-plus-lg"></i><span>Yeni Kupon Oluştur</span></a>
+    </div>
+
+    @if (TempData["BasariliMesaj"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius:12px;"><i class="bi bi-check-circle me-2"></i>@TempData["BasariliMesaj"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+    @if (TempData["HataMesaji"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius:12px;"><i class="bi bi-exclamation-circle me-2"></i>@TempData["HataMesaji"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+
+    <div class="kupon-grid">
+        @if (kuponlar.Any())
+        {
+            foreach (var item in kuponlar)
+            {
+                var isExpired = item.BitisTarihi < DateTime.Now;
+
+                <div class="kupon-card" style="opacity: @((!item.AktifMi || isExpired) ? "0.75" : "1");">
+                    <div class="kupon-card-top">
+                        <div class="kupon-value">
+                            @(item.YuzdelikMi ? $"%{item.IndirimMiktari.ToString("0.##")}" : $"₺{item.IndirimMiktari.ToString("N2")}")
+                        </div>
+                        <div class="kupon-type">İNDİRİM KUPONU</div>
+                    </div>
+
+                    <div class="kupon-card-body">
+                        <div class="kupon-code-box">
+                            <div class="kupon-code">@item.Kod</div>
+                        </div>
+
+                        <div class="kupon-detail-row">
+                            <span class="kupon-detail-label">Geçerlilik Bitiş:</span>
+                            <span class="kupon-detail-val @(isExpired ? "text-danger" : "")">@item.BitisTarihi.ToString("dd.MM.yyyy HH:mm")</span>
+                        </div>
+                        <div class="kupon-detail-row">
+                            <span class="kupon-detail-label">Durum:</span>
+                            @if (isExpired)
+                            {
+                                <span class="kupon-status status-expired"><i class="bi bi-clock-history"></i> Süresi Doldu</span>
+                            }
+                            else if (item.AktifMi)
+                            {
+                                <span class="kupon-status status-active"><i class="bi bi-check2-circle"></i> Aktif Kullanımda</span>
+                            }
+                            else
+                            {
+                                <span class="kupon-status status-passive"><i class="bi bi-dash-circle"></i> Pasif</span>
+                            }
+                        </div>
+
+                        <div class="kupon-card-footer">
+                            <a asp-action="Guncelle" asp-route-id="@item.Id" class="kupon-btn kupon-btn-edit"><i class="bi bi-pencil"></i> Düzenle</a>
+                            <form asp-action="Sil" asp-route-id="@item.Id" method="post" onsubmit="return confirm('Bu kuponu silmek istediğinize emin misiniz?');" style="margin:0;">
+                                <button type="submit" class="kupon-btn kupon-btn-delete" title="Sil"><i class="bi bi-trash3"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="kupon-empty">
+                <div class="kupon-empty-icon"><i class="bi bi-ticket-perforated"></i></div>
+                <h3>Henüz kupon bulunmuyor</h3>
+                <p>Müşterilerinizi sevindirmek için ilk promosyon kodunuzu oluşturun.</p>
+                <a asp-action="Ekle" class="kupon-add-btn mt-2"><i class="bi bi-plus-lg"></i> Kupon Oluştur</a>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,12 @@
+﻿@model ECommerce.Application.DTOs.Hakkimizda.HakkimizdaAyariDto
+@{
+    ViewData["Title"] = !string.IsNullOrEmpty(Model.SeoTitle) ? Model.SeoTitle : "Hakkımızda";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            @await Component.InvokeAsync("Hakkimizda")
+        </div>
+    </div>
+</div>

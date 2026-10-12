@@ -1,0 +1,354 @@
+﻿@model List<ECommerce.Application.DTOs.Menu.MenuGrupListeDto>
+@{
+    ViewData["Title"] = "Menü Yönetimi";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .t-page {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .t-hero {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 28px;
+    }
+
+    .t-eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #9a1640;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+    }
+
+    .t-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0 0 6px;
+        letter-spacing: -.5px;
+    }
+
+    .t-subtitle {
+        margin: 0;
+        color: #85818c;
+        font-size: .95rem;
+    }
+
+    .t-btn-primary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        background: linear-gradient(135deg,#8b0028,#a70b3b);
+        border: 0;
+        border-radius: 12px;
+        color: #fff;
+        padding: 12px 24px;
+        font-size: .95rem;
+        font-weight: 600;
+        text-decoration: none;
+        box-shadow: 0 8px 22px rgba(139,0,40,.2);
+        transition: all .2s ease;
+        cursor: pointer;
+    }
+
+        .t-btn-primary:hover {
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(139,0,40,.28);
+        }
+
+    .menu-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 22px;
+    }
+
+    .menu-group-card {
+        background: #fff;
+        border: 1px solid #eee9ed;
+        border-radius: 20px;
+        padding: 24px;
+        box-shadow: 0 8px 28px rgba(35,28,40,.055);
+        transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+        display: flex;
+        flex-direction: column;
+    }
+
+        .menu-group-card:hover {
+            transform: translateY(-4px);
+            border-color: #e5d5db;
+            box-shadow: 0 15px 35px rgba(35,28,40,.09);
+        }
+
+    .card-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        margin-bottom: 18px;
+    }
+
+    .card-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        background: linear-gradient(145deg,#fff2f5,#fbe3e9);
+        color: #8b0028;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 12px;
+        border-radius: 8px;
+        font-size: .75rem;
+        font-weight: 700;
+    }
+
+    .status-active {
+        background: #edf9f4;
+        color: #287c5d;
+    }
+
+    .status-passive {
+        background: #fff0f2;
+        color: #a4364b;
+    }
+
+    .card-title {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0 0 4px;
+    }
+
+    .card-location {
+        font-size: .85rem;
+        color: #85818c;
+        margin-bottom: 20px;
+    }
+
+    .card-stats {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: .85rem;
+        color: #716c75;
+        font-weight: 600;
+        margin-top: auto;
+        padding-bottom: 18px;
+    }
+
+        .card-stats i {
+            color: #c98ca0;
+            font-size: 1.1rem;
+        }
+
+    .card-footer-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: 16px;
+        border-top: 1px solid #f0edef;
+    }
+
+    .btn-manage {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #fdf8f9;
+        color: #8b0028;
+        border: 1px solid #f2d6dc;
+        padding: 8px 16px;
+        border-radius: 10px;
+        font-size: .85rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all .2s;
+    }
+
+        .btn-manage:hover {
+            background: #8b0028;
+            color: #fff;
+        }
+
+    .action-group {
+        display: flex;
+        gap: 6px;
+    }
+
+    .t-btn-action {
+        width: 34px;
+        height: 34px;
+        border-radius: 9px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        transition: all .2s ease;
+        border: 0;
+        cursor: pointer;
+    }
+
+    .btn-edit {
+        background: #f4f5f7;
+        color: #24213d;
+    }
+
+        .btn-edit:hover {
+            background: #e5e7eb;
+            color: #111827;
+        }
+
+    .btn-delete {
+        background: #fff0f2;
+        color: #a4364b;
+    }
+
+        .btn-delete:hover {
+            background: #fce8ed;
+            color: #8b0028;
+        }
+
+    .blog-empty {
+        background: #fff;
+        border: 1px dashed #d9cbd1;
+        border-radius: 20px;
+        padding: 60px 20px;
+        text-align: center;
+        grid-column: 1/-1;
+    }
+
+        .blog-empty > i {
+            font-size: 2.5rem;
+            color: #9a1640;
+            margin-bottom: 15px;
+            display: inline-block;
+            padding: 20px;
+            background: #fff2f5;
+            border-radius: 20px;
+        }
+
+    @@media(max-width:1100px) {
+        .menu-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @@media(max-width:768px) {
+        .menu-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .t-hero {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+</style>
+
+<div class="t-page">
+    <div class="t-hero">
+        <div>
+            <div class="t-eyebrow"><i class="bi bi-diagram-3"></i> Site Navigasyonu</div>
+            <h1 class="t-title">Menü Yönetimi</h1>
+            <p class="t-subtitle">Sitenizin farklı alanlarındaki menü kutularını hızlı ve kolay bir şekilde yönetin.</p>
+        </div>
+        <a asp-action="GrupEkle" class="t-btn-primary"><i class="bi bi-plus-lg"></i> Yeni Menü Grubu Ekle</a>
+    </div>
+
+    @if (TempData["BasariliMesaj"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius:12px; background: #edf9f4; color: #287c5d; border: 1px solid #d4f0e5;">
+            <i class="bi bi-check-circle-fill me-2"></i>@TempData["BasariliMesaj"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["HataMesaji"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius:12px;">
+            <i class="bi bi-exclamation-circle-fill me-2"></i>@TempData["HataMesaji"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="menu-grid">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var grup in Model)
+            {
+                <div class="menu-group-card">
+                    <div class="card-top">
+                        <div class="card-icon"><i class="bi bi-menu-app"></i></div>
+                        <div class="d-flex align-items-center gap-1">
+                            @if (grup.SistemMi)
+                            {
+                                <span class="badge bg-warning text-dark" title="Bu menü grubu sistem tarafından korunmaktadır"><i class="bi bi-shield-lock-fill"></i> Sistem</span>
+                            }
+                            @if (grup.AktifMi)
+                            {
+                                <span class="status-badge status-active"><i class="bi bi-check-circle-fill"></i> Aktif</span>
+                            }
+                            else
+                            {
+                                <span class="status-badge status-passive"><i class="bi bi-eye-slash-fill"></i> Pasif</span>
+                            }
+                        </div>
+                    </div>
+
+                    <h3 class="card-title">@grup.Baslik</h3>
+                    <div class="card-location"><i class="bi bi-geo-alt me-1"></i> Konum: <strong>@grup.Konum</strong></div>
+
+                    <div class="card-stats">
+                        <i class="bi bi-link-45deg"></i> Bu menüde <strong>@grup.ElemanSayisi</strong> öğe bulunuyor
+                    </div>
+
+                    <div class="card-footer-actions">
+                        <a asp-action="Detay" asp-route-grupId="@grup.Id" class="btn-manage">
+                            <i class="bi bi-list-nested"></i> İçeriği Yönet
+                        </a>
+                        <div class="action-group">
+                            <a asp-action="GrupGuncelle" asp-route-id="@grup.Id" class="t-btn-action btn-edit" title="Grubu Düzenle">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+
+                            <!-- SADECE SİSTEM GRUBU OLMAYANLAR SİLİNEBİLİR -->
+                            @if (!grup.SistemMi)
+                            {
+                                <form asp-action="GrupSil" asp-route-id="@grup.Id" method="post" onsubmit="return confirm('Bu menü grubunu ve içerisindeki tüm alt linkleri silmek istediğinize emin misiniz?');" style="display:inline;">
+                                    <button type="submit" class="t-btn-action btn-delete" title="Grubu Sil">
+                                        <i class="bi bi-trash3"></i>
+                                    </button>
+                                </form>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="blog-empty">
+                <i class="bi bi-diagram-3"></i>
+                <h3>Henüz Menü Grubu Bulunmuyor</h3>
+                <p>Header veya Footer gibi alanlar için ilk menü grubunu oluşturarak başlayın.</p>
+                <a asp-action="GrupEkle" class="t-btn-primary mt-2"><i class="bi bi-plus-lg"></i> İlk Menü Grubunu Oluştur</a>
+            </div>
+        }
+    </div>
+</div>

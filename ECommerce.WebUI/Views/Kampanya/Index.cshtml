@@ -1,0 +1,120 @@
+﻿@model List<ECommerce.Application.DTOs.Kampanya.KampanyaUrunDto>
+@{
+    ViewData["Title"] = "Tüm Kampanyalarımız";
+}
+
+<section class="kampanyalar-lp-page py-5" style="background-color: #fcfbfc;">
+    <div class="container" style="max-width: 1100px;">
+        <!-- Sayfa Başlığı -->
+        <div class="mb-5 text-center">
+            <span class="d-block text-uppercase fw-bold mb-1" style="font-size: 0.78rem; letter-spacing: 2px; color: var(--site-primary);">Sizin İçin Seçtiklerimiz</span>
+            <h1 class="fw-bold display-6 text-dark mb-2">Kampanyalar ve Fırsatlar</h1>
+            <p class="text-muted small">Alışverişinizi avantaja dönüştürecek en güncel promosyon kurallarını inceleyin.</p>
+        </div>
+
+        <div class="d-flex flex-column gap-3">
+            @foreach (var kampanya in Model)
+            {
+                bool isKategoriVeyaGrup = kampanya.KapsamTuru == "Kategori" || kampanya.KampanyaVaryasyonu == "KategoriCapraz" || kampanya.KampanyaVaryasyonu == "IkinciUrunIndirimli" || !kampanya.UrunId.HasValue;
+
+                <!-- SABİT YÜKSEKLİKTE KURUMSAL KAMPANYA BANDI -->
+                <div class="card border rounded-4 shadow-sm overflow-hidden bg-white transition-all" style="border-color: #eee5ed !important; height: 270px;">
+                    <div class="row g-0 h-100">
+
+                        <!-- Sol Taraf: Görsel veya Şık İkon Alanı -->
+                        <div class="col-md-4 h-100 position-relative" style="background: #f9f9f9; overflow: hidden;">
+                            @if (isKategoriVeyaGrup)
+                            {
+                                <div class="h-100 w-100 d-flex flex-column align-items-center justify-content-center p-4 text-center" style="background: linear-gradient(135deg, #8b0028 0%, #a70b3b 100%); color: #fff;">
+                                    <i class="bi bi-gift-fill mb-2" style="font-size: 3rem;"></i>
+                                    <span class="badge bg-warning text-dark px-2.5 py-1 rounded-pill fw-bold" style="font-size: 0.68rem;">ÖZEL SEPET FIRSATI</span>
+                                </div>
+                            }
+                            else
+                            {
+                                @if (!string.IsNullOrEmpty(kampanya.GorselUrl))
+                                {
+                                    <img src="@kampanya.GorselUrl" alt="@kampanya.UrunAdi" class="position-absolute top-0 start-0 w-100 h-100 object-fit-cover" />
+                                }
+                                else
+                                {
+                                    <img src="/images/no-image.jpg" alt="@kampanya.UrunAdi" class="position-absolute top-0 start-0 w-100 h-100 object-fit-cover" />
+                                }
+                                <div class="position-absolute top-0 start-0 m-2 text-white fw-bold px-2.5 py-1 rounded-2 shadow-sm" style="background-color: #d97706; font-size: 0.7rem; z-index: 2;">
+                                    @kampanya.KampanyaAdi
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Sağ Taraf: Metin ve Aksiyon Alanı -->
+                        <div class="col-md-8 h-100 d-flex flex-column justify-content-between p-4">
+                            <div>
+                                <!-- Üst Bilgi Satırı (Teknik Kodlar Yerine Şık Etiketler) -->
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="badge px-2.5 py-1 rounded fw-bold" style="background: #fff4f7; color: #8b0028; font-size: 0.7rem;">
+                                            @(kampanya.KampanyaVaryasyonu == "IkinciUrunIndirimli" ? "İkinci Ürün Fırsatı" : "Özel Kampanya")
+                                        </span>
+                                        @if (!isKategoriVeyaGrup && !string.IsNullOrEmpty(kampanya.UrunKodu))
+                                        {
+                                            <span class="text-muted" style="font-size: 0.75rem;">Kod: @kampanya.UrunKodu</span>
+                                        }
+                                    </div>
+                                    <span class="text-danger fw-semibold small" style="font-size: 0.75rem;"><i class="bi bi-truck"></i> Aynı Gün Teslimat</span>
+                                </div>
+
+                                <!-- Başlık -->
+                                <h3 class="fw-bold text-dark mb-2 text-truncate" style="font-size: 1.25rem;">
+                                    @(isKategoriVeyaGrup ? kampanya.KampanyaAdi : kampanya.UrunAdi)
+                                </h3>
+
+                                <!-- Kampanya Koşulu / Açıklaması (Hedef Kapsam Bilgisi Dahil) -->
+                                <div class="py-2 px-3 rounded-3 mb-3" style="background: #faf6f8; border-left: 3px solid #8b0028;">
+                                    <div class="text-danger fw-bold small" style="font-size: 0.72rem;"><i class="bi bi-stars"></i> Kampanya Koşulu</div>
+                                    <div class="text-dark small text-truncate" style="font-size: 0.85rem;">
+                                        @(!string.IsNullOrEmpty(kampanya.KampanyaAciklamasi) ? kampanya.KampanyaAciklamasi : "Bu fırsatı kaçırmayın!")
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Alt Fiyat ve Buton Satırı -->
+                            <div class="d-flex align-items-center justify-content-between pt-2 border-top">
+                                <div>
+                                    @if (!isKategoriVeyaGrup)
+                                    {
+                                        <div class="text-muted small text-decoration-line-through" style="font-size: 0.75rem;">Orijinal Fiyat</div>
+                                        <div class="fw-bold fs-5 text-dark">@kampanya.Fiyat.ToString("N2") ₺</div>
+                                    }
+                                    else
+                                    {
+                                        <div class="text-muted small">Çoklu Alım Kampanyası</div>
+                                        <div class="fw-bold text-danger small">Sepette Geçerli Fırsat</div>
+                                    }
+                                </div>
+
+                                <a href="@(isKategoriVeyaGrup ? "/Kategori/Index" : "/urun/" + kampanya.SeoUrl)"
+                                   class="btn btn-gunu-guzellestir text-white fw-bold px-4 py-2 rounded-3 text-uppercase shadow-sm d-inline-flex align-items-center gap-2" style="font-size: 0.82rem;">
+                                    <span>@(isKategoriVeyaGrup ? "Kategoriyi İncele" : "Fırsatı Yakala")</span>
+                                    <i class="bi bi-arrow-right"></i>
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<style>
+    .transition-all {
+        transition: all 0.2s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(35,28,40,0.08) !important;
+        border-color: #d1b5c2 !important;
+    }
+</style>

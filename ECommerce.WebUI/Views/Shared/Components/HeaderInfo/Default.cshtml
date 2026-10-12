@@ -1,0 +1,68 @@
+﻿@model ECommerce.Application.DTOs.SiteAyari.SiteAyariDto
+
+<div class="header-top-bar py-2">
+    <div class="container d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <!-- Sol Kısım: İletişim Bilgileri -->
+        <div class="d-flex align-items-center gap-4">
+            @if (!string.IsNullOrEmpty(Model.Telefon1))
+            {
+                <span><i class="bi bi-telephone-fill me-1 text-danger"></i> @Model.Telefon1</span>
+            }
+            @if (!string.IsNullOrEmpty(Model.Email))
+            {
+                <span class="d-none d-md-inline"><i class="bi bi-envelope-fill me-1 text-danger"></i> @Model.Email</span>
+            }
+        </div>
+
+        <!-- Orta / Sağ Kısım: Sosyal Medya İkonları ve Kurumsal Linkler -->
+        <div class="d-flex align-items-center gap-3">
+            <!-- Sosyal Medya Linkleri (Dinamik) -->
+            <div class="d-flex align-items-center gap-2 me-2">
+                @if (!string.IsNullOrEmpty(Model.InstagramUrl))
+                {
+                    <a href="@Model.InstagramUrl" target="_blank" title="Instagram" class="social-icon"><i class="bi bi-instagram"></i></a>
+                }
+                @if (!string.IsNullOrEmpty(Model.FacebookUrl))
+                {
+                    <a href="@Model.FacebookUrl" target="_blank" title="Facebook" class="social-icon"><i class="bi bi-facebook"></i></a>
+                }
+                @if (!string.IsNullOrEmpty(Model.TwitterUrl))
+                {
+                    <a href="@Model.TwitterUrl" target="_blank" title="Twitter / X" class="social-icon"><i class="bi bi-twitter-x"></i></a>
+                }
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.InstagramUrl) || !string.IsNullOrEmpty(Model.FacebookUrl) || !string.IsNullOrEmpty(Model.TwitterUrl))
+            {
+                <span class="text-muted">|</span>
+            }
+
+            <a href="/iletisim" class="text-decoration-none text-dark small"><i class="bi bi-geo-alt-fill me-1 text-danger"></i> İletişim</a>
+            <span>|</span>
+            <!-- HESAP NUMARALARI LİNKİ -->
+            <a href="/hesap-numaralarimiz" class="text-decoration-none text-dark small"><i class="bi bi-wallet2 me-1 text-danger"></i> Hesap Numaralarımız</a>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Sosyal medya ikonları için zarif hover efekti */
+    .social-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: #f1f1f1;
+        color: #495057;
+        font-size: 0.85rem;
+        transition: all 0.2s ease;
+    }
+
+        .social-icon:hover {
+            background: var(--site-primary, #8b0028);
+            color: #fff !important;
+            transform: translateY(-2px);
+        }
+</style>

@@ -1,0 +1,223 @@
+﻿@model ECommerce.Application.DTOs.Kupon.KuponEkleDto
+@{
+    ViewData["Title"] = "Yeni Kupon Ekle";
+}
+
+<style>
+    .k-form-page {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .k-form-card {
+        background: #fff;
+        border: 1px solid #eee9ed;
+        border-radius: 20px;
+        padding: 32px;
+        box-shadow: 0 8px 30px rgba(35,28,40,.04);
+    }
+
+    .k-form-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #24213d;
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+        .k-form-title i {
+            color: #8b0028;
+            background: #fff2f5;
+            padding: 10px;
+            border-radius: 12px;
+            font-size: 1.2rem;
+        }
+
+    .k-field {
+        margin-bottom: 22px;
+    }
+
+        .k-field label {
+            display: block;
+            color: #403b46;
+            font-size: .85rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+            .k-field label span {
+                color: #b24a60;
+            }
+
+    .k-input {
+        width: 100%;
+        height: 50px;
+        border: 1px solid #e4dfe4;
+        border-radius: 12px;
+        background: #fff;
+        padding: 0 15px;
+        color: #24213d;
+        font-size: .95rem;
+        outline: 0;
+        transition: all .2s ease;
+    }
+
+        .k-input:focus {
+            border-color: #c98ca0;
+            box-shadow: 0 0 0 4px rgba(139,0,40,.06);
+        }
+
+        .k-input.code-input {
+            font-family: monospace;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+    .k-switch-box {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border: 1px solid #e4dfe4;
+        border-radius: 12px;
+        padding: 15px;
+        background: #faf9fa;
+    }
+
+    .k-switch-text strong {
+        display: block;
+        font-size: .9rem;
+        color: #24213d;
+    }
+
+    .k-switch-text span {
+        font-size: .75rem;
+        color: #85818c;
+    }
+
+    .k-switch-box input {
+        width: 44px;
+        height: 24px;
+        cursor: pointer;
+        accent-color: #8b0028;
+    }
+
+    .k-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 30px;
+    }
+
+    .k-btn-cancel {
+        display: inline-flex;
+        align-items: center;
+        height: 48px;
+        padding: 0 20px;
+        border: 1px solid #e5e0e5;
+        border-radius: 12px;
+        color: #403b46;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+        .k-btn-cancel:hover {
+            background: #f8f6f8;
+        }
+
+    .k-btn-save {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        height: 48px;
+        padding: 0 24px;
+        background: linear-gradient(135deg,#8b0028,#a70b3b);
+        border: 0;
+        border-radius: 12px;
+        color: #fff;
+        font-weight: 600;
+        box-shadow: 0 6px 15px rgba(139,0,40,.2);
+    }
+</style>
+
+<div class="k-form-page">
+    <div class="k-form-card">
+        <h2 class="k-form-title"><i class="bi bi-ticket-detailed"></i> Yeni İndirim Kuponu</h2>
+
+        <form asp-action="Ekle" method="post">
+            @Html.AntiForgeryToken()
+
+            <div class="k-field">
+                <label asp-for="Kod">Kupon Kodu <span>*</span></label>
+                <div class="input-group">
+                    <input asp-for="Kod" class="form-control k-input code-input" id="kuponKodu" placeholder="Örn: YAZGULU2026" autocomplete="off" />
+                    <button class="btn btn-outline-secondary" type="button" id="btnRastgele" style="border-color:#e4dfe4; border-radius:0 12px 12px 0;">Rastgele Üret</button>
+                </div>
+                <span asp-validation-for="Kod" class="text-danger" style="font-size:12px;"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="k-field">
+                        <label asp-for="IndirimMiktari">İndirim Miktarı / Oranı <span>*</span></label>
+                        <input asp-for="IndirimMiktari" type="number" step="0.01" class="k-input" placeholder="0.00" />
+                        <span asp-validation-for="IndirimMiktari" class="text-danger" style="font-size:12px;"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="k-field">
+                        <label asp-for="BitisTarihi">Geçerlilik Bitiş Tarihi <span>*</span></label>
+                        <input asp-for="BitisTarihi" type="datetime-local" class="k-input" />
+                        <span asp-validation-for="BitisTarihi" class="text-danger" style="font-size:12px;"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="k-field">
+                <div class="k-switch-box">
+                    <div class="k-switch-text">
+                        <strong>Yüzdelik İndirim Mi?</strong>
+                        <span>Aktif edilirse girilen miktar yüzdelik (%) olarak hesaplanır. Kapalıysa sabit tutar (₺) düşülür.</span>
+                    </div>
+                    <input asp-for="YuzdelikMi" type="checkbox" />
+                </div>
+            </div>
+
+            <div class="k-field mb-0">
+                <div class="k-switch-box">
+                    <div class="k-switch-text">
+                        <strong>Kuponu Aktif Et</strong>
+                        <span>Müşteriler bu kuponu şu andan itibaren sepetlerinde kullanabilir.</span>
+                    </div>
+                    <input asp-for="AktifMi" type="checkbox" />
+                </div>
+            </div>
+
+            <div class="k-actions">
+                <a asp-action="Index" class="k-btn-cancel">Vazgeç</a>
+                <button type="submit" class="k-btn-save"><i class="bi bi-check2"></i> Kuponu Oluştur</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.getElementById('btnRastgele').addEventListener('click', function () {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let result = 'KUPON-';
+            for (let i = 0; i < 6; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            document.getElementById('kuponKodu').value = result;
+        });
+
+        // Inputu otomatik büyük harfe çevir
+        document.getElementById('kuponKodu').addEventListener('input', function () {
+            this.value = this.value.toUpperCase();
+        });
+    </script>
+}

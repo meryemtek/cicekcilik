@@ -1,0 +1,61 @@
+﻿@model List<ECommerce.Application.DTOs.KategoriBanner.KategoriBannerDto>
+
+@if (Model != null && Model.Any())
+{
+    <section class="category-banners-section py-4">
+        <div class="container" style="max-width: 1400px;">
+            <div class="row g-4">
+                @foreach (var item in Model)
+                {
+                    <div class="col-md-6">
+                        <a href="/kategori/@item.KategoriSeoUrl" class="category-banner-card text-decoration-none d-block position-relative rounded-4 overflow-hidden shadow-sm">
+                            <!-- ARKA PLAN GÖRSELİ (710x340 px tam alan kaplama) -->
+                            <div class="banner-bg-wrapper position-relative w-100" style="height: 240px; background-color: #f3f0f4;">
+                                @if (!string.IsNullOrEmpty(item.GorselUrl))
+                                {
+                                    <img src="@item.GorselUrl" alt="@item.Baslik" class="position-absolute top-0 start-0 w-100 h-100 object-fit-cover" />
+                                }
+                                else
+                                {
+                                    <img src="/images/no-image.jpg" alt="@item.Baslik" class="position-absolute top-0 start-0 w-100 h-100 object-fit-cover" />
+                                }
+
+                                <!-- HAFİF KARARTMA (Overlay) - Yazıların okunabilirliğini artırmak için -->
+                                <div class="position-absolute inset-0" style="background: linear-gradient(90deg, rgba(20,15,25,0.7) 0%, rgba(20,15,25,0.2) 60%, transparent 100%); inset: 0;"></div>
+
+                                <!-- GÖRSELİN ÜZERİNDEKİ İÇERİK VE BUTON -->
+                                <div class="position-absolute top-0 start-0 w-100 h-100 d-flex flex-column justify-content-center p-4 p-md-5" style="z-index: 2;">
+                                    <div style="max-width: 320px;">
+                                        <h3 class="fw-bold text-white mb-2" style="font-size: 1.6rem; letter-spacing: -0.5px; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">@item.Baslik</h3>
+                                        <p class="text-white-50 small mb-3" style="text-shadow: 0 1px 2px rgba(0,0,0,0.3);">@item.Aciklama</p>
+                                        <span class="btn text-white fw-bold px-4 py-2 rounded-3 shadow-sm d-inline-flex align-items-center gap-2" style="background-color: #8b0028; font-size: 0.8rem; border: 0;">
+                                            ALIŞVERİŞE BAŞLA
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+
+    <style>
+        .category-banner-card {
+            transition: all 0.3s ease;
+            border: 1px solid #eee9ed;
+        }
+
+            .category-banner-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 15px 35px rgba(139, 0, 40, 0.12) !important;
+                border-color: #e5d5db !important;
+            }
+
+                .category-banner-card:hover img {
+                    transform: scale(1.04);
+                    transition: transform 0.5s ease;
+                }
+    </style>
+}

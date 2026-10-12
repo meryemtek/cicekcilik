@@ -1,0 +1,71 @@
+﻿@{
+    ViewData["Title"] = "Gösterge Paneli";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-1">Genel Bakış</h2>
+        <p class="text-muted small mb-0">Çiçekçilik e-ticaret yönetim paneline hoş geldiniz.</p>
+    </div>
+    <div>
+        <span class="badge bg-success p-2 px-3 fw-normal">Sistem Aktif ve Çalışıyor</span>
+    </div>
+</div>
+
+<!-- Özet Kartları (Widgets) -->
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <span class="text-muted small fw-bold text-uppercase">Bugünkü Siparişler</span>
+                    <h3 class="fw-bold mt-1 mb-0">12</h3>
+                </div>
+                <div class="p-3 bg-success bg-opacity-10 text-success rounded-4 fs-4">
+                    <i class="bi bi-cart-plus"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <span class="text-muted small fw-bold text-uppercase">Bekleyen Teslimatlar</span>
+                    <h3 class="fw-bold mt-1 mb-0">5</h3>
+                </div>
+                <div class="p-3 bg-warning bg-opacity-10 text-warning rounded-4 fs-4">
+                    <i class="bi bi-clock-history"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <span class="text-muted small fw-bold text-uppercase">Aktif Ürün Sayısı</span>
+                    <h3 class="fw-bold mt-1 mb-0">48</h3>
+                </div>
+                <div class="p-3 bg-primary bg-opacity-10 text-primary rounded-4 fs-4">
+                    <i class="bi bi-flower2"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Karşılama Kartı -->
+<div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+    <h5 class="fw-bold text-success mb-2"><i class="bi bi-check-circle-fill me-2"></i>Sistem Mimari Durumu</h5>
+    <p class="text-muted small mb-3">
+        Backend API, WebUI, NetGSM SMS, PayTR Ödeme ve HiCariTakip köprü altyapısı başarıyla kurulmuş ve çalışır durumdadır. Sol menüden modülleri yönetmeye başlayabilirsiniz.
+    </p>
+    <hr class="text-muted opacity-25" />
+    <div class="d-flex gap-2">
+        <a href="/Admin/Urun" class="btn btn-dark btn-sm px-3">Ürün Listesine Git</a>
+        <a href="#" class="btn btn-outline-secondary btn-sm px-3">Site Ayarlarını Düzenle</a>
+    </div>
+</div>

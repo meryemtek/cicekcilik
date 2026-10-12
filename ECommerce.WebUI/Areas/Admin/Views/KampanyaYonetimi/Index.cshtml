@@ -1,0 +1,429 @@
+﻿@model IEnumerable<ECommerce.Application.DTOs.Kampanya.KampanyaUrunDto>
+@{
+    ViewData["Title"] = "Kampanya Yönetimi";
+}
+
+<style>
+    .s-page {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 15px;
+    }
+
+    .s-hero {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 28px;
+    }
+
+    .s-eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #9a1640;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+    }
+
+    .s-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0 0 6px;
+        letter-spacing: -.5px;
+    }
+
+    .s-subtitle {
+        margin: 0;
+        color: #85818c;
+        font-size: .95rem;
+    }
+
+    .s-add-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        background: linear-gradient(135deg,#8b0028,#a70b3b);
+        border: 0;
+        border-radius: 13px;
+        color: #fff;
+        padding: 13px 20px;
+        font-size: .9rem;
+        font-weight: 600;
+        text-decoration: none;
+        box-shadow: 0 8px 22px rgba(139,0,40,.2);
+        transition: all .2s ease;
+        white-space: nowrap;
+    }
+
+        .s-add-btn:hover {
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(139,0,40,.28);
+        }
+
+    /* GRID DÜZELTMESİ: 3 Sütunlu esnek yapı */
+    .s-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 20px;
+        width: 100%;
+    }
+
+    .s-card {
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #eee9ed;
+        box-shadow: 0 8px 25px rgba(35,28,40,.04);
+        padding: 24px;
+        transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+        display: flex;
+        flex-direction: column;
+    }
+
+        .s-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 35px rgba(35,28,40,.08);
+            border-color: #e5d5db;
+        }
+
+    .s-card-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        margin-bottom: 15px;
+    }
+
+    /* GÖRSEL TAŞMA DÜZELTMESİ */
+    .s-icon {
+        width: 54px;
+        height: 54px;
+        min-width: 54px;
+        min-height: 54px;
+        border-radius: 12px;
+        background: linear-gradient(145deg,#fff2f5,#fbe3e9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        position: relative;
+    }
+
+        .s-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .s-icon i {
+            color: #8b0028;
+            font-size: 1.4rem;
+        }
+
+    .s-campaign-badge {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #8b0028;
+        background: #fce8ed;
+        padding: 4px 10px;
+        border-radius: 6px;
+        display: inline-block;
+        margin-bottom: 8px;
+    }
+
+    .s-coupon-badge {
+        font-size: 0.7rem;
+        font-weight: 600;
+        padding: 3px 8px;
+        border-radius: 6px;
+        display: inline-block;
+        margin-bottom: 10px;
+    }
+
+    .coupon-yes {
+        background: #e0f2fe;
+        color: #0369a1;
+    }
+
+    .coupon-no {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .s-card-title {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0 0 5px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .s-card-code {
+        font-size: .8rem;
+        font-weight: 600;
+        color: #9a959e;
+        margin-bottom: 10px;
+    }
+
+    .s-discount-info {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #d97706;
+        background: #fef3c7;
+        padding: 4px 8px;
+        border-radius: 6px;
+        display: inline-block;
+        margin-bottom: 12px;
+    }
+
+    .s-card-url {
+        font-size: .85rem;
+        font-weight: 600;
+        color: #287c5d;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .s-card-date {
+        font-size: 0.75rem;
+        color: #85808a;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin-top: 8px;
+    }
+
+    .s-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 10px;
+        border-radius: 8px;
+        font-size: .75rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .status-active {
+        background: #edf9f4;
+        color: #287c5d;
+    }
+
+    .status-passive {
+        background: #f2f1f3;
+        color: #85808a;
+    }
+
+    .s-card-footer {
+        display: flex;
+        gap: 10px;
+        padding-top: 15px;
+        margin-top: auto;
+        border-top: 1px solid #f0edef;
+    }
+
+    .s-btn {
+        flex: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        height: 38px;
+        border-radius: 9px;
+        font-size: .82rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all .2s ease;
+        border: none;
+        cursor: pointer;
+    }
+
+    .s-btn-edit {
+        background: #fff4f7;
+        color: #8b0028;
+    }
+
+        .s-btn-edit:hover {
+            background: #fce8ed;
+            color: #65001f;
+        }
+
+    .s-btn-delete {
+        background: #fff;
+        border: 1px solid #e5e0e5;
+        color: #716c75;
+        width: 42px;
+        flex: none;
+    }
+
+        .s-btn-delete:hover {
+            background: #fff0f2;
+            border-color: #fce8ed;
+            color: #a4364b;
+        }
+
+    .s-empty {
+        background: #fff;
+        border: 1px dashed #ddd5da;
+        border-radius: 20px;
+        padding: 65px 25px;
+        text-align: center;
+        grid-column: 1/-1;
+    }
+
+        .s-empty > i {
+            font-size: 2.5rem;
+            color: #9a1640;
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+
+    @@media(max-width:1100px) {
+        .s-grid {
+            grid-template-columns: repeat(2, minmax(0,1fr));
+        }
+    }
+
+    @@media(max-width:768px) {
+        .s-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .s-hero {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+</style>
+
+<div class="s-page mt-4">
+    <div class="s-hero">
+        <div class="s-hero-content">
+            <div class="s-eyebrow"><i class="bi bi-tags-fill"></i> Kampanya Yönetimi</div>
+            <h1 class="s-title">Aktif Kampanyalar ve Fırsatlar</h1>
+            <p class="s-subtitle">Anasayfa vitrininde sergilenen gelişmiş indirim ve promosyon kurallarını yönetin.</p>
+        </div>
+        <a asp-action="Ekle" class="s-add-btn"><i class="bi bi-plus-lg"></i><span>Yeni Kampanya Ekle</span></a>
+    </div>
+
+    @if (TempData["BasariliMesaj"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert" style="border-radius:12px;"><i class="bi bi-check-circle me-2"></i>@TempData["BasariliMesaj"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+    @if (TempData["HataMesaji"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert" style="border-radius:12px;"><i class="bi bi-exclamation-circle me-2"></i>@TempData["HataMesaji"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+
+    <div class="s-grid">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var item in Model)
+            {
+                <div class="s-card" style="opacity: @(item.AktifMi ? "1" : "0.6");">
+                    <div class="s-card-top">
+                        <div class="s-icon">
+                            @if (!string.IsNullOrEmpty(item.GorselUrl))
+                            {
+                                <img src="@item.GorselUrl" alt="@item.UrunAdi" />
+                            }
+                            else
+                            {
+                                <i class="bi bi-tags"></i>
+                            }
+                        </div>
+                        @if (item.AktifMi)
+                        {
+                            <span class="s-status status-active"><i class="bi bi-check2-circle"></i> Yayında</span>
+                        }
+                        else
+                        {
+                            <span class="s-status status-passive"><i class="bi bi-eye-slash"></i> Gizli</span>
+                        }
+                    </div>
+
+                    <!-- Kampanya Adı ve Varyasyonu -->
+                    <div>
+                        <span class="s-campaign-badge"><i class="bi bi-bookmark-star"></i> @item.KampanyaAdi (@item.KampanyaVaryasyonu)</span>
+
+                        <!-- Kupon Uyumluluk Rozeti -->
+                        <div>
+                            @if (item.KuponlarlaBirlesebilirMi)
+                            {
+                                <span class="s-coupon-badge coupon-yes"><i class="bi bi-ticket-perforated"></i> Kuponla Birleşebilir</span>
+                            }
+                            else
+                            {
+                                <span class="s-coupon-badge coupon-no"><i class="bi bi-ticket-detailed-fill"></i> Kuponla Birleşemez</span>
+                            }
+                        </div>
+                    </div>
+
+                    <h3 class="s-card-title" title="@item.UrunAdi">@item.UrunAdi</h3>
+
+                    <div class="s-card-code">
+                        Sıra: @item.Sira
+                        @if (!string.IsNullOrEmpty(item.UrunKodu))
+                        {
+                            <text>&nbsp;|&nbsp; Kod: @item.UrunKodu</text>
+                        }
+                    </div>
+
+                    <!-- İndirim Oranı / Tutar Bilgisi -->
+                    <div>
+                        <span class="s-discount-info">
+                            <i class="bi bi-tag-fill me-1"></i>
+                            @if (item.IndirimTipi == "Yuzde")
+                            {
+                                <text>%@item.IndirimDegeri İndirim</text>
+                            }
+                            else
+                            {
+                                <text>@item.IndirimDegeri.ToString("N2") ₺ Net İndirim</text>
+                            }
+                        </span>
+                    </div>
+
+                    @if (item.Fiyat > 0)
+                    {
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div class="s-card-url"><span class="text-muted text-decoration-line-through">@item.Fiyat.ToString("N2") ₺</span></div>
+                        </div>
+                    }
+
+                    @if (item.BitisTarihi.HasValue)
+                    {
+                        <div class="s-card-date"><i class="bi bi-clock-history"></i> Bitiş: @item.BitisTarihi.Value.ToString("dd.MM.yyyy HH:mm")</div>
+                    }
+
+                    <div class="s-card-footer">
+                        <a asp-action="Guncelle" asp-route-id="@item.Id" class="s-btn s-btn-edit"><i class="bi bi-pencil"></i> Düzenle</a>
+                        <form asp-action="Sil" asp-route-id="@item.Id" method="post" onsubmit="return confirm('Bu kampanyayı kaldırmak istediğinize emin misiniz?');" style="margin:0;">
+                            <button type="submit" class="s-btn s-btn-delete" title="Sil"><i class="bi bi-trash3"></i></button>
+                        </form>
+                    </div>
+                </div>
+            }
+        }
+        else
+            {
+        <div class="s-empty">
+            <i class="bi bi-box2-heart"></i>
+            <h3>Henüz aktif kampanya yok</h3>
+            <p>Müşterilerinize cazip indirimler sunmak için ilk gelişmiş kampanyanızı hemen oluşturun.</p>
+            <div style="display: flex; justify-content: center; margin-top: 20px;">
+                <a asp-action="Ekle" class="s-add-btn" style="display: inline-flex !important; width: auto !important; padding: 13px 24px;"><i class="bi bi-plus-lg"></i><span>İlk Kampanyayı Ekle</span></a>
+            </div>
+        </div>
+        }
+    </div>
+</div>

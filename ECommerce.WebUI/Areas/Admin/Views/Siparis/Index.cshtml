@@ -1,0 +1,255 @@
+﻿@model List<ECommerce.Application.DTOs.Siparis.SiparisListeDto>
+@{
+    ViewData["Title"] = "Tüm Siparişler";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .t-page {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .t-hero {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 28px;
+    }
+
+    .t-eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #9a1640;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+    }
+
+    .t-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0 0 6px;
+        letter-spacing: -.5px;
+    }
+
+    .t-subtitle {
+        margin: 0;
+        color: #85818c;
+        font-size: .95rem;
+    }
+
+    .t-table-card {
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #eee9ed;
+        box-shadow: 0 8px 25px rgba(35,28,40,.04);
+        overflow: hidden;
+        padding: 20px;
+    }
+
+    .t-table {
+        width: 100%;
+        margin: 0;
+        border-collapse: collapse;
+    }
+
+        .t-table th {
+            background: #fdf8f9;
+            padding: 18px 20px;
+            font-size: .85rem;
+            font-weight: 600;
+            color: #9a1640;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid #f0edef;
+            text-align: left;
+        }
+
+        .t-table td {
+            padding: 16px 20px;
+            border-bottom: 1px solid #f0edef;
+            color: #403b46;
+            font-size: .95rem;
+            vertical-align: middle;
+        }
+
+        .t-table tr:hover td {
+            background: #faf9fa;
+        }
+
+    .fee-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 8px;
+        background: #fff4f7;
+        color: #8b0028;
+        font-weight: 700;
+        font-size: .95rem;
+        border: 1px solid #fce8ed;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 12px;
+        border-radius: 8px;
+        font-size: .8rem;
+        font-weight: 700;
+    }
+
+    .status-warning {
+        background: #fff8e6;
+        color: #b7791f;
+        border: 1px solid #fef08a;
+    }
+
+    .status-info {
+        background: #ebf8ff;
+        color: #2b6cb0;
+        border: 1px solid #bee3f8;
+    }
+
+    .status-success {
+        background: #edf9f4;
+        color: #287c5d;
+        border: 1px solid #d4f0e5;
+    }
+
+    .status-danger {
+        background: #fff0f2;
+        color: #a4364b;
+        border: 1px solid #fce8ed;
+    }
+
+    .action-links {
+        display: flex;
+        gap: 8px;
+        justify-content: flex-end;
+    }
+
+    .t-btn-action {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        transition: all .2s ease;
+        border: 0;
+        cursor: pointer;
+    }
+
+    .btn-camera {
+        background: #fff4f7;
+        color: #8b0028;
+    }
+
+        .btn-camera:hover {
+            background: #fce8ed;
+            color: #65001f;
+        }
+
+    .btn-detail {
+        background: #f4f5f7;
+        color: #24213d;
+    }
+
+        .btn-detail:hover {
+            background: #e5e7eb;
+            color: #111827;
+        }
+</style>
+
+<div class="t-page">
+    <div class="t-hero">
+        <div class="t-hero-content">
+            <div class="t-eyebrow"><i class="bi bi-bag-heart-fill"></i> Mağaza Yönetimi</div>
+            <h1 class="t-title">Tüm Siparişler</h1>
+            <p class="t-subtitle">Müşterilerinizin verdiği siparişleri inceleyin, durumlarını güncelleyin ve kurye fotoğrafları yükleyin.</p>
+        </div>
+    </div>
+
+    @if (TempData["BasariliMesaj"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius:12px; background: #edf9f4; color: #287c5d; border: 1px solid #d4f0e5;">
+            <i class="bi bi-check-circle-fill me-2"></i>@TempData["BasariliMesaj"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["HataMesaji"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius:12px;">
+            <i class="bi bi-exclamation-circle-fill me-2"></i>@TempData["HataMesaji"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="t-table-card">
+        <div class="table-responsive">
+            <table id="siparislerTablosu" class="t-table w-100">
+                <thead>
+                    <tr>
+                        <th>Sipariş No</th>
+                        <th>Müşteri</th>
+                        <th>Tarih</th>
+                        <th>Tutar</th>
+                        <th>Durum</th>
+                        <th style="text-align: right;">İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td><strong>@item.SiparisNumarasi</strong></td>
+                            <td>@item.MusteriAdSoyad</td>
+                            <td>@item.SiparisTarihi.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
+                            <td><span class="fee-badge">@item.ToplamTutar.ToString("C2")</span></td>
+                            <td>
+                                <span class="status-badge status-info">
+                                    <i class="bi bi-clock-history"></i> @item.Durum.ToString()
+                                </span>
+                            </td>
+                            <td>
+                                <div class="action-links">
+                                    <!-- Görsel Yükleme Sayfasına Yönlendiren Kamera Butonu -->
+                                    <a href="/Admin/SiparisGorsel/Yonet?siparisId=@item.Id" class="t-btn-action btn-camera" title="Kurye/Çiçek Görseli Yükle">
+                                        <i class="bi bi-camera"></i>
+                                    </a>
+                                    <!-- Detay Sayfasına Yönlendiren Buton -->
+                                    <a asp-action="Detay" asp-route-id="@item.Id" class="t-btn-action btn-detail" title="Sipariş Detayı">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#siparislerTablosu').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/tr.json",
+                    "emptyTable": "Henüz verilmiş bir sipariş bulunmuyor."
+                },
+                "pageLength": 10,
+                "responsive": true,
+                "ordering": false
+            });
+        });
+    </script>
+}

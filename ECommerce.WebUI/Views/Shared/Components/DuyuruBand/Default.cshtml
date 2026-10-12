@@ -1,0 +1,62 @@
+﻿@model IEnumerable<ECommerce.Application.DTOs.Duyuru.DuyuruDto>
+
+@if (Model != null && Model.Any())
+{
+    <div class="announcement-bar">
+        <div class="container">
+            <div class="announcement-content">
+                @foreach (var duyuru in Model)
+                {
+                    <span>
+                        @if (!string.IsNullOrEmpty(duyuru.LinkUrl))
+                        {
+                            <a href="@duyuru.LinkUrl" class="text-white text-decoration-none">@duyuru.Metin</a>
+                        }
+                        else
+                        {
+                            @duyuru.Metin
+                        }
+                    </span>
+                    <!-- İstediğin gibi duyurular arasına çiçek ikonunu koyuyoruz -->
+                    <span class="mx-3 flower-separator"><i class="bi bi-flower1"></i></span>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+<style>
+    .announcement-bar {
+        background-color: var(--site-primary, #7b1fa2);
+        color: #fff;
+        font-size: 0.85rem;
+        font-weight: 500;
+        padding: 8px 0;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+
+    .announcement-content {
+        display: inline-block;
+        animation: marquee 30s linear infinite;
+    }
+
+    .flower-separator {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.9rem;
+    }
+
+    .announcement-bar:hover .announcement-content {
+        animation-play-state: paused;
+    }
+
+    @@keyframes marquee {
+        0% {
+            transform: translateX(100%);
+        }
+
+        100% {
+            transform: translateX(-100%);
+        }
+    }
+</style>

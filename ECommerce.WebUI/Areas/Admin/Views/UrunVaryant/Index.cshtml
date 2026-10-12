@@ -1,0 +1,384 @@
+﻿@model IEnumerable<ECommerce.Application.DTOs.UrunVaryant.UrunVaryantListeDto>
+@{
+    ViewData["Title"] = "Ürün Varyantları";
+    var urunId = ViewBag.UrunId as Guid?;
+    var urunAdi = ViewBag.UrunAdi as string ?? "Ürün";
+}
+
+<style>
+    .varyant-page {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .varyant-hero {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 28px;
+    }
+
+    .varyant-eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #9a1640;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+    }
+
+    .varyant-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0 0 6px;
+        letter-spacing: -.5px;
+    }
+
+        .varyant-title span {
+            color: #8b0028;
+        }
+
+    .varyant-subtitle {
+        margin: 0;
+        color: #85818c;
+        font-size: .95rem;
+    }
+
+    .varyant-actions {
+        display: flex;
+        gap: 12px;
+    }
+
+    .btn-back-products {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #fff;
+        border: 1px solid #e5e0e5;
+        border-radius: 13px;
+        color: #403b46;
+        padding: 13px 20px;
+        font-size: .9rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all .2s ease;
+    }
+
+        .btn-back-products:hover {
+            background: #fcfafb;
+            color: #24213d;
+            border-color: #d9cbd1;
+        }
+
+    .varyant-add-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        background: linear-gradient(135deg,#8b0028,#a70b3b);
+        border: 0;
+        border-radius: 13px;
+        color: #fff;
+        padding: 13px 20px;
+        font-size: .9rem;
+        font-weight: 600;
+        text-decoration: none;
+        box-shadow: 0 8px 22px rgba(139,0,40,.2);
+        transition: all .2s ease;
+    }
+
+        .varyant-add-btn:hover {
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(139,0,40,.28);
+        }
+
+    .varyant-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 20px;
+    }
+
+    .varyant-card {
+        background: #fff;
+        border: 1px solid #eee9ed;
+        border-radius: 19px;
+        padding: 24px;
+        box-shadow: 0 8px 28px rgba(35,28,40,.055);
+        transition: transform .22s ease, box-shadow .22s ease;
+        position: relative;
+    }
+
+        .varyant-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 35px rgba(35,28,40,.09);
+            border-color: #e5d5db;
+        }
+
+    .varyant-card-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 18px;
+    }
+
+    .varyant-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        background: #fff2f5;
+        color: #8b0028;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+    }
+
+    .varyant-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: .75rem;
+        font-weight: 700;
+        padding: 5px 10px;
+        border-radius: 8px;
+    }
+
+    .status-active {
+        background: #edf9f4;
+        color: #287c5d;
+    }
+
+    .status-passive {
+        background: #f2f0f3;
+        color: #716c75;
+    }
+
+    .varyant-name {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0 0 8px;
+    }
+
+    .varyant-price-diff {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #8b0028;
+        margin-bottom: 5px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .varyant-stock {
+        font-size: .8rem;
+        color: #716c75;
+    }
+
+    .varyant-card-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 1px solid #f0edef;
+    }
+
+    .varyant-edit-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        color: #8b0028;
+        text-decoration: none;
+        font-size: .85rem;
+        font-weight: 600;
+    }
+
+    .varyant-delete-btn {
+        width: 36px;
+        height: 36px;
+        border: 0;
+        border-radius: 10px;
+        background: #fff3f4;
+        color: #b64a5d;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all .2s ease;
+    }
+
+        .varyant-delete-btn:hover {
+            background: #fbe1e5;
+            color: #9e253c;
+        }
+
+    .varyant-empty {
+        background: #fff;
+        border: 1px dashed #ddd5da;
+        border-radius: 20px;
+        padding: 60px 20px;
+        text-align: center;
+        grid-column: 1/-1;
+    }
+
+    .varyant-empty-icon {
+        width: 70px;
+        height: 70px;
+        border-radius: 22px;
+        background: #fff2f5;
+        color: #9a1640;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        margin: 0 auto 15px;
+    }
+
+    .varyant-empty h3 {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #24213d;
+        margin-bottom: 7px;
+    }
+
+    .varyant-empty p {
+        color: #99949d;
+        font-size: .85rem;
+        margin-bottom: 20px;
+    }
+
+    .urun-alert {
+        border: 0;
+        border-radius: 13px;
+        padding: 13px 16px;
+        font-size: .84rem;
+        margin-bottom: 18px;
+    }
+
+    .urun-alert-success {
+        background: #edf9f4;
+        color: #287c5d;
+    }
+
+    .urun-alert-danger {
+        background: #fff0f2;
+        color: #a4364b;
+    }
+
+    @@media(max-width: 992px) {
+        .varyant-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @@media(max-width: 768px) {
+        .varyant-hero {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .varyant-actions {
+            width: 100%;
+            flex-direction: column;
+        }
+
+            .varyant-actions a {
+                width: 100%;
+                justify-content: center;
+            }
+
+        .varyant-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="varyant-page">
+    <div class="varyant-hero">
+        <div>
+            <div class="varyant-eyebrow"><i class="bi bi-diagram-2"></i> Varyant Yönetimi</div>
+            <h1 class="varyant-title"><span>@urunAdi</span> Seçenekleri</h1>
+            <p class="varyant-subtitle">Bu ürün için farklı boyut, renk veya aranjman tipi seçeneklerini belirleyin.</p>
+        </div>
+        <div class="varyant-actions">
+            <a asp-controller="Urun" asp-action="Index" class="btn-back-products"><i class="bi bi-arrow-left"></i> Ürün Listesine Dön</a>
+            <a asp-action="Ekle" asp-route-urunId="@urunId" class="varyant-add-btn"><i class="bi bi-plus-lg"></i> Yeni Varyant Ekle</a>
+        </div>
+    </div>
+
+    @if (TempData["BasariliMesaj"] != null)
+    {
+        <div class="alert urun-alert urun-alert-success alert-dismissible fade show" role="alert"><i class="bi bi-check-circle me-2"></i>@TempData["BasariliMesaj"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+
+    @if (TempData["HataMesaji"] != null)
+    {
+        <div class="alert urun-alert urun-alert-danger alert-dismissible fade show" role="alert"><i class="bi bi-exclamation-circle me-2"></i>@TempData["HataMesaji"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+
+    <div class="varyant-grid">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var item in Model)
+            {
+                <div class="varyant-card">
+                    <div class="varyant-card-top">
+                        <div class="varyant-icon"><i class="bi bi-box-seam"></i></div>
+                        @if (item.AktifMi)
+                        {
+                            <div class="varyant-status status-active"><i class="bi bi-check-circle-fill"></i> Yayında</div>
+                        }
+                        else
+                        {
+                            <div class="varyant-status status-passive"><i class="bi bi-eye-slash-fill"></i> Gizli</div>
+                        }
+                    </div>
+
+                    <h3 class="varyant-name">@item.VaryantAdi</h3>
+
+                    <div class="varyant-price-diff">
+                        <i class="bi bi-tags"></i>
+                        @if (item.FiyatFarki > 0)
+                        {
+                            <span>+ @item.FiyatFarki.ToString("N2") ₺ (Fiyat Farkı)</span>
+                        }
+                        else if (item.FiyatFarki < 0)
+                        {
+                            <span>@item.FiyatFarki.ToString("N2") ₺ (Fiyat Farkı)</span>
+                        }
+                        else
+                        {
+                            <span style="color:#716c75;">Fiyat farkı yok</span>
+                        }
+                    </div>
+
+                    <div class="varyant-stock">
+                        Stok: <strong>@item.StokMiktari</strong> Adet
+                    </div>
+
+                    <div class="varyant-card-footer">
+                        <a asp-action="Guncelle" asp-route-id="@item.Id" asp-route-urunId="@item.UrunId" class="varyant-edit-btn"><i class="bi bi-pencil"></i> Düzenle</a>
+                        <form asp-action="Sil" asp-route-id="@item.Id" asp-route-urunId="@item.UrunId" method="post" onsubmit="return confirm('Bu varyantı silmek istediğinize emin misiniz?');">
+                            <button type="submit" class="varyant-delete-btn" title="Sil"><i class="bi bi-trash3"></i></button>
+                        </form>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="varyant-empty">
+                <div class="varyant-empty-icon"><i class="bi bi-diagram-2"></i></div>
+                <h3>Henüz Varyant Eklenmemiş</h3>
+                <p>Bu ürün şu anda tek tip olarak satılıyor. Boyut veya renk gibi seçenekler sunmak için hemen bir varyant ekleyin.</p>
+                <a asp-action="Ekle" asp-route-urunId="@urunId" class="varyant-add-btn"><i class="bi bi-plus-lg"></i> İlk Varyantı Ekle</a>
+            </div>
+        }
+    </div>
+</div>

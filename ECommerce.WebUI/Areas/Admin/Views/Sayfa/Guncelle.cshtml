@@ -1,0 +1,266 @@
+﻿@model ECommerce.Application.DTOs.Sayfa.SayfaGuncelleDto
+@{
+    ViewData["Title"] = "Sayfa Düzenle";
+}
+
+<link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet">
+
+<style>
+    .s-form-page {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .s-form-card {
+        background: #fff;
+        border: 1px solid #eee9ed;
+        border-radius: 20px;
+        padding: 32px;
+        box-shadow: 0 8px 30px rgba(35,28,40,.04);
+        margin-bottom: 25px;
+    }
+
+    .s-form-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #24213d;
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+        .s-form-title i {
+            color: #8b0028;
+            background: #fff2f5;
+            padding: 10px;
+            border-radius: 12px;
+            font-size: 1.2rem;
+        }
+
+    .s-field {
+        margin-bottom: 20px;
+    }
+
+        .s-field label {
+            display: block;
+            color: #403b46;
+            font-size: .85rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+            .s-field label span {
+                color: #b24a60;
+            }
+
+    .s-input {
+        width: 100%;
+        height: 48px;
+        border: 1px solid #e4dfe4;
+        border-radius: 12px;
+        background: #fff;
+        padding: 0 15px;
+        color: #24213d;
+        font-size: .95rem;
+        outline: 0;
+        transition: all .2s ease;
+    }
+
+        .s-input:focus {
+            border-color: #c98ca0;
+            box-shadow: 0 0 0 4px rgba(139,0,40,.06);
+        }
+
+    .s-textarea {
+        height: 90px;
+        padding: 12px 15px;
+        resize: vertical;
+    }
+
+    .s-switch-box {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border: 1px solid #e4dfe4;
+        border-radius: 12px;
+        padding: 15px;
+        background: #faf9fa;
+    }
+
+    .s-switch-text strong {
+        display: block;
+        font-size: .9rem;
+        color: #24213d;
+    }
+
+    .s-switch-text span {
+        font-size: .75rem;
+        color: #85818c;
+    }
+
+    .s-switch-box input {
+        width: 44px;
+        height: 24px;
+        cursor: pointer;
+        accent-color: #8b0028;
+    }
+
+    .editor-container {
+        height: 350px;
+        border-radius: 0 0 12px 12px;
+        background: #fff;
+    }
+
+    .ql-toolbar.ql-snow {
+        border-radius: 12px 12px 0 0;
+        border-color: #e4dfe4;
+        background: #faf9fa;
+    }
+
+    .ql-container.ql-snow {
+        border-radius: 0 0 12px 12px;
+        border-color: #e4dfe4;
+        font-size: .95rem;
+        font-family: inherit;
+    }
+
+    .s-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+    }
+
+    .s-btn-cancel {
+        display: inline-flex;
+        align-items: center;
+        height: 48px;
+        padding: 0 20px;
+        border: 1px solid #e5e0e5;
+        border-radius: 12px;
+        color: #403b46;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+        .s-btn-cancel:hover {
+            background: #f8f6f8;
+        }
+
+    .s-btn-save {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        height: 48px;
+        padding: 0 24px;
+        background: linear-gradient(135deg,#8b0028,#a70b3b);
+        border: 0;
+        border-radius: 12px;
+        color: #fff;
+        font-weight: 600;
+        box-shadow: 0 6px 15px rgba(139,0,40,.2);
+    }
+</style>
+
+<div class="s-form-page">
+    <form asp-action="Guncelle" method="post" id="sayfaForm">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+
+        <div class="s-form-card">
+            <h2 class="s-form-title"><i class="bi bi-pencil-square"></i> Sayfayı Düzenle</h2>
+
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="s-field">
+                        <label asp-for="Baslik">Sayfa Başlığı <span>*</span></label>
+                        <input asp-for="Baslik" class="s-input" id="sayfaBaslik" autocomplete="off" />
+                        <span asp-validation-for="Baslik" class="text-danger" style="font-size:12px;"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="s-field">
+                        <label asp-for="SayfaKodu">Sistem Kodu <span>*</span></label>
+                        <input asp-for="SayfaKodu" class="s-input" autocomplete="off" />
+                        <span asp-validation-for="SayfaKodu" class="text-danger" style="font-size:12px;"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="s-field">
+                <label asp-for="Icerik">Sayfa İçeriği <span>*</span></label>
+                <input type="hidden" asp-for="Icerik" id="gizliIcerik" />
+                <div id="editor" class="editor-container"></div>
+                <span asp-validation-for="Icerik" class="text-danger" style="font-size:12px;"></span>
+            </div>
+
+            <div class="s-field mb-0">
+                <div class="s-switch-box">
+                    <div class="s-switch-text">
+                        <strong>Sayfayı Aktif Et (Yayınla)</strong>
+                        <span>Sayfa kaydedildikten sonra web sitesinde görüntülenebilir.</span>
+                    </div>
+                    <input asp-for="AktifMi" type="checkbox" />
+                </div>
+            </div>
+        </div>
+
+        <div class="s-form-card">
+            <h2 class="s-form-title"><i class="bi bi-google"></i> Arama Motoru Optimizasyonu (SEO)</h2>
+
+            <div class="s-field">
+                <label asp-for="SeoUrl">SEO URL (Kalıcı Bağlantı) <span>*</span></label>
+                <input asp-for="SeoUrl" class="s-input" id="sayfaSeo" autocomplete="off" />
+                <span asp-validation-for="SeoUrl" class="text-danger" style="font-size:12px;"></span>
+            </div>
+
+            <div class="s-field">
+                <label asp-for="MetaDescription">Meta Açıklama (Description)</label>
+                <textarea asp-for="MetaDescription" class="s-input s-textarea"></textarea>
+            </div>
+
+            <div class="s-field mb-0">
+                <label asp-for="MetaKeywords">Anahtar Kelimeler (Keywords)</label>
+                <input asp-for="MetaKeywords" class="s-input" autocomplete="off" />
+            </div>
+        </div>
+
+        <div class="s-actions mb-5">
+            <a asp-action="Index" class="s-btn-cancel">Vazgeç</a>
+            <button type="submit" class="s-btn-save"><i class="bi bi-check2"></i> Değişiklikleri Kaydet</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var quill = new Quill('#editor', {
+                theme: 'snow'
+            });
+
+            // Mevcut veriyi editöre yükleme
+            const gizliIcerik = document.getElementById("gizliIcerik");
+            if (gizliIcerik.value) {
+                quill.clipboard.dangerouslyPasteHTML(gizliIcerik.value);
+            }
+
+            const form = document.getElementById("sayfaForm");
+            form.addEventListener("submit", function () {
+                gizliIcerik.value = quill.root.innerHTML;
+            });
+
+            const baslik = document.getElementById("sayfaBaslik");
+            const seo = document.getElementById("sayfaSeo");
+
+            baslik?.addEventListener("blur", function () {
+                const val = baslik.value.trim();
+                if (val && !seo.value.trim()) {
+                    seo.value = val.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ı/g, "i").replace(/ğ/g, "g").replace(/ü/g, "u").replace(/ş/g, "s").replace(/ö/g, "o").replace(/ç/g, "c").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+                }
+            });
+        });
+    </script>
+}

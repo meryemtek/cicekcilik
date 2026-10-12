@@ -1,0 +1,764 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Lidya Çiçekçilik</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
+
+    <!-- DataTables CSS -->
+    <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            min-height: 100%;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: #fff;
+            color: #2c3e35;
+            overflow-x: hidden;
+        }
+
+        #wrapper {
+            display: flex;
+            min-height: 100vh;
+            width: 100%;
+        }
+
+        #sidebar {
+            width: 280px;
+            min-width: 280px;
+            min-height: 100vh;
+            background: radial-gradient(at 76.85% 55.8%, hsla(0,88%,33.5%,1) 0%, hsla(0,88%,33.5%,0) 100%), radial-gradient(at 36.79% 76.01%, hsla(242,100%,20%,1) 0%, hsla(242,100%,20%,0) 100%), radial-gradient(at 0.58% 53.97%, hsla(0,88%,33.5%,1) 0%, hsla(0,88%,33.5%,0) 100%), radial-gradient(at 13.45% 79.28%, hsla(242,100%,20%,1) 0%, hsla(242,100%,20%,0) 100%), radial-gradient(at 63.10% 4.14%, hsla(0,88%,33.5%,1) 0%, hsla(0,88%,33.5%,0) 100%), radial-gradient(at 39.61% 0.85%, hsla(242,100%,20%,1) 0%, hsla(242,100%,20%,0) 100%), radial-gradient(at 28.07% 68.94%, hsla(0,88%,33.5%,1) 0%, hsla(0,88%,33.5%,0) 100%), radial-gradient(at 76.80% 81.22%, hsla(242,100%,20%,1) 0%, hsla(242,100%,20%,0) 100%), radial-gradient(at 59.01% 4.70%, hsla(0,88%,33.5%,1) 0%, hsla(0,88%,33.5%,0) 100%), radial-gradient(at 9.49% 97.51%, hsla(242,100%,20%,1) 0%, hsla(242,100%,20%,0) 100%), radial-gradient(at 60.22% 16.27%, hsla(0,88%,33.5%,1) 0%, hsla(0,88%,33.5%,0) 100%), radial-gradient(at 99.21% 53.54%, hsla(242,100%,20%,1) 0%, hsla(242,100%,20%,0) 100%);
+            padding: 2rem 1.1rem;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 1001;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #fff;
+            margin-bottom: 2.5rem;
+            padding: 0 .5rem;
+        }
+
+        .brand-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 12px;
+            background: rgba(255,255,255,.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .brand-text strong {
+            font-size: 1.35rem;
+            font-weight: 700;
+            display: block;
+            line-height: 1.1;
+        }
+
+        .brand-text small {
+            font-size: .7rem;
+            opacity: .6;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            flex: 1;
+        }
+
+        .sidebar-heading {
+            font-size: .68rem;
+            font-weight: 600;
+            letter-spacing: 1.4px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,.4);
+            margin: 1.6rem .8rem .5rem;
+        }
+
+        .sidebar-nav .nav-item {
+            position: relative;
+            margin-bottom: .3rem;
+        }
+
+        .sidebar-nav .nav-link {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            padding: .85rem 1.15rem;
+            border-radius: 12px;
+            color: rgba(255,255,255,.78);
+            font-weight: 500;
+            font-size: .95rem;
+            text-decoration: none;
+            transition: background .2s ease, color .2s ease, transform .2s ease;
+        }
+
+            .sidebar-nav .nav-link .bi {
+                font-size: 1.25rem;
+                width: 24px;
+                min-width: 24px;
+                text-align: center;
+                transition: color .2s ease;
+            }
+
+            .sidebar-nav .nav-link:not(.active):hover {
+                background: rgba(255,255,255,.1);
+                color: #fff;
+                transform: translateX(2px);
+            }
+
+            /* AKTİF MENÜ */
+            .sidebar-nav .nav-link.active {
+                position: relative;
+                z-index: 5;
+                width: calc(100% + 1.1rem);
+                margin-right: -1.1rem;
+                padding-right: 2rem;
+                background: #fff !important;
+                color: #24213d !important;
+                font-weight: 600;
+                border-radius: 30px 0 0 30px;
+                box-shadow: none;
+                transform: none;
+            }
+
+                .sidebar-nav .nav-link.active .bi {
+                    color: #24213d !important;
+                }
+
+                .sidebar-nav .nav-link.active:hover {
+                    background: #fff !important;
+                    color: #24213d !important;
+                    transform: none;
+                }
+
+                .sidebar-nav .nav-link.active::before {
+                    content: "";
+                    position: absolute;
+                    top: -20px;
+                    right: 0;
+                    width: 20px;
+                    height: 20px;
+                    background: radial-gradient(circle at top left, transparent 19.5px, #ffffff 20px);
+                    pointer-events: none;
+                }
+
+                .sidebar-nav .nav-link.active::after {
+                    content: "";
+                    position: absolute;
+                    bottom: -20px;
+                    right: 0;
+                    width: 20px;
+                    height: 20px;
+                    background: radial-gradient(circle at bottom left, transparent 19.5px, #ffffff 20px);
+                    pointer-events: none;
+                }
+
+        .logout-item {
+            margin-top: auto;
+            padding-top: 1.5rem;
+        }
+
+        .logout-btn {
+            color: #f0a0b0 !important;
+        }
+
+            .logout-btn:hover {
+                background: rgba(240,160,176,.15) !important;
+                color: #ffc0cb !important;
+            }
+
+        #content-wrapper {
+            flex: 1;
+            min-width: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+            position: relative;
+            z-index: 1;
+        }
+
+        .topbar {
+            min-height: 5rem;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            width: 42px;
+            height: 42px;
+            border: 0;
+            border-radius: 10px;
+            background: #f4f5f7;
+            color: #24213d;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: background .2s ease, transform .2s ease;
+        }
+
+            .mobile-menu-btn:hover {
+                background: #e9ebef;
+            }
+
+            .mobile-menu-btn:active {
+                transform: scale(.95);
+            }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+            color: #2c3e35;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 1.8rem 2rem;
+            background: #fff;
+        }
+
+        footer {
+            padding: 1.2rem;
+            text-align: center;
+            color: #888;
+            font-size: .85rem;
+            background: #fff;
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            background: rgba(12,15,25,.38);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity .25s ease, visibility .25s ease;
+        }
+
+            .sidebar-overlay.show {
+                opacity: 1;
+                visibility: visible;
+                pointer-events: auto;
+            }
+
+        .sidebar-close {
+            display: none;
+        }
+
+        body.menu-open {
+            overflow: hidden;
+        }
+
+        @@media (max-width: 992px) {
+            #sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 280px;
+                min-width: 280px;
+                height: 100dvh;
+                min-height: 100dvh;
+                padding: 1.5rem 1.1rem;
+                transform: translateX(-100%);
+                transition: transform .28s cubic-bezier(.4,0,.2,1);
+                box-shadow: 10px 0 35px rgba(0,0,0,.18);
+                overflow-y: auto;
+                overflow-x: hidden;
+                z-index: 1001;
+            }
+
+                #sidebar.show {
+                    transform: translateX(0);
+                }
+
+            .sidebar-close {
+                display: flex;
+                position: absolute;
+                top: 1.35rem;
+                right: 1.1rem;
+                width: 38px;
+                height: 38px;
+                align-items: center;
+                justify-content: center;
+                border: 0;
+                border-radius: 10px;
+                background: rgba(255,255,255,.12);
+                color: #fff;
+                font-size: 1.2rem;
+                cursor: pointer;
+            }
+
+            .sidebar-brand {
+                padding-right: 3rem;
+                margin-bottom: 2rem;
+            }
+
+            .sidebar-nav .nav-link.active {
+                width: 100%;
+                margin-right: 0;
+                padding-right: 1.15rem;
+                border-radius: 12px;
+            }
+
+                .sidebar-nav .nav-link.active::before,
+                .sidebar-nav .nav-link.active::after {
+                    display: none;
+                }
+
+            .mobile-menu-btn {
+                display: flex;
+            }
+
+            .topbar {
+                min-height: 4.5rem;
+                padding: 0 1rem;
+                gap: 12px;
+            }
+
+            .page-title {
+                font-size: 1.25rem;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .main-content {
+                padding: 1.25rem 1rem;
+            }
+        }
+
+        @@media (max-width: 576px) {
+            .topbar {
+                min-height: 4.2rem;
+                padding: 0 .8rem;
+            }
+
+            .mobile-menu-btn {
+                width: 40px;
+                height: 40px;
+            }
+
+            .page-title {
+                font-size: 1.1rem;
+            }
+
+            .topbar-user {
+                display: none;
+            }
+
+            .main-content {
+                padding: 1rem .8rem;
+            }
+
+            footer {
+                padding: 1rem .5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    @{
+        var currentPath = Context.Request.Path.Value?.ToLowerInvariant() ?? "";
+        bool IsActive(string path)
+        {
+            path = path.ToLowerInvariant();
+            return currentPath == path || currentPath.StartsWith(path + "/");
+        }
+    }
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div id="wrapper">
+        <nav id="sidebar">
+            <button type="button" class="sidebar-close" id="sidebarClose" aria-label="Menüyü kapat">
+                <i class="bi bi-x-lg"></i>
+            </button>
+
+            <a class="sidebar-brand" href="/Admin/Dashboard">
+                <div class="brand-icon">
+                    <i class="bi bi-flower1"></i>
+                </div>
+                <div class="brand-text">
+                    <strong>Lidya</strong>
+                    <small>Çiçekçilik</small>
+                </div>
+            </a>
+
+            <ul class="sidebar-nav">
+                <li class="nav-item">
+                    <a class="nav-link @(IsActive("/Admin/Dashboard") ? "active" : "")" href="/Admin/Dashboard">
+                        <i class="bi bi-grid-1x2-fill"></i>
+                        <span>Gösterge Paneli</span>
+                    </a>
+                </li>
+                <div class="sidebar-heading">İçerik Yönetimi</div>
+
+                <li class="nav-item">
+                    <a class="nav-link @(IsActive("/Admin/Duyuru") ? "active" : "")" href="/Admin/Duyuru">
+                        <i class="bi bi-megaphone-fill"></i>
+                        <span>Kayan Duyurular</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link @(IsActive("/Admin/Slider") ? "active" : "")" href="/Admin/Slider">
+                        <i class="bi bi-images"></i>
+                        <span>Slider Yönetimi</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link @(IsActive("/Admin/Blog") ? "active" : "")" href="/Admin/Blog">
+                        <i class="bi bi-newspaper"></i>
+                        <span>Blog Yazıları</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link @(IsActive("/Admin/Sayfa") ? "active" : "")" href="/Admin/Sayfa">
+                        <i class="bi bi-file-earmark-text-fill"></i>
+                        <span>Sabit Sayfalar</span>
+                    </a>
+                </li>
+
+                <div class="sidebar-heading">Kurumsal Sayfalar</div>
+
+                <li class="nav-item">
+                    <a class="nav-link @(IsActive("/Admin/HakkimizdaAyari") ? "active" : "")" href="/Admin/HakkimizdaAyari">
+                        <i class="bi bi-building-fill"></i>
+                        <span>Hakkımızda Yönetimi</span>
+                    </a>
+                </li>
+
+                <div class="sidebar-heading">Site Yönetimi</div>
+
+                <li class="nav-item">
+                    <a class="nav-link @(IsActive("/Admin/Kategori") ? "active" : "")" href="/Admin/Kategori">
+                        <i class="bi bi-tags-fill"></i>
+                        <span>Kategori Yönetimi</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link @(IsActive("/Admin/AnasayfaKategori") ? "active" : "")"
+                       href="/Admin/AnasayfaKategori">
+                        <i class="bi bi-grid-3x3-gap-fill"></i>
+                        <span>Anasayfa Kategorileri</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link @(IsActive("/Admin/KategoriBannerAdmin") ? "active" : "")" href="/Admin/KategoriBannerAdmin">
+                        <i class="bi bi-images"></i>
+                        <span>Kategori Bannerlar</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link @(IsActive("/Admin/OneCikanAdmin") ? "active" : "")" href="/Admin/OneCikanAdmin">
+                        <i class="bi bi-star-fill"></i>
+                        <span>Öne Çıkanlar</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link @(IsActive("/Admin/KampanyaYonetimi") ? "active" : "")" href="/Admin/KampanyaYonetimi">
+                        <i class="bi bi-tags-fill"></i>
+                        <span>Kampanya Yönetimi</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link @(IsActive("/Admin/Kupon") ? "active" : "")" href="/Admin/Kupon">
+                        <i class="bi bi-tag"></i>
+                        <span>Kupon Yönetimi</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @(IsActive("/Admin/Menu") ? "active" : "")" href="/Admin/Menu">
+                        <i class="bi bi-diagram-3"></i>
+                        <span>Menü Yönetimi</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link @(IsActive("/Admin/SiteAyari") ? "active" : "")" href="/Admin/SiteAyari">
+                        <i class="bi bi-sliders"></i>
+                        <span>Site Ayarları</span>
+                    </a>
+                </li>
+
+
+                <div class="sidebar-heading">Mağaza</div>
+
+                <li class="nav-item">
+                    <a class="nav-link @(IsActive("/Admin/Urun") ? "active" : "")" href="/Admin/Urun">
+                        <i class="bi bi-box-seam-fill"></i>
+                        <span>Ürünler</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link @(IsActive("/Admin/UrunYorum") ? "active" : "")" href="/Admin/UrunYorum">
+                        <i class="bi bi-chat-square-text-fill"></i>
+                        <span>Ürün Yorumları</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link @(IsActive("/Admin/KartNotuSablonu") ? "active" : "")" href="/Admin/KartNotuSablonu">
+                        <i class="bi bi-chat-square-quote-fill"></i>
+                        <span>Hazır Kart Notları</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link @(IsActive("/Admin/TopluIslem") ? "active" : "")" href="/Admin/TopluIslem">
+                        <i class="bi bi-layers-fill"></i>
+                        <span>Toplu İşlemler</span>
+                    </a>
+                </li>
+
+
+                <div class="sidebar-heading">İletişim</div>
+
+                <li class="nav-item">
+                    <!-- GÜNCELLENEN KISIM: Sol menüde Gelen Kutusu yanına dinamik rozet eklendi -->
+                    <a class="nav-link @(IsActive("/Admin/IletisimMesaji") ? "active" : "") d-flex align-items-center justify-content-between" href="/Admin/IletisimMesaji">
+                        <div class="d-flex align-items-center gap-12" style="gap: 12px;">
+                            <i class="bi bi-envelope-paper"></i>
+                            <span>Gelen Kutusu</span>
+                        </div>
+                        @await Component.InvokeAsync("AdminNotification", new { viewName = "Badge" })
+                    </a>
+                </li>
+
+
+                <div class="sidebar-heading">Finans</div>
+
+                <li class="nav-item">
+                    <a class="nav-link @(IsActive("/Admin/BankaHesabi") ? "active" : "")" href="/Admin/BankaHesabi">
+                        <i class="bi bi-wallet2"></i>
+                        <span>Banka Hesapları</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link @(IsActive("/Admin/OdemeBildirimi") ? "active" : "") d-flex align-items-center justify-content-between" href="/Admin/OdemeBildirimi">
+                        <div class="d-flex align-items-center" style="gap: 12px;">
+                            <i class="bi bi-receipt-cutoff"></i>
+                            <span>Ödeme Bildirimleri</span>
+                        </div>
+                        @await Component.InvokeAsync("AdminNotification", new { viewName = "OdemeBadge" })
+                    </a>
+                </li>
+
+                <div class="sidebar-heading">Siparişler</div>
+
+                <li class="nav-item">
+                    <a class="nav-link @(IsActive("/Admin/Siparis") ? "active" : "")" href="/Admin/Siparis">
+                        <i class="bi bi-bag-heart-fill"></i>
+                        <span>Tüm Siparişler</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link @(IsActive("/Admin/Teslimat") ? "active" : "")" href="/Admin/Teslimat">
+                        <i class="bi bi-truck"></i>
+                        <span>Teslimat Bölgeleri</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @(IsActive("/Admin/TeslimatSaati") ? "active" : "")" href="/Admin/TeslimatSaati">
+                        <i class="bi bi-clock-history"></i>
+                        <span>Teslimat Saatleri</span>
+                    </a>
+                </li>
+
+                <div class="sidebar-heading">Sistem</div>
+
+                <li class="nav-item logout-item">
+                    <a class="nav-link logout-btn" href="/Admin/Auth/Logout">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span>Çıkış Yap</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <div id="content-wrapper">
+            <div class="topbar">
+                <div class="topbar-left">
+                    <button type="button" class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menüyü aç">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <h1 class="page-title">@ViewData["Title"]</h1>
+                </div>
+
+                <!-- GÜNCELLENEN KISIM: Sağ üst köşeye Bildirim İkonu (Çan) eklendi -->
+                <div class="d-flex align-items-center gap-3 topbar-user">
+                    @await Component.InvokeAsync("AdminNotification")
+                    <span class="fw-medium">Yönetici</span>
+                </div>
+            </div>
+
+            <div class="main-content">
+                @RenderBody()
+            </div>
+
+            <footer>
+                &copy; @DateTime.Now.Year Lidya Çiçekçilik - Tasarım ve Kodlama Hayat İşleri İşletme Çözümleri
+            </footer>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const sidebar = document.getElementById("sidebar");
+            const overlay = document.getElementById("sidebarOverlay");
+            const menuButton = document.getElementById("mobileMenuBtn");
+            const closeButton = document.getElementById("sidebarClose");
+
+            function openSidebar() {
+                sidebar.classList.add("show");
+                overlay.classList.add("show");
+                document.body.classList.add("menu-open");
+            }
+
+            function closeSidebar() {
+                sidebar.classList.remove("show");
+                overlay.classList.remove("show");
+                document.body.classList.remove("menu-open");
+            }
+
+            menuButton?.addEventListener("click", function (event) {
+                event.stopPropagation();
+                openSidebar();
+            });
+
+            closeButton?.addEventListener("click", closeSidebar);
+            overlay?.addEventListener("click", closeSidebar);
+
+            document.addEventListener("keydown", function (event) {
+                if (event.key === "Escape") {
+                    closeSidebar();
+                }
+            });
+
+            sidebar.querySelectorAll(".nav-link").forEach(function (link) {
+                link.addEventListener("click", function () {
+                    if (window.innerWidth <= 992) {
+                        closeSidebar();
+                    }
+                });
+            });
+
+            window.addEventListener("resize", function () {
+                if (window.innerWidth > 992) {
+                    closeSidebar();
+                }
+            });
+        });
+    </script>
+    <!-- Summernote CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+    <!-- Summernote JS -->
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+
+    <script>
+        var CustomButton = function (context) {
+            var ui = $.summernote.ui;
+            var button = ui.button({
+                contents: '<i class="bi bi-link-45deg"></i> Özel Buton Ekle',
+                tooltip: 'İçeriğe Şık Buton Ekle',
+                click: function () {
+                    var butonMetni = prompt("Buton Üzerinde Ne Yazsın?\n(Örn: Sevgiliye Çiçekleri Keşfet)");
+                    if (!butonMetni) return;
+
+                    var butonLink = prompt("Buton Hangi Sayfaya Gitsin?\n(Örn: /kategori/sevgiliye-cicek)");
+                    if (!butonLink) return;
+
+                    context.invoke('editor.insertText', ` [ ${butonMetni} → ${butonLink} ] `);
+                }
+            });
+            return button.render();
+        };
+
+        $(document).ready(function () {
+            $('.rich-editor').summernote({
+                height: 400,
+                placeholder: 'Harika içeriğinizi buraya yazın...',
+                lang: 'tr-TR',
+                toolbar: [
+                    ['style', ['style']],
+                    ['font', ['bold', 'italic', 'underline', 'clear']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['insert', ['link', 'picture', 'video']],
+                    ['mybutton', ['customButton']]
+                ],
+                buttons: {
+                    customButton: CustomButton
+                }
+            });
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>

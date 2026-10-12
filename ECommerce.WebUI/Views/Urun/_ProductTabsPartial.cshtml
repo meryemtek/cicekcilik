@@ -1,0 +1,146 @@
+﻿@model ECommerce.Application.DTOs.Urun.UrunDetayDto
+
+<div class="product-tabs-container">
+    <ul class="nav nav-tabs" id="productTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="aciklama-tab" data-bs-toggle="tab" data-bs-target="#aciklama" type="button" role="tab"><i class="bi bi-file-text me-2"></i>Ürün Açıklaması</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="yorumlar-tab" data-bs-toggle="tab" data-bs-target="#yorumlar" type="button" role="tab"><i class="bi bi-chat-left-quote me-2"></i>Müşteri Yorumları (@Model.ToplamYorumSayisi)</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="taksit-tab" data-bs-toggle="tab" data-bs-target="#taksit" type="button" role="tab"><i class="bi bi-credit-card me-2"></i>Taksit Seçenekleri</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="sss-tab" data-bs-toggle="tab" data-bs-target="#sss" type="button" role="tab"><i class="bi bi-question-circle me-2"></i>Sık Sorulan Sorular</button>
+        </li>
+    </ul>
+
+    <div class="tab-content tab-content-box" id="productTabContent">
+        <!-- 1. ÜRÜN AÇIKLAMASI SEKMESİ -->
+        <div class="tab-pane fade show active" id="aciklama" role="tabpanel">
+            <h5 class="fw-bold mb-3" style="color: #3b1154;">Ürün Detayları</h5>
+            <div class="text-muted" style="line-height: 1.7;">
+                @Html.Raw(Model.Aciklama)
+            </div>
+
+            @if (!string.IsNullOrWhiteSpace(Model.AiAciklama))
+            {
+                <div class="mt-4 p-3 bg-light rounded-3 border-start border-4" style="border-color: #3b1154 !important;">
+                    <h6 class="fw-bold text-dark mb-1"><i class="bi bi-stars text-warning me-2"></i>Yapay Zeka Destekli Tasarım Notu</h6>
+                    <p class="small text-muted mb-0">@Model.AiAciklama</p>
+                </div>
+            }
+        </div>
+
+        <!-- 2. MÜŞTERİ YORUMLARI SEKMESİ -->
+        <div class="tab-pane fade" id="yorumlar" role="tabpanel">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="fw-bold m-0" style="color: #3b1154;">Değerlendirmeler ve Yorumlar</h5>
+                <button class="btn btn-sm text-white px-4 fw-bold rounded-pill" style="background: #3b1154;" data-bs-toggle="modal" data-bs-target="#yorumModal">Yorum Yap</button>
+            </div>
+
+            @if (Model.Yorumlar != null && Model.Yorumlar.Any())
+            {
+                foreach (var yorum in Model.Yorumlar)
+                {
+                    dynamic r = yorum;
+                    string yorumMetni = r.YorumMetni ?? r.Yorum ?? r.Icerik ?? r.Metin ?? "";
+                    string yorumcuAd = r.YorumcuAd ?? r.AdSoyad ?? r.KullaniciAdi ?? "Misafir";
+                    int puan = r.Puan > 0 ? r.Puan : 5;
+                    DateTime tarih = r.OlusturulmaTarihi != null ? r.OlusturulmaTarihi : DateTime.Now;
+
+                    <div class="review-card">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h6 class="fw-bold mb-0 text-dark">@yorumcuAd</h6>
+                            <span class="text-muted small">@tarih.ToString("dd.MM.yyyy")</span>
+                        </div>
+                        <div class="text-warning small mb-2">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                if (i <= puan)
+                                {
+                                    <i class="bi bi-star-fill"></i>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-star"></i>
+                                }
+                            }
+                        </div>
+                        <p class="text-muted small mb-0">@yorumMetni</p>
+                    </div>
+                }
+            }
+            else
+            {
+                <p class="text-muted text-center py-4 mb-0">Bu ürün için henüz değerlendirme yapılmamış. İlk yorumu sen yaparak fikirlerini paylaşabilirsin!</p>
+            }
+        </div>
+
+        <!-- 3. TAKSİT SEÇENEKLERİ SEKMESİ -->
+        <div class="tab-pane fade" id="taksit" role="tabpanel">
+            <h5 class="fw-bold mb-3" style="color: #3b1154;">Anlaşmalı Kredi Kartı Taksit Tablosu</h5>
+            <p class="small text-muted mb-4">Tüm banka kredi kartlarına uygun vade farksız veya avantajlı taksit seçeneklerinden yararlanabilirsiniz.</p>
+
+            <div class="table-responsive">
+                <table class="table table-bordered installment-table text-center align-middle">
+                    <thead>
+                        <tr>
+                            <th>Taksit Sayısı</th>
+                            <th>Aylık Tutar</th>
+                            <th>Toplam Tutar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="fw-bold">Tek Çekim</td>
+                            <td>@Model.Fiyat.ToString("N2") ₺</td>
+                            <td class="fw-bold">@Model.Fiyat.ToString("N2") ₺</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">3 Taksit</td>
+                            <td>@((Model.Fiyat / 3 * 1.02m).ToString("N2")) ₺</td>
+                            <td>@((Model.Fiyat * 1.02m).ToString("N2")) ₺</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">6 Taksit</td>
+                            <td>@((Model.Fiyat / 6 * 1.04m).ToString("N2")) ₺</td>
+                            <td>@((Model.Fiyat * 1.04m).ToString("N2")) ₺</td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">9 Taksit</td>
+                            <td>@((Model.Fiyat / 9 * 1.07m).ToString("N2")) ₺</td>
+                            <td>@((Model.Fiyat * 1.07m).ToString("N2")) ₺</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 4. SIK SORULAN SORULAR & ÖZEL NOTLAR SEKMESİ -->
+        <div class="tab-pane fade" id="sss" role="tabpanel">
+            <div class="d-flex align-items-center gap-2 mb-3">
+                <div class="p-2 rounded-circle bg-light text-purple" style="color: #3b1154;">
+                    <i class="bi bi-gift-fill fs-4"></i>
+                </div>
+                <h5 class="fw-bold m-0" style="color: #3b1154;">Özel Notlar ve Bilgilendirmeler</h5>
+            </div>
+
+            <ul class="text-muted small ps-3 mb-4" style="line-height: 1.8;">
+                <li class="mb-2"><strong>Tüm çiçeklerimiz</strong> özenle seçilmiş, birinci kalite çiçeklerdir.</li>
+                <li class="mb-2">Mevsim şartlarına ve yöresel stok durumuna göre çiçek renk tonlarında küçük farklılıklar olabilir.</li>
+                <li class="mb-2">Stok durumuna göre bazı yan çiçekler, aranjmanın genel görünümünü bozmayacak şekilde benzerleriyle değiştirilebilir.</li>
+                <li class="mb-2">Özel gün ve yoğun tarihlerde (Anneler Günü, Sevgililer Günü vb.) erken sipariş vermenizi öneririz.</li>
+            </ul>
+
+            <hr class="my-4 text-muted opacity-25" />
+
+            <h6 class="fw-bold text-dark mb-2">Teslimat Nasıl Yapılıyor?</h6>
+            <p class="small text-muted mb-3">Siparişleriniz soğuk zincir bozulmadan veya tazeliği koruncak şekilde özel kurye araçlarımızla tam belirttiğiniz saat aralığında kapınıza kadar teslim edilir.</p>
+
+            <h6 class="fw-bold text-dark mb-2">İade veya Değişim Yapabilir miyim?</h6>
+            <p class="small text-muted mb-0">Canlı bitki ve çiçek ürünlerinde hızlı tüketim ve hassasiyet nedeniyle, teslimat sonrasında kalite kaynaklı bir sorun yaşanması durumunda aynı gün içerisinde bizimle iletişime geçebilirsiniz.</p>
+        </div>
+    </div>
+</div>

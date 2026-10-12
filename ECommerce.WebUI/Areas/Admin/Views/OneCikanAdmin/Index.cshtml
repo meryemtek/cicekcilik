@@ -1,0 +1,221 @@
+﻿@model ECommerce.Application.DTOs.OneCikan.OneCikanDto
+@{
+    ViewData["Title"] = "Öne Çıkanlar Yönetimi";
+}
+
+<!-- Select2 Kütüphanesi (Canlı Ürün Arama İçin) -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+<style>
+    .s-page {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .s-hero {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 28px;
+    }
+
+    .s-eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #9a1640;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+    }
+
+    .s-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0 0 6px;
+        letter-spacing: -.5px;
+    }
+
+    .s-subtitle {
+        margin: 0;
+        color: #85818c;
+        font-size: .95rem;
+    }
+
+    .s-card-form {
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #eee9ed;
+        box-shadow: 0 8px 25px rgba(35,28,40,.04);
+        padding: 28px;
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        font-weight: 600;
+        font-size: 0.88rem;
+        color: #24213d;
+    }
+
+    .s-save-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        background: linear-gradient(135deg,#8b0028,#a70b3b);
+        border: 0;
+        border-radius: 13px;
+        color: #fff;
+        padding: 13px 25px;
+        font-size: .9rem;
+        font-weight: 600;
+        text-decoration: none;
+        box-shadow: 0 8px 22px rgba(139,0,40,.2);
+        transition: all .2s ease;
+        cursor: pointer;
+    }
+
+        .s-save-btn:hover {
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(139,0,40,.28);
+        }
+
+    /* Select2 Kurumsal Tasarım Entegrasyonu */
+    .select2-container--default .select2-selection--multiple {
+        border: 1px solid #e5e0e5;
+        border-radius: 12px;
+        min-height: 48px;
+        padding: 6px;
+    }
+
+    .select2-container--default.select2-container--focus .select2-selection--multiple {
+        border-color: #8b0028;
+        box-shadow: 0 0 0 3px rgba(139,0,40,0.1);
+    }
+
+    .select2-container--default .select2-selection--multiple .select2-selection__choice {
+        background-color: #fff4f7;
+        border: 1px solid #fce8ed;
+        color: #8b0028;
+        border-radius: 8px;
+        padding: 4px 10px;
+        font-weight: 600;
+    }
+</style>
+
+<div class="s-page">
+    <div class="s-hero">
+        <div class="s-hero-content">
+            <div class="s-eyebrow"><i class="bi bi-star-fill"></i> Mağaza Yönetimi</div>
+            <h1 class="s-title">Öne Çıkanlar Yönetimi</h1>
+            <p class="s-subtitle">Anasayfada sergilenecek öne çıkan ürünlerin kaynak filtrelemesini ve özel ürün seçimlerini yönetin.</p>
+        </div>
+    </div>
+
+    @if (TempData["BasariliMesaj"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show rounded-4 mb-4" role="alert"><i class="bi bi-check-circle me-2"></i>@TempData["BasariliMesaj"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+    @if (TempData["HataMesaji"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show rounded-4 mb-4" role="alert"><i class="bi bi-exclamation-circle me-2"></i>@TempData["HataMesaji"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+
+    <form asp-action="Index" method="post">
+        @Html.AntiForgeryToken()
+
+        <!-- 1. Görüntüleme Modu -->
+        <div class="s-card-form">
+            <h5 class="fw-bold text-dark mb-3"><i class="bi bi-sliders me-2 text-danger"></i> Görüntüleme Modu</h5>
+            <div class="form-check form-switch p-3 bg-light rounded-3 border">
+                <input class="form-check-input ms-0 me-3" type="checkbox" asp-for="TumUrunleriGoster" id="tumUrunlerSwitch" style="width: 50px; height: 26px; accent-color: #8b0028;" />
+                <label class="form-check-label fw-bold text-dark pt-1" for="tumUrunlerSwitch">
+                    Sistemdeki Tüm Aktif Ürünleri Öne Çıkanlarda Göster
+                </label>
+                <div class="text-muted small mt-1">Aktif edildiğinde kategori ve özel ürün filtreleri devre dışı kalır, tüm aktif ürünler ön yüzde listelenir.</div>
+            </div>
+        </div>
+
+        <!-- 2. Ürün Bazlı Özel Seçim (Canlı Arama Modülüyle) -->
+        <div class="s-card-form" id="urunSecimBolumu">
+            <h5 class="fw-bold text-dark mb-2"><i class="bi bi-box-seam me-2 text-danger"></i> Ürün Bazlı Özel Seçim</h5>
+            <p class="text-muted small mb-3">Listeden ürün adı yazarak arayabilir ve anasayfada özellikle sergilenmesini istediğiniz ürünleri seçebilirsiniz.</p>
+
+            <div class="mb-2">
+                <label class="form-label">Ürün Seçimi</label>
+                <select name="secilenUrunIdleri" id="urunSelect" class="form-select" multiple="multiple" style="width: 100%;">
+                    @if (ViewBag.Urunler != null)
+                    {
+                        foreach (var urun in (List<ECommerce.Application.DTOs.Urun.UrunListeDto>)ViewBag.Urunler)
+                        {
+                            bool seciliMi = Model.SecilenUrunIdleri != null && Model.SecilenUrunIdleri.Contains(urun.Id);
+                            <option value="@urun.Id" selected="@seciliMi">@urun.Ad (@urun.UrunKodu - @urun.Fiyat ₺)</option>
+                        }
+                    }
+                </select>
+                <small class="text-muted d-block mt-2"><i class="bi bi-info-circle"></i> İstediğiniz kadar ürün ekleyebilirsiniz. Binlerce ürün olsa bile arama özelliği sayesinde sayfayı şişirmez.</small>
+            </div>
+        </div>
+
+        <!-- 3. Kategori Filtresi -->
+        <div class="s-card-form" id="kategoriFiltreBolumu">
+            <h5 class="fw-bold text-dark mb-2"><i class="bi bi-tags me-2 text-danger"></i> Kategori Bazlı Filtreleme</h5>
+            <p class="text-muted small mb-3">Yalnızca seçtiğiniz kategorilere ait ürünler anasayfada öne çıkanlarda görünecektir.</p>
+
+            <div class="row g-3">
+                @if (ViewBag.Kategoriler != null)
+                {
+                    foreach (var kat in (List<ECommerce.Application.DTOs.Kategori.KategoriListeDto>)ViewBag.Kategoriler)
+                    {
+                        bool kategoriSeciliMi = Model.SecilenKategoriIdleri != null && Model.SecilenKategoriIdleri.Contains(kat.Id);
+                        <div class="col-md-4">
+                            <div class="p-3 border rounded-3 bg-light h-100 d-flex align-items-center">
+                                <input class="form-check-input me-2" type="checkbox" name="secilenKategoriIdleri" value="@kat.Id" id="kat_@kat.Id" checked="@kategoriSeciliMi" style="accent-color: #8b0028; width: 18px; height: 18px;" />
+                                <label class="form-check-label fw-medium small text-dark" for="kat_@kat.Id">@kat.Ad</label>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end mb-5">
+            <button type="submit" class="s-save-btn">
+                <i class="bi bi-check2-all"></i> Değişiklikleri Kaydet
+            </button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Select2 Canlı Arama ve Çoklu Seçim Entegrasyonu
+            $('#urunSelect').select2({
+                placeholder: "Ürün adı veya kodu yazarak arayın...",
+                allowClear: true,
+                language: {
+                    noResults: function () { return "Aradığınız ürün bulunamadı"; }
+                }
+            });
+
+            // "Tüm Ürünleri Göster" aktifse alt filtreleri şeffaflaştırma
+            const toggleMod = () => {
+                if ($('#tumUrunlerSwitch').is(':checked')) {
+                    $('#urunSecimBolumu, #kategoriFiltreBolumu').css({ opacity: '0.4', pointerEvents: 'none' });
+                } else {
+                    $('#urunSecimBolumu, #kategoriFiltreBolumu').css({ opacity: '1', pointerEvents: 'auto' });
+                }
+            };
+
+            toggleMod();
+            $('#tumUrunlerSwitch').change(toggleMod);
+        });
+    </script>
+}

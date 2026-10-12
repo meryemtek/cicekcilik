@@ -1,0 +1,77 @@
+﻿@model ECommerce.WebUI.Models.OdemeViewModel
+@{
+    decimal araToplam = Model.Sepet.Kalemler.Sum(k => k.BirimFiyat * k.Miktar);
+    decimal teslimatToplam = Model.Sepet.Kalemler.Sum(k => k.TeslimatUcreti);
+    decimal vipToplam = Model.Sepet.Kalemler.Sum(k => k.VipUcreti);
+
+    decimal kampanyaIndirimi = Model.Sepet.KampanyaIndirimTutari;
+    decimal kuponIndirimi = Model.Sepet.IndirimTutari;
+
+    decimal genelToplam = araToplam + teslimatToplam + vipToplam - kampanyaIndirimi - kuponIndirimi;
+    if (genelToplam < 0) genelToplam = 0;
+}
+
+<div class="payment-card p-4 sticky-top" style="top: 100px;">
+    <h5 class="fw-bold text-dark mb-4 pb-2 border-bottom">Sipariş Özeti</h5>
+
+    <div class="d-flex justify-content-between mb-3 text-muted">
+        <span class="fw-semibold">Ara Toplam</span>
+        <span class="fw-bold">₺@araToplam.ToString("N2")</span>
+    </div>
+
+    <div class="d-flex justify-content-between mb-3 text-muted">
+        <span class="fw-semibold">Teslimat Ücreti</span>
+        <span class="fw-bold">₺@teslimatToplam.ToString("N2")</span>
+    </div>
+
+    @if (vipToplam > 0)
+    {
+        <div class="d-flex justify-content-between mb-3" style="color: #bfa100;">
+            <span class="fw-bold"><i class="bi bi-crown-fill me-1"></i> VIP Teslimat Ücreti</span>
+            <span class="fw-bold">₺@vipToplam.ToString("N2")</span>
+        </div>
+    }
+
+    @if (kampanyaIndirimi > 0)
+    {
+        <div class="d-flex justify-content-between mb-3 text-success">
+            <span class="fw-semibold">
+                <i class="bi bi-stars me-1"></i> @(string.IsNullOrEmpty(Model.Sepet.UygulananKampanyaAdi) ? "Kampanya İndirimi" : Model.Sepet.UygulananKampanyaAdi)
+            </span>
+            <span class="fw-bold">-₺@kampanyaIndirimi.ToString("N2")</span>
+        </div>
+    }
+
+    @if (kuponIndirimi > 0)
+    {
+        <div class="d-flex justify-content-between mb-3 text-success">
+            <span class="fw-semibold"><i class="bi bi-tag-fill me-1"></i> İndirim (@Model.Sepet.IndirimKodu)</span>
+            <span class="fw-bold">-₺@kuponIndirimi.ToString("N2")</span>
+        </div>
+    }
+
+    <hr class="text-muted opacity-25 my-4" />
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <span class="fw-bold fs-5 text-dark">Toplam</span>
+        <span class="fw-bolder fs-4 text-dark">₺@genelToplam.ToString("N2")</span>
+    </div>
+
+    <!-- MESAFELİ SATIŞ SÖZLEŞMESİ ONAY KUTUSU -->
+    <div class="mb-4">
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="sozlesmeOnay" required>
+            <label class="form-check-label small text-muted" for="sozlesmeOnay">
+                <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#mesafeliSatisModal" class="text-decoration-underline fw-semibold" style="color: #3b1154;">Mesafeli satış sözleşmesini</a> ve <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#gizlilikModal" class="text-decoration-underline fw-semibold" style="color: #3b1154;">gizlilik politikasını</a> okudum, onaylıyorum.
+            </label>
+        </div>
+    </div>
+
+    <button type="submit" id="siparisTamamlaBtn" class="btn btn-primary-custom w-100 py-3 fw-bold text-white text-decoration-none shadow-sm fs-6 d-flex justify-content-center align-items-center">
+        Siparişi Tamamla
+    </button>
+
+    <div class="text-center text-muted small mt-3">
+        <i class="bi bi-lock-fill text-success"></i> 256-bit SSL ile güvenli ödeme
+    </div>
+</div>

@@ -1,0 +1,76 @@
+﻿@{
+    int mesajSayisi = ViewBag.OkunmamisMesajSayisi ?? 0;
+    int toplamBildirim = ViewBag.ToplamBildirim ?? 0;
+}
+
+<div class="dropdown notification-dropdown">
+    <!-- Şık yuvarlak buton yapısı ve ok işaretini kaldıran yapı -->
+    <a href="#" class="notification-btn dropdown-toggle" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="bi bi-bell"></i>
+        @if (toplamBildirim > 0)
+        {
+            <span class="notification-badge">@toplamBildirim</span>
+        }
+    </a>
+
+    <!-- Dropdown Menü (Açılır Kutu) -->
+    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 py-2 mt-2" aria-labelledby="notificationDropdown" style="width: 300px; border-radius: 16px;">
+        <li class="px-3 py-2 border-bottom d-flex justify-content-between align-items-center">
+            <span class="fw-bold small text-dark"><i class="bi bi-bell me-1 text-danger"></i> Bildirimler</span>
+            <span class="badge bg-danger rounded-pill">@toplamBildirim Yeni</span>
+        </li>
+        <li>
+            <a class="dropdown-item py-2 px-3 d-flex align-items-center gap-3 mt-1 text-wrap" href="/Admin/IletisimMesaji/Index">
+                <div class="rounded-circle bg-danger bg-opacity-10 p-2 text-danger d-flex align-items-center justify-content-center flex-shrink-0" style="width: 38px; height: 38px;">
+                    <i class="bi bi-chat-dots-fill"></i>
+                </div>
+                <div class="overflow-hidden">
+                    <p class="mb-0 small fw-semibold text-dark">İletişim Mesajları</p>
+                    <small class="text-muted text-truncate d-block">@mesajSayisi okunmamış mesajınız var.</small>
+                </div>
+            </a>
+        </li>
+    </ul>
+</div>
+
+<style>
+    /* Bootstrap'in varsayılan dropdown ok işaretini tamamen gizler */
+    .notification-dropdown .dropdown-toggle::after {
+        display: none !important;
+    }
+
+    /* Çan ikonunun arkasındaki şık modern buton çerçevesi */
+    .notification-btn {
+        position: relative;
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        background: #f4f5f7;
+        color: #24213d;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        text-decoration: none;
+        transition: background .2s ease, color .2s ease, transform .2s ease;
+    }
+
+        .notification-btn:hover {
+            background: #e9ebef;
+            color: #8b0028;
+        }
+
+    /* Kırmızı bildirim sayısının çanın sağ üst köşesine kusursuz oturması */
+    .notification-badge {
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        background: #dc3545;
+        color: #fff;
+        font-size: 0.65rem;
+        font-weight: 700;
+        padding: 0.2em 0.5em;
+        border-radius: 50rem;
+        border: 2px solid #fff;
+    }
+</style>

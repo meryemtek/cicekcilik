@@ -1,0 +1,242 @@
+﻿@model ECommerce.Application.DTOs.SiparisGorselOnay.SiparisGorselOnayDto
+@{
+    ViewData["Title"] = "Sipariş Görsel Yönetimi";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .t-page {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .t-hero {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 28px;
+    }
+
+    .t-eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #9a1640;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+    }
+
+    .t-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0 0 6px;
+        letter-spacing: -.5px;
+    }
+
+    .t-subtitle {
+        margin: 0;
+        color: #85818c;
+        font-size: .95rem;
+    }
+
+    .t-card {
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #eee9ed;
+        box-shadow: 0 8px 25px rgba(35,28,40,.04);
+        padding: 30px;
+    }
+
+    .t-btn-primary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        background: linear-gradient(135deg,#8b0028,#a70b3b);
+        border: 0;
+        border-radius: 13px;
+        color: #fff;
+        padding: 13px 20px;
+        font-size: .9rem;
+        font-weight: 600;
+        text-decoration: none;
+        box-shadow: 0 8px 22px rgba(139,0,40,.2);
+        transition: all .2s ease;
+        width: 100%;
+        cursor: pointer;
+    }
+
+        .t-btn-primary:hover {
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(139,0,40,.28);
+        }
+
+    .t-btn-danger {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        background: #fff;
+        border: 1px solid #e5e0e5;
+        color: #a4364b;
+        border-radius: 13px;
+        padding: 13px 20px;
+        font-size: .9rem;
+        font-weight: 600;
+        text-decoration: none;
+        width: 100%;
+        transition: all .2s ease;
+        cursor: pointer;
+    }
+
+        .t-btn-danger:hover {
+            background: #fff0f2;
+            border-color: #fce8ed;
+        }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 18px;
+        border-radius: 12px;
+        font-size: .95rem;
+        font-weight: 700;
+        width: 100%;
+        justify-content: center;
+        margin-bottom: 15px;
+    }
+
+    .status-active {
+        background: #edf9f4;
+        color: #287c5d;
+        border: 1px solid #d4f0e5;
+    }
+
+    .status-pending {
+        background: #fff4f7;
+        color: #8b0028;
+        border: 1px solid #fce8ed;
+    }
+
+    .upload-area {
+        border: 2px dashed #e5e0e5;
+        border-radius: 16px;
+        padding: 30px;
+        text-align: center;
+        background: #faf9fa;
+        transition: all .2s ease;
+    }
+
+        .upload-area:hover {
+            border-color: #8b0028;
+            background: #fff4f7;
+        }
+</style>
+
+<div class="t-page">
+    <div class="t-hero">
+        <div class="t-hero-content">
+            <div class="t-eyebrow"><i class="bi bi-camera-fill"></i> Görsel Onay Sistemi</div>
+            <h1 class="t-title">Sipariş Görseli Yönetimi</h1>
+            <p class="t-subtitle">Müşteriye SMS ile onaya sunulacak teslimat öncesi ürün fotoğrafını yükleyin.</p>
+        </div>
+        <a href="/Admin/Siparis" class="t-btn-danger" style="width: auto;"><i class="bi bi-arrow-left"></i> Siparişlere Dön</a>
+    </div>
+
+    @if (TempData["BasariliMesaj"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius:12px; background: #edf9f4; color: #287c5d; border: 1px solid #d4f0e5;">
+            <i class="bi bi-check-circle-fill me-2"></i>@TempData["BasariliMesaj"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["HataMesaji"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius:12px;">
+            <i class="bi bi-exclamation-circle-fill me-2"></i>@TempData["HataMesaji"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row g-4">
+        <!-- Fotoğraf Yükleme Alanı -->
+        <div class="col-lg-6">
+            <div class="t-card h-100">
+                <h5 class="fw-bold mb-4" style="color: #24213d;">Yeni Görsel Yükle</h5>
+                <form asp-action="GorselYukle" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="siparisId" value="@ViewBag.SiparisId" />
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold" style="color: #403b46;">Kurye / Ürün Fotoğrafı (JPG/PNG)</label>
+                        <div class="upload-area mb-3">
+                            <i class="bi bi-cloud-arrow-up text-muted mb-2" style="font-size: 2.5rem;"></i>
+                            <input type="file" name="gorselDosyasi" class="form-control" accept="image/*" required style="border: 1px solid #eee9ed; border-radius: 8px;" />
+                        </div>
+                        <div class="form-text text-muted" style="font-size: .85rem;">
+                            <i class="bi bi-info-circle me-1"></i> Yeni bir görsel yüklediğinizde, varsa önceki görselin üzerine yazılır ve onay durumu sıfırlanır.
+                        </div>
+                    </div>
+
+                    <button type="submit" class="t-btn-primary">
+                        <i class="bi bi-upload"></i> Görseli Sisteme Yükle
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Mevcut Görsel ve Onay Durumu -->
+        <div class="col-lg-6">
+            <div class="t-card h-100 d-flex flex-column">
+                <h5 class="fw-bold mb-4" style="color: #24213d;">Mevcut Görsel & Onay Durumu</h5>
+
+                @if (!string.IsNullOrEmpty(Model.GorselUrl))
+                {
+                    <div class="text-center mb-4 flex-grow-1">
+                        <img src="@Model.GorselUrl" class="img-fluid rounded-4 shadow-sm" style="max-height: 260px; object-fit: cover; border: 1px solid #eee9ed;" alt="Mevcut Görsel" />
+                    </div>
+
+                    <div>
+                        @if (Model.MusteriOnayladiMi)
+                        {
+                            <div class="status-badge status-active">
+                                <i class="bi bi-check-circle-fill"></i> Müşteri Tarafından Onaylandı
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="status-badge status-pending">
+                                <i class="bi bi-hourglass-split"></i> Müşteri Onayı Bekleniyor
+                            </div>
+                        }
+
+                        <p class="text-center text-muted mb-3" style="font-size: .85rem;">
+                            <strong>Yüklenme Tarihi:</strong> @Model.YuklemeTarihi.ToLocalTime().ToString("dd.MM.yyyy HH:mm")
+                        </p>
+
+                        <form asp-action="Sil" method="post" onsubmit="return confirm('Bu görseli silmek istediğinize emin misiniz? Müşteri artık bu görseli göremeyecek.');">
+                            <input type="hidden" name="siparisId" value="@Model.SiparisId" />
+                            <button type="submit" class="t-btn-danger">
+                                <i class="bi bi-trash3"></i> Görseli Sil
+                            </button>
+                        </form>
+                    </div>
+                }
+                else
+                {
+                    <div class="d-flex flex-column align-items-center justify-content-center h-100 text-muted" style="background: #faf9fa; border-radius: 16px; border: 1px dashed #eee9ed;">
+                        <i class="bi bi-image" style="font-size: 3.5rem; opacity: 0.3; margin-bottom: 10px;"></i>
+                        <p class="mb-0 fw-medium">Henüz görsel yüklenmemiş.</p>
+                        <small class="opacity-75">Sol taraftaki alanı kullanarak yükleme yapabilirsiniz.</small>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

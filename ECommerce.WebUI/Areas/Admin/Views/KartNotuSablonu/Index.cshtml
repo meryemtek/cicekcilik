@@ -1,0 +1,326 @@
+﻿@model IEnumerable<ECommerce.Application.DTOs.KartNotuSablonu.KartNotuSablonuListeDto>
+@{
+    ViewData["Title"] = "Hazır Kart Notları";
+    var sablonlar = Model?.ToList() ?? new List<ECommerce.Application.DTOs.KartNotuSablonu.KartNotuSablonuListeDto>();
+    // Kategorilere göre gruplama yapıyoruz
+    var grupluSablonlar = sablonlar.GroupBy(x => x.Kategori).ToList();
+}
+
+<style>
+    .not-page {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .not-hero {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 28px;
+    }
+
+    .not-eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #9a1640;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+    }
+
+    .not-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0 0 6px;
+        letter-spacing: -.5px;
+    }
+
+    .not-subtitle {
+        margin: 0;
+        color: #85818c;
+        font-size: .95rem;
+    }
+
+    .btn-add {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        background: linear-gradient(135deg,#8b0028,#a70b3b);
+        border: 0;
+        border-radius: 13px;
+        color: #fff;
+        padding: 13px 20px;
+        font-size: .9rem;
+        font-weight: 600;
+        text-decoration: none;
+        box-shadow: 0 8px 22px rgba(139,0,40,.2);
+        transition: all .2s ease;
+    }
+
+        .btn-add:hover {
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(139,0,40,.28);
+        }
+
+    .kategori-bolumu {
+        margin-bottom: 40px;
+    }
+
+    .kategori-baslik {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid #f0edf0;
+    }
+
+        .kategori-baslik i {
+            font-size: 1.5rem;
+            color: #c98ca0;
+        }
+
+        .kategori-baslik h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #24213d;
+            margin: 0;
+        }
+
+    .not-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 20px;
+    }
+
+    .not-card {
+        background: #fff;
+        border: 1px solid #eee9ed;
+        border-radius: 16px;
+        padding: 22px;
+        position: relative;
+        transition: all .2s ease;
+        display: flex;
+        flex-direction: column;
+    }
+
+        .not-card:hover {
+            border-color: #d9cbd1;
+            box-shadow: 0 8px 25px rgba(35,28,40,.06);
+            transform: translateY(-3px);
+        }
+
+    .not-icerik {
+        font-size: 1rem;
+        color: #403b46;
+        line-height: 1.6;
+        margin-bottom: 20px;
+        font-style: italic;
+    }
+
+        .not-icerik::before {
+            content: '"';
+            font-size: 1.5rem;
+            color: #c98ca0;
+            margin-right: 5px;
+            font-family: serif;
+        }
+
+        .not-icerik::after {
+            content: '"';
+            font-size: 1.5rem;
+            color: #c98ca0;
+            margin-left: 5px;
+            font-family: serif;
+        }
+
+    .not-footer {
+        margin-top: auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: 15px;
+        border-top: 1px dashed #e5e0e5;
+    }
+
+    .not-meta {
+        display: flex;
+        gap: 12px;
+        font-size: .8rem;
+        font-weight: 600;
+    }
+
+    .meta-sira {
+        color: #85818c;
+        background: #f4f3f5;
+        padding: 4px 10px;
+        border-radius: 8px;
+    }
+
+    .meta-durum.aktif {
+        color: #287c5d;
+        background: #edf9f4;
+        padding: 4px 10px;
+        border-radius: 8px;
+    }
+
+    .meta-durum.pasif {
+        color: #b53d53;
+        background: #fff3f4;
+        padding: 4px 10px;
+        border-radius: 8px;
+    }
+
+    .not-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .btn-edit {
+        color: #716c75;
+        background: #f4f3f5;
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        transition: all .2s;
+    }
+
+        .btn-edit:hover {
+            background: #e5e0e5;
+            color: #24213d;
+        }
+
+    .btn-delete {
+        color: #b64a5d;
+        background: #fff3f4;
+        width: 32px;
+        height: 32px;
+        border: 0;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all .2s;
+    }
+
+        .btn-delete:hover {
+            background: #fbe1e5;
+            color: #9e253c;
+        }
+
+    .empty-state {
+        text-align: center;
+        padding: 50px 20px;
+        background: #fcfafb;
+        border: 1px dashed #d9cbd1;
+        border-radius: 20px;
+    }
+
+        .empty-state i {
+            font-size: 2.5rem;
+            color: #c98ca0;
+            margin-bottom: 15px;
+        }
+
+    .urun-alert {
+        border: 0;
+        border-radius: 13px;
+        padding: 13px 16px;
+        font-size: .84rem;
+        margin-bottom: 18px;
+    }
+
+    .urun-alert-success {
+        background: #edf9f4;
+        color: #287c5d;
+    }
+
+    .urun-alert-danger {
+        background: #fff0f2;
+        color: #a4364b;
+    }
+</style>
+
+<div class="not-page">
+    <div class="not-hero">
+        <div>
+            <div class="not-eyebrow"><i class="bi bi-chat-square-quote"></i> Mağaza Yönetimi</div>
+            <h1 class="not-title">Hazır Kart Notları</h1>
+            <p class="not-subtitle">Müşterilerinizin sipariş verirken seçebileceği hazır mesaj şablonlarını yönetin.</p>
+        </div>
+        <a asp-action="Ekle" class="btn-add"><i class="bi bi-plus-lg"></i> Yeni Not Ekle</a>
+    </div>
+
+    @if (TempData["BasariliMesaj"] != null)
+    {
+        <div class="alert urun-alert urun-alert-success alert-dismissible fade show"><i class="bi bi-check-circle me-2"></i>@TempData["BasariliMesaj"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+
+    @if (TempData["HataMesaji"] != null)
+    {
+        <div class="alert urun-alert urun-alert-danger alert-dismissible fade show"><i class="bi bi-exclamation-circle me-2"></i>@TempData["HataMesaji"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+    }
+
+    @if (grupluSablonlar.Any())
+    {
+        foreach (var grup in grupluSablonlar)
+        {
+            <div class="kategori-bolumu">
+                <div class="kategori-baslik">
+                    <i class="bi bi-bookmark-heart"></i>
+                    <h2>@grup.Key</h2>
+                </div>
+
+                <div class="not-grid">
+                    @foreach (var item in grup)
+                    {
+                        <div class="not-card">
+                            <div class="not-icerik">
+                                @item.MesajIcerigi
+                            </div>
+
+                            <div class="not-footer">
+                                <div class="not-meta">
+                                    <span class="meta-sira" title="Sıralama"><i class="bi bi-sort-numeric-down"></i> Sira: @item.SiraNo</span>
+                                    @if (item.AktifMi)
+                                    {
+                                        <span class="meta-durum aktif"><i class="bi bi-check-circle"></i> Aktif</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="meta-durum pasif"><i class="bi bi-eye-slash"></i> Pasif</span>
+                                    }
+                                </div>
+                                <div class="not-actions">
+                                    <a asp-action="Guncelle" asp-route-id="@item.Id" class="btn-edit" title="Düzenle"><i class="bi bi-pencil"></i></a>
+                                    <form asp-action="Sil" asp-route-id="@item.Id" method="post" onsubmit="return confirm('Bu kart notunu silmek istediğinize emin misiniz?');">
+                                        <button type="submit" class="btn-delete" title="Sil"><i class="bi bi-trash3"></i></button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="empty-state">
+            <i class="bi bi-card-text"></i>
+            <h3>Henüz Hazır Not Eklenmemiş</h3>
+            <p>Müşterilerinize kolaylık sağlamak için hemen doğum günü, yıldönümü gibi kategorilerde notlar ekleyin.</p>
+        </div>
+    }
+</div>

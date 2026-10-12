@@ -1,0 +1,262 @@
+﻿@model ECommerce.Application.DTOs.SemtTeslimatBolgesi.SemtBolgeGuncelleDto
+@{
+    ViewData["Title"] = "Teslimat Bölgesi Güncelle";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .t-form-page {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .t-form-card {
+        background: #fff;
+        border: 1px solid #eee9ed;
+        border-radius: 20px;
+        padding: 32px;
+        box-shadow: 0 8px 30px rgba(35,28,40,.04);
+    }
+
+    .t-form-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #24213d;
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+        .t-form-title i {
+            color: #8b0028;
+            background: #fff2f5;
+            padding: 10px;
+            border-radius: 12px;
+            font-size: 1.2rem;
+        }
+
+    .t-field {
+        margin-bottom: 22px;
+    }
+
+        .t-field label {
+            display: block;
+            color: #403b46;
+            font-size: .85rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+            .t-field label span {
+                color: #b24a60;
+            }
+
+    .t-input {
+        width: 100%;
+        height: 50px;
+        border: 1px solid #e4dfe4;
+        border-radius: 12px;
+        background: #fff;
+        padding: 0 15px;
+        color: #24213d;
+        font-size: .95rem;
+        outline: 0;
+        transition: all .2s ease;
+        cursor: pointer;
+    }
+
+        .t-input:focus {
+            border-color: #c98ca0;
+            box-shadow: 0 0 0 4px rgba(139,0,40,.06);
+        }
+
+    .t-switch-box {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border: 1px solid #e4dfe4;
+        border-radius: 12px;
+        padding: 15px;
+        background: #faf9fa;
+    }
+
+    .t-switch-text strong {
+        display: block;
+        font-size: .9rem;
+        color: #24213d;
+    }
+
+    .t-switch-text span {
+        font-size: .75rem;
+        color: #85818c;
+    }
+
+    .t-switch-box input {
+        width: 44px;
+        height: 24px;
+        cursor: pointer;
+        accent-color: #8b0028;
+    }
+
+    .t-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin-top: 30px;
+    }
+
+    .t-btn-cancel {
+        display: inline-flex;
+        align-items: center;
+        height: 48px;
+        padding: 0 20px;
+        border: 1px solid #e5e0e5;
+        border-radius: 12px;
+        color: #403b46;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+        .t-btn-cancel:hover {
+            background: #f8f6f8;
+        }
+
+    .t-btn-save {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        height: 48px;
+        padding: 0 24px;
+        background: linear-gradient(135deg,#8b0028,#a70b3b);
+        border: 0;
+        border-radius: 12px;
+        color: #fff;
+        font-weight: 600;
+        box-shadow: 0 6px 15px rgba(139,0,40,.2);
+    }
+</style>
+
+<div class="t-form-page">
+    <div class="t-form-card">
+        <h2 class="t-form-title"><i class="bi bi-pencil-square"></i> Teslimat Bölgesi Güncelle</h2>
+
+        <form asp-action="Guncelle" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="t-field">
+                        <label asp-for="IlAdi">İl <span>*</span></label>
+                        <select asp-for="IlAdi" id="ilSelect" class="t-input">
+                            <option value="">İl Seçiniz</option>
+                        </select>
+                        <span asp-validation-for="IlAdi" class="text-danger" style="font-size:12px;"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="t-field">
+                        <label asp-for="IlceAdi">İlçe <span>*</span></label>
+                        <select asp-for="IlceAdi" id="ilceSelect" class="t-input">
+                            <option value="">Önce İl Seçiniz</option>
+                        </select>
+                        <span asp-validation-for="IlceAdi" class="text-danger" style="font-size:12px;"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="t-field">
+                        <label asp-for="MahalleAdi">Mahalle / Semt <span>*</span></label>
+                        <select asp-for="MahalleAdi" id="mahalleSelect" class="t-input">
+                            <option value="">Önce İlçe Seçiniz</option>
+                        </select>
+                        <span asp-validation-for="MahalleAdi" class="text-danger" style="font-size:12px;"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="t-field">
+                        <label asp-for="EkTeslimatUcreti">Ek Teslimat Ücreti (₺)</label>
+                        <input asp-for="EkTeslimatUcreti" type="number" step="0.01" class="t-input" placeholder="0.00 (Ücretsiz ise boş bırakın)" />
+                        <span asp-validation-for="EkTeslimatUcreti" class="text-danger" style="font-size:12px;"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="t-field mb-0">
+                <div class="t-switch-box">
+                    <div class="t-switch-text">
+                        <strong>Bölgeyi Teslimata Aç</strong>
+                        <span>Müşteriler bu adresi seçtiklerinde siparişlerini tamamlayabilir.</span>
+                    </div>
+                    <input asp-for="AktifMi" type="checkbox" />
+                </div>
+            </div>
+
+            <div class="t-actions">
+                <a asp-action="Index" class="t-btn-cancel">Vazgeç</a>
+                <button type="submit" class="t-btn-save"><i class="bi bi-check2-all"></i> Değişiklikleri Kaydet</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function () {
+            $('.select2').select2({
+                width: '100%',
+                placeholder: "Seçiniz..."
+            });
+
+            // 1. İlleri Çek
+            $.get('/Admin/Teslimat/IlleriGetir', function (data) {
+                var $ilSelect = $('#ilSelect');
+                $.each(data, function (index, item) {
+                    $ilSelect.append(new Option(item, item));
+                });
+                $ilSelect.trigger('change');
+            });
+
+            // 2. İl Değişince İlçeleri Çek
+            $('#ilSelect').on('change', function () {
+                var secilenIl = $(this).val();
+                var $ilceSelect = $('#ilceSelect');
+                var $mahalleSelect = $('#mahalleSelect');
+
+                $ilceSelect.empty().append(new Option(secilenIl ? "İlçe Seçiniz" : "Önce İl Seçiniz", "")).trigger('change');
+                $mahalleSelect.empty().append(new Option("Önce İlçe Seçiniz", "")).trigger('change');
+
+                if (secilenIl) {
+                    $.get('/Admin/Teslimat/IlceleriGetir', { ilAdi: secilenIl }, function (data) {
+                        $.each(data, function (index, item) {
+                            $ilceSelect.append(new Option(item, item));
+                        });
+                        $ilceSelect.trigger('change');
+                    });
+                }
+            });
+
+            // 3. İlçe Değişince Mahalleleri Çek
+            $('#ilceSelect').on('change', function () {
+                var secilenIl = $('#ilSelect').val();
+                var secilenIlce = $(this).val();
+                var $mahalleSelect = $('#mahalleSelect');
+
+                $mahalleSelect.empty().append(new Option(secilenIlce ? "Mahalle Seçiniz" : "Önce İlçe Seçiniz", "")).trigger('change');
+
+                if (secilenIl && secilenIlce) {
+                    $.get('/Admin/Teslimat/MahalleleriGetir', { ilAdi: secilenIl, ilceAdi: secilenIlce }, function (data) {
+                        $.each(data, function (index, item) {
+                            $mahalleSelect.append(new Option(item, item));
+                        });
+                        $mahalleSelect.trigger('change');
+                    });
+                }
+            });
+        });
+    </script>
+}

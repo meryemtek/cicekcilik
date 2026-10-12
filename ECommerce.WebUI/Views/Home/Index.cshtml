@@ -1,0 +1,178 @@
+﻿@{
+    ViewData["Title"] = "Anasayfa";
+}
+
+<!-- =========================================================
+     1. SLIDER
+========================================================= -->
+@await Component.InvokeAsync("Slider")
+
+
+<!-- =========================================================
+     2. KATEGORİLER
+========================================================= -->
+@await Component.InvokeAsync("KategoriBand")
+
+
+<!-- =========================================================
+     3. KATEGORİ BANDI ALTINDAN BAŞLAYAN
+        DEKORATİF ANA SAYFA ALANI
+========================================================= -->
+<div class="homepage-decorative-area">
+
+    <!-- =====================================================
+         DEKORATİF LOGOLAR
+         Arka planda çok hafif şekilde görünürler.
+         aria-hidden ile SEO/erişilebilirlik açısından
+         dekoratif oldukları belirtilmiştir.
+    ====================================================== -->
+
+    <img src="~/images/imza_arkaplan.png"
+         class="decorative-logo decorative-logo-1"
+         alt=""
+         aria-hidden="true" />
+
+    <img src="~/images/imza_arkaplan.png"
+         class="decorative-logo decorative-logo-2"
+         alt=""
+         aria-hidden="true" />
+
+    <img src="~/images/imza_arkaplan.png"
+         class="decorative-logo decorative-logo-3"
+         alt=""
+         aria-hidden="true" />
+
+    <img src="~/images/imza_arkaplan.png"
+         class="decorative-logo decorative-logo-4"
+         alt=""
+         aria-hidden="true" />
+
+    <img src="~/images/imza_arkaplan.png"
+         class="decorative-logo decorative-logo-5"
+         alt=""
+         aria-hidden="true" />
+
+    <img src="~/images/imza_arkaplan.png"
+         class="decorative-logo decorative-logo-6"
+         alt=""
+         aria-hidden="true" />
+
+
+    <!-- =====================================================
+         3. KATEGORİ BANNERLARI
+    ====================================================== -->
+    @await Component.InvokeAsync("KategoriBannerlar")
+
+
+    <!-- =====================================================
+         4. ÖNE ÇIKAN ÜRÜNLER
+    ====================================================== -->
+    @await Component.InvokeAsync("OneCikanUrunler")
+
+    <!-- =====================================================
+         5. KAMPANYALAR
+    ====================================================== -->
+    @await Component.InvokeAsync("Kampanyalar")
+
+
+    <!-- =====================================================
+         6. BLOG
+    ====================================================== -->
+    @await Component.InvokeAsync("Blog")
+
+
+    <!-- =====================================================
+         YEREL SEO / KURUMSAL İÇERİK
+    ====================================================== -->
+    <section class="local-seo-section">
+
+        <div class="container">
+
+            <div class="local-seo-wrapper">
+
+                <div class="local-seo-content">
+
+                    <div class="local-seo-label">
+                        <i class="bi bi-flower1"></i>
+                        Elazığ Çiçekçilik
+                    </div>
+
+                    <h2 class="local-seo-title">
+                        Elazığ Çiçekçi ve Çiçek Gönderimi
+                    </h2>
+
+                    <p>
+                        <strong>Lidya Çiçekçilik</strong>, Elazığ'da sevdiklerinize
+                        çiçek göndermek isteyenler için özenle hazırlanan çiçek
+                        tasarımları ve çiçek gönderimi hizmetleri sunmaktadır.
+                        Doğum günü, yıldönümü, sevgililer günü, anneler günü,
+                        açılış, tebrik, geçmiş olsun ve özel günleriniz için
+                        farklı çiçek seçeneklerini bir araya getiriyoruz.
+                    </p>
+
+                    <p>
+                        Elazığ'da <strong>çiçek siparişi</strong> vermek,
+                        sevdiklerinize çiçek göndermek veya özel bir gün için
+                        şık bir çiçek arıyorsanız Lidya Çiçekçilik'in
+                        hazırladığı ürünleri inceleyebilirsiniz. Gül buketleri,
+                        orkide, aranjman, buket çiçekler, saksı çiçekleri ve
+                        özel tasarım çiçek seçenekleri arasından
+                        ihtiyacınıza uygun ürünü seçebilirsiniz.
+                    </p>
+
+                    <div class="local-seo-divider"></div>
+
+                    <h3>
+                        Elazığ Çiçek Siparişi
+                    </h3>
+
+                    <p>
+                        <strong>Elazığ çiçek siparişi</strong> arayan müşteriler
+                        için hazırlanan Lidya Çiçekçilik ürünleri, farklı
+                        bütçe ve zevklere uygun seçenekler sunar. Sevdiklerinize
+                        göndermek istediğiniz çiçeği seçerek sipariş sürecinizi
+                        kolayca gerçekleştirebilirsiniz.
+                    </p>
+
+                    <h3>
+                        Elazığ Çiçek Gönderimi
+                    </h3>
+
+                    <p>
+                        Özel günlerde sevdiklerinizi mutlu etmek için
+                        <strong>Elazığ çiçek gönderimi</strong> hizmetinden
+                        yararlanabilirsiniz. Doğum günü çiçekleri, romantik
+                        buketler, geçmiş olsun çiçekleri, açılış çiçekleri ve
+                        kutlama çiçekleri gibi farklı ihtiyaçlara yönelik
+                        tasarımlar Lidya Çiçekçilik tarafından sunulmaktadır.
+                    </p>
+
+                    <h3>
+                        Elazığ'da Online Çiçekçi
+                    </h3>
+
+                    <p>
+                        İnternet üzerinden çiçek seçmek ve sipariş vermek
+                        isteyenler için <strong>Lidya Çiçekçilik</strong>,
+                        Elazığ'da online çiçekçi hizmeti sunmaktadır.
+                        Çiçek modellerini inceleyebilir, özel gününüze uygun
+                        ürünü seçebilir ve sipariş işleminizi kolayca
+                        gerçekleştirebilirsiniz.
+                    </p>
+
+                    <p>
+                        Lidya Çiçekçilik olarak amacımız, yalnızca bir çiçek
+                        göndermek değil; sevdiklerinize iletmek istediğiniz
+                        duyguyu en güzel şekilde ifade eden çiçeği
+                        hazırlamaktır.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</div>

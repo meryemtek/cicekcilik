@@ -1,0 +1,169 @@
+﻿@model ECommerce.Application.DTOs.UrunYorum.UrunYorumGuncelleDto
+@{
+    ViewData["Title"] = "Yorum Onayı ve Düzenleme";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .t-page {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .t-hero {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 28px;
+    }
+
+    .t-eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #9a1640;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+    }
+
+    .t-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0 0 6px;
+        letter-spacing: -.5px;
+    }
+
+    .t-subtitle {
+        margin: 0;
+        color: #85818c;
+        font-size: .95rem;
+    }
+
+    .t-card {
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #eee9ed;
+        box-shadow: 0 8px 25px rgba(35,28,40,.04);
+        padding: 30px;
+    }
+
+    .t-btn-primary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        background: linear-gradient(135deg,#8b0028,#a70b3b);
+        border: 0;
+        border-radius: 12px;
+        color: #fff;
+        padding: 12px 24px;
+        font-size: 1rem;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        box-shadow: 0 8px 22px rgba(139,0,40,.2);
+    }
+
+        .t-btn-primary:hover {
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+    .t-btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        background: #fff;
+        border: 1px solid #e5e0e5;
+        color: #403b46;
+        border-radius: 12px;
+        padding: 12px 24px;
+        font-size: 1rem;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+        .t-btn-secondary:hover {
+            background: #faf9fa;
+            color: #24213d;
+        }
+
+    .form-label {
+        font-weight: 600;
+        color: #403b46;
+        font-size: .9rem;
+        margin-bottom: 6px;
+    }
+
+    .form-control, .form-select {
+        border-radius: 10px;
+        border: 1px solid #e5e0e5;
+        padding: 11px 15px;
+        font-size: .95rem;
+    }
+
+        .form-control:focus {
+            border-color: #8b0028;
+            box-shadow: 0 0 0 3px rgba(139,0,40,.1);
+        }
+</style>
+
+<div class="t-page">
+    <div class="t-hero">
+        <div class="t-hero-content">
+            <div class="t-eyebrow"><i class="bi bi-chat-square-text-fill"></i> Mağaza Etkileşimi</div>
+            <h1 class="t-title">Yorumu İncele & Onayla</h1>
+            <p class="t-subtitle">Müşteri yorumunu yayına almak için onaylayabilir veya metin üzerinde düzenleme yapabilirsiniz.</p>
+        </div>
+        <a asp-action="Index" class="t-btn-secondary"><i class="bi bi-arrow-left"></i> Listeye Dön</a>
+    </div>
+
+    <div class="t-card">
+        <form asp-action="Guncelle" method="post">
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="UrunId" />
+
+            <div class="mb-3">
+                <label class="form-label">Yorumu Yapan Müşteri</label>
+                <input type="text" asp-for="YorumcuAd" class="form-control" required />
+            </div>
+
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Verilen Puan (1 - 5 Yıldız)</label>
+                    <select asp-for="Puan" class="form-select">
+                        <option value="5">⭐⭐⭐⭐⭐ (5 Yıldız)</option>
+                        <option value="4">⭐⭐⭐⭐ (4 Yıldız)</option>
+                        <option value="3">⭐⭐⭐ (3 Yıldız)</option>
+                        <option value="2">⭐⭐ (2 Yıldız)</option>
+                        <option value="1">⭐ (1 Yıldız)</option>
+                    </select>
+                </div>
+                <div class="col-md-6 d-flex align-items-center pt-4">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" asp-for="OnaylandiMi" id="onaySwitch" style="width: 45px; height: 22px; cursor: pointer;">
+                        <label class="form-check-label fw-bold ms-2 mt-1" for="onaySwitch">Yorum Sitede Yayınlansın mi?</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label">Yorum Metni</label>
+                <textarea asp-for="YorumMetni" class="form-control" rows="4" required></textarea>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2">
+                <a asp-action="Index" class="t-btn-secondary">İptal</a>
+                <button type="submit" class="t-btn-primary">
+                    <i class="bi bi-check-lg"></i> Değişiklikleri Kaydet
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

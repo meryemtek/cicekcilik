@@ -1,0 +1,175 @@
+﻿@model ECommerce.Application.DTOs.KategoriBanner.KategoriBannerEkleGuncelleDto
+@{
+    ViewData["Title"] = "Kategori Banner Düzenle";
+}
+
+<style>
+    .s-page {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .s-hero {
+        margin-bottom: 25px;
+    }
+
+    .s-eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #9a1640;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 6px;
+    }
+
+    .s-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0;
+    }
+
+    .s-card-form {
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #eee9ed;
+        box-shadow: 0 8px 25px rgba(35,28,40,.04);
+        padding: 30px;
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        font-weight: 600;
+        font-size: 0.85rem;
+        color: #24213d;
+    }
+
+    .form-control, .form-select {
+        border-radius: 10px;
+        border-color: #e5e0e5;
+        padding: 11px 15px;
+        font-size: 0.9rem;
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #8b0028;
+            box-shadow: 0 0 0 3px rgba(139,0,40,0.1);
+        }
+</style>
+
+<div class="s-page">
+    <div class="s-hero">
+        <div class="s-eyebrow"><i class="bi bi-pencil-square"></i> Banner Yönetimi</div>
+        <h1 class="s-title">Kategori Banner Düzenle</h1>
+    </div>
+
+    <form asp-action="Guncelle" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="GorselUrl" />
+
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="s-card-form">
+                    <h5 class="fw-bold text-dark mb-4"><i class="bi bi-info-circle me-2 text-danger"></i> Banner Bilgileri</h5>
+
+                    <div class="mb-3">
+                        <label asp-for="KategoriId" class="form-label">Hedef Kategori <span class="text-danger">*</span></label>
+                        <select asp-for="KategoriId" asp-items="ViewBag.Kategoriler" class="form-select">
+                            <option value="">-- Kategori Seçiniz --</option>
+                        </select>
+                        <span asp-validation-for="KategoriId" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Baslik" class="form-label">Başlık <span class="text-danger">*</span></label>
+                        <input asp-for="Baslik" class="form-control" id="inputBaslik" autocomplete="off" />
+                        <span asp-validation-for="Baslik" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Aciklama" class="form-label">Açıklama <span class="text-danger">*</span></label>
+                        <textarea asp-for="Aciklama" class="form-control" id="inputAciklama" rows="3"></textarea>
+                        <span asp-validation-for="Aciklama" class="text-danger small"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Sira" class="form-label">Görüntüleme Sırası</label>
+                            <input asp-for="Sira" type="number" class="form-control" />
+                        </div>
+                        <div class="col-md-6 mb-3 d-flex align-items-center">
+                            <div class="form-check form-switch mt-4">
+                                <input class="form-check-input" type="checkbox" asp-for="AktifMi" id="aktifSwitch" style="width: 45px; height: 22px; accent-color: #8b0028;" />
+                                <label class="form-check-label fw-semibold ms-2 pt-1" for="aktifSwitch">Banner Aktif mi?</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="s-card-form">
+                    <h5 class="fw-bold text-dark mb-3"><i class="bi bi-cloud-arrow-up me-2 text-danger"></i> Banner Görseli</h5>
+                    @if (!string.IsNullOrEmpty(Model.GorselUrl))
+                    {
+                        <div class="mb-3">
+                            <img src="@Model.GorselUrl" alt="" class="rounded-3 object-fit-cover shadow-sm border" style="height: 100px; width: 180px;" />
+                            <div class="text-muted small mt-1">Mevcut görsel yukarıdadır. Yeni bir dosya seçmezseniz bu görsel korunacaktır.</div>
+                        </div>
+                    }
+                    <div class="mb-2">
+                        <input type="file" name="gorselDosyasi" id="gorselDosyasi" class="form-control" accept="image/*" />
+                        <small class="text-muted d-block mt-2"><i class="bi bi-info-circle"></i> Önerilen çözünürlük: <strong>710x340 px</strong></small>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2 mb-5">
+                    <a asp-action="Index" class="btn btn-light border px-4 py-2 rounded-3 fw-semibold">Vazgeç</a>
+                    <button type="submit" class="btn text-white px-5 py-2 rounded-3 fw-bold shadow-sm" style="background: linear-gradient(135deg,#8b0028,#a70b3b);">
+                        <i class="bi bi-check2 me-1"></i> Değişiklikleri Kaydet
+                    </button>
+                </div>
+            </div>
+
+            <!-- Canlı Önizleme -->
+            <div class="col-lg-4">
+                <div class="sticky-top" style="top: 20px;">
+                    <div class="text-uppercase text-muted fw-bold mb-2" style="font-size: 0.72rem; letter-spacing: 1px;">Ön Yüz Tasarım Önizlemesi</div>
+                    <div class="s-card-form p-3">
+                        <div class="position-relative rounded-4 overflow-hidden shadow-sm" style="height: 180px; background-color: #24213d;">
+                            <img id="prevResim" src="@(string.IsNullOrEmpty(Model.GorselUrl) ? "/images/no-image.jpg" : Model.GorselUrl)" alt="" class="position-absolute top-0 start-0 w-100 h-100 object-fit-cover" />
+                            <div class="position-absolute inset-0" style="background: linear-gradient(90deg, rgba(20,15,25,0.7) 0%, transparent 100%); inset: 0;"></div>
+                            <div class="position-absolute top-0 start-0 w-100 h-100 d-flex flex-column justify-content-center p-3" style="z-index: 2;">
+                                <h5 class="fw-bold text-white mb-1" id="prevBaslik" style="font-size: 1.1rem;">@Model.Baslik</h5>
+                                <p class="text-white-50 small mb-2" id="prevAciklama" style="font-size: 0.7rem;">@Model.Aciklama</p>
+                                <span class="badge text-white fw-bold py-1 px-2 rounded-2" style="background-color: #8b0028; font-size: 0.6rem; width: fit-content;">ALIŞVERİŞE BAŞLA</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    const inputBaslik = document.getElementById('inputBaslik');
+    const inputAciklama = document.getElementById('inputAciklama');
+    const prevBaslik = document.getElementById('prevBaslik');
+    const prevAciklama = document.getElementById('prevAciklama');
+    const gorselDosyasi = document.getElementById('gorselDosyasi');
+    const prevResim = document.getElementById('prevResim');
+
+    inputBaslik.addEventListener('input', function () { prevBaslik.textContent = this.value || 'Başlık'; });
+    inputAciklama.addEventListener('input', function () { prevAciklama.textContent = this.value || 'Açıklama alanı...'; });
+    gorselDosyasi.addEventListener('change', function (e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) { prevResim.src = e.target.result; }
+            reader.readAsDataURL(file);
+        }
+    });
+</script>

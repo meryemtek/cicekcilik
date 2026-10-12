@@ -1,0 +1,204 @@
+﻿@model ECommerce.Application.DTOs.SemtTeslimatBolgesi.SemtBolgeEkleDto
+@{
+    ViewData["Title"] = "Yeni Teslimat Bölgesi";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .t-form-page{max-width:800px;margin:0 auto}
+    .t-form-card{background:#fff;border:1px solid #eee9ed;border-radius:20px;padding:32px;box-shadow:0 8px 30px rgba(35,28,40,.04)}
+    .t-form-title{font-size:1.3rem;font-weight:700;color:#24213d;margin-bottom:25px;display:flex;align-items:center;gap:10px}
+    .t-form-title i{color:#8b0028;background:#fff2f5;padding:10px;border-radius:12px;font-size:1.2rem}
+    .t-field{margin-bottom:22px}
+    .t-field label{display:block;color:#403b46;font-size:.85rem;font-weight:600;margin-bottom:8px}
+    .t-field label span{color:#b24a60}
+    .t-input{width:100%;height:50px;border:1px solid #e4dfe4;border-radius:12px;background:#fff;padding:0 15px;color:#24213d;font-size:.95rem;outline:0}
+    .t-input:focus{border-color:#8b0028;box-shadow:0 0 0 3px rgba(139,0,40,.08)}
+    .select2-container{width:100%!important}
+    .select2-container .select2-selection--single{height:50px!important;border:1px solid #e4dfe4!important;border-radius:12px!important;display:flex;align-items:center}
+    .select2-container--default .select2-selection--single .select2-selection__rendered{color:#24213d;padding-left:10px;font-size:.95rem}
+    .select2-container--default .select2-selection--single .select2-selection__arrow{height:48px;right:10px}
+    .select2-container--default.select2-container--focus .select2-selection--single{border-color:#8b0028!important;box-shadow:0 0 0 3px rgba(139,0,40,.08)}
+    .select2-container--default .select2-results__option--highlighted[aria-selected]{background:#8b0028}
+    .select2-dropdown{border:1px solid #e4dfe4!important;border-radius:12px!important;overflow:hidden}
+    .t-switch-box{display:flex;align-items:center;justify-content:space-between;border:1px solid #e4dfe4;border-radius:12px;padding:15px;background:#faf9fa}
+    .t-switch-text strong{display:block;font-size:.9rem;color:#24213d}
+    .t-switch-text span{font-size:.75rem;color:#85818c}
+    .t-switch-box input{width:44px;height:24px;cursor:pointer;accent-color:#8b0028}
+    .t-actions{display:flex;justify-content:flex-end;gap:12px;margin-top:30px}
+    .t-btn-cancel{display:inline-flex;align-items:center;height:48px;padding:0 20px;border:1px solid #e5e0e5;border-radius:12px;color:#403b46;text-decoration:none;font-weight:600}
+    .t-btn-cancel:hover{background:#f8f6f8}
+    .t-btn-save{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:48px;padding:0 24px;background:linear-gradient(135deg,#8b0028,#a70b3b);border:0;border-radius:12px;color:#fff;font-weight:600;box-shadow:0 6px 15px rgba(139,0,40,.2)}
+    .t-btn-save:hover{background:linear-gradient(135deg,#760022,#950934);color:#fff}
+    .t-loading{color:#85818c!important}
+    .t-error{color:#b42318;font-size:12px;margin-top:6px;display:none}
+    @@media(max-width:767px){
+        .t-form-page{max-width:100%}
+        .t-form-card{padding:22px 18px;border-radius:16px}
+        .t-form-title{font-size:1.15rem;margin-bottom:20px}
+        .t-field{margin-bottom:18px}
+        .t-actions{flex-direction:column-reverse}
+        .t-btn-cancel,.t-btn-save{width:100%;justify-content:center}
+    }
+</style>
+
+<div class="t-form-page">
+    <div class="t-form-card">
+        <h2 class="t-form-title"><i class="bi bi-geo-alt"></i>Yeni Bölge Ekle</h2>
+
+        <form asp-action="Ekle" method="post">
+            @Html.AntiForgeryToken()
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="t-field">
+                        <label asp-for="IlAdi">İl <span>*</span></label>
+                        <select asp-for="IlAdi" id="ilSelect" class="form-control select2">
+                            <option value="">İl Seçiniz</option>
+                        </select>
+                        <span asp-validation-for="IlAdi" class="text-danger" style="font-size:12px;"></span>
+                        <div id="ilError" class="t-error"></div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="t-field">
+                        <label asp-for="IlceAdi">İlçe <span>*</span></label>
+                        <select asp-for="IlceAdi" id="ilceSelect" class="form-control select2" disabled>
+                            <option value="">Önce İl Seçiniz</option>
+                        </select>
+                        <span asp-validation-for="IlceAdi" class="text-danger" style="font-size:12px;"></span>
+                        <div id="ilceError" class="t-error"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="t-field">
+                        <label asp-for="MahalleAdi">Mahalle / Semt <span>*</span></label>
+                        <select asp-for="MahalleAdi" id="mahalleSelect" class="form-control select2" disabled>
+                            <option value="">Önce İlçe Seçiniz</option>
+                        </select>
+                        <span asp-validation-for="MahalleAdi" class="text-danger" style="font-size:12px;"></span>
+                        <div id="mahalleError" class="t-error"></div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="t-field">
+                        <label asp-for="EkTeslimatUcreti">Ek Teslimat Ücreti (₺)</label>
+                        <input asp-for="EkTeslimatUcreti" type="number" step="0.01" min="0" class="t-input" placeholder="0.00" />
+                        <span asp-validation-for="EkTeslimatUcreti" class="text-danger" style="font-size:12px;"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="t-field mb-0">
+                <div class="t-switch-box">
+                    <div class="t-switch-text">
+                        <strong>Bölgeyi Teslimata Aç</strong>
+                        <span>Müşteriler bu adresi seçtiklerinde siparişlerini tamamlayabilir.</span>
+                    </div>
+                    <input asp-for="AktifMi" type="checkbox" />
+                </div>
+            </div>
+
+            <div class="t-actions">
+                <a asp-action="Index" class="t-btn-cancel">Vazgeç</a>
+                <button type="submit" class="t-btn-save"><i class="bi bi-check2"></i>Kaydet</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(function(){
+            const ilUrl='@Url.Action("IlleriGetir","Teslimat",new{area="Admin"})';
+            const ilceUrl='@Url.Action("IlceleriGetir","Teslimat",new{area="Admin"})';
+            const mahalleUrl='@Url.Action("MahalleleriGetir","Teslimat",new{area="Admin"})';
+            const $il=$('#ilSelect');
+            const $ilce=$('#ilceSelect');
+            const $mahalle=$('#mahalleSelect');
+
+            $('.select2').select2({width:'100%',placeholder:'Seçiniz...',allowClear:true});
+
+            function selectReset($select,text,disabled){
+                $select.empty().append(new Option(text,'')).val('').prop('disabled',disabled).trigger('change.select2');
+            }
+
+            function hataGoster(selector,mesaj){
+                $(selector).text(mesaj).stop(true,true).fadeIn();
+            }
+
+            function hataTemizle(){
+                $('.t-error').hide().text('');
+            }
+
+            $.getJSON(ilUrl)
+                .done(function(data){
+                    $il.empty().append(new Option('İl Seçiniz',''));
+                    $.each(data||[],function(_,item){
+                        $il.append(new Option(item,item));
+                    });
+                    $il.prop('disabled',false).trigger('change.select2');
+                })
+                .fail(function(xhr){
+                    console.error('İller yüklenemedi:',xhr.status,xhr.responseText);
+                    hataGoster('#ilError','İller yüklenirken bir hata oluştu.');
+                });
+
+            $il.on('change',function(){
+                const secilenIl=$(this).val();
+
+                hataTemizle();
+                selectReset($ilce,secilenIl?'İlçe Seçiniz':'Önce İl Seçiniz',!secilenIl);
+                selectReset($mahalle,'Önce İlçe Seçiniz',true);
+
+                if(!secilenIl)return;
+
+                $ilce.prop('disabled',true);
+
+                $.getJSON(ilceUrl,{ilAdi:secilenIl})
+                    .done(function(data){
+                        $ilce.empty().append(new Option('İlçe Seçiniz',''));
+                        $.each(data||[],function(_,item){
+                            $ilce.append(new Option(item,item));
+                        });
+                        $ilce.prop('disabled',false).trigger('change.select2');
+                    })
+                    .fail(function(xhr){
+                        console.error('İlçeler yüklenemedi:',xhr.status,xhr.responseText);
+                        selectReset($ilce,'İlçe yüklenemedi',true);
+                        hataGoster('#ilceError','İlçeler yüklenirken bir hata oluştu.');
+                    });
+            });
+
+            $ilce.on('change',function(){
+                const secilenIl=$il.val();
+                const secilenIlce=$(this).val();
+
+                hataTemizle();
+                selectReset($mahalle,secilenIlce?'Mahalle Seçiniz':'Önce İlçe Seçiniz',!secilenIlce);
+
+                if(!secilenIl||!secilenIlce)return;
+
+                $mahalle.prop('disabled',true);
+
+                $.getJSON(mahalleUrl,{ilAdi:secilenIl,ilceAdi:secilenIlce})
+                    .done(function(data){
+                        $mahalle.empty().append(new Option('Mahalle Seçiniz',''));
+                        $.each(data||[],function(_,item){
+                            $mahalle.append(new Option(item,item));
+                        });
+                        $mahalle.prop('disabled',false).trigger('change.select2');
+                    })
+                    .fail(function(xhr){
+                        console.error('Mahalleler yüklenemedi:',xhr.status,xhr.responseText);
+                        selectReset($mahalle,'Mahalleler yüklenemedi',true);
+                        hataGoster('#mahalleError','Mahalleler yüklenirken bir hata oluştu.');
+                    });
+            });
+        });
+    </script>
+}

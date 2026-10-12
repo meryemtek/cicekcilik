@@ -1,0 +1,143 @@
+﻿@model ECommerce.Application.DTOs.Hakkimizda.HakkimizdaAyariDto
+
+<div class="about-page-wrapper">
+
+    <!-- 1. HİKAYEMİZ & GÖRSEL BÖLÜMÜ -->
+    @if (Model.HikayemizAktifMi)
+    {
+        <div class="card border-0 shadow-sm rounded-4 p-lg-5 p-4 mb-5 bg-white overflow-hidden">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-6">
+                    <span class="badge bg-danger bg-opacity-10 text-danger px-3 py-2 rounded-pill fw-bold mb-3 small" style="letter-spacing: 0.5px;">HİKAYEMİZ</span>
+                    <h1 class="fw-bold display-6 mb-4 text-dark" style="font-family: 'Outfit', sans-serif; line-height: 1.2;">
+                        @Model.HikayemizBaslik
+                    </h1>
+                    <div class="text-secondary fs-6" style="line-height: 1.8; white-space: pre-line;">
+                        @Model.HikayemizMetni
+                    </div>
+                </div>
+                <div class="col-lg-6 text-center">
+                    @if (!string.IsNullOrEmpty(Model.GorselUrl))
+                    {
+                        <div class="about-img-wrapper position-relative">
+                            <img src="@Model.GorselUrl" alt="@Model.HikayemizBaslik" class="img-fluid rounded-4 shadow-sm w-100 object-fit-cover" style="max-height: 400px;" />
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="p-5 rounded-4 shadow-sm text-white text-center" style="background: linear-gradient(135deg, var(--site-primary), #4a1525);">
+                            <i class="bi bi-flower1 display-1 opacity-75 mb-3 d-block"></i>
+                            <h3 class="fw-bold h4 mb-2">Taze ve Güvenilir</h3>
+                            <p class="small text-white-50 mb-0">En özel anlarınıza değer katıyoruz.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- 2. NEDEN BİZ SEÇMELİSİNİZ? (DİNAMİK KUTULAR) -->
+    @if (Model.NedenBiziAktifMi && Model.NedenBiziItems != null && Model.NedenBiziItems.Any())
+    {
+        <div class="mb-5">
+            <div class="text-center mb-4">
+                <h3 class="fw-bold h3 text-dark" style="font-family: 'Outfit', sans-serif;">Neden Bizi Tercih Etmelisiniz?</h3>
+                <p class="text-muted small">Sizi mutlu etmek için her gün daha çok çalışıyoruz.</p>
+            </div>
+            <div class="row g-4">
+                @foreach (var item in Model.NedenBiziItems)
+                {
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm rounded-4 p-4 h-100 about-feature-card text-center">
+                            <div class="icon-box mb-3 text-danger bg-danger bg-opacity-10 rounded-3 d-flex align-items-center justify-content-center mx-auto" style="width: 55px; height: 55px; font-size: 1.4rem;">
+                                <i class="bi @item.Ikon"></i>
+                            </div>
+                            <h4 class="fw-bold h5 text-dark mb-2">@item.Baslik</h4>
+                            <p class="text-muted small mb-0" style="line-height: 1.7;">@item.Aciklama</p>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- 3. DEĞERLERİMİZ -->
+    @if (Model.DegerlerimizAktifMi && Model.Degerlerimiz != null && Model.Degerlerimiz.Any())
+    {
+        <div class="mb-5">
+            <div class="text-center mb-4">
+                <h3 class="fw-bold h3 text-dark" style="font-family: 'Outfit', sans-serif;">Değerlerimiz</h3>
+                <p class="text-muted small">Bizi biz yapan temel ilkelerimiz.</p>
+            </div>
+            <div class="row g-4">
+                @foreach (var deger in Model.Degerlerimiz)
+                {
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm rounded-4 p-4 h-100 about-feature-card text-center">
+                            <div class="icon-box mb-3 text-danger bg-danger bg-opacity-10 rounded-3 d-flex align-items-center justify-content-center mx-auto" style="width: 50px; height: 50px; font-size: 1.25rem;">
+                                <i class="bi @deger.Ikon"></i>
+                            </div>
+                            <h4 class="fw-bold h5 text-dark mb-2">@deger.Baslik</h4>
+                            <p class="text-muted small mb-0" style="line-height: 1.7;">@deger.Aciklama</p>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- 4. HİZMET VERDİĞİMİZ BÖLGELER -->
+    @if (Model.HizmetBolgeleriAktifMi && Model.HizmetBolgeleri != null && Model.HizmetBolgeleri.Any())
+    {
+        <div class="text-center mb-4">
+            <h3 class="fw-bold h3 text-dark" style="font-family: 'Outfit', sans-serif;">Hizmet Verdiğimiz Bölgeler</h3>
+            <p class="text-muted small">Aşağıdaki bölgelerde aynı gün teslimat hizmeti sunuyoruz</p>
+        </div>
+
+        <div class="row g-3">
+            @foreach (var bolge in Model.HizmetBolgeleri)
+            {
+                <div class="col-lg-3 col-md-4 col-sm-6">
+                    <div class="card border-0 shadow-sm rounded-4 p-3 text-center region-card h-100 d-flex flex-column align-items-center justify-content-center">
+                        <div class="text-danger fs-3 mb-2">
+                            <i class="bi bi-geo-alt-fill"></i>
+                        </div>
+                        <span class="fw-bold text-dark" style="font-size: 0.95rem;">@bolge</span>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+</div>
+
+<style>
+    .about-page-wrapper .card {
+        background-color: #ffffff;
+        border: 1px solid #f0edf0 !important;
+        font-family: 'Outfit', sans-serif;
+    }
+
+    .about-feature-card {
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+        .about-feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.08) !important;
+        }
+
+    /* Hizmet Bölgesi Kartları Tasarımı */
+    .region-card {
+        background: #fff;
+        border: 1px solid #eee !important;
+        transition: all 0.25s ease;
+        min-height: 100px;
+    }
+
+        .region-card:hover {
+            border-color: var(--site-primary) !important;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06) !important;
+        }
+</style>

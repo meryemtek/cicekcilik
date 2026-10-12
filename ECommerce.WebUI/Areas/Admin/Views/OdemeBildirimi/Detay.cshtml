@@ -1,0 +1,102 @@
+﻿@model ECommerce.Application.DTOs.OdemeBildirimi.OdemeBildirimiDetayDto
+@{
+    ViewData["Title"] = "Ödeme Bildirimi Detayı";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm" style="border-radius: 16px;">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+                    <div>
+                        <h4 class="fw-bold text-dark mb-1">Bildirim Detayları</h4>
+                        <p class="text-muted small mb-0">Sisteme Bildirim Tarihi: @Model.OlusturulmaTarihi.ToString("dd MMMM yyyy, HH:mm")</p>
+                    </div>
+                    <a href="/Admin/OdemeBildirimi/Index" class="btn btn-light btn-sm px-3 rounded-pill">
+                        <i class="bi bi-arrow-left me-1"></i> Geri Dön
+                    </a>
+                </div>
+
+                <div class="row g-4">
+                    <!-- Sipariş No -->
+                    <div class="col-md-6">
+                        <small class="text-muted d-block mb-1">Sipariş Numarası</small>
+                        <h6 class="fw-bold text-primary">@(string.IsNullOrEmpty(Model.SiparisNo) ? "-" : Model.SiparisNo)</h6>
+                    </div>
+
+                    <!-- Gönderen Ad Soyad -->
+                    <div class="col-md-6">
+                        <small class="text-muted d-block mb-1">Gönderen Ad Soyad</small>
+                        <h6 class="fw-bold text-dark">@Model.AdSoyad</h6>
+                    </div>
+
+                    <!-- İletişim Telefonu -->
+                    <div class="col-md-6">
+                        <small class="text-muted d-block mb-1">İletişim Telefonu</small>
+                        <h6 class="fw-bold text-dark"><a href="tel:@Model.Telefon" class="text-decoration-none">@Model.Telefon</a></h6>
+                    </div>
+
+                    <!-- E-Posta Adresi -->
+                    <div class="col-md-6">
+                        <small class="text-muted d-block mb-1">E-Posta Adresi</small>
+                        <h6 class="fw-bold text-dark">@(string.IsNullOrEmpty(Model.Email) ? "-" : Model.Email)</h6>
+                    </div>
+
+                    <!-- Ödeme Yapılan Banka -->
+                    <div class="col-md-6">
+                        <small class="text-muted d-block mb-1">Ödeme Yapılan Banka</small>
+                        <h6 class="fw-bold text-danger">@Model.BankaAdi</h6>
+                    </div>
+
+                    <!-- Ödeme Tarihi -->
+                    <div class="col-md-6">
+                        <small class="text-muted d-block mb-1">Ödemenin Yapıldığı Tarih</small>
+                        <h6 class="fw-bold text-dark">@Model.OdemeTarihi.ToString("dd MMMM yyyy, HH:mm")</h6>
+                    </div>
+
+                    <!-- Bildirilen Tutar -->
+                    <div class="col-12">
+                        <div class="p-3 bg-light rounded-3 border">
+                            <small class="text-muted d-block mb-1">Bildirilen Tutar</small>
+                            <h3 class="fw-bold text-success mb-0">@Model.Tutar.ToString("N2") TL</h3>
+                        </div>
+                    </div>
+
+                    <!-- Müşteri Dekontu (Eğer yüklendiyse görünür) -->
+                    @if (!string.IsNullOrEmpty(Model.DekontYolu))
+                    {
+                        <div class="col-12">
+                            <div class="p-3 bg-white rounded-3 border d-flex justify-content-between align-items-center">
+                                <div>
+                                    <small class="text-muted d-block mb-1">Müşteri Dekontu</small>
+                                    <span class="fw-semibold text-dark small"><i class="bi bi-file-earmark-text me-1 text-danger"></i> Dekont Dosyası Yüklendi</span>
+                                </div>
+                                <!-- Linki WebUI içindeki proxy metodumuza yönlendiriyoruz -->
+                                <a href="/Admin/OdemeBildirimi/DekontIndir/@Model.Id" target="_blank" class="btn btn-outline-danger btn-sm px-3 rounded-pill">
+                                    <i class="bi bi-download me-1"></i> Dekontu İndir / Görüntüle
+                                </a>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Açıklama -->
+                    <div class="col-12">
+                        <small class="text-muted d-block mb-1">Müşteri Açıklaması / Notu</small>
+                        <div class="p-3 bg-white rounded-3 border text-secondary" style="min-height: 80px;">
+                            @(string.IsNullOrEmpty(Model.Aciklama) ? "Açıklama belirtilmemiş." : Model.Aciklama)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-3 border-top d-flex justify-content-end gap-2">
+                    <form asp-action="Sil" asp-route-id="@Model.Id" method="post" onsubmit="return confirm('Bu bildirimi silmek istediğinize emin misiniz?');">
+                        <button type="submit" class="btn btn-danger px-4 rounded-pill">
+                            <i class="bi bi-trash-fill me-1"></i> Bildirimi Sil
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

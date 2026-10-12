@@ -1,0 +1,314 @@
+﻿@model List<ECommerce.Application.DTOs.Slider.SliderListeDto>
+
+@if (Model != null && Model.Any())
+{
+    <!-- Google Fonts Lüks Çiçekçilik Fontu Entegrasyonu -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <div id="mainHeroSlider" class="carousel slide hero-carousel mb-4" data-bs-ride="carousel" data-bs-interval="6000">
+        <!-- Göstergeler (Noktalar) -->
+        <div class="carousel-indicators">
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                <button type="button" data-bs-target="#mainHeroSlider" data-bs-slide-to="@i" class="@(i == 0 ? "active" : "")" aria-current="@(i == 0 ? "true" : "false")" aria-label="Slide @(i + 1)"></button>
+            }
+        </div>
+
+        <!-- Slider Görselleri -->
+        <div class="carousel-inner overflow-hidden">
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                var slider = Model[i];
+                <div class="carousel-item @(i == 0 ? "active" : "")">
+                    <div class="slider-img-container position-relative">
+                        <!-- Net ve Canlı Görsel -->
+                        <img src="@slider.ResimUrl" class="d-block w-100 slider-image" alt="@slider.Baslik">
+
+                        <!-- Butik & Lüks Metin Kartı -->
+                        @if (!string.IsNullOrEmpty(slider.Baslik) || !string.IsNullOrEmpty(slider.AltMetin))
+                        {
+                            <div class="carousel-caption text-start p-4 p-md-5 animated-caption">
+                                <div class="slider-content-box">
+                                    <div class="slider-badge-top">Lidya Özel Seçim</div>
+                                    @if (!string.IsNullOrEmpty(slider.Baslik))
+                                    {
+                                        <h2 class="fw-bold mb-2 slider-title">@slider.Baslik</h2>
+                                    }
+                                    @if (!string.IsNullOrEmpty(slider.AltMetin))
+                                    {
+                                        <p class="mb-4 slider-desc">@slider.AltMetin</p>
+                                    }
+                                    @if (!string.IsNullOrEmpty(slider.LinkUrl))
+                                    {
+                                        <a href="@slider.LinkUrl" class="btn slider-action-btn">
+                                            <span class="btn-text">@(string.IsNullOrEmpty(slider.ButonMetni) ? "Hemen Keşfet" : slider.ButonMetni)</span>
+                                            <div class="btn-icon-wrapper">
+                                                <i class="bi bi-arrow-right"></i>
+                                            </div>
+                                        </a>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- İleri / Geri Okları -->
+        <button class="carousel-control-prev custom-arrow" type="button" data-bs-target="#mainHeroSlider" data-bs-slide="prev">
+            <i class="bi bi-chevron-left"></i>
+        </button>
+        <button class="carousel-control-next custom-arrow" type="button" data-bs-target="#mainHeroSlider" data-bs-slide="next">
+            <i class="bi bi-chevron-right"></i>
+        </button>
+    </div>
+
+    <style>
+        /* =====================================================
+                   LİDYA ÇİÇEKÇİLİK LÜKS BOUTIQUE SLIDER STİLLERİ
+                   ===================================================== */
+
+        .hero-carousel {
+            position: relative;
+            background-color: #fcf8f9;
+        }
+
+        .slider-img-container {
+            height: 500px;
+            width: 100%;
+            background-color: #f7f3f4;
+        }
+
+        .slider-image {
+            height: 100% !important;
+            object-fit: cover;
+            transform: scale(1);
+            transition: transform 7s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .carousel-item.active .slider-image {
+            transform: scale(1.03);
+        }
+
+        /* Metin Alanı Pozisyonu */
+        .carousel-caption {
+            bottom: auto !important;
+            top: 50% !important;
+            transform: translateY(-50%);
+            left: 7% !important;
+            right: auto !important;
+            max-width: 520px;
+            text-align: left !important;
+        }
+
+        /* Lüks Cam Efekti Kartı (Glassmorphism + İnce Gold/Bordo Çizgi) */
+        .slider-content-box {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(139, 0, 40, 0.12);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 20px 45px rgba(35, 28, 40, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Kart İçerisindeki Üst Küçük İnce Etiket */
+        .slider-badge-top {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #8b0028;
+            margin-bottom: 8px;
+        }
+
+        /* Başlık İçin Özel Lüks Font (Playfair Display) */
+        .slider-title {
+            font-family: 'Playfair Display', serif !important;
+            font-size: 2.6rem;
+            font-weight: 700;
+            color: #24213d !important;
+            line-height: 1.15;
+            letter-spacing: -0.5px;
+        }
+
+        /* Açıklama Yazısı */
+        .slider-desc {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.98rem;
+            color: #65606d !important;
+            line-height: 1.6;
+        }
+
+        /* =====================================================
+                   YENİ NESİL ANİMASYONLU SİPARİŞ / KEŞFET BUTONU
+                   ===================================================== */
+        .slider-action-btn {
+            background: linear-gradient(135deg, #8b0028, #a70b3b);
+            color: #fff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 600;
+            padding: 13px 30px;
+            border-radius: 50px; /* Tam yuvarlak hap buton */
+            font-size: 0.92rem;
+            letter-spacing: 0.4px;
+            border: 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 14px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 8px 22px rgba(139, 0, 40, 0.28);
+        }
+
+            /* Buton Arka Plan Işıma Animasyonu */
+            .slider-action-btn::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+                transition: 0.6s;
+            }
+
+            .slider-action-btn:hover::before {
+                left: 100%;
+            }
+
+            .slider-action-btn:hover {
+                background: linear-gradient(135deg, #a70b3b, #c21247);
+                color: #fff;
+                transform: translateY(-3px);
+                box-shadow: 0 12px 30px rgba(139, 0, 40, 0.42);
+            }
+
+        /* Buton İçindeki Ok Dairesi ve Animasyonu */
+        .btn-icon-wrapper {
+            width: 28px;
+            height: 28px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease;
+        }
+
+        .slider-action-btn:hover .btn-icon-wrapper {
+            transform: translateX(5px);
+            background: rgba(255, 255, 255, 0.35);
+        }
+
+        /* Giriş (Fade In & Slide) Animasyonu */
+        .carousel-item.active .animated-caption {
+            animation: luxurySlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @@keyframes luxurySlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(-40%) translateX(-25px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(-50%) translateX(0);
+            }
+        }
+
+        /* Zarif Yön Okları */
+        .custom-arrow {
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0.8;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(139, 0, 40, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #8b0028;
+            font-size: 1.1rem;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+        }
+
+        .carousel-control-prev.custom-arrow {
+            left: 25px;
+        }
+
+        .carousel-control-next.custom-arrow {
+            right: 25px;
+        }
+
+        .custom-arrow:hover {
+            background: #8b0028;
+            opacity: 1;
+            color: #fff;
+            border-color: #8b0028;
+            transform: translateY(-50%) scale(1.1);
+            box-shadow: 0 10px 25px rgba(139, 0, 40, 0.3);
+        }
+
+        /* İndikatör Noktaları */
+        .carousel-indicators {
+            bottom: 20px;
+        }
+
+            .carousel-indicators [data-bs-target] {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background-color: #d1c7cc;
+                border: 0;
+                margin: 0 6px;
+                transition: all 0.4s ease;
+            }
+
+            .carousel-indicators .active {
+                background-color: #8b0028;
+                width: 28px;
+                border-radius: 4px;
+            }
+
+        /* Mobil Uyum */
+        @@media (max-width: 768px) {
+            .slider-img-container {
+                height: 380px;
+            }
+
+            .carousel-caption {
+                left: 4% !important;
+                right: 4% !important;
+                top: auto !important;
+                bottom: 15px !important;
+                transform: none !important;
+            }
+
+            .slider-content-box {
+                padding: 24px;
+            }
+
+            .slider-title {
+                font-size: 1.8rem;
+            }
+
+            .slider-desc {
+                font-size: 0.88rem;
+            }
+
+            .custom-arrow {
+                display: none;
+            }
+        }
+    </style>
+}

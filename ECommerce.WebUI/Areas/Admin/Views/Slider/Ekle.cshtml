@@ -1,0 +1,176 @@
+﻿@model ECommerce.Application.DTOs.Slider.SliderEkleDto
+@{
+    ViewData["Title"] = "Yeni Slider Ekle";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .t-page {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .t-hero {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 28px;
+    }
+
+    .t-eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #9a1640;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+    }
+
+    .t-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0 0 6px;
+        letter-spacing: -.5px;
+    }
+
+    .t-subtitle {
+        margin: 0;
+        color: #85818c;
+        font-size: .95rem;
+    }
+
+    .t-card {
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid #eee9ed;
+        box-shadow: 0 8px 25px rgba(35,28,40,.04);
+        padding: 30px;
+    }
+
+    .t-btn-primary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        background: linear-gradient(135deg,#8b0028,#a70b3b);
+        border: 0;
+        border-radius: 12px;
+        color: #fff;
+        padding: 12px 24px;
+        font-size: 1rem;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        box-shadow: 0 8px 22px rgba(139,0,40,.2);
+    }
+
+        .t-btn-primary:hover {
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+    .t-btn-secondary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        background: #fff;
+        border: 1px solid #e5e0e5;
+        color: #403b46;
+        border-radius: 12px;
+        padding: 12px 24px;
+        font-size: 1rem;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+        .t-btn-secondary:hover {
+            background: #faf9fa;
+            color: #24213d;
+        }
+
+    .form-label {
+        font-weight: 600;
+        color: #403b46;
+        font-size: .9rem;
+        margin-bottom: 6px;
+    }
+
+    .form-control, .form-select {
+        border-radius: 10px;
+        border: 1px solid #e5e0e5;
+        padding: 11px 15px;
+        font-size: .95rem;
+    }
+
+        .form-control:focus {
+            border-color: #8b0028;
+            box-shadow: 0 0 0 3px rgba(139,0,40,.1);
+        }
+</style>
+
+<div class="t-page">
+    <div class="t-hero">
+        <div class="t-hero-content">
+            <div class="t-eyebrow"><i class="bi bi-images"></i> Vitrin Yönetimi</div>
+            <h1 class="t-title">Yeni Slider Ekle</h1>
+            <p class="t-subtitle">Ana sayfa manşet alanı için yeni bir görsel ve yönlendirme ekleyin.</p>
+        </div>
+        <a asp-action="Index" class="t-btn-secondary"><i class="bi bi-arrow-left"></i> Listeye Dön</a>
+    </div>
+
+    <div class="t-card">
+        <form asp-action="Ekle" method="post" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label class="form-label">Slider Başlığı</label>
+                <input type="text" asp-for="Baslik" class="form-control" placeholder="Örn: En Tazesi Sizinle" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Alt Metin</label>
+                <textarea asp-for="AltMetin" class="form-control" rows="3" placeholder="Slider üzerinde görünecek alt metin..."></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Buton Metni</label>
+                <input type="text" asp-for="ButonMetni" class="form-control" placeholder="Örn: Fırsatları İncele" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Manşet Görseli (Dosya)</label>
+                <input type="file" name="gorselDosyasi" class="form-control" accept="image/*" required />
+                <small class="text-muted">Önerilen boyut: 1920x600 px</small>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Hedef URL (Tıklanınca Gidilecek Link)</label>
+                <input type="text" asp-for="LinkUrl" class="form-control" placeholder="Örn: /Kategori/Guller veya https://..." />
+            </div>
+
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <label class="form-label">Görüntüleme Sırası</label>
+                    <input type="number" asp-for="SiraNo" class="form-control" value="1" />
+                </div>
+                <div class="col-md-6 d-flex align-items-center pt-4">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" asp-for="AktifMi" id="aktifSwitch" checked style="width: 45px; height: 22px; cursor: pointer;">
+                        <label class="form-check-label fw-bold ms-2 mt-1" for="aktifSwitch">Slider Aktif mi?</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2">
+                <a asp-action="Index" class="t-btn-secondary">İptal</a>
+                <button type="submit" class="t-btn-primary">
+                    <i class="bi bi-check-lg"></i> Slider'ı Kaydet
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,476 @@
+﻿@model ECommerce.Application.Models.Sepet
+@{
+    ViewData["Title"] = "Alışveriş Sepetim";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    decimal araToplam = Model.Kalemler.Sum(k => k.BirimFiyat * k.Miktar);
+    decimal teslimatToplam = Model.Kalemler.Sum(k => k.TeslimatUcreti);
+    decimal vipToplam = Model.Kalemler.Sum(k => k.VipUcreti);
+
+    decimal kampanyaIndirimi = Model.KampanyaIndirimTutari;
+    decimal kuponIndirimi = Model.IndirimTutari;
+
+    // Genel Toplam = Ara Toplam + Kargo + VIP - Kampanya İndirimi - Kupon İndirimi
+    decimal genelToplam = araToplam + teslimatToplam + vipToplam - kampanyaIndirimi - kuponIndirimi;
+    if (genelToplam < 0) genelToplam = 0;
+
+    bool farkliAlicilarAktif = Model.Kalemler.Count > 1;
+}
+
+<style>
+    .cart-header {
+        border-bottom: 2px solid #f0f0f0;
+    }
+
+    .item-col {
+        width: 100%;
+    }
+
+    .image-container {
+        width: 80px;
+        height: 80px;
+        min-width: 80px;
+        flex-shrink: 0;
+        border-radius: 8px;
+        overflow: hidden;
+        background-color: #f8f9fa;
+        border: 1px solid #eaeaea;
+    }
+
+    @@media (min-width: 768px) {
+        .item-col {
+            width: 25%;
+            text-align: center;
+            justify-content: center !important;
+        }
+
+            .item-col:last-child {
+                text-align: right;
+                justify-content: flex-end !important;
+            }
+    }
+
+    .summary-card {
+        background: #fff;
+        border: 1px solid #eaeaea;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+    }
+
+    .btn-checkout {
+        background-color: var(--site-primary);
+        border-color: var(--site-primary);
+        border-radius: 8px;
+    }
+
+        .btn-checkout:hover {
+            opacity: 0.9;
+        }
+
+    .form-check-input:checked {
+        background-color: #3b1154;
+        border-color: #3b1154;
+    }
+</style>
+
+<div class="container my-5">
+    <!-- BAŞARI / HATA MESAJLARI -->
+    @if (TempData["BasariliMesaj"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-3 mb-4" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["BasariliMesaj"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+        </div>
+    }
+    @if (TempData["HataMesaji"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm rounded-3 mb-4" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["HataMesaji"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+        </div>
+    }
+
+    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-4 gap-3">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1">
+                    <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-muted">Anasayfa</a></li>
+                    <li class="breadcrumb-item active text-dark fw-bold" aria-current="page">Sepetim</li>
+                </ol>
+            </nav>
+            <h1 class="fw-bold text-dark" style="font-size: 1.8rem; letter-spacing: -0.5px;">Alışveriş Sepetim (@Model.Kalemler.Sum(k => k.Miktar) Ürün)</h1>
+        </div>
+
+        <!-- Farklı Alıcılara Gönder Toggle Bar -->
+        <div class="bg-white px-4 py-2 rounded-pill border shadow-sm d-flex align-items-center gap-3">
+            <span class="small fw-bold text-dark">Farklı Alıcılara Gönder</span>
+            <div class="form-check form-switch m-0">
+                <input class="form-check-input" type="checkbox" id="farkliAlicilarToggle" @(farkliAlicilarAktif ? "checked" : "") onchange="toggleFarkliAlicilar(this)" style="cursor: pointer; width: 45px; height: 22px;">
+            </div>
+        </div>
+    </div>
+
+    @if (Model.Kalemler == null || !Model.Kalemler.Any())
+    {
+        <div class="text-center py-5 bg-white rounded-4 border shadow-sm p-5 summary-card">
+            <h3 class="fw-bold text-dark mb-2">Sepetinizde Ürün Bulunmuyor</h3>
+            <a href="/Urunler" class="btn btn-primary px-5 py-3 rounded-pill fw-bold text-white text-decoration-none mt-3" style="background-color: var(--site-primary);">Alışverişe Başla</a>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            <div class="col-lg-8">
+                @if (!farkliAlicilarAktif)
+                {
+                    <!-- 1. DURUM: STANDART TABLO GÖRÜNÜMÜ (Switch Kapalı) -->
+                    <div class="bg-white border shadow-sm" style="border-radius: 12px; overflow: hidden;">
+                        <div class="cart-header d-none d-md-flex text-dark fw-bold small text-uppercase py-3 px-4 bg-light">
+                            <div style="flex: 3;">Ürün</div>
+                            <div class="d-flex" style="flex: 4;">
+                                <div class="item-col">Adet</div>
+                                <div class="item-col">Fiyat</div>
+                                <div class="item-col">Toplam</div>
+                                <div class="item-col text-end">İşlem</div>
+                            </div>
+                        </div>
+
+                        @foreach (var item in Model.Kalemler)
+                        {
+                            <div class="d-flex flex-column flex-md-row align-items-md-center py-4 px-4 border-bottom position-relative">
+                                <div class="d-flex align-items-center gap-3 mb-3 mb-md-0" style="flex: 3; min-width: 0;">
+                                    <div class="image-container">
+                                        <img src="@(string.IsNullOrEmpty(item.GorselUrl) ? "/images/no-image.jpg" : item.GorselUrl)"
+                                             alt="@item.UrunAdi" class="w-100 h-100 object-fit-cover"
+                                             onerror="this.src='/images/no-image.jpg'" />
+                                    </div>
+                                    <div class="pe-3" style="flex: 1; min-width: 0;">
+                                        <h6 class="fw-bold text-dark mb-1 text-truncate">@item.UrunAdi</h6>
+                                        @if (!string.IsNullOrEmpty(item.VaryantAdi) && item.VaryantAdi != "Standart Boy / Model")
+                                        {
+                                            <small class="d-block text-muted mb-1 text-truncate">Varyant: @item.VaryantAdi</small>
+                                        }
+                                        @if (!string.IsNullOrEmpty(item.Mahalle))
+                                        {
+                                            <small class="d-block text-muted text-truncate" style="font-size: 0.8rem;">
+                                                <i class="bi bi-geo-alt text-danger"></i> @item.Il / @item.Ilce / @item.Mahalle
+                                            </small>
+                                        }
+                                    </div>
+                                </div>
+
+                                <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between w-100 gap-3 gap-md-0" style="flex: 4;">
+                                    <div class="d-flex justify-content-between align-items-center item-col">
+                                        <span class="d-md-none text-muted small fw-bold text-uppercase">Adet</span>
+                                        <div class="d-flex align-items-center justify-content-center gap-2">
+                                            <span class="fw-bold px-3 py-1 bg-light rounded border text-dark">@item.Miktar</span>
+                                            <button type="button" class="btn btn-sm btn-outline-dark rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 26px; height: 26px;" onclick="adetArtirTiklandi('@item.Id', @item.Miktar)" title="Farklı Adrese Göndermek İçin Ayır">
+                                                <i class="bi bi-plus" style="font-size: 0.8rem;"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex justify-content-between align-items-center item-col">
+                                        <span class="d-md-none text-muted small fw-bold text-uppercase">Fiyat</span>
+                                        <span class="fw-bold text-dark">₺@item.BirimFiyat.ToString("N2")</span>
+                                    </div>
+
+                                    <div class="d-flex justify-content-between align-items-center item-col">
+                                        <span class="d-md-none text-muted small fw-bold text-uppercase">Toplam</span>
+                                        <span class="fw-bolder text-dark">₺@((item.BirimFiyat * item.Miktar).ToString("N2"))</span>
+                                    </div>
+
+                                    <div class="d-flex justify-content-end item-col">
+                                        <form asp-action="Cikar" method="post" class="m-0">
+                                            <input type="hidden" name="kalemId" value="@item.Id" />
+                                            <button type="submit" class="btn btn-danger text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 36px; height: 36px; background-color: #8b0028; border-color: #8b0028;" title="Sil">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <!-- 2. DURUM: AYRI AYRI SİPARİŞ KARTLARI (Switch Açık / Farklı Alıcılara Gönder Modu) -->
+                    @for (int i = 0; i < Model.Kalemler.Count; i++)
+                    {
+                        var item = Model.Kalemler[i];
+                        <div class="mb-4">
+                            <div class="text-center position-relative my-3">
+                                <hr class="position-absolute w-100 top-50 translate-middle-y text-muted opacity-25 m-0" />
+                                <span class="badge bg-white border px-4 py-2 rounded-pill fw-bold position-relative shadow-sm" style="color: #3b1154; border-color: #3b1154;">
+                                    <i class="bi bi-box-seam me-1"></i> @(i + 1). Sipariş / Alıcı
+                                </span>
+                            </div>
+
+                            <div class="bg-white border shadow-sm p-4" style="border-radius: 16px;">
+                                <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-4">
+                                    <div class="d-flex align-items-center gap-3" style="flex: 3; min-width: 0;">
+                                        <div class="image-container">
+                                            <img src="@(string.IsNullOrEmpty(item.GorselUrl) ? "/images/no-image.jpg" : item.GorselUrl)"
+                                                 alt="@item.UrunAdi" class="w-100 h-100 object-fit-cover"
+                                                 onerror="this.src='/images/no-image.jpg'" />
+                                        </div>
+                                        <div style="flex: 1; min-width: 0;">
+                                            <h6 class="fw-bold text-dark mb-1 text-truncate">@item.UrunAdi</h6>
+                                            @if (!string.IsNullOrEmpty(item.VaryantAdi) && item.VaryantAdi != "Standart Boy / Model")
+                                            {
+                                                <small class="d-block text-muted mb-1 text-truncate">Varyant: @item.VaryantAdi</small>
+                                            }
+                                            @if (!string.IsNullOrEmpty(item.Mahalle))
+                                            {
+                                                <small class="d-block text-muted text-truncate" style="font-size: 0.8rem;">
+                                                    <i class="bi bi-geo-alt text-danger"></i> Bölge: @item.Il / @item.Ilce / @item.Mahalle
+                                                </small>
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex align-items-center justify-content-between justify-content-md-end gap-4 w-100 w-md-auto">
+                                        <div class="d-flex align-items-center border rounded bg-light px-3 py-1">
+                                            <span class="fw-bold text-dark">@item.Miktar Adet</span>
+                                        </div>
+
+                                        <div class="text-end">
+                                            <span class="fw-bolder text-dark fs-5">₺@((item.BirimFiyat * item.Miktar).ToString("N2"))</span>
+                                        </div>
+
+                                        <div>
+                                            <form asp-action="Cikar" method="post" class="m-0">
+                                                <input type="hidden" name="kalemId" value="@item.Id" />
+                                                <button type="submit" class="btn btn-outline-danger rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 36px; height: 36px;" title="Siparişi Sil">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+
+            <!-- SAĞ: SİPARİŞ ÖZETİ KARTI -->
+            <div class="col-lg-4">
+                <div class="summary-card p-4 sticky-top" style="top: 100px;">
+                    <h5 class="fw-bold text-dark mb-4 pb-2 border-bottom">Sipariş Özeti</h5>
+
+                    <div class="d-flex justify-content-between mb-3 text-muted">
+                        <span class="fw-semibold">Ara Toplam</span>
+                        <span class="fw-bold">₺@araToplam.ToString("N2")</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-3 text-muted">
+                        <span class="fw-semibold">Teslimat Ücreti</span>
+                        <span class="fw-bold">₺@teslimatToplam.ToString("N2")</span>
+                    </div>
+
+                    @if (vipToplam > 0)
+                    {
+                        <div class="d-flex justify-content-between mb-3" style="color: #bfa100;">
+                            <span class="fw-bold"><i class="bi bi-crown-fill me-1"></i> VIP Teslimat Ücreti</span>
+                            <span class="fw-bold">₺@vipToplam.ToString("N2")</span>
+                        </div>
+                    }
+
+                    <!-- KAMPANYA İNDİRİMİ SATIRI -->
+                    @if (kampanyaIndirimi > 0)
+                    {
+                        <div class="d-flex justify-content-between mb-3 text-success">
+                            <span class="fw-semibold">
+                                <i class="bi bi-stars me-1"></i> @(string.IsNullOrEmpty(Model.UygulananKampanyaAdi) ? "Kampanya İndirimi" : Model.UygulananKampanyaAdi)
+                            </span>
+                            <span class="fw-bold">-₺@kampanyaIndirimi.ToString("N2")</span>
+                        </div>
+                    }
+
+                    <!-- EĞER KUPON UYGULANDIYSA ÖZETTE GÖSTER -->
+                    @if (kuponIndirimi > 0)
+                    {
+                        <div class="d-flex justify-content-between mb-3 text-success">
+                            <span class="fw-semibold"><i class="bi bi-tag-fill me-1"></i> İndirim (@Model.IndirimKodu)</span>
+                            <span class="fw-bold">-₺@kuponIndirimi.ToString("N2")</span>
+                        </div>
+                    }
+
+                    <hr class="text-muted opacity-25 my-4" />
+
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <span class="fw-bold fs-5 text-dark">Toplam</span>
+                        <span class="fw-bolder fs-4 text-dark">₺@genelToplam.ToString("N2")</span>
+                    </div>
+
+                    <!-- KUPON GİRİŞ VEYA AKTİF KUPON ALANI -->
+                    <div class="mb-4">
+                        <label class="form-label text-muted small fw-bold">İndirim Kodu</label>
+                        @if (string.IsNullOrEmpty(Model.IndirimKodu))
+                        {
+                            <form asp-action="KuponUygula" method="post" class="input-group">
+                                <input type="text" name="kuponKodu" class="form-control shadow-none text-uppercase" placeholder="Kodu girin" required>
+                                <button class="btn btn-outline-secondary px-4" type="submit">Uygula</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <div class="d-flex justify-content-between align-items-center bg-light border border-success px-3 py-2 rounded-3">
+                                <span class="small fw-bold text-success text-uppercase">
+                                    <i class="bi bi-check-circle-fill me-1"></i> @Model.IndirimKodu uygulandı
+                                </span>
+                                <form asp-action="KuponKaldir" method="post" class="m-0">
+                                    <button type="submit" class="btn btn-sm btn-link text-danger p-0 text-decoration-none fw-bold" title="Kuponu Kaldır">
+                                        <i class="bi bi-x-circle fs-6"></i> Kaldır
+                                    </button>
+                                </form>
+                            </div>
+                        }
+                    </div>
+
+                    <a href="/Odeme" id="checkoutBtn" data-auth="@User.Identity.IsAuthenticated" class="btn btn-checkout w-100 py-3 fw-bold text-white text-decoration-none shadow-sm fs-6 d-flex justify-content-center align-items-center">
+                        Ödemeye Geç
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- ================= ÜRÜNÜ AYIR MODALI ================= -->
+<div class="modal fade" id="urunAyirModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px; overflow: hidden;">
+            <div class="modal-header text-white border-0 py-3" style="background-color: #3b1154;">
+                <h5 class="modal-title fw-bold fs-6">
+                    <i class="bi bi-intersect me-2"></i> Ürünü Ayır
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body text-center p-4">
+                <div class="mb-3">
+                    <i class="bi bi-question-circle fs-1" style="color: #3b1154 !important;"></i>
+                </div>
+                <h5 class="fw-bold text-dark mb-2">Bu ürünü farklı alıcılara göndermek için ayırmak ister misiniz?</h5>
+                <p class="text-muted small mb-0">
+                    Ürün 1'er adet olarak ayrılacak ve kartlı sipariş moduna geçilecektir.
+                </p>
+            </div>
+            <div class="modal-footer border-0 justify-content-center pb-4 pt-0">
+                <button type="button" class="btn btn-light px-4 py-2 rounded-pill fw-semibold text-muted" data-bs-dismiss="modal">
+                    <i class="bi bi-x-lg me-1"></i> Hayır
+                </button>
+                <button type="button" id="onaylaAyirBtn" class="btn text-white px-4 py-2 rounded-pill fw-semibold" style="background-color: #3b1154;">
+                    <i class="bi bi-check-lg me-1"></i> Evet, Ayır
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ================= ÖDEME TERCİHİ (GİRİŞ / MİSAFİR) MODALI ================= -->
+<div class="modal fade" id="odemeSecimModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 24px; overflow: hidden; padding: 10px;">
+            <div class="modal-header border-0 pb-0 justify-content-end">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body text-center px-4 pb-4 pt-0">
+                <div class="mb-3">
+                    <div class="d-inline-flex align-items-center justify-content-center rounded-circle shadow-sm" style="width: 70px; height: 70px; background-color: #fcf8ff; color: #3b1154;">
+                        <i class="bi bi-shield-lock-fill fs-2"></i>
+                    </div>
+                </div>
+                <h4 class="fw-bold text-dark mb-1">Ödeme İşlemi</h4>
+                <p class="text-muted small mb-4">Siparişinizi tamamlamak için lütfen giriş yapın veya üye olmadan devam edin.</p>
+
+                <div class="d-grid gap-3 mb-4">
+                    <!-- Üye Giriş Butonu (Giriş sayfasına yönlendirir, dönüşte /Odeme sayfasına gider) -->
+                    <a href="/Hesap/Giris?returnUrl=/Odeme" class="btn text-white py-3 fw-bold rounded-pill shadow-sm d-flex align-items-center justify-content-center gap-2" style="background-color: #3b1154;">
+                        <i class="bi bi-person-fill fs-5"></i> Üye Girişi
+                    </a>
+
+                    <div class="position-relative text-center my-1">
+                        <hr class="text-muted opacity-25 m-0" />
+                        <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted small fw-semibold">veya</span>
+                    </div>
+
+                    <!-- Üye Olmadan Devam Et Butonu -->
+                    <a href="/Odeme" class="btn py-3 fw-bold rounded-pill d-flex align-items-center justify-content-center gap-2" style="border: 1px solid #e2d9ec; color: #3b1154; background-color: #fcf8ff;">
+                        <span>Üye Olmadan Devam Et</span>
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="text-muted small d-flex align-items-center justify-content-center gap-1 opacity-75">
+                    <i class="bi bi-lock-fill text-success"></i> 256-bit SSL Güvenli Ödeme
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let aktifKalemId = null;
+
+    function adetArtirTiklandi(kalemId, mevcutMiktar) {
+        aktifKalemId = kalemId;
+        var modalEl = document.getElementById('urunAyirModal');
+        var modal = new bootstrap.Modal(modalEl);
+        modal.show();
+    }
+
+    document.getElementById('onaylaAyirBtn').addEventListener('click', function () {
+        if (!aktifKalemId) return;
+
+        fetch(`/Sepet/UrunuAyir/${aktifKalemId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        }).then(response => {
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                alert("İşlem sırasında hata oluştu.");
+            }
+        });
+    });
+
+    // Switch kapatıldığında sepeti birleştirip tablo görünümüne döndürür
+    function toggleFarkliAlicilar(checkbox) {
+        if (!checkbox.checked) {
+            fetch('/Sepet/SepetiBirlestir', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            }).then(response => {
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    alert("Sepet birleştirilirken hata oluştu.");
+                    checkbox.checked = true;
+                }
+            });
+        } else {
+            window.location.reload();
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const checkoutBtn = document.getElementById('checkoutBtn');
+        if (checkoutBtn) {
+            checkoutBtn.addEventListener('click', function (e) {
+                const isAuthenticated = checkoutBtn.getAttribute('data-auth') === 'True';
+
+                // Eğer kullanıcı giriş yapmamışsa modalı aç ve gitmesini engelle
+                if (!isAuthenticated) {
+                    e.preventDefault();
+                    var modalEl = document.getElementById('odemeSecimModal');
+                    var modal = new bootstrap.Modal(modalEl);
+                    modal.show();
+                }
+                // Giriş yapmışsa doğrudan /Odeme sayfasına geçiş yapar.
+            });
+        }
+    });
+</script>

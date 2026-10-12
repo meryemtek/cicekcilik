@@ -1,0 +1,583 @@
+﻿@model List<ECommerce.Application.DTOs.AnasayfaKategori.AnasayfaKategoriDto>
+
+@if (Model != null && Model.Any())
+{
+    <section class="homepage-category-section">
+        <div class="homepage-category-container">
+            <!-- SOL OK -->
+            <button type="button" class="category-nav-button category-prev" aria-label="Önceki kategoriler"> <i class="bi bi-chevron-left"></i> </button>
+            <!-- KATEGORİ SLIDER -->
+            <div class="homepage-category-wrapper">
+                <div class="homepage-category-track">
+                    @foreach (var kategori in Model)
+                    {
+                        <a href="/kategori/@kategori.SeoUrl"
+                           class="homepage-category-item">
+                            <div class="homepage-category-image">
+                                @if (!string.IsNullOrWhiteSpace(kategori.GorselUrl))
+                                {
+                                    <img src="@kategori.GorselUrl" alt="@kategori.KategoriAdi" loading="lazy" />
+                                }
+                                else
+                                {
+                                    <div class="homepage-category-placeholder"> <i class="bi bi-flower1"></i> </div>
+                                }
+                            </div>
+                            <span class="homepage-category-name"> @kategori.KategoriAdi </span> </a>
+                    }
+                    @*
+                Kesintisiz slider için aynı kategorileri ikinci kez oluşturuyoruz.
+                JavaScript başlangıçta bunu kullanarak sonsuz akışı sağlayacak.
+                *@
+                    @foreach (var kategori in Model)
+                    {
+                        <a href="/kategori/@kategori.SeoUrl" class="homepage-category-item" aria-hidden="true" tabindex="-1">
+                            <div class="homepage-category-image">
+                                @if (!string.IsNullOrWhiteSpace(kategori.GorselUrl))
+                                {
+                                    <img src="@kategori.GorselUrl" alt="" loading="lazy" />
+                                }
+                                else
+                                {
+                                    <div class="homepage-category-placeholder"> <i class="bi bi-flower1"></i> </div>
+                                }
+                            </div>
+                            <span class="homepage-category-name"> @kategori.KategoriAdi </span> </a>
+                    }
+                </div>
+            </div>
+            <!-- SAĞ OK -->
+            <button type="button" class="category-nav-button category-next" aria-label="Sonraki kategoriler"> <i class="bi bi-chevron-right"></i> </button>
+        </div>
+    </section>
+    <style>
+
+        /* =========================================================
+                   ANA ALAN
+           ========================================================= */
+        .homepage-category-section {
+            position: relative;
+            width: 100%;
+            padding: 34px 0;
+            background: #fff;
+            overflow: hidden;
+        }
+        .homepage-category-container {
+            position: relative;
+            width: 100%;
+        }
+        /* =========================================================
+                   SLIDER ALANI
+           ========================================================= */
+        .homepage-category-wrapper {
+            width: 100%;
+            overflow: hidden;
+            padding: 4px 0 14px;
+        }
+        .homepage-category-track {
+            display: flex;
+            align-items: flex-start;
+            width: max-content;
+            gap: 24px;
+            will-change: transform;
+        }
+        /* =========================================================
+                   KATEGORİ
+           ========================================================= */
+        .homepage-category-item {
+            flex: 0 0 150px;
+            width: 150px;
+            text-decoration: none;
+            color: inherit;
+            text-align: center;
+            user-select: none;
+        }
+        /* =========================================================
+                   GÖRSEL
+           ========================================================= */
+        .homepage-category-image {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            overflow: hidden;
+            border-radius: 50%;
+            background: #f8f5f6;
+            border: 1px solid #eeeeee;
+            margin-bottom: 12px;
+            transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease;
+        }
+            .homepage-category-image img {
+                width: 100%;
+                height: 100%;
+                display: block;
+                object-fit: cover;
+                transition: transform .45s ease;
+            }
+        /* =========================================================
+                   HOVER
+                ========================================================= */
+        .homepage-category-item:hover .homepage-category-image {
+            transform: translateY(-5px);
+            border-color: rgba(139, 0, 40, .18);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, .12);
+        }
+            .homepage-category-item:hover .homepage-category-image img {
+                transform: scale(1.07);
+            }
+        .homepage-category-name {
+            display: block;
+            padding: 0 4px;
+            font-size: .94rem;
+            font-weight: 600;
+            line-height: 1.35;
+            color: #374151;
+            transition: color .2s ease, transform .2s ease;
+        }
+        .homepage-category-item:hover .homepage-category-name {
+            color: var(--site-primary, #8b0028);
+        }
+        /* =========================================================
+                   PLACEHOLDER
+                ========================================================= */
+        .homepage-category-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--site-primary, #8b0028);
+        }
+        /* =========================================================
+                   SAĞ / SOL OKLAR
+                ========================================================= */
+        .category-nav-button {
+            position: absolute;
+            top: 50%;
+            z-index: 20;
+            width: 46px;
+            height: 46px;
+            transform: translateY(-50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255, 255, 255, .75);
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .94);
+            color: #374151;
+            box-shadow: 0 5px 18px rgba(0, 0, 0, .13);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            cursor: pointer;
+            transition: transform .25s ease, background .25s ease, color .25s ease, box-shadow .25s ease;
+        }
+            .category-nav-button i {
+                font-size: 1.15rem;
+                line-height: 1;
+            }
+        /* SOL */
+        .category-prev {
+            left: 18px;
+        }
+        /* SAĞ */
+        .category-next {
+            right: 18px;
+        }
+        /* HOVER */
+        .category-nav-button:hover {
+            transform: translateY(-50%) scale(1.08);
+            background: var(--site-primary, #8b0028);
+            border-color: var(--site-primary, #8b0028);
+            color: #fff;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .18);
+        }
+        /* =========================================================
+                   MOBİL
+                ========================================================= */
+        @@media (max-width: 767.98px) {
+            .homepage-category-section {
+                padding: 26px 0;
+            }
+            .homepage-category-track {
+                gap: 16px;
+            }
+            .homepage-category-item {
+                flex-basis: 112px;
+                width: 112px;
+            }
+            .homepage-category-image {
+                width: 112px;
+                height: 112px;
+                margin-bottom: 9px;
+            }
+            .homepage-category-name {
+                font-size: .84rem;
+            }
+            .category-nav-button {
+                display: none;
+            }
+        }
+        /* =========================================================
+                   TABLET
+                ========================================================= */
+        @@media (min-width: 768px) and (max-width: 1199.98px) {
+            .homepage-category-track {
+                gap: 20px;
+            }
+            .homepage-category-item {
+                flex-basis: 135px;
+                width: 135px;
+            }
+            .homepage-category-image {
+                width: 135px;
+                height: 135px;
+            }
+        }
+    </style>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const wrapper = document.querySelector(".homepage-category-wrapper");
+            const track = document.querySelector(".homepage-category-track");
+            const prev = document.querySelector(".category-prev");
+            const next = document.querySelector(".category-next");
+
+            if (!wrapper || !track) {
+                return;
+            }
+
+            let speed = 0.45;
+            let position = 0;
+
+            let isPaused = false;
+            let isDragging = false;
+
+            let startX = 0;
+            let startY = 0;
+            let startPosition = 0;
+
+            // Gerçek bir sürükleme yapılıp yapılmadığını tutar
+            let hasDragged = false;
+
+            // Sürükleme sonrası oluşan click'i engellemek için
+            let blockNextClick = false;
+
+            const items = Array.from(track.children);
+
+            if (items.length < 2) {
+                return;
+            }
+
+            const totalItems = Math.floor(items.length / 2);
+
+            if (totalItems <= 0) {
+                return;
+            }
+
+            let loopWidth = 0;
+
+            // =========================================================
+            // LOOP GENİŞLİĞİ
+            // =========================================================
+            function calculateLoopWidth() {
+
+                loopWidth = 0;
+
+                for (let i = 0; i < totalItems; i++) {
+                    loopWidth += items[i].getBoundingClientRect().width;
+                }
+
+                const styles = window.getComputedStyle(track);
+
+                const gap = parseFloat(
+                    styles.columnGap || styles.gap || 0
+                );
+
+                loopWidth += gap * (totalItems - 1);
+            }
+
+            calculateLoopWidth();
+
+
+            // =========================================================
+            // TRANSFORM UYGULA
+            // =========================================================
+            function updatePosition() {
+
+                track.style.transform =
+                    `translate3d(${position}px, 0, 0)`;
+            }
+
+
+            // =========================================================
+            // POZİSYONU NORMALİZE ET
+            // =========================================================
+            function normalizePosition() {
+
+                if (!loopWidth) {
+                    return;
+                }
+
+                while (position <= -loopWidth) {
+                    position += loopWidth;
+                }
+
+                while (position > 0) {
+                    position -= loopWidth;
+                }
+            }
+
+
+            // =========================================================
+            // OTOMATİK SLIDER
+            // =========================================================
+            function animate() {
+
+                if (!isPaused && !isDragging) {
+
+                    position -= speed;
+
+                    normalizePosition();
+
+                    updatePosition();
+                }
+
+                requestAnimationFrame(animate);
+            }
+
+            animate();
+
+
+            // =========================================================
+            // MOUSE ÜZERİNE GELİNCE DUR
+            // =========================================================
+            wrapper.addEventListener("mouseenter", function () {
+
+                if (!isDragging) {
+                    isPaused = true;
+                }
+
+            });
+
+
+            wrapper.addEventListener("mouseleave", function () {
+
+                if (!isDragging) {
+                    isPaused = false;
+                }
+
+            });
+
+
+            // =========================================================
+            // SAĞ OK
+            // =========================================================
+            if (next) {
+
+                next.addEventListener("click", function (e) {
+
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    isPaused = true;
+
+                    position -= 180;
+
+                    normalizePosition();
+
+                    updatePosition();
+
+                    setTimeout(function () {
+                        isPaused = false;
+                    }, 300);
+                });
+            }
+
+
+            // =========================================================
+            // SOL OK
+            // =========================================================
+            if (prev) {
+
+                prev.addEventListener("click", function (e) {
+
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    isPaused = true;
+
+                    position += 180;
+
+                    normalizePosition();
+
+                    updatePosition();
+
+                    setTimeout(function () {
+                        isPaused = false;
+                    }, 300);
+                });
+            }
+
+
+            // =========================================================
+            // POINTER DOWN
+            // =========================================================
+            wrapper.addEventListener("pointerdown", function (e) {
+
+                // Mouse ise sadece sol tuş
+                if (e.pointerType === "mouse" && e.button !== 0) {
+                    return;
+                }
+
+                isDragging = true;
+                hasDragged = false;
+
+                startX = e.clientX;
+                startY = e.clientY;
+
+                startPosition = position;
+
+                // Pointer capture kullanmıyoruz.
+                // Çünkü bazı tarayıcılarda <a> click davranışını
+                // gereksiz yere etkileyebiliyor.
+            });
+
+
+            // =========================================================
+            // POINTER MOVE
+            // =========================================================
+            wrapper.addEventListener("pointermove", function (e) {
+
+                if (!isDragging) {
+                    return;
+                }
+
+                const distanceX = e.clientX - startX;
+                const distanceY = e.clientY - startY;
+
+
+                // 6 px'den fazla hareket varsa bu artık CLICK değil,
+                // DRAG işlemidir.
+                if (
+                    Math.abs(distanceX) > 6 ||
+                    Math.abs(distanceY) > 6
+                ) {
+                    hasDragged = true;
+                }
+
+
+                if (hasDragged) {
+
+                    position = startPosition + distanceX;
+
+                    normalizePosition();
+
+                    updatePosition();
+                }
+            });
+
+
+            // =========================================================
+            // POINTER UP
+            // =========================================================
+            wrapper.addEventListener("pointerup", function () {
+
+                if (!isDragging) {
+                    return;
+                }
+
+                isDragging = false;
+
+                // Eğer gerçekten sürükleme yapıldıysa,
+                // browser'ın hemen ardından oluşturacağı
+                // click olayını bir kez engelle.
+                if (hasDragged) {
+
+                    blockNextClick = true;
+
+                    // Güvenlik için kısa süre sonra sıfırla.
+                    setTimeout(function () {
+                        blockNextClick = false;
+                    }, 100);
+                }
+
+                hasDragged = false;
+            });
+
+
+            // =========================================================
+            // POINTER CANCEL
+            // =========================================================
+            wrapper.addEventListener("pointercancel", function () {
+
+                isDragging = false;
+                hasDragged = false;
+
+            });
+
+
+            // =========================================================
+            // CLICK KONTROLÜ
+            // =========================================================
+            track.addEventListener(
+                "click",
+                function (e) {
+
+                    const link = e.target.closest(
+                        ".homepage-category-item"
+                    );
+
+                    if (!link) {
+                        return;
+                    }
+
+
+                    // Eğer slider sürüklendiyse click'i iptal et.
+                    if (blockNextClick) {
+
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        blockNextClick = false;
+
+                        return;
+                    }
+
+
+                    // =================================================
+                    // NORMAL TIKLAMA
+                    // =================================================
+                    // Burada hiçbir şey yapmıyoruz.
+                    //
+                    // Browser normal <a href="..."> davranışını
+                    // kendisi gerçekleştirecek.
+                    //
+                    // Örneğin:
+                    // /kategori/guller
+                    // /kategori/buketler
+                    // /kategori/orkideler
+                    //
+                    // doğrudan açılacak.
+                },
+                false
+            );
+
+
+            // =========================================================
+            // RESIZE
+            // =========================================================
+            window.addEventListener("resize", function () {
+
+                calculateLoopWidth();
+
+                normalizePosition();
+
+                updatePosition();
+
+            });
+
+        });
+    </script>
+}
