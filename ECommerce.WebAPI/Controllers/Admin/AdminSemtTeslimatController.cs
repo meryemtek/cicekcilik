@@ -1,4 +1,4 @@
-﻿using ECommerce.Application.DTOs.SemtTeslimatBolgesi;
+using ECommerce.Application.DTOs.SemtTeslimatBolgesi;
 using ECommerce.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,6 +18,7 @@ namespace ECommerce.WebAPI.Controllers.Admin
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> TumunuGetir()
         {
             var bolgeler = await _semtTeslimatServisi.TumBolgeleriGetirAsync();

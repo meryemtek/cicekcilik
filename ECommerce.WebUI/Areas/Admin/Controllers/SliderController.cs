@@ -3,11 +3,14 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using ECommerce.Application.DTOs.Kategori;
 using ECommerce.Application.DTOs.Slider;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ECommerce.WebUI.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class SliderController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
@@ -50,8 +53,9 @@ namespace ECommerce.WebUI.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public IActionResult Ekle()
+        public async Task<IActionResult> Ekle()
         {
+            await KategorileriYukleAsync();
             return View(new SliderEkleDto());
         }
 
@@ -59,21 +63,15 @@ namespace ECommerce.WebUI.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Ekle(SliderEkleDto dto, IFormFile? gorselDosyasi)
         {
-            if (gorselDosyasi != null && gorselDosyasi.Length > 0)
+            await KategorileriYukleAsync(dto.LinkUrl);
+            if (gorselDosyasi == null || gorselDosyasi.Length == 0)
             {
-                var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads", "slider");
-                if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
-
-                var benzersizAd = Guid.NewGuid().ToString() + "_" + Path.GetFileName(gorselDosyasi.FileName);
-                var dosyaYolu = Path.Combine(uploadsFolder, benzersizAd);
-
-                using (var stream = new FileStream(dosyaYolu, FileMode.Create))
-                {
-                    await gorselDosyasi.CopyToAsync(stream);
-                }
-
-                dto.ResimUrl = $"/uploads/slider/{benzersizAd}"; // GorselUrl yerine ResimUrl yapıldı
+                ModelState.AddModelError("gorselDosyasi", "Slider görseli seçin.");
+                return View(dto);
             }
+            var resimUrl = await GorselKaydetAsync(gorselDosyasi);
+            if (resimUrl == null) return View(dto);
+            dto.ResimUrl = resimUrl;
 
             var client = CreateClientWithToken();
             var jsonOptions = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
@@ -101,7 +99,11 @@ namespace ECommerce.WebUI.Areas.Admin.Controllers
             {
                 var content = await response.Content.ReadAsStringAsync();
                 var slider = JsonSerializer.Deserialize<SliderGuncelleDto>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-                if (slider != null) return View(slider);
+                if (slider != null)
+                {
+                    await KategorileriYukleAsync(slider.LinkUrl);
+                    return View(slider);
+                }
             }
 
             TempData["HataMesaji"] = "Slider bilgileri bulunamadı.";
@@ -112,20 +114,12 @@ namespace ECommerce.WebUI.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Guncelle(SliderGuncelleDto dto, IFormFile? gorselDosyasi)
         {
+            await KategorileriYukleAsync(dto.LinkUrl);
             if (gorselDosyasi != null && gorselDosyasi.Length > 0)
             {
-                var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads", "slider");
-                if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
-
-                var benzersizAd = Guid.NewGuid().ToString() + "_" + Path.GetFileName(gorselDosyasi.FileName);
-                var dosyaYolu = Path.Combine(uploadsFolder, benzersizAd);
-
-                using (var stream = new FileStream(dosyaYolu, FileMode.Create))
-                {
-                    await gorselDosyasi.CopyToAsync(stream);
-                }
-
-                dto.ResimUrl = $"/uploads/slider/{benzersizAd}"; // GorselUrl yerine ResimUrl yapıldı
+                var resimUrl = await GorselKaydetAsync(gorselDosyasi);
+                if (resimUrl == null) return View(dto);
+                dto.ResimUrl = resimUrl;
             }
             // Eğer resim seçilmemişse, dto içindeki mevcut ResimUrl (View'dan hidden olarak gelen) aynen kalır.
 
@@ -143,6 +137,77 @@ namespace ECommerce.WebUI.Areas.Admin.Controllers
 
             TempData["HataMesaji"] = "Slider güncellenirken bir hata oluştu.";
             return View(dto);
+        }
+
+        private async Task KategorileriYukleAsync(string? seciliLink = null)
+        {
+            var client = CreateClientWithToken();
+            var response = await client.GetAsync("kategoriler");
+            var kategoriler = new List<KategoriListeDto>();
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                kategoriler = JsonSerializer.Deserialize<List<KategoriListeDto>>(content,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<KategoriListeDto>();
+            }
+
+            var secenekler = kategoriler
+                .OrderBy(x => x.Ad)
+                .Select(x => new SelectListItem
+                {
+                    Text = x.Ad + (x.AktifMi ? "" : " (pasif)") +
+                        (string.IsNullOrWhiteSpace(x.SeoUrl) ? " — SEO adresi yok" : ""),
+                    Value = string.IsNullOrWhiteSpace(x.SeoUrl) ? "" : $"/kategori/{x.SeoUrl}",
+                    Disabled = string.IsNullOrWhiteSpace(x.SeoUrl)
+                })
+                .ToList();
+
+            if (!string.IsNullOrWhiteSpace(seciliLink) &&
+                !secenekler.Any(x => x.Value == seciliLink))
+            {
+                secenekler.Insert(0, new SelectListItem
+                {
+                    Text = $"Mevcut bağlantı: {seciliLink}",
+                    Value = seciliLink
+                });
+            }
+
+            ViewBag.KategoriLinkleri = secenekler;
+            ViewBag.KategorilerYuklenemedi = !response.IsSuccessStatusCode;
+            ViewBag.KategoriUyarisi = response.IsSuccessStatusCode && kategoriler.Count == 0
+                ? "Sistemde kayıtlı kategori bulunamadı."
+                : response.IsSuccessStatusCode && secenekler.All(x => x.Disabled)
+                    ? "Kategorilerin SEO adresi bulunmuyor. Kategori yönetiminden SEO adreslerini doldurun."
+                    : null;
+        }
+
+        private async Task<string?> GorselKaydetAsync(IFormFile dosya)
+        {
+            if (dosya.Length == 0 || dosya.Length > 15 * 1024 * 1024)
+            {
+                ModelState.AddModelError("gorselDosyasi", "Görsel boyutu en fazla 15 MB olabilir.");
+                return null;
+            }
+
+            var uzanti = Path.GetExtension(dosya.FileName).ToLowerInvariant();
+            var gecerliTurler = new Dictionary<string, string>
+            {
+                [".jpg"] = "image/jpeg", [".jpeg"] = "image/jpeg",
+                [".png"] = "image/png", [".webp"] = "image/webp"
+            };
+            if (!gecerliTurler.TryGetValue(uzanti, out var icerikTuru) || dosya.ContentType != icerikTuru)
+            {
+                ModelState.AddModelError("gorselDosyasi", "JPG, PNG veya WEBP görsel yükleyin.");
+                return null;
+            }
+
+            var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads", "slider");
+            Directory.CreateDirectory(uploadsFolder);
+            var benzersizAd = $"{Guid.NewGuid():N}{uzanti}";
+            var dosyaYolu = Path.Combine(uploadsFolder, benzersizAd);
+            await using var stream = new FileStream(dosyaYolu, FileMode.CreateNew);
+            await dosya.CopyToAsync(stream);
+            return $"/uploads/slider/{benzersizAd}";
         }
 
         [HttpPost]

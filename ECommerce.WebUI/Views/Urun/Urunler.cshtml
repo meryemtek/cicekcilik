@@ -1,21 +1,22 @@
 ﻿@model List<ECommerce.Application.DTOs.Urun.UrunListeDto>
 @{
-    ViewData["Title"] = "Tüm Ürünler";
+    var aramaMetni = ViewBag.AramaMetni as string;
+    ViewData["Title"] = string.IsNullOrWhiteSpace(aramaMetni) ? "Tüm Ürünler" : "Arama Sonuçları";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <div class="container my-5">
     <!-- Sayfa Başlığı -->
     <div class="text-center mb-5">
-        <h1 class="fw-bold text-dark" style="letter-spacing: -0.5px;">Tüm Ürünlerimiz</h1>
-        <p class="text-muted">En özenle hazırlanmış çiçek ve hediyelik ürünlerimizi keşfedin.</p>
+        <h1 class="fw-bold text-dark" style="letter-spacing: -0.5px;">@(string.IsNullOrWhiteSpace(aramaMetni) ? "Tüm Ürünlerimiz" : "Arama Sonuçları")</h1>
+        <p class="text-muted">@(string.IsNullOrWhiteSpace(aramaMetni) ? "En özenle hazırlanmış çiçek ve hediyelik ürünlerimizi keşfedin." : $"“{aramaMetni}” için sonuçlar")</p>
     </div>
 
     @if (Model == null || !Model.Any())
     {
         <div class="alert alert-warning text-center py-4 rounded-4" role="alert">
             <i class="bi bi-exclamation-circle fs-3 d-block mb-2"></i>
-            Henüz eklenmiş aktif bir ürün bulunmuyor.
+            @(string.IsNullOrWhiteSpace(aramaMetni) ? "Henüz eklenmiş aktif bir ürün bulunmuyor." : "Aramanızla eşleşen bir ürün bulunamadı.")
         </div>
     }
     else

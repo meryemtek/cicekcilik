@@ -43,9 +43,11 @@ public static class SeedDataExtensions
         // 2. Varsayılan Admin Kullanıcısı Seed İşlemi
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<UygulamaKullanicisi>>();
 
-        if (!userManager.Users.Any())
+        var adminKullanici = await userManager.FindByEmailAsync("admin@lidya.com");
+
+        if (adminKullanici == null && !userManager.Users.Any())
         {
-            var adminKullanici = new UygulamaKullanicisi
+            var yeniAdmin = new UygulamaKullanicisi
             {
                 UserName = "admin@lidya.com",
                 Email = "admin@lidya.com",
@@ -54,7 +56,16 @@ public static class SeedDataExtensions
                 EmailConfirmed = true
             };
 
-            await userManager.CreateAsync(adminKullanici, "Admin123!");
+            var sonuc = await userManager.CreateAsync(yeniAdmin, "Admin123!");
+            if (sonuc.Succeeded)
+                adminKullanici = yeniAdmin;
+        }
+
+        // Yetkilendirme veritabanındaki rollerle yapılır; admin hesabına Admin rolü yoksa
+        // [Authorize(Roles = "Admin")] korumalı uçlara erişemez. Mevcut veritabanları için de tamamlanır.
+        if (adminKullanici != null && !await userManager.IsInRoleAsync(adminKullanici, "Admin"))
+        {
+            await userManager.AddToRoleAsync(adminKullanici, "Admin");
         }
     }
 }

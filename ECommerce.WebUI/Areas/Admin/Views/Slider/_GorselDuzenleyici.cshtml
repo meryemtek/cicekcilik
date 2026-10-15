@@ -1,0 +1,52 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" />
+<style>
+    .slider-crop-stage { max-height: 55vh; min-height: 260px; overflow: hidden; background: #f4f4f4; }
+    .slider-crop-stage img { display: block; max-width: 100%; }
+    .slider-crop-preview { width: 100%; max-width: 320px; aspect-ratio: 4 / 3; overflow: hidden; background: #f4f4f4; }
+</style>
+
+<div class="modal fade" id="sliderCropModal" tabindex="-1" aria-labelledby="sliderCropTitle" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="sliderCropTitle">Slider Görselini Düzenle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-4">
+                    <div class="col-lg-8">
+                        <div class="slider-crop-stage"><img id="sliderCropImage" alt="Kırpılacak görsel" /></div>
+                    </div>
+                    <div class="col-lg-4">
+                        <p class="small text-muted">Kırpma alanını köşelerinden büyütün veya alanı sürükleyin. Görseli taşımak için aşağıdaki düğmeyi kullanın.</p>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="form-label" for="sliderCropWidth">En fazla genişlik (px)</label>
+                                <input id="sliderCropWidth" type="number" class="form-control" min="320" max="3840" value="1920" required />
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label" for="sliderCropHeight">En fazla yükseklik (px)</label>
+                                <input id="sliderCropHeight" type="number" class="form-control" min="160" max="2160" value="1920" required />
+                            </div>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2 mb-3">
+                            <button type="button" class="btn btn-primary btn-sm" data-slider-crop-action="crop">Alan seç</button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" data-slider-crop-action="move">Görseli taşı</button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" data-slider-crop-action="zoom-in">Yakınlaştır</button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" data-slider-crop-action="zoom-out">Uzaklaştır</button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" data-slider-crop-action="rotate">Döndür</button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm" data-slider-crop-action="reset">Sıfırla</button>
+                        </div>
+                        <label class="form-label">Önizleme</label>
+                        <div class="slider-crop-preview" id="sliderCropPreview"></div>
+                        <div id="sliderCropError" class="text-danger small mt-2" role="alert"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-primary" id="sliderCropApply">Kırp ve Uygula</button>
+            </div>
+        </div>
+    </div>
+</div>

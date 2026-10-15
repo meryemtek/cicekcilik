@@ -1,4 +1,4 @@
-using System.Text;
+ï»¿using System.Text;
 using ECommerce.Application.Interfaces;
 using ECommerce.Application.Repositories;
 using ECommerce.Application.Services;
@@ -16,14 +16,14 @@ using ECommerce.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Veritabaný Baðlantý Dizesini Al ve DbContext Servisini Kaydet
+// 1. Veritabanï¿½ Baï¿½lantï¿½ Dizesini Al ve DbContext Servisini Kaydet
 var baglantiDizesi = builder.Configuration.GetConnectionString("VarsayilanBaglanti")
-    ?? throw new InvalidOperationException("Baðlantý dizesi 'VarsayilanBaglanti' bulunamadý.");
+    ?? throw new InvalidOperationException("Baï¿½lantï¿½ dizesi 'VarsayilanBaglanti' bulunamadï¿½.");
 
 builder.Services.AddDbContext<UygulamaDbContext>(options =>
     options.UseSqlServer(baglantiDizesi));
 
-// 2. ASP.NET Core Identity (Kimlik Doðrulama ve Yetkilendirme) Yapýlandýrmasý
+// 2. ASP.NET Core Identity (Kimlik Doï¿½rulama ve Yetkilendirme) Yapï¿½landï¿½rmasï¿½
 builder.Services.AddIdentity<UygulamaKullanicisi, IdentityRole<Guid>>(options =>
 {
     options.Password.RequireDigit = true;
@@ -37,9 +37,9 @@ builder.Services.AddIdentity<UygulamaKullanicisi, IdentityRole<Guid>>(options =>
 .AddEntityFrameworkStores<UygulamaDbContext>()
 .AddDefaultTokenProviders();
 
-// 3. JWT Authentication (Bearer) Yapýlandýrmasý
+// 3. JWT Authentication (Bearer) Yapï¿½landï¿½rmasï¿½
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-var secretKey = jwtSettings["Secret"] ?? throw new InvalidOperationException("JWT Secret anahtarý bulunamadý.");
+var secretKey = jwtSettings["Secret"] ?? throw new InvalidOperationException("JWT Secret anahtarï¿½ bulunamadï¿½.");
 var key = Encoding.ASCII.GetBytes(secretKey);
 
 builder.Services.AddAuthentication(options =>
@@ -64,10 +64,10 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// 4. Alýþveriþ Sepeti Ýçin Distributed Memory Cache Kaydý
+// 4. Alï¿½ï¿½veriï¿½ Sepeti ï¿½ï¿½in Distributed Memory Cache Kaydï¿½
 builder.Services.AddDistributedMemoryCache();
 
-// 5. CORS POLÝTÝKASI (Dýþarýdan WebUI projesinin baðlanabilmesi için)
+// 5. CORS POLï¿½Tï¿½KASI (Dï¿½ï¿½arï¿½dan WebUI projesinin baï¿½lanabilmesi iï¿½in)
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
@@ -78,7 +78,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-// 6. Baðýmlýlýk Enjeksiyonu (Dependency Injection - DI) Kayýtlarý
+// 6. Baï¿½ï¿½mlï¿½lï¿½k Enjeksiyonu (Dependency Injection - DI) Kayï¿½tlarï¿½
 builder.Services.AddScoped(typeof(IDepo<>), typeof(Depo<>));
 
 builder.Services.AddScoped<IDosyaServisi, DosyaServisi>();
@@ -116,12 +116,14 @@ builder.Services.AddScoped<IOdemeBildirimiServisi, OdemeBildirimiServisi>();
 builder.Services.AddScoped<ITeslimatSaatiServisi, TeslimatSaatiServisi>();
 builder.Services.AddScoped<ISiparisDeposu, SiparisDeposu>();
 builder.Services.AddScoped<IFavoriServisi, FavoriServisi>();
+builder.Services.AddScoped<IKayitliAdresServisi, KayitliAdresServisi>();
 builder.Services.AddScoped<IAuthServisi, AuthServisi>();
+builder.Services.AddScoped<IEmailServisi, EmailServisi>();
 
 // Adres Seed Servisi eklendi
 builder.Services.AddSingleton<IAdresHavuzuServisi, AdresHavuzuServisi>();
 
-// 7. Controller ve Swagger / OpenAPI Yapýlandýrmasý (Kilit Butonu Eklendi)
+// 7. Controller ve Swagger / OpenAPI Yapï¿½landï¿½rmasï¿½ (Kilit Butonu Eklendi)
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -156,10 +158,10 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// 8. GLOBAL EXCEPTION MIDDLEWARE (Sistem Çökmelerini Engeller - En baþta olmalý)
+// 8. GLOBAL EXCEPTION MIDDLEWARE (Sistem ï¿½ï¿½kmelerini Engeller - En baï¿½ta olmalï¿½)
 app.UseMiddleware<ExceptionMiddleware>();
 
-// 9. HTTP Ýstek Hattý (Middleware Pipeline) Yapýlandýrmasý
+// 9. HTTP ï¿½stek Hattï¿½ (Middleware Pipeline) Yapï¿½landï¿½rmasï¿½
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -168,10 +170,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// Statik dosyalarý (wwwroot resimlerini) dýþa açar
+// Statik dosyalarï¿½ (wwwroot resimlerini) dï¿½ï¿½a aï¿½ar
 app.UseStaticFiles();
 
-// CORS politikasýný aktifleþtirir
+// CORS politikasï¿½nï¿½ aktifleï¿½tirir
 app.UseCors("AllowAll");
 
 app.UseAuthentication();
@@ -179,7 +181,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// 10. ROL SEEDING (Uygulama ilk ayaða kalktýðýnda rollerin otomatik oluþturulmasý)
+// 10. ROL SEEDING (Uygulama ilk ayaï¿½a kalktï¿½ï¿½ï¿½nda rollerin otomatik oluï¿½turulmasï¿½)
 using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
@@ -193,10 +195,10 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// 11. SEED DATA ÇALIÞTIRICISI
+// 11. SEED DATA ï¿½ALIï¿½TIRICISI
 await app.SeedVerileriOlusturAsync();
 
-// 12. EXCEL'den ADRES VERÝSÝ AKTARIMI
+// 12. EXCEL'den ADRES VERï¿½Sï¿½ AKTARIMI
 var env = app.Services.GetRequiredService<IWebHostEnvironment>();
 
 var dosyaYolu = Path.Combine(

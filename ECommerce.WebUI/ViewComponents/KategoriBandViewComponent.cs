@@ -1,4 +1,4 @@
-﻿using ECommerce.Application.DTOs.AnasayfaKategori;
+using ECommerce.Application.DTOs.Kategori;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Json;
 
@@ -8,8 +8,7 @@ namespace ECommerce.WebUI.ViewComponents
     {
         private readonly IHttpClientFactory _httpClientFactory;
 
-        public KategoriBandViewComponent(
-            IHttpClientFactory httpClientFactory)
+        public KategoriBandViewComponent(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
         }
@@ -18,12 +17,17 @@ namespace ECommerce.WebUI.ViewComponents
         {
             var client = _httpClientFactory.CreateClient("ApiClient");
 
-            var kategoriler =
-                await client.GetFromJsonAsync<List<AnasayfaKategoriDto>>(
-                    "anasayfa-kategoriler/aktif");
+            try
+            {
+                var kategoriler = await client.GetFromJsonAsync<List<KategoriListeDto>>("kategoriler");
+                var aktifKategoriler = kategoriler?.Where(x => x.AktifMi).ToList() ?? new List<KategoriListeDto>();
 
-            return View(
-                kategoriler ?? new List<AnasayfaKategoriDto>());
+                return View(aktifKategoriler);
+            }
+            catch
+            {
+                return View(new List<KategoriListeDto>());
+            }
         }
     }
 }

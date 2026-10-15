@@ -1,45 +1,390 @@
-﻿@model ECommerce.Application.DTOs.Auth.GirisDto
+@model ECommerce.Application.DTOs.Auth.GirisDto
 @{
     ViewData["Title"] = "Müşteri Girişi";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<html> 
+<head>
+<style>
+    .bf-auth-page {
+        background: radial-gradient(circle at 10% 15%, rgba(255, 217, 222, .35), transparent 45%),
+                    radial-gradient(circle at 90% 85%, rgba(199, 235, 218, .35), transparent 45%),
+                    #fcf9f8;
+        min-height: 75vh;
+        display: flex;
+        align-items: center;
+    }
 
-<div class="container my-5">
-    <div class="row justify-content-center">
-        <div class="col-md-5">
-            <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white">
-                <div class="text-center mb-4">
-                    <h2 class="fw-bold text-dark" style="letter-spacing: -0.5px;">Hesabınıza Giriş Yapın</h2>
-                    <p class="text-muted small">Alışverişe kaldığınız yerden devam edin.</p>
-                </div>
+    .bf-auth-card {
+        background: #ffffff;
+        border: 1px solid rgba(232, 130, 150, .25);
+        border-radius: 28px;
+        padding: 42px 36px;
+        box-shadow: 0 16px 40px -8px rgba(26, 58, 47, .08), 0 6px 16px rgba(232, 130, 150, .08);
+    }
 
-                @if (!ViewData.ModelState.IsValid)
-                {
-                    <div class="alert alert-danger rounded-3 small py-2 mb-3">
-                        <div asp-validation-summary="All" class="text-danger m-0"></div>
+    .bf-auth-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 14px;
+        border-radius: 999px;
+        background: #ffd9de;
+        color: #3f0015;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+    }
+    .bf-auth-badge i {
+        color: #984255;
+    }
+
+    .bf-auth-title {
+        color: #02241a;
+        font-family: 'Playfair Display', Georgia, serif !important;
+        font-size: 2rem;
+        font-weight: 600;
+        letter-spacing: -.01em;
+        margin-bottom: 6px;
+    }
+
+    .bf-auth-subtitle {
+        color: #727974;
+        font-size: .88rem;
+        font-weight: 300;
+        line-height: 1.5;
+        margin-bottom: 0;
+    }
+
+    .bf-form-label {
+        font-size: .78rem;
+        font-weight: 600;
+        letter-spacing: .02em;
+        color: #1a3a2f;
+    }
+
+    .bf-input-group {
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid rgba(114, 121, 116, .3);
+        transition: border-color .2s ease, box-shadow .2s ease;
+    }
+    .bf-input-group:focus-within {
+        border-color: #1a3a2f !important;
+        box-shadow: 0 0 0 3px rgba(26, 58, 47, .1);
+    }
+    .bf-input-group .input-group-text {
+        background-color: #fbfaf9;
+        border: none;
+        color: #984255;
+        padding-left: 14px;
+    }
+    .bf-input-group .form-control {
+        border: none;
+        padding: 11px 14px;
+        font-size: .92rem;
+        box-shadow: none !important;
+    }
+
+    .bf-toggle-pass {
+        border: none;
+        background: #fbfaf9;
+        color: #727974;
+    }
+    .bf-toggle-pass:hover {
+        background: #f0eded;
+        color: #02241a;
+    }
+
+    .bf-forgot-link {
+        color: #984255;
+        font-size: .75rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: color .2s ease;
+    }
+    .bf-forgot-link:hover {
+        color: #3f0015;
+        text-decoration: underline;
+    }
+
+    .bf-auth-submit-btn {
+        background: #1a3a2f;
+        color: #fcf9f8;
+        border-radius: 999px;
+        padding: 13px 24px;
+        font-size: .85rem;
+        font-weight: 600;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        border: none;
+        box-shadow: 0 6px 16px rgba(26, 58, 47, .2);
+        transition: all .25s ease;
+    }
+    .bf-auth-submit-btn:hover {
+        background: #02241a;
+        color: #ffffff;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 22px rgba(26, 58, 47, .3);
+    }
+
+    .bf-register-link {
+        color: #984255;
+        font-weight: 700;
+        text-decoration: none;
+        margin-left: 4px;
+        transition: color .2s ease;
+    }
+    .bf-register-link:hover {
+        color: #3f0015;
+        text-decoration: underline;
+    }
+
+    .bf-auth-alert {
+        background-color: #ffd9de;
+        border: 1px solid rgba(152, 66, 85, .3);
+        color: #3f0015;
+        border-radius: 14px;
+        font-size: .82rem;
+        padding: 10px 14px;
+    }
+
+    /* Modal Stilleri */
+    .bf-modal-content {
+        border-radius: 24px;
+        border: 1px solid rgba(232, 130, 150, .25);
+        box-shadow: 0 20px 48px rgba(26, 58, 47, .18);
+        overflow: hidden;
+    }
+    .bf-modal-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: #ffd9de;
+        color: #984255;
+        font-size: 1.3rem;
+        margin: 10px auto 0;
+    }
+
+    @@media (max-width: 575px) {
+        .bf-auth-card {
+            padding: 30px 22px;
+            border-radius: 22px;
+        }
+        .bf-auth-title {
+            font-size: 1.65rem;
+        }
+    }
+</style>
+</head>
+<body>
+<div class="bf-auth-page py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 col-lg-5">
+                <div class="bf-auth-card">
+                    <!-- Üst Rozet & Başlık -->
+                    <div class="text-center mb-4">
+                        <span class="bf-auth-badge mb-3">
+                            <i class="bi bi-flower1" aria-hidden="true"></i> Lidya Çiçekçilik
+                        </span>
+                        <h1 class="bf-auth-title">Hoş Geldiniz</h1>
+                        <p class="bf-auth-subtitle">Siparişlerinizi takip etmek ve çiçek dünyasına devam etmek için giriş yapın.</p>
                     </div>
-                }
 
-                <form asp-action="Giris" method="post">
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold small text-muted">E-posta Adresi</label>
-                        <input asp-for="Email" type="email" class="form-control rounded-3 py-2" placeholder="ornek@mail.com" required />
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert bf-auth-alert alert-dismissible fade show" role="alert">
+                            <i class="bi bi-exclamation-circle-fill me-2"></i>
+                            <div asp-validation-summary="All" class="d-inline m-0"></div>
+                            <button type="button" class="btn-close shadow-none" data-bs-dismiss="alert" aria-label="Kapat"></button>
+                        </div>
+                    }
+
+                    @if (TempData["BasariliMesaj"] != null)
+                    {
+                        <div class="alert alert-success rounded-3 small py-2 mb-3">
+                            <i class="bi bi-check-circle-fill me-2"></i>@TempData["BasariliMesaj"]
+                        </div>
+                    }
+
+                    <!-- Giriş Formu -->
+                    <form asp-action="Giris" method="post" class="bf-auth-form">
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label bf-form-label">E-posta Adresi</label>
+                            <div class="input-group bf-input-group">
+                                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                <input asp-for="Email" type="email" class="form-control" placeholder="ornek@mail.com" required autocomplete="email" />
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <label asp-for="Sifre" class="form-label bf-form-label mb-0">Şifre</label>
+                                <a href="#sifremiUnuttumModal" data-bs-toggle="modal" class="bf-forgot-link">
+                                    Şifremi unuttum?
+                                </a>
+                            </div>
+                            <div class="input-group bf-input-group">
+                                <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                <input asp-for="Sifre" type="password" id="girisSifreInput" class="form-control" placeholder="••••••••" required autocomplete="current-password" />
+                                <button type="button" class="btn btn-outline-secondary bf-toggle-pass" onclick="togglePasswordVisibility('girisSifreInput', this)">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="beniHatirlaCheck" name="BeniHatirla" value="true" checked>
+                                <label class="form-check-label small text-muted" for="beniHatirlaCheck">
+                                    Beni hatırla
+                                </label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn bf-auth-submit-btn w-100">
+                            <span>Giriş Yap</span>
+                            <i class="bi bi-arrow-right ms-2" aria-hidden="true"></i>
+                        </button>
+                    </form>
+
+                    <!-- Alt Yönlendirme -->
+                    <div class="text-center mt-4 pt-3 border-top bf-auth-footer">
+                        <p class="text-muted small mb-0">
+                            Henüz bir hesabınız yok mu?
+                            <a href="/Hesap/Kayit" class="bf-register-link">Hemen Üye Olun</a>
+                        </p>
                     </div>
-
-                    <div class="mb-4">
-                        <label class="form-label fw-semibold small text-muted">Şifre</label>
-                        <input asp-for="Sifre" type="password" class="form-control rounded-3 py-2" placeholder="••••••••" required />
-                    </div>
-
-                    <button type="submit" class="btn w-100 text-white py-3 rounded-pill fw-bold shadow-sm" style="background-color: #3b1154;">
-                        Giriş Yap
-                    </button>
-                </form>
-
-                <div class="text-center mt-4 pt-3 border-top">
-                    <p class="text-muted small mb-0">Hesabınız yok mu? <a href="/Hesap/Kayit" class="text-decoration-none fw-bold" style="color: #3b1154;">Hemen Üye Olun</a></p>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- ŞİFREMİ UNUTTUM MODAL -->
+<div class="modal fade" id="sifremiUnuttumModal" tabindex="-1" aria-labelledby="sifremiUnuttumModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bf-modal-content">
+            <div class="modal-header border-0 pb-0">
+                <span class="bf-modal-icon">
+                    <i class="bi bi-key"></i>
+                </span>
+                <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body pt-2 pb-4 px-4 text-center">
+                <h4 class="modal-title font-serif fw-semibold text-dark mb-2" id="sifremiUnuttumModalLabel">Şifrenizi mi Unuttunuz?</h4>
+                <p class="text-muted small mb-4">
+                    Hesabınıza kayıtlı e-posta adresinizi girin. Size şifrenizi güvenle yenileyebileceğiniz bir bağlantı gönderelim.
+                </p>
+
+                <form id="sifreSifirlaForm" onsubmit="sifreSifirlamaGonder(event)">
+                    <div id="sifreSifirlaInputGrup">
+                        <div class="mb-3 text-start">
+                            <label for="sifirlaEmail" class="form-label bf-form-label">Kayıtlı E-posta Adresi</label>
+                            <div class="input-group bf-input-group">
+                                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                <input type="email" id="sifirlaEmail" class="form-control" placeholder="ornek@mail.com" required autocomplete="email" />
+                            </div>
+                        </div>
+
+                        <button type="submit" id="sifreSifirlaBtn" class="btn bf-auth-submit-btn w-100 py-2">
+                            <span id="sifreSifirlaBtnText">Sıfırlama Bağlantısı Gönder</span>
+                            <span id="sifreSifirlaSpinner" class="spinner-border spinner-border-sm ms-2 d-none" role="status" aria-hidden="true"></span>
+                            <i id="sifreSifirlaBtnIcon" class="bi bi-send ms-2"></i>
+                        </button>
+                    </div>
+
+                    <div id="sifreSifirlaHata" class="d-none alert alert-danger rounded-3 small py-2 mt-3 text-start">
+                        <i class="bi bi-exclamation-circle-fill me-2"></i>
+                        <span id="sifreSifirlaHataMesaj"></span>
+                    </div>
+
+                    <div id="sifreSifirlaBasari" class="d-none alert alert-success rounded-3 small py-3 mt-3 text-start">
+                        <i class="bi bi-check-circle-fill me-2"></i>
+                        <span id="sifreSifirlaBasariMesaj"></span>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function togglePasswordVisibility(inputId, btn) {
+        const input = document.getElementById(inputId);
+        const icon = btn.querySelector('i');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.remove('bi-eye');
+            icon.classList.add('bi-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.remove('bi-eye-slash');
+            icon.classList.add('bi-eye');
+        }
+    }
+
+    async function sifreSifirlamaGonder(e) {
+        e.preventDefault();
+        const emailInput = document.getElementById('sifirlaEmail');
+        const email = emailInput.value.trim();
+        const btn = document.getElementById('sifreSifirlaBtn');
+        const btnText = document.getElementById('sifreSifirlaBtnText');
+        const spinner = document.getElementById('sifreSifirlaSpinner');
+        const btnIcon = document.getElementById('sifreSifirlaBtnIcon');
+        const hataBox = document.getElementById('sifreSifirlaHata');
+        const hataMesaj = document.getElementById('sifreSifirlaHataMesaj');
+        const basariBox = document.getElementById('sifreSifirlaBasari');
+        const basariMesaj = document.getElementById('sifreSifirlaBasariMesaj');
+        const inputGrup = document.getElementById('sifreSifirlaInputGrup');
+
+        hataBox.classList.add('d-none');
+        btn.disabled = true;
+        btnText.textContent = 'Gönderiliyor...';
+        spinner.classList.remove('d-none');
+        btnIcon.classList.add('d-none');
+
+        try {
+            const res = await fetch('/Hesap/SifremiUnuttum', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email: email })
+            });
+
+            const data = await res.json();
+
+            if (data.basarili) {
+                inputGrup.classList.add('d-none');
+                basariMesaj.textContent = data.mesaj || 'Şifre sıfırlama bağlantısı e-posta adresinize gönderildi.';
+                basariBox.classList.remove('d-none');
+            } else {
+                hataMesaj.textContent = data.mesaj || 'İşlem gerçekleştirilemedi. Lütfen tekrar deneyiniz.';
+                hataBox.classList.remove('d-none');
+                btn.disabled = false;
+                btnText.textContent = 'Sıfırlama Bağlantısı Gönder';
+                spinner.classList.add('d-none');
+                btnIcon.classList.remove('d-none');
+            }
+        } catch (err) {
+            hataMesaj.textContent = 'Bağlantı hatası oluştu. Lütfen internet bağlantınızı kontrol ediniz.';
+            hataBox.classList.remove('d-none');
+            btn.disabled = false;
+            btnText.textContent = 'Sıfırlama Bağlantısı Gönder';
+            spinner.classList.add('d-none');
+            btnIcon.classList.remove('d-none');
+        }
+    }
+</script>
+</body>
+
+
+</html>
+
+

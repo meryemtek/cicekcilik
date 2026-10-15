@@ -1,4 +1,4 @@
-﻿@model ECommerce.Application.DTOs.Urun.UrunGuncelleDto
+@model ECommerce.Application.DTOs.Urun.UrunGuncelleDto
 @{
     ViewData["Title"] = "Ürün Düzenle";
 }
@@ -488,10 +488,17 @@
 </style>
 
 <div class="urun-form-page">
-    <div class="urun-form-header">
-        <div class="urun-form-eyebrow"><i class="bi bi-flower1"></i> Mağaza Yönetimi</div>
-        <h1 class="urun-form-title">Ürün Düzenle</h1>
-        <p class="urun-form-subtitle">Mevcut ürünün bilgilerini, fiyatını ve içeriklerini güncelleyin.</p>
+    <div class="urun-form-header d-flex align-items-center justify-content-between flex-wrap gap-3">
+        <div>
+            <div class="urun-form-eyebrow"><i class="bi bi-flower1"></i> Mağaza Yönetimi</div>
+            <h1 class="urun-form-title">Ürün Düzenle</h1>
+            <p class="urun-form-subtitle">Mevcut ürünün bilgilerini, fiyatını ve içeriklerini güncelleyin.</p>
+        </div>
+        <div>
+            <a asp-controller="UrunVaryant" asp-action="Index" asp-route-urunId="@Model.Id" class="btn btn-outline-danger rounded-pill px-3 py-2 fw-bold d-inline-flex align-items-center gap-2" style="border-color: #8b0028; color: #8b0028;">
+                <i class="bi bi-arrows-angle-expand"></i> Boyut / Varyant Yönetimi
+            </a>
+        </div>
     </div>
 
     <form asp-action="Guncelle" method="post" enctype="multipart/form-data" id="urunForm">

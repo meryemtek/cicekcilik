@@ -14,7 +14,7 @@ using ECommerce.Application.DTOs.KartNotuSablonu;
 namespace ECommerce.WebUI.Areas.Admin.Controllers;
 
 [Area("Admin")]
-[Authorize]
+[Authorize(Roles = "Admin")]
 public class KartNotuSablonuController : Controller
 {
     private readonly IHttpClientFactory _httpClientFactory;

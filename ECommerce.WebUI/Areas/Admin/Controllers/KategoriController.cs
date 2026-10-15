@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Net.Http.Headers;
@@ -9,7 +9,7 @@ using ECommerce.Application.DTOs.Urun;
 namespace ECommerce.WebUI.Areas.Admin.Controllers;
 
 [Area("Admin")]
-[Authorize]
+[Authorize(Roles = "Admin")]
 public class KategoriController : Controller
 {
     private readonly IHttpClientFactory _httpClientFactory;
@@ -204,6 +204,34 @@ public class KategoriController : Controller
             TempData["HataMesaji"] = "Kategori silinirken bir hata oluştu.";
         }
 
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DurumDegistir(Guid id)
+    {
+        var client = CreateClientWithToken();
+        var response = await client.GetAsync($"kategoriler/{id}");
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            var kategori = JsonSerializer.Deserialize<KategoriGuncelleDto>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            if (kategori != null)
+            {
+                kategori.AktifMi = !kategori.AktifMi;
+                var putResponse = await client.PutAsJsonAsync("kategoriler", kategori);
+                if (putResponse.IsSuccessStatusCode)
+                {
+                    TempData["BasariliMesaj"] = kategori.AktifMi 
+                        ? $"'{kategori.Ad}' kategorisi başarıyla aktife alındı." 
+                        : $"'{kategori.Ad}' kategorisi arşivlendi (pasife alındı).";
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+        }
+
+        TempData["HataMesaji"] = "Kategori durumu değiştirilirken bir hata oluştu.";
         return RedirectToAction(nameof(Index));
     }
 

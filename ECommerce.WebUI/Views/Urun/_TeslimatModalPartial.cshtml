@@ -1,28 +1,37 @@
-﻿<!-- ================= TESLİMAT KONUMU SEÇİM MODALI ================= -->
+<!-- ================= TESLİMAT KONUMU SEÇİM MODALI ================= -->
 <div class="modal fade" id="teslimatModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
-            <div class="modal-header border-0 pb-0">
-                <h5 class="modal-title fw-bold">Teslimat Konumu Seçimi</h5>
+            <div class="modal-header border-0 pb-0 pt-4 px-4">
+                <div>
+                    <span class="text-uppercase fw-bold text-muted small" style="letter-spacing: 0.8px;">Lidya Çiçekçilik</span>
+                    <h5 class="modal-title fw-bold" style="font-family: var(--fl-font-serif, serif); color: #0D382B;">Teslimat Bölgesi Seçimi</h5>
+                </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body text-start">
+            <div class="modal-body text-start px-4 py-3">
                 <div class="mb-3">
                     <label class="form-label small fw-bold text-muted">İl</label>
-                    <select id="modalIl" class="form-select fw-semibold" onchange="ilDegisti()"><option value="">İl Seçiniz</option></select>
+                    <select id="modalIl" class="form-select fw-semibold" onchange="ilDegisti()">
+                        <option value="Elazığ" selected>Elazığ</option>
+                    </select>
                 </div>
                 <div class="mb-3">
                     <label class="form-label small fw-bold text-muted">İlçe</label>
-                    <select id="modalIlce" class="form-select fw-semibold" onchange="ilceDegisti()"><option value="">İlçe Seçiniz</option></select>
+                    <select id="modalIlce" class="form-select fw-semibold" onchange="ilceDegisti()">
+                        <option value="Merkez" selected>Merkez</option>
+                    </select>
                 </div>
                 <div class="mb-3">
                     <label class="form-label small fw-bold text-muted">Mahalle / Semt</label>
-                    <select id="modalMahalle" class="form-select fw-semibold"><option value="" data-fark="0">Mahalle Seçiniz...</option></select>
+                    <select id="modalMahalle" class="form-select fw-semibold">
+                        <option value="" data-fark="0">Mahalle Seçiniz...</option>
+                    </select>
                 </div>
             </div>
-            <div class="modal-footer border-0 pt-0">
-                <button type="button" class="btn btn-light rounded-3 px-4" data-bs-dismiss="modal">İptal</button>
-                <button type="button" class="btn text-white px-4" style="background: #3b1154; border-radius: 12px;" onclick="konumBilgileriniKaydet()">Seçimi Onayla</button>
+            <div class="modal-footer border-0 pt-0 px-4 pb-4">
+                <button type="button" class="btn btn-light rounded-3 px-4" data-bs-dismiss="modal">Vazgeç</button>
+                <button type="button" class="btn text-white px-4 fw-bold" style="background: #0D382B; border-radius: 12px;" onclick="konumBilgileriniKaydet()">Konumu Onayla</button>
             </div>
         </div>
     </div>

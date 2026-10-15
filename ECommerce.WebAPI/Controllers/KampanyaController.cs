@@ -9,7 +9,7 @@ namespace ECommerce.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize] // Sınıf seviyesinde yetkilendirme (Admin girişi gerektirir)
+    [Authorize(Roles = "Admin")] // Sınıf seviyesinde yetkilendirme (Admin girişi gerektirir)
     public class KampanyaController : ControllerBase
     {
         private readonly IKampanyaServisi _kampanyaServisi;

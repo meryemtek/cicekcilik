@@ -1,314 +1,136 @@
-﻿@model List<ECommerce.Application.DTOs.Slider.SliderListeDto>
+@using ECommerce.Application.DTOs.Slider
+@model List<SliderListeDto>
 
-@if (Model != null && Model.Any())
-{
-    <!-- Google Fonts Lüks Çiçekçilik Fontu Entegrasyonu -->
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+@{
+    var sliderlar = Model?.Where(x => x.AktifMi).OrderBy(x => x.SiraNo).ToList() ?? new List<SliderListeDto>();
+    if (!sliderlar.Any())
+    {
+        sliderlar = new List<SliderListeDto>
+        {
+            new() { Baslik = "Doğanın en naif formu, sanatla buluştu.", AltMetin = "Elazığ'ın taze çiçekleriyle hazırlanan buketler ve aranjmanlar, sevdiklerinize zarafetle ulaşıyor.", LinkUrl = "/Arama?q=Buket", ButonMetni = "Koleksiyonu keşfet", ResimUrl = "/images/anasayfa/hero.jpg" },
+            new() { Baslik = "Her ana zarif bir dokunuş", AltMetin = "Sevgiyle seçilen çiçekler, sıradan bir günü unutulmaz bir ana dönüştürür.", LinkUrl = "/Arama?q=Orkide", ButonMetni = "Orkideleri keşfet" },
+            new() { Baslik = "Sevdiklerinize çiçekli bir sürpriz", AltMetin = "Renkler ve kokular arasından size en yakın olanı bulun, güzel bir anı paylaşın.", LinkUrl = "/Arama?q=Gül", ButonMetni = "Gülleri keşfet" }
+        };
+    }
+}
 
-    <div id="mainHeroSlider" class="carousel slide hero-carousel mb-4" data-bs-ride="carousel" data-bs-interval="6000">
-        <!-- Göstergeler (Noktalar) -->
-        <div class="carousel-indicators">
-            @for (int i = 0; i < Model.Count; i++)
-            {
-                <button type="button" data-bs-target="#mainHeroSlider" data-bs-slide-to="@i" class="@(i == 0 ? "active" : "")" aria-current="@(i == 0 ? "true" : "false")" aria-label="Slide @(i + 1)"></button>
-            }
-        </div>
-
-        <!-- Slider Görselleri -->
-        <div class="carousel-inner overflow-hidden">
-            @for (int i = 0; i < Model.Count; i++)
-            {
-                var slider = Model[i];
-                <div class="carousel-item @(i == 0 ? "active" : "")">
-                    <div class="slider-img-container position-relative">
-                        <!-- Net ve Canlı Görsel -->
-                        <img src="@slider.ResimUrl" class="d-block w-100 slider-image" alt="@slider.Baslik">
-
-                        <!-- Butik & Lüks Metin Kartı -->
-                        @if (!string.IsNullOrEmpty(slider.Baslik) || !string.IsNullOrEmpty(slider.AltMetin))
-                        {
-                            <div class="carousel-caption text-start p-4 p-md-5 animated-caption">
-                                <div class="slider-content-box">
-                                    <div class="slider-badge-top">Lidya Özel Seçim</div>
-                                    @if (!string.IsNullOrEmpty(slider.Baslik))
-                                    {
-                                        <h2 class="fw-bold mb-2 slider-title">@slider.Baslik</h2>
-                                    }
-                                    @if (!string.IsNullOrEmpty(slider.AltMetin))
-                                    {
-                                        <p class="mb-4 slider-desc">@slider.AltMetin</p>
-                                    }
-                                    @if (!string.IsNullOrEmpty(slider.LinkUrl))
-                                    {
-                                        <a href="@slider.LinkUrl" class="btn slider-action-btn">
-                                            <span class="btn-text">@(string.IsNullOrEmpty(slider.ButonMetni) ? "Hemen Keşfet" : slider.ButonMetni)</span>
-                                            <div class="btn-icon-wrapper">
-                                                <i class="bi bi-arrow-right"></i>
-                                            </div>
-                                        </a>
-                                    }
-                                </div>
+<section class="bf-hero" aria-label="Öne çıkan çiçekler">
+    <div class="bf-container">
+        <div id="floralHeroSlider" class="carousel slide bf-hero-carousel" data-bs-ride="carousel" data-bs-interval="6500" data-bs-pause="hover">
+            <div class="carousel-inner">
+                @for (var i = 0; i < sliderlar.Count; i++)
+                {
+                    var slider = sliderlar[i];
+                    <div class="carousel-item @(i == 0 ? "active" : "")">
+                        <div class="bf-hero-slide">
+                            <div class="bf-hero-copy">
+                                <span class="bf-hero-badge"><i class="bi bi-flower1" aria-hidden="true"></i> Lidya Çiçekçilik</span>
+                                @if (!string.IsNullOrWhiteSpace(slider.Baslik))
+                                {
+                                    <h2>@slider.Baslik</h2>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(slider.AltMetin))
+                                {
+                                    <p>@slider.AltMetin</p>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(slider.LinkUrl))
+                                {
+                                    <a href="@slider.LinkUrl" class="bf-hero-link">
+                                        <span>@(string.IsNullOrWhiteSpace(slider.ButonMetni) ? "Çiçekleri keşfet" : slider.ButonMetni)</span>
+                                        <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                                    </a>
+                                }
+                                <ul class="bf-hero-trust">
+                                    <li><i class="bi bi-clock" aria-hidden="true"></i><span><strong>Aynı gün teslimat</strong><small>Elazığ içi hızlı gönderim</small></span></li>
+                                    <li><i class="bi bi-droplet" aria-hidden="true"></i><span><strong>Taze çiçek garantisi</strong><small>Günlük taze seçilir</small></span></li>
+                                    <li><i class="bi bi-pencil-square" aria-hidden="true"></i><span><strong>Özel not kartı</strong><small>Her siparişe dahil</small></span></li>
+                                </ul>
                             </div>
-                        }
+                            <div class="bf-hero-visual" aria-hidden="true">
+                                @if (!string.IsNullOrWhiteSpace(slider.ResimUrl))
+                                {
+                                    <img src="@slider.ResimUrl" alt="" loading="@(i == 0 ? "eager" : "lazy")" />
+                                }
+                                else
+                                {
+                                    <div class="bf-hero-illustration">
+                                        <span class="bf-hero-flower flower-back">✿</span>
+                                        <span class="bf-hero-flower flower-main">✿</span>
+                                        <span class="bf-hero-flower flower-front">❀</span>
+                                        <span class="bf-hero-leaf leaf-left">❧</span>
+                                        <span class="bf-hero-leaf leaf-right">❧</span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
                     </div>
+                }
+            </div>
+
+            @if (sliderlar.Count > 1)
+            {
+                <div class="bf-hero-indicators">
+                    @for (var i = 0; i < sliderlar.Count; i++)
+                    {
+                        <button type="button" data-bs-target="#floralHeroSlider" data-bs-slide-to="@i" class="@(i == 0 ? "active" : "")" aria-label="@(i + 1). slayt" aria-current="@(i == 0 ? "true" : "false")"></button>
+                    }
+                </div>
+                <div class="bf-hero-controls">
+                    <button type="button" data-bs-target="#floralHeroSlider" data-bs-slide="prev" aria-label="Önceki slayt"><i class="bi bi-arrow-left" aria-hidden="true"></i></button>
+                    <button type="button" data-bs-target="#floralHeroSlider" data-bs-slide="next" aria-label="Sonraki slayt"><i class="bi bi-arrow-right" aria-hidden="true"></i></button>
                 </div>
             }
         </div>
-
-        <!-- İleri / Geri Okları -->
-        <button class="carousel-control-prev custom-arrow" type="button" data-bs-target="#mainHeroSlider" data-bs-slide="prev">
-            <i class="bi bi-chevron-left"></i>
-        </button>
-        <button class="carousel-control-next custom-arrow" type="button" data-bs-target="#mainHeroSlider" data-bs-slide="next">
-            <i class="bi bi-chevron-right"></i>
-        </button>
     </div>
+</section>
 
-    <style>
-        /* =====================================================
-                   LİDYA ÇİÇEKÇİLİK LÜKS BOUTIQUE SLIDER STİLLERİ
-                   ===================================================== */
-
-        .hero-carousel {
-            position: relative;
-            background-color: #fcf8f9;
-        }
-
-        .slider-img-container {
-            height: 500px;
-            width: 100%;
-            background-color: #f7f3f4;
-        }
-
-        .slider-image {
-            height: 100% !important;
-            object-fit: cover;
-            transform: scale(1);
-            transition: transform 7s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-
-        .carousel-item.active .slider-image {
-            transform: scale(1.03);
-        }
-
-        /* Metin Alanı Pozisyonu */
-        .carousel-caption {
-            bottom: auto !important;
-            top: 50% !important;
-            transform: translateY(-50%);
-            left: 7% !important;
-            right: auto !important;
-            max-width: 520px;
-            text-align: left !important;
-        }
-
-        /* Lüks Cam Efekti Kartı (Glassmorphism + İnce Gold/Bordo Çizgi) */
-        .slider-content-box {
-            background: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            border: 1px solid rgba(139, 0, 40, 0.12);
-            padding: 40px;
-            border-radius: 24px;
-            box-shadow: 0 20px 45px rgba(35, 28, 40, 0.08);
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* Kart İçerisindeki Üst Küçük İnce Etiket */
-        .slider-badge-top {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 0.72rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: #8b0028;
-            margin-bottom: 8px;
-        }
-
-        /* Başlık İçin Özel Lüks Font (Playfair Display) */
-        .slider-title {
-            font-family: 'Playfair Display', serif !important;
-            font-size: 2.6rem;
-            font-weight: 700;
-            color: #24213d !important;
-            line-height: 1.15;
-            letter-spacing: -0.5px;
-        }
-
-        /* Açıklama Yazısı */
-        .slider-desc {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 0.98rem;
-            color: #65606d !important;
-            line-height: 1.6;
-        }
-
-        /* =====================================================
-                   YENİ NESİL ANİMASYONLU SİPARİŞ / KEŞFET BUTONU
-                   ===================================================== */
-        .slider-action-btn {
-            background: linear-gradient(135deg, #8b0028, #a70b3b);
-            color: #fff;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-weight: 600;
-            padding: 13px 30px;
-            border-radius: 50px; /* Tam yuvarlak hap buton */
-            font-size: 0.92rem;
-            letter-spacing: 0.4px;
-            border: 0;
-            display: inline-flex;
-            align-items: center;
-            gap: 14px;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: 0 8px 22px rgba(139, 0, 40, 0.28);
-        }
-
-            /* Buton Arka Plan Işıma Animasyonu */
-            .slider-action-btn::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: -100%;
-                width: 100%;
-                height: 100%;
-                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
-                transition: 0.6s;
-            }
-
-            .slider-action-btn:hover::before {
-                left: 100%;
-            }
-
-            .slider-action-btn:hover {
-                background: linear-gradient(135deg, #a70b3b, #c21247);
-                color: #fff;
-                transform: translateY(-3px);
-                box-shadow: 0 12px 30px rgba(139, 0, 40, 0.42);
-            }
-
-        /* Buton İçindeki Ok Dairesi ve Animasyonu */
-        .btn-icon-wrapper {
-            width: 28px;
-            height: 28px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease;
-        }
-
-        .slider-action-btn:hover .btn-icon-wrapper {
-            transform: translateX(5px);
-            background: rgba(255, 255, 255, 0.35);
-        }
-
-        /* Giriş (Fade In & Slide) Animasyonu */
-        .carousel-item.active .animated-caption {
-            animation: luxurySlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-
-        @@keyframes luxurySlideUp {
-            from {
-                opacity: 0;
-                transform: translateY(-40%) translateX(-25px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(-50%) translateX(0);
-            }
-        }
-
-        /* Zarif Yön Okları */
-        .custom-arrow {
-            width: 48px;
-            height: 48px;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 50%;
-            top: 50%;
-            transform: translateY(-50%);
-            opacity: 0.8;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(139, 0, 40, 0.15);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #8b0028;
-            font-size: 1.1rem;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.06);
-        }
-
-        .carousel-control-prev.custom-arrow {
-            left: 25px;
-        }
-
-        .carousel-control-next.custom-arrow {
-            right: 25px;
-        }
-
-        .custom-arrow:hover {
-            background: #8b0028;
-            opacity: 1;
-            color: #fff;
-            border-color: #8b0028;
-            transform: translateY(-50%) scale(1.1);
-            box-shadow: 0 10px 25px rgba(139, 0, 40, 0.3);
-        }
-
-        /* İndikatör Noktaları */
-        .carousel-indicators {
-            bottom: 20px;
-        }
-
-            .carousel-indicators [data-bs-target] {
-                width: 8px;
-                height: 8px;
-                border-radius: 50%;
-                background-color: #d1c7cc;
-                border: 0;
-                margin: 0 6px;
-                transition: all 0.4s ease;
-            }
-
-            .carousel-indicators .active {
-                background-color: #8b0028;
-                width: 28px;
-                border-radius: 4px;
-            }
-
-        /* Mobil Uyum */
-        @@media (max-width: 768px) {
-            .slider-img-container {
-                height: 380px;
-            }
-
-            .carousel-caption {
-                left: 4% !important;
-                right: 4% !important;
-                top: auto !important;
-                bottom: 15px !important;
-                transform: none !important;
-            }
-
-            .slider-content-box {
-                padding: 24px;
-            }
-
-            .slider-title {
-                font-size: 1.8rem;
-            }
-
-            .slider-desc {
-                font-size: 0.88rem;
-            }
-
-            .custom-arrow {
-                display: none;
-            }
-        }
-    </style>
-}
+<style>
+    .bf-hero { padding: 28px 0 40px; }
+    .bf-hero-carousel { position: relative; overflow: hidden; border-radius: 28px; border: 1px solid rgba(232, 130, 150, .22); background: #fcf9f8; box-shadow: 0 12px 32px -4px rgba(26, 58, 47, .08), 0 4px 12px rgba(232, 130, 150, .08); }
+    .bf-hero-slide { display: grid; grid-template-columns: 5fr 7fr; align-items: center; gap: 40px; min-height: 520px; padding: 48px 56px 64px; background: radial-gradient(circle at 92% 8%, rgba(255, 178, 190, .32), transparent 42%), radial-gradient(circle at 4% 96%, rgba(199, 235, 218, .45), transparent 40%), #fcf9f8; }
+    .bf-hero-copy { position: relative; z-index: 1; }
+    .bf-hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 7px 15px; border-radius: 999px; background: #ffd9de; color: #3f0015; font-size: .7rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+    .bf-hero-badge i { color: #984255; }
+    .bf-hero-copy h2 { margin: 20px 0 16px; color: #02241a; font-family: 'Playfair Display', Georgia, serif !important; font-size: clamp(2rem, 3.6vw, 3rem); font-weight: 500; line-height: 1.16; letter-spacing: -.015em; }
+    .bf-hero-copy p { max-width: 440px; margin: 0 0 26px; color: #414845; font-size: 1rem; font-weight: 300; line-height: 1.75; }
+    .bf-hero-link { display: inline-flex; align-items: center; gap: 12px; padding: 14px 30px; border-radius: 999px; background: #1a3a2f; color: #fcf9f8; font-size: .76rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; text-decoration: none; box-shadow: 0 6px 16px rgba(26, 58, 47, .22); transition: background .25s ease, transform .25s ease, box-shadow .25s ease; }
+    .bf-hero-link:hover { background: #02241a; color: #fff; transform: translateY(-2px); box-shadow: 0 10px 22px rgba(26, 58, 47, .3); }
+    .bf-hero-trust { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 32px 0 0; padding: 22px 0 0; border-top: 1px solid rgba(254, 148, 168, .35); list-style: none; }
+    .bf-hero-trust li { display: flex; align-items: flex-start; gap: 9px; }
+    .bf-hero-trust i { color: #984255; font-size: 1.25rem; line-height: 1.2; }
+    .bf-hero-trust strong { display: block; color: #02241a; font-size: .76rem; font-weight: 600; line-height: 1.3; }
+    .bf-hero-trust small { display: block; margin-top: 2px; color: #727974; font-size: .68rem; line-height: 1.3; }
+    .bf-hero-visual { position: relative; display: grid; place-items: center; min-width: 0; }
+    .bf-hero-visual img { width: 100%; height: 440px; object-fit: cover; object-position: center 40%; border-radius: 24px; border: 1px solid rgba(232, 130, 150, .2); box-shadow: 0 24px 44px -8px rgba(26, 58, 47, .16); }
+    .bf-hero-illustration { position: relative; width: 100%; height: 440px; overflow: hidden; border-radius: 24px; background: radial-gradient(circle at 48% 40%, rgba(255, 255, 255, .95), rgba(255, 217, 222, .55) 60%, rgba(171, 206, 191, .55)); box-shadow: 0 24px 44px -8px rgba(26, 58, 47, .12); }
+    .bf-hero-flower, .bf-hero-leaf { position: absolute; display: block; font-family: Georgia, serif !important; line-height: 1; }
+    .bf-hero-flower { color: #d96391; }
+    .flower-main { left: 33%; top: 14%; font-size: 14rem; transform: rotate(-13deg); }
+    .flower-back { left: 5%; top: 32%; color: #984255; font-size: 9rem; transform: rotate(17deg); }
+    .flower-front { right: 5%; bottom: 8%; color: #fe94a8; font-size: 9rem; transform: rotate(18deg); }
+    .bf-hero-leaf { color: #456558; font-size: 9rem; }
+    .leaf-left { left: 12%; bottom: -10%; transform: rotate(-22deg); }
+    .leaf-right { right: 3%; top: -10%; transform: rotate(145deg); }
+    .bf-hero-indicators { position: absolute; z-index: 2; left: 56px; bottom: 26px; display: flex; gap: 7px; }
+    .bf-hero-indicators button { width: 7px; height: 7px; padding: 0; border: 0; border-radius: 50%; background: #c1c8c3; transition: width .2s ease, background .2s ease; }
+    .bf-hero-indicators button.active { width: 24px; border-radius: 6px; background: #984255; }
+    .bf-hero-controls { position: absolute; z-index: 2; right: 28px; bottom: 22px; display: flex; gap: 8px; }
+    .bf-hero-controls button { display: grid; place-items: center; width: 38px; height: 38px; border: 1px solid rgba(26, 58, 47, .15); border-radius: 50%; background: rgba(252, 249, 248, .9); color: #1a3a2f; transition: background .2s ease, color .2s ease; }
+    .bf-hero-controls button:hover { background: #1a3a2f; color: #fff; }
+    @@media (max-width: 991px) {
+        .bf-hero-slide { grid-template-columns: 1fr; gap: 28px; min-height: 0; padding: 40px 36px 72px; }
+        .bf-hero-visual img, .bf-hero-illustration { height: 320px; }
+        .bf-hero-indicators { left: 36px; }
+    }
+    @@media (max-width: 575px) {
+        .bf-hero { padding: 14px 0 28px; }
+        .bf-hero-carousel { border-radius: 22px; }
+        .bf-hero-slide { padding: 30px 22px 70px; }
+        .bf-hero-trust { grid-template-columns: 1fr; gap: 10px; }
+        .bf-hero-visual img, .bf-hero-illustration { height: 230px; }
+        .flower-main { font-size: 9rem; } .flower-back, .flower-front, .bf-hero-leaf { font-size: 6rem; }
+        .bf-hero-indicators { left: 22px; bottom: 28px; }
+        .bf-hero-controls { right: 16px; bottom: 18px; }
+    }
+    @@media (prefers-reduced-motion: reduce) { .bf-hero-link, .bf-hero-indicators button { transition: none; } }
+</style>

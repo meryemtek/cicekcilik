@@ -65,6 +65,12 @@ namespace ECommerce.WebUI.Controllers
             var client = CreateApiClient();
             var referer = Request.Headers["Referer"].ToString();
 
+            if (string.IsNullOrWhiteSpace(dto.Mahalle))
+            {
+                TempData["HataMesaji"] = "Sipariş vermek için teslimat mahallesi seçmelisiniz.";
+                return !string.IsNullOrEmpty(referer) ? Redirect(referer) : RedirectToAction("Index", "Home");
+            }
+
             var urunResponse = await client.GetAsync($"urunler/id-ile/{dto.UrunId}");
             if (!urunResponse.IsSuccessStatusCode)
             {

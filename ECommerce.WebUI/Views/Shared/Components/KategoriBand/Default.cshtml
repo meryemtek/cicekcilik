@@ -1,583 +1,188 @@
-﻿@model List<ECommerce.Application.DTOs.AnasayfaKategori.AnasayfaKategoriDto>
-
-@if (Model != null && Model.Any())
-{
-    <section class="homepage-category-section">
-        <div class="homepage-category-container">
-            <!-- SOL OK -->
-            <button type="button" class="category-nav-button category-prev" aria-label="Önceki kategoriler"> <i class="bi bi-chevron-left"></i> </button>
-            <!-- KATEGORİ SLIDER -->
-            <div class="homepage-category-wrapper">
-                <div class="homepage-category-track">
-                    @foreach (var kategori in Model)
-                    {
-                        <a href="/kategori/@kategori.SeoUrl"
-                           class="homepage-category-item">
-                            <div class="homepage-category-image">
-                                @if (!string.IsNullOrWhiteSpace(kategori.GorselUrl))
-                                {
-                                    <img src="@kategori.GorselUrl" alt="@kategori.KategoriAdi" loading="lazy" />
-                                }
-                                else
-                                {
-                                    <div class="homepage-category-placeholder"> <i class="bi bi-flower1"></i> </div>
-                                }
-                            </div>
-                            <span class="homepage-category-name"> @kategori.KategoriAdi </span> </a>
-                    }
-                    @*
-                Kesintisiz slider için aynı kategorileri ikinci kez oluşturuyoruz.
-                JavaScript başlangıçta bunu kullanarak sonsuz akışı sağlayacak.
-                *@
-                    @foreach (var kategori in Model)
-                    {
-                        <a href="/kategori/@kategori.SeoUrl" class="homepage-category-item" aria-hidden="true" tabindex="-1">
-                            <div class="homepage-category-image">
-                                @if (!string.IsNullOrWhiteSpace(kategori.GorselUrl))
-                                {
-                                    <img src="@kategori.GorselUrl" alt="" loading="lazy" />
-                                }
-                                else
-                                {
-                                    <div class="homepage-category-placeholder"> <i class="bi bi-flower1"></i> </div>
-                                }
-                            </div>
-                            <span class="homepage-category-name"> @kategori.KategoriAdi </span> </a>
-                    }
-                </div>
-            </div>
-            <!-- SAĞ OK -->
-            <button type="button" class="category-nav-button category-next" aria-label="Sonraki kategoriler"> <i class="bi bi-chevron-right"></i> </button>
-        </div>
-    </section>
-    <style>
-
-        /* =========================================================
-                   ANA ALAN
-           ========================================================= */
-        .homepage-category-section {
-            position: relative;
-            width: 100%;
-            padding: 34px 0;
-            background: #fff;
-            overflow: hidden;
-        }
-        .homepage-category-container {
-            position: relative;
-            width: 100%;
-        }
-        /* =========================================================
-                   SLIDER ALANI
-           ========================================================= */
-        .homepage-category-wrapper {
-            width: 100%;
-            overflow: hidden;
-            padding: 4px 0 14px;
-        }
-        .homepage-category-track {
-            display: flex;
-            align-items: flex-start;
-            width: max-content;
-            gap: 24px;
-            will-change: transform;
-        }
-        /* =========================================================
-                   KATEGORİ
-           ========================================================= */
-        .homepage-category-item {
-            flex: 0 0 150px;
-            width: 150px;
-            text-decoration: none;
-            color: inherit;
-            text-align: center;
-            user-select: none;
-        }
-        /* =========================================================
-                   GÖRSEL
-           ========================================================= */
-        .homepage-category-image {
-            position: relative;
-            width: 150px;
-            height: 150px;
-            overflow: hidden;
-            border-radius: 50%;
-            background: #f8f5f6;
-            border: 1px solid #eeeeee;
-            margin-bottom: 12px;
-            transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease;
-        }
-            .homepage-category-image img {
-                width: 100%;
-                height: 100%;
-                display: block;
-                object-fit: cover;
-                transition: transform .45s ease;
-            }
-        /* =========================================================
-                   HOVER
-                ========================================================= */
-        .homepage-category-item:hover .homepage-category-image {
-            transform: translateY(-5px);
-            border-color: rgba(139, 0, 40, .18);
-            box-shadow: 0 12px 28px rgba(0, 0, 0, .12);
-        }
-            .homepage-category-item:hover .homepage-category-image img {
-                transform: scale(1.07);
-            }
-        .homepage-category-name {
-            display: block;
-            padding: 0 4px;
-            font-size: .94rem;
-            font-weight: 600;
-            line-height: 1.35;
-            color: #374151;
-            transition: color .2s ease, transform .2s ease;
-        }
-        .homepage-category-item:hover .homepage-category-name {
-            color: var(--site-primary, #8b0028);
-        }
-        /* =========================================================
-                   PLACEHOLDER
-                ========================================================= */
-        .homepage-category-placeholder {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            color: var(--site-primary, #8b0028);
-        }
-        /* =========================================================
-                   SAĞ / SOL OKLAR
-                ========================================================= */
-        .category-nav-button {
-            position: absolute;
-            top: 50%;
-            z-index: 20;
-            width: 46px;
-            height: 46px;
-            transform: translateY(-50%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid rgba(255, 255, 255, .75);
-            border-radius: 50%;
-            background: rgba(255, 255, 255, .94);
-            color: #374151;
-            box-shadow: 0 5px 18px rgba(0, 0, 0, .13);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            cursor: pointer;
-            transition: transform .25s ease, background .25s ease, color .25s ease, box-shadow .25s ease;
-        }
-            .category-nav-button i {
-                font-size: 1.15rem;
-                line-height: 1;
-            }
-        /* SOL */
-        .category-prev {
-            left: 18px;
-        }
-        /* SAĞ */
-        .category-next {
-            right: 18px;
-        }
-        /* HOVER */
-        .category-nav-button:hover {
-            transform: translateY(-50%) scale(1.08);
-            background: var(--site-primary, #8b0028);
-            border-color: var(--site-primary, #8b0028);
-            color: #fff;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, .18);
-        }
-        /* =========================================================
-                   MOBİL
-                ========================================================= */
-        @@media (max-width: 767.98px) {
-            .homepage-category-section {
-                padding: 26px 0;
-            }
-            .homepage-category-track {
-                gap: 16px;
-            }
-            .homepage-category-item {
-                flex-basis: 112px;
-                width: 112px;
-            }
-            .homepage-category-image {
-                width: 112px;
-                height: 112px;
-                margin-bottom: 9px;
-            }
-            .homepage-category-name {
-                font-size: .84rem;
-            }
-            .category-nav-button {
-                display: none;
-            }
-        }
-        /* =========================================================
-                   TABLET
-                ========================================================= */
-        @@media (min-width: 768px) and (max-width: 1199.98px) {
-            .homepage-category-track {
-                gap: 20px;
-            }
-            .homepage-category-item {
-                flex-basis: 135px;
-                width: 135px;
-            }
-            .homepage-category-image {
-                width: 135px;
-                height: 135px;
-            }
-        }
-    </style>
-
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-
-            const wrapper = document.querySelector(".homepage-category-wrapper");
-            const track = document.querySelector(".homepage-category-track");
-            const prev = document.querySelector(".category-prev");
-            const next = document.querySelector(".category-next");
-
-            if (!wrapper || !track) {
-                return;
-            }
-
-            let speed = 0.45;
-            let position = 0;
-
-            let isPaused = false;
-            let isDragging = false;
-
-            let startX = 0;
-            let startY = 0;
-            let startPosition = 0;
-
-            // Gerçek bir sürükleme yapılıp yapılmadığını tutar
-            let hasDragged = false;
-
-            // Sürükleme sonrası oluşan click'i engellemek için
-            let blockNextClick = false;
-
-            const items = Array.from(track.children);
-
-            if (items.length < 2) {
-                return;
-            }
-
-            const totalItems = Math.floor(items.length / 2);
-
-            if (totalItems <= 0) {
-                return;
-            }
-
-            let loopWidth = 0;
-
-            // =========================================================
-            // LOOP GENİŞLİĞİ
-            // =========================================================
-            function calculateLoopWidth() {
-
-                loopWidth = 0;
-
-                for (let i = 0; i < totalItems; i++) {
-                    loopWidth += items[i].getBoundingClientRect().width;
-                }
-
-                const styles = window.getComputedStyle(track);
-
-                const gap = parseFloat(
-                    styles.columnGap || styles.gap || 0
-                );
-
-                loopWidth += gap * (totalItems - 1);
-            }
-
-            calculateLoopWidth();
-
-
-            // =========================================================
-            // TRANSFORM UYGULA
-            // =========================================================
-            function updatePosition() {
-
-                track.style.transform =
-                    `translate3d(${position}px, 0, 0)`;
-            }
-
-
-            // =========================================================
-            // POZİSYONU NORMALİZE ET
-            // =========================================================
-            function normalizePosition() {
-
-                if (!loopWidth) {
-                    return;
-                }
-
-                while (position <= -loopWidth) {
-                    position += loopWidth;
-                }
-
-                while (position > 0) {
-                    position -= loopWidth;
-                }
-            }
-
-
-            // =========================================================
-            // OTOMATİK SLIDER
-            // =========================================================
-            function animate() {
-
-                if (!isPaused && !isDragging) {
-
-                    position -= speed;
-
-                    normalizePosition();
-
-                    updatePosition();
-                }
-
-                requestAnimationFrame(animate);
-            }
-
-            animate();
-
-
-            // =========================================================
-            // MOUSE ÜZERİNE GELİNCE DUR
-            // =========================================================
-            wrapper.addEventListener("mouseenter", function () {
-
-                if (!isDragging) {
-                    isPaused = true;
-                }
-
-            });
-
-
-            wrapper.addEventListener("mouseleave", function () {
-
-                if (!isDragging) {
-                    isPaused = false;
-                }
-
-            });
-
-
-            // =========================================================
-            // SAĞ OK
-            // =========================================================
-            if (next) {
-
-                next.addEventListener("click", function (e) {
-
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    isPaused = true;
-
-                    position -= 180;
-
-                    normalizePosition();
-
-                    updatePosition();
-
-                    setTimeout(function () {
-                        isPaused = false;
-                    }, 300);
-                });
-            }
-
-
-            // =========================================================
-            // SOL OK
-            // =========================================================
-            if (prev) {
-
-                prev.addEventListener("click", function (e) {
-
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    isPaused = true;
-
-                    position += 180;
-
-                    normalizePosition();
-
-                    updatePosition();
-
-                    setTimeout(function () {
-                        isPaused = false;
-                    }, 300);
-                });
-            }
-
-
-            // =========================================================
-            // POINTER DOWN
-            // =========================================================
-            wrapper.addEventListener("pointerdown", function (e) {
-
-                // Mouse ise sadece sol tuş
-                if (e.pointerType === "mouse" && e.button !== 0) {
-                    return;
-                }
-
-                isDragging = true;
-                hasDragged = false;
-
-                startX = e.clientX;
-                startY = e.clientY;
-
-                startPosition = position;
-
-                // Pointer capture kullanmıyoruz.
-                // Çünkü bazı tarayıcılarda <a> click davranışını
-                // gereksiz yere etkileyebiliyor.
-            });
-
-
-            // =========================================================
-            // POINTER MOVE
-            // =========================================================
-            wrapper.addEventListener("pointermove", function (e) {
-
-                if (!isDragging) {
-                    return;
-                }
-
-                const distanceX = e.clientX - startX;
-                const distanceY = e.clientY - startY;
-
-
-                // 6 px'den fazla hareket varsa bu artık CLICK değil,
-                // DRAG işlemidir.
-                if (
-                    Math.abs(distanceX) > 6 ||
-                    Math.abs(distanceY) > 6
-                ) {
-                    hasDragged = true;
-                }
-
-
-                if (hasDragged) {
-
-                    position = startPosition + distanceX;
-
-                    normalizePosition();
-
-                    updatePosition();
-                }
-            });
-
-
-            // =========================================================
-            // POINTER UP
-            // =========================================================
-            wrapper.addEventListener("pointerup", function () {
-
-                if (!isDragging) {
-                    return;
-                }
-
-                isDragging = false;
-
-                // Eğer gerçekten sürükleme yapıldıysa,
-                // browser'ın hemen ardından oluşturacağı
-                // click olayını bir kez engelle.
-                if (hasDragged) {
-
-                    blockNextClick = true;
-
-                    // Güvenlik için kısa süre sonra sıfırla.
-                    setTimeout(function () {
-                        blockNextClick = false;
-                    }, 100);
-                }
-
-                hasDragged = false;
-            });
-
-
-            // =========================================================
-            // POINTER CANCEL
-            // =========================================================
-            wrapper.addEventListener("pointercancel", function () {
-
-                isDragging = false;
-                hasDragged = false;
-
-            });
-
-
-            // =========================================================
-            // CLICK KONTROLÜ
-            // =========================================================
-            track.addEventListener(
-                "click",
-                function (e) {
-
-                    const link = e.target.closest(
-                        ".homepage-category-item"
-                    );
-
-                    if (!link) {
-                        return;
-                    }
-
-
-                    // Eğer slider sürüklendiyse click'i iptal et.
-                    if (blockNextClick) {
-
-                        e.preventDefault();
-                        e.stopPropagation();
-
-                        blockNextClick = false;
-
-                        return;
-                    }
-
-
-                    // =================================================
-                    // NORMAL TIKLAMA
-                    // =================================================
-                    // Burada hiçbir şey yapmıyoruz.
-                    //
-                    // Browser normal <a href="..."> davranışını
-                    // kendisi gerçekleştirecek.
-                    //
-                    // Örneğin:
-                    // /kategori/guller
-                    // /kategori/buketler
-                    // /kategori/orkideler
-                    //
-                    // doğrudan açılacak.
-                },
-                false
-            );
-
-
-            // =========================================================
-            // RESIZE
-            // =========================================================
-            window.addEventListener("resize", function () {
-
-                calculateLoopWidth();
-
-                normalizePosition();
-
-                updatePosition();
-
-            });
-
-        });
-    </script>
+@using ECommerce.Application.DTOs.Kategori
+@model List<KategoriListeDto>
+
+@{
+    var kategoriler = Model?.Where(x => x.AktifMi).ToList() ?? new List<KategoriListeDto>();
+
+    var varsayilanKategoriler = new[]
+    {
+        new { Ad = "Doğum Günü", Seo = "dogum-gunu", Gorsel = "https://images.unsplash.com/photo-1582794543139-8ac9cb0f7b11?auto=format&fit=crop&w=300&q=80" },
+        new { Ad = "Çok Satanlar", Seo = "cok-satanlar", Gorsel = "https://images.unsplash.com/photo-1563241527-3004b7be0ffd?auto=format&fit=crop&w=300&q=80" },
+        new { Ad = "Gül Buketleri", Seo = "gul-buketleri", Gorsel = "https://images.unsplash.com/photo-1561181286-d3fee7d55364?auto=format&fit=crop&w=300&q=80" },
+        new { Ad = "Kutuda Çiçekler", Seo = "kutuda-cicekler", Gorsel = "https://images.unsplash.com/photo-1526047932273-341f2a7631f9?auto=format&fit=crop&w=300&q=80" },
+        new { Ad = "Hediye Setleri", Seo = "hediye-setleri", Gorsel = "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=300&q=80" },
+        new { Ad = "Trend Çiçekler", Seo = "trend-cicekler", Gorsel = "https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=300&q=80" },
+        new { Ad = "Yıl Dönümü", Seo = "yil-donumu", Gorsel = "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=300&q=80" },
+        new { Ad = "Saksı Bitkileri", Seo = "saksi-bitkileri", Gorsel = "https://images.unsplash.com/photo-1485955900006-10f4d324d411?auto=format&fit=crop&w=300&q=80" },
+        new { Ad = "Özür Çiçekleri", Seo = "ozur-cicekleri", Gorsel = "https://images.unsplash.com/photo-1508610048659-a06b669e3321?auto=format&fit=crop&w=300&q=80" }
+    };
 }
+
+<!-- =========================================================
+     SERBEST & ÇİZGİSİZ ÇİÇEK KATEGORİLERİ AKIŞI
+========================================================= -->
+<div class="cat-showcase-wrapper" aria-label="Çiçek Kategorileri">
+    @if (kategoriler.Any())
+    {
+        int index = 0;
+        foreach (var kat in kategoriler)
+        {
+            string gorsel = !string.IsNullOrWhiteSpace(kat.GorselUrl) 
+                ? kat.GorselUrl 
+                : varsayilanKategoriler[index % varsayilanKategoriler.Length].Gorsel;
+
+            <a href="/kategori/@kat.SeoUrl" class="cat-showcase-item" title="@kat.Ad">
+                <div class="cat-card-squircle">
+                    <img src="@gorsel" alt="@kat.Ad" loading="lazy" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1563241527-3004b7be0ffd?auto=format&fit=crop&w=300&q=80';" />
+                </div>
+                <span class="cat-card-title">@kat.Ad</span>
+            </a>
+            index++;
+        }
+    }
+    else
+    {
+        foreach (var v in varsayilanKategoriler)
+        {
+            <a href="/Urun?kategori=@v.Seo" class="cat-showcase-item" title="@v.Ad">
+                <div class="cat-card-squircle">
+                    <img src="@v.Gorsel" alt="@v.Ad" loading="lazy" />
+                </div>
+                <span class="cat-card-title">@v.Ad</span>
+            </a>
+        }
+    }
+</div>
+
+<style>
+    /* =========================================================
+       SERBEST, ÇİZGİSİZ & ÇERÇEVESİZ KATEGORİ VİTRİNİ
+    ========================================================= */
+    .cat-showcase-wrapper {
+        display: flex;
+        align-items: flex-start;
+        justify-content: flex-start;
+        gap: 1.15rem;
+        overflow-x: auto;
+        /* Kapsayan çerçeve ve alt çizgi tamamen kaldırıldı */
+        border: none !important;
+        background: transparent !important;
+        padding-top: 14px;
+        padding-bottom: 14px;
+        padding-left: 16px;
+        padding-right: 16px;
+        margin: 0 auto;
+        max-width: 1440px;
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE/Edge */
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .cat-showcase-wrapper::-webkit-scrollbar {
+        display: none; /* Chrome/Safari */
+    }
+
+    @@media (min-width: 1200px) {
+        .cat-showcase-wrapper {
+            justify-content: center;
+            gap: 1.35rem;
+            padding-left: 24px;
+            padding-right: 24px;
+        }
+    }
+
+    /* Kategori Tekil Elemanı */
+    .cat-showcase-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-decoration: none;
+        width: 82px;
+        min-width: 82px;
+        transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        cursor: pointer;
+    }
+
+    .cat-showcase-item:hover {
+        transform: translateY(-4px);
+    }
+
+    /* Nane Yeşili Squircle Kart */
+    .cat-card-squircle {
+        width: 76px;
+        height: 76px;
+        background: #e5f6eb; /* Açık pastel nane yeşili */
+        border-radius: 22px; /* Yumuşak squircle */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        position: relative;
+        padding: 6px;
+        box-shadow: 0 4px 12px rgba(46, 125, 50, 0.08);
+        border: 1px solid rgba(46, 125, 50, 0.08);
+        transition: all 0.25s ease;
+    }
+
+    .cat-showcase-item:hover .cat-card-squircle {
+        background: #d6f2df;
+        box-shadow: 0 8px 20px rgba(46, 125, 50, 0.18);
+        border-color: rgba(46, 125, 50, 0.22);
+    }
+
+    /* Çiçek Görseli */
+    .cat-card-squircle img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 16px;
+        transition: transform 0.35s ease;
+    }
+
+    .cat-showcase-item:hover .cat-card-squircle img {
+        transform: scale(1.08);
+    }
+
+    /* Kategori Başlığı */
+    .cat-card-title {
+        margin-top: 6px;
+        font-size: 0.76rem;
+        font-weight: 600;
+        color: #212529;
+        text-align: center;
+        line-height: 1.2;
+        max-width: 100%;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        transition: color 0.2s ease;
+        font-family: 'Outfit', sans-serif;
+    }
+
+    .cat-showcase-item:hover .cat-card-title {
+        color: #1b4332;
+        font-weight: 700;
+    }
+
+    @@media (max-width: 576px) {
+        .cat-showcase-item {
+            width: 70px;
+            min-width: 70px;
+        }
+
+        .cat-card-squircle {
+            width: 66px;
+            height: 66px;
+            border-radius: 18px;
+            padding: 5px;
+        }
+
+        .cat-card-title {
+            font-size: 0.7rem;
+            margin-top: 5px;
+        }
+    }
+</style>

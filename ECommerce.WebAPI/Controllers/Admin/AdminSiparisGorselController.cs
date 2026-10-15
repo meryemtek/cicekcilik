@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce.WebAPI.Controllers.Admin;
 
-[Authorize]
+[Authorize(Roles = "Admin")]
 [Route("api/admin/siparis-gorsel")]
 [ApiController]
 public class AdminSiparisGorselController : ControllerBase

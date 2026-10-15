@@ -1,0 +1,41 @@
+@model ECommerce.Application.DTOs.Siparis.SiparisDetayDto
+@{
+    ViewData["Title"] = "Sipariş Detayı";
+    ViewData["AktifMenu"] = "Siparislerim";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container my-5">
+    <div class="row g-4">
+        <div class="col-lg-3">@await Html.PartialAsync("_HesapMenuPartial")</div>
+        <div class="col-lg-9">
+            <a href="/Hesap/Siparislerim" class="d-inline-block mb-3 text-decoration-none text-success"><i class="bi bi-arrow-left me-1"></i>Tüm siparişlerim</a>
+            <div class="card border-0 shadow-sm rounded-4 p-4 mb-3">
+                <div class="d-flex flex-wrap justify-content-between gap-3 align-items-start">
+                    <div>
+                        <span class="text-muted small">Sipariş numarası</span>
+                        <h1 class="h3 fw-bold mb-1">@Model.SiparisNumarasi</h1>
+                        <span class="text-muted small">@Model.SiparisTarihi.ToString("dd.MM.yyyy HH:mm")</span>
+                    </div>
+                    <span class="badge rounded-pill bg-light text-dark border px-3 py-2">@Model.Durum</span>
+                </div>
+                <hr />
+                <div class="row g-3 small">
+                    <div class="col-md-6"><span class="text-muted d-block">Alıcı</span><strong>@Model.AliciAdSoyad</strong><br />@Model.AliciTelefon</div>
+                    <div class="col-md-6"><span class="text-muted d-block">Teslimat adresi</span><strong>@Model.TeslimatAdresi</strong></div>
+                </div>
+            </div>
+            <div class="card border-0 shadow-sm rounded-4 p-4">
+                <h2 class="h5 fw-bold mb-3">Ürünler</h2>
+                @foreach (var kalem in Model.Kalemler)
+                {
+                    <div class="d-flex justify-content-between align-items-start gap-3 py-3 border-bottom">
+                        <div><strong>@kalem.UrunAdi</strong><div class="small text-muted">@kalem.Miktar adet @kalem.VaryantAdi</div></div>
+                        <strong>@kalem.ToplamFiyat.ToString("N2") ₺</strong>
+                    </div>
+                }
+                <div class="d-flex justify-content-between mt-4 fs-5"><strong>Toplam</strong><strong class="text-success">@Model.ToplamTutar.ToString("N2") ₺</strong></div>
+            </div>
+        </div>
+    </div>
+</div>

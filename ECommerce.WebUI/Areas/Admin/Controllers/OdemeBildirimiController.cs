@@ -7,7 +7,7 @@ using ECommerce.Application.DTOs.OdemeBildirimi;
 namespace ECommerce.WebUI.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class OdemeBildirimiController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;

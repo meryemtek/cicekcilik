@@ -33,7 +33,7 @@ namespace ECommerce.WebUI.Controllers
         private HttpClient CreateApiClient()
         {
             var client = _httpClientFactory.CreateClient("ApiClient");
-            var token = User.FindFirst("JWToken")?.Value;
+            var token = Request.Cookies["JWToken"];
             if (!string.IsNullOrEmpty(token))
             {
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -150,6 +150,13 @@ namespace ECommerce.WebUI.Controllers
                 GizlilikPolitikasiIcerigi = gizlilikMetni
             };
 
+            if (!string.IsNullOrEmpty(Request.Cookies["JWToken"]))
+            {
+                var adresResponse = await client.GetAsync("hesap/adresler");
+                if (adresResponse.IsSuccessStatusCode)
+                    viewModel.KayitliAdresler = await adresResponse.Content.ReadFromJsonAsync<List<ECommerce.Application.DTOs.Adres.KayitliAdresDto>>() ?? new();
+            }
+
             return View(viewModel);
         }
 
@@ -180,13 +187,6 @@ namespace ECommerce.WebUI.Controllers
                 return RedirectToAction("Index", "Sepet");
             }
 
-            Guid? kullaniciId = null;
-            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-            if (Guid.TryParse(userIdClaim, out var parsedId))
-            {
-                kullaniciId = parsedId;
-            }
-
             var adSoyadParca = musteriAdSoyad.Trim().Split(' ', 2);
             string ad = adSoyadParca[0];
             string soyad = adSoyadParca.Length > 1 ? adSoyadParca[1] : "";
@@ -209,11 +209,12 @@ namespace ECommerce.WebUI.Controllers
                 KartNotu = kartNotu,
                 GonderenGorunenAd = gonderenGorunenAd,
                 OdemeYontemi = odemeYontemi,
-                KullaniciId = kullaniciId
+                // API, giriş yapan müşterinin kimliğini doğrulanmış JWT üzerinden belirler.
+                KullaniciId = null
             };
 
             var jsonContent = new StringContent(JsonSerializer.Serialize(dto), Encoding.UTF8, "application/json");
-            var response = await client.PostAsync("siparisler/olustur", jsonContent);
+            var response = await client.PostAsync("siparis/olustur", jsonContent);
 
             if (response.IsSuccessStatusCode)
             {
@@ -232,7 +233,7 @@ namespace ECommerce.WebUI.Controllers
         public async Task<IActionResult> Basarili(Guid id)
         {
             var client = CreateApiClient();
-            var response = await client.GetAsync($"admin/siparisler/{id}");
+            var response = await client.GetAsync($"siparis/benim-siparislerim/{id}");
 
             if (response.IsSuccessStatusCode)
             {

@@ -1,4 +1,5 @@
-﻿using ECommerce.Application.DTOs.Kupon; // Kendi namespace'ine göre ayarlandığını varsayıyorum
+﻿using Microsoft.AspNetCore.Authorization;
+using ECommerce.Application.DTOs.Kupon; // Kendi namespace'ine göre ayarlandığını varsayıyorum
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using System.Text;
@@ -7,6 +8,7 @@ using System.Net.Http.Headers;
 namespace ECommerce.WebUI.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class KuponController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;

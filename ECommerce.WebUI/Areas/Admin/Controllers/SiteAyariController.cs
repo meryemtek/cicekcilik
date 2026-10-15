@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text;
@@ -9,6 +10,7 @@ using ECommerce.Application.DTOs.SiteAyari;
 namespace ECommerce.WebUI.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class SiteAyariController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;

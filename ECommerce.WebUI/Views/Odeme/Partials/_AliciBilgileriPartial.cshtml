@@ -9,6 +9,25 @@
         <i class="bi bi-geo-alt-fill me-2" style="color: #3b1154;"></i> 1. Alıcı Bilgileri
     </h5>
     <div class="row g-3">
+        @if (Model.KayitliAdresler.Count > 0)
+        {
+            <div class="col-12">
+                <label for="kayitli-adres-secimi" class="form-label small fw-bold text-muted">Kayıtlı adreslerim</label>
+                <select id="kayitli-adres-secimi" class="form-select">
+                    <option value="">Yeni teslimat adresi gireceğim</option>
+                    @foreach (var adres in Model.KayitliAdresler)
+                    {
+                        var bolgeUyumlu = ilkKalem != null &&
+                            string.Equals(adres.Il, ilkKalem.Il, StringComparison.CurrentCultureIgnoreCase) &&
+                            string.Equals(adres.Ilce, ilkKalem.Ilce, StringComparison.CurrentCultureIgnoreCase);
+                        <option value="@adres.Id" data-alici="@adres.AliciAdSoyad" data-telefon="@adres.Telefon" data-baslik="@adres.Baslik" data-adres="@adres.AcikAdres" disabled="@(!bolgeUyumlu)">
+                            @adres.Baslik — @adres.Ilce / @adres.Il @(bolgeUyumlu ? "" : "(seçilen teslimat bölgesinden farklı)")
+                        </option>
+                    }
+                </select>
+                <div class="form-text">Sepetinizde seçtiğiniz il ve ilçeyle eşleşen adresler kullanılabilir.</div>
+            </div>
+        }
         <div class="col-md-6">
             <label class="form-label small fw-bold text-muted">Alıcı Ad Soyad</label>
             <input type="text" name="AliciAdSoyad" class="form-control" required placeholder="Alıcının Adı Soyadı" />
@@ -31,3 +50,15 @@
         </div>
     </div>
 </div>
+<script>
+    document.getElementById('kayitli-adres-secimi')?.addEventListener('change', function () {
+        const secili = this.selectedOptions[0];
+        if (!secili?.value) return;
+        const alanlar = { AliciAdSoyad: secili.dataset.alici, AliciTelefon: secili.dataset.telefon,
+            GonderimYeriAdi: secili.dataset.baslik, TeslimatAdresi: secili.dataset.adres };
+        for (const [ad, deger] of Object.entries(alanlar)) {
+            const input = document.querySelector(`[name="${ad}"]`);
+            if (input) input.value = deger || '';
+        }
+    });
+</script>

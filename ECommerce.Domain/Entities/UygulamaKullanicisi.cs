@@ -15,4 +15,5 @@ public class UygulamaKullanicisi : IdentityUser<Guid>
     public DateTime KayitTarihi { get; set; } = DateTime.UtcNow;
 
     public virtual ICollection<Siparis> Siparisler { get; set; } = new List<Siparis>();
+    public virtual ICollection<KayitliAdres> KayitliAdresler { get; set; } = new List<KayitliAdres>();
 }

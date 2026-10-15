@@ -9,6 +9,7 @@ namespace ECommerce.WebUI.Models
         public Sepet Sepet { get; set; } = new();
         public List<KartNotuSablonuListeDto> KartNotlari { get; set; } = new();
         public List<BankaHesabiPublicDto> Bankalar { get; set; } = new();
+        public List<ECommerce.Application.DTOs.Adres.KayitliAdresDto> KayitliAdresler { get; set; } = new();
 
         // Sabit sayfa başlık ve içerikleri
         public string MesafeliSatisBaslik { get; set; } = "Mesafeli Satış Sözleşmesi";

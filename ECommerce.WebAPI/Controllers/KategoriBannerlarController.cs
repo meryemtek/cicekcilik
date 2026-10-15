@@ -24,7 +24,7 @@ namespace ECommerce.WebAPI.Controllers
             return Ok(liste);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetirById(Guid id)
         {
@@ -32,7 +32,7 @@ namespace ECommerce.WebAPI.Controllers
             return Ok(model);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Ekle([FromBody] KategoriBannerEkleGuncelleDto dto)
         {
@@ -40,7 +40,7 @@ namespace ECommerce.WebAPI.Controllers
             return Ok(new { Mesaj = "Başarıyla eklendi." });
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpPut]
         public async Task<IActionResult> Guncelle([FromBody] KategoriBannerEkleGuncelleDto dto)
         {
@@ -48,7 +48,7 @@ namespace ECommerce.WebAPI.Controllers
             return Ok(new { Mesaj = "Başarıyla güncellendi." });
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Sil(Guid id)
         {

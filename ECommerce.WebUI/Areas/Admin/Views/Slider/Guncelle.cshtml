@@ -1,7 +1,9 @@
-﻿@model ECommerce.Application.DTOs.Slider.SliderGuncelleDto
+@model ECommerce.Application.DTOs.Slider.SliderGuncelleDto
+@inject System.Net.Http.IHttpClientFactory ApiFactory
 @{
     ViewData["Title"] = "Slider Düzenle";
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    var kategoriApiUrl = new System.Uri(ApiFactory.CreateClient("ApiClient").BaseAddress!, "kategoriler").AbsoluteUri;
 }
 
 <style>
@@ -153,13 +155,18 @@
                     </div>
                 }
                 <label class="form-label mt-2">Yeni Görsel Yükle (İsteğe Bağlı)</label>
-                <input type="file" name="gorselDosyasi" class="form-control" accept="image/*" />
-                <small class="text-muted">Yeni dosya seçmezseniz mevcut görsel korunur.</small>
+                <input type="file" id="sliderImageFile" name="gorselDosyasi" class="form-control" accept="image/jpeg,image/png,image/webp" />
+                <small class="text-muted">Yeni dosya seçmezseniz mevcut görsel korunur. JPG, PNG veya WEBP (en fazla 15 MB); seçince serbest kırpma penceresi açılır.</small>
+                <div class="text-danger">@Html.ValidationMessage("gorselDosyasi")</div>
+                <img id="sliderSelectedPreview" class="img-fluid rounded mt-2" style="max-height: 180px;" alt="Düzenlenen slider görseli" hidden />
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Hedef URL</label>
-                <input type="text" asp-for="LinkUrl" class="form-control" />
+                <label asp-for="LinkUrl" class="form-label">Yönlendirilecek Kategori</label>
+                <select asp-for="LinkUrl" asp-items="ViewBag.KategoriLinkleri" class="form-select" data-kategori-api="@kategoriApiUrl" data-current-link="@Model.LinkUrl">
+                    <option value="">Kategori seçin</option>
+                </select>
+                <small id="kategoriLoadStatus" class="text-danger d-block" role="status" aria-live="polite"></small>
             </div>
 
             <div class="row g-3 mb-4">
@@ -184,3 +191,10 @@
         </form>
     </div>
 </div>
+<partial name="_GorselDuzenleyici" />
+
+@section Scripts {
+    <script src="~/js/admin-slider-categories.js" asp-append-version="true"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <script src="~/js/admin-slider-crop.js" asp-append-version="true"></script>
+}

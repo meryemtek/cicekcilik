@@ -1,0 +1,176 @@
+@model ECommerce.WebUI.Models.KayitliAdresSayfaViewModel
+@{
+    ViewData["Title"] = "Kayıtlı Adreslerim";
+    ViewData["AktifMenu"] = "Adreslerim";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="account-address-page py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-3">@await Html.PartialAsync("_HesapMenuPartial")</div>
+            <div class="col-lg-9">
+                <header class="address-header mb-4">
+                    <div>
+                        <span class="address-kicker">Hesap ayarları</span>
+                        <h1>Kayıtlı Adreslerim</h1>
+                        <p>Size ait teslimat adreslerini buradan yönetin.</p>
+                    </div>
+                    <a href="/Hesap/Adreslerim#adres-formu" class="address-primary"><i class="bi bi-plus-lg me-2"></i>Yeni Adres</a>
+                </header>
+
+                @if (TempData["BasariliMesaj"] != null)
+                {
+                    <div class="alert alert-success rounded-3" role="status">@TempData["BasariliMesaj"]</div>
+                }
+                @if (TempData["HataMesaj"] != null)
+                {
+                    <div class="alert alert-danger rounded-3" role="alert">@TempData["HataMesaj"]</div>
+                }
+
+                @if (Model.Adresler.Count == 0)
+                {
+                    <div class="address-empty text-center mb-4">
+                        <span class="address-empty-icon"><i class="bi bi-geo-alt"></i></span>
+                        <h2>Henüz kayıtlı adresiniz yok</h2>
+                        <p>İlk adresinizi ekleyerek teslimat bilgilerinizi hesabınızda saklayabilirsiniz.</p>
+                        <a href="#adres-formu" class="address-primary">İlk Adresimi Ekle</a>
+                    </div>
+                }
+                else
+                {
+                    <div class="row g-3 mb-4">
+                        @foreach (var adres in Model.Adresler)
+                        {
+                            <div class="col-md-6">
+                                <article class="address-card h-100 @(adres.VarsayilanMi ? "address-card-default" : "")">
+                                    <div class="d-flex align-items-start justify-content-between gap-2 mb-3">
+                                        <span class="address-card-icon"><i class="bi bi-geo-alt"></i></span>
+                                        @if (adres.VarsayilanMi)
+                                        {
+                                            <span class="address-default-badge"><i class="bi bi-check-circle me-1"></i>Varsayılan</span>
+                                        }
+                                    </div>
+                                    <h2>@adres.Baslik</h2>
+                                    <div class="address-person">@adres.AliciAdSoyad · @adres.Telefon</div>
+                                    <p class="address-line">@adres.AcikAdres<br />@adres.Ilce / @adres.Il</p>
+                                    <div class="address-actions">
+                                        <a asp-action="Adreslerim" asp-route-duzenle="@adres.Id" asp-fragment="adres-formu" class="address-link"><i class="bi bi-pencil me-1"></i>Düzenle</a>
+                                        @if (!adres.VarsayilanMi)
+                                        {
+                                            <form asp-action="VarsayilanAdresYap" method="post">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@adres.Id" />
+                                                <button type="submit" class="address-link">Varsayılan Yap</button>
+                                            </form>
+                                        }
+                                        <form asp-action="AdresSil" method="post" onsubmit="return confirm('Bu adres silinsin mi?');">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@adres.Id" />
+                                            <button type="submit" class="address-link address-delete">Sil</button>
+                                        </form>
+                                    </div>
+                                </article>
+                            </div>
+                        }
+                    </div>
+                }
+
+                <section class="address-form-card" id="adres-formu">
+                    <div class="mb-4">
+                        <span class="address-kicker">Adres bilgileri</span>
+                        <h2>@(Model.DuzenlenenId.HasValue ? "Adresi Düzenle" : "Yeni Adres Ekle")</h2>
+                        <p>Alıcının ve teslimat noktasının bilgilerini girin.</p>
+                    </div>
+                    <form asp-action="AdresKaydet" method="post">
+                        @Html.AntiForgeryToken()
+                        @if (Model.DuzenlenenId.HasValue)
+                        {
+                            <input type="hidden" name="id" value="@Model.DuzenlenenId" />
+                        }
+                        <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label asp-for="Form.Baslik" class="form-label">Adres başlığı</label>
+                                <input asp-for="Form.Baslik" class="form-control" placeholder="Ev, İş, Annem..." />
+                                <span asp-validation-for="Form.Baslik" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Form.AliciAdSoyad" class="form-label">Alıcı adı soyadı</label>
+                                <input asp-for="Form.AliciAdSoyad" class="form-control" autocomplete="name" />
+                                <span asp-validation-for="Form.AliciAdSoyad" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Form.Telefon" class="form-label">Telefon</label>
+                                <input asp-for="Form.Telefon" class="form-control" type="tel" autocomplete="tel" />
+                                <span asp-validation-for="Form.Telefon" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-3">
+                                <label asp-for="Form.Il" class="form-label">İl</label>
+                                <input asp-for="Form.Il" class="form-control" autocomplete="address-level1" />
+                                <span asp-validation-for="Form.Il" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-3">
+                                <label asp-for="Form.Ilce" class="form-label">İlçe</label>
+                                <input asp-for="Form.Ilce" class="form-control" autocomplete="address-level2" />
+                                <span asp-validation-for="Form.Ilce" class="text-danger small"></span>
+                            </div>
+                            <div class="col-12">
+                                <label asp-for="Form.AcikAdres" class="form-label">Açık adres</label>
+                                <textarea asp-for="Form.AcikAdres" class="form-control" rows="3" autocomplete="street-address" placeholder="Mahalle, sokak, bina, daire ve adres tarifi"></textarea>
+                                <span asp-validation-for="Form.AcikAdres" class="text-danger small"></span>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-check-label d-inline-flex align-items-center gap-2">
+                                    <input asp-for="Form.VarsayilanMi" class="form-check-input mt-0" />
+                                    Varsayılan adresim olsun
+                                </label>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2 mt-4">
+                            <button type="submit" class="address-primary">@(Model.DuzenlenenId.HasValue ? "Değişiklikleri Kaydet" : "Adresi Kaydet")</button>
+                            @if (Model.DuzenlenenId.HasValue)
+                            {
+                                <a href="/Hesap/Adreslerim" class="address-secondary">Vazgeç</a>
+                            }
+                        </div>
+                    </form>
+                </section>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .account-address-page { background: #fcf9f8; min-height: 75vh; }
+    .address-header { display: flex; justify-content: space-between; align-items: center; gap: 20px; background: linear-gradient(135deg,#fff,#fff5f7); border: 1px solid #f3dde2; border-radius: 24px; padding: 28px 30px; }
+    .address-kicker { color: #984255; text-transform: uppercase; letter-spacing: .12em; font-size: .7rem; font-weight: 700; }
+    .address-header h1, .address-form-card h2, .address-card h2, .address-empty h2 { font-family: 'Playfair Display',Georgia,serif; color: #14382e; }
+    .address-header h1 { font-size: 1.9rem; margin: 5px 0; }
+    .address-header p, .address-form-card p, .address-empty p { color: #67716b; margin: 0; font-size: .9rem; }
+    .address-primary, .address-secondary { display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; padding: 11px 20px; font-size: .82rem; font-weight: 700; text-decoration: none; border: 1px solid #1a3a2f; white-space: nowrap; }
+    .address-primary { background: #1a3a2f; color: white; }
+    .address-primary:hover { background: #09281e; color: white; }
+    .address-secondary { background: white; color: #1a3a2f; }
+    .address-card, .address-form-card, .address-empty { background: white; border: 1px solid #f3dde2; border-radius: 20px; padding: 24px; box-shadow: 0 8px 25px rgba(26,58,47,.04); }
+    .address-card-default { border-color: #98cbb1; }
+    .address-card-icon, .address-empty-icon { display: inline-flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 12px; background: #dff3e8; color: #1a3a2f; font-size: 1.2rem; }
+    .address-default-badge { background: #e4f3e9; color: #1a3a2f; border-radius: 999px; padding: 5px 10px; font-size: .7rem; font-weight: 700; }
+    .address-card h2 { font-size: 1.2rem; margin-bottom: 6px; }
+    .address-person { color: #3c4841; font-size: .85rem; font-weight: 600; }
+    .address-line { color: #67716b; font-size: .85rem; line-height: 1.6; min-height: 50px; margin: 12px 0 20px; overflow-wrap: anywhere; }
+    .address-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 14px; border-top: 1px solid #f0e8e9; padding-top: 14px; }
+    .address-actions form { margin: 0; }
+    .address-link { border: 0; background: none; color: #1a3a2f; padding: 0; text-decoration: none; font-size: .78rem; font-weight: 700; cursor: pointer; }
+    .address-link:hover { text-decoration: underline; color: #0a291f; }
+    .address-delete { color: #a52e4b; }
+    .address-form-card h2 { font-size: 1.5rem; margin: 4px 0 6px; }
+    .address-form-card .form-label { font-size: .8rem; font-weight: 700; color: #34463e; }
+    .address-form-card .form-control { border: 1px solid #e5dddd; border-radius: 11px; padding: 11px 13px; }
+    .address-form-card .form-control:focus { border-color: #1a3a2f; box-shadow: 0 0 0 .2rem rgba(26,58,47,.1); }
+    .address-empty { padding: 48px 24px; }
+    .address-empty-icon { width: 62px; height: 62px; font-size: 1.6rem; margin-bottom: 16px; }
+    .address-empty h2 { font-size: 1.4rem; }
+    .address-empty p { margin-bottom: 20px; }
+    @@media(max-width:767px) { .address-header { flex-direction: column; align-items: flex-start; padding: 24px; } .address-header h1 { font-size: 1.6rem; } }
+</style>

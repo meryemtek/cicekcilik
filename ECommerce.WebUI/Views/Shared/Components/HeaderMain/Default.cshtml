@@ -1,11 +1,11 @@
-﻿@model ECommerce.Application.DTOs.SiteAyari.SiteAyariDto
+@model ECommerce.Application.DTOs.SiteAyari.SiteAyariDto
 
-<div class="header-main py-3 py-lg-4 border-bottom bg-white">
+<div class="header-main border-bottom bg-white">
     <div class="container">
-        <div class="row align-items-center g-3">
+        <div class="row align-items-center g-2 g-lg-3">
             
             <!-- 1. LOGO ALANI -->
-            <div class="col-6 col-lg-3 d-flex align-items-center">
+            <div class="col-6 col-lg-2 d-flex align-items-center">
                 <div class="logo-wrapper">
                     <a href="/" class="d-block text-decoration-none">
                         @if (!string.IsNullOrEmpty(Model?.LogoUrl))
@@ -14,21 +14,15 @@
                         }
                         else
                         {
-                            <div class="d-flex align-items-center gap-2 text-dark">
-                                <i class="bi bi-flower1 fs-2 fs-lg-1 text-brand"></i>
-                                <div>
-                                    <strong class="fs-4 fs-lg-3 d-block" style="line-height: 1; font-weight: 800; color: #24213d;">LİDYA</strong>
-                                    <small style="letter-spacing: 2px; font-size: 0.65rem; color: #85818c;">ÇİÇEKLERİ</small>
-                                </div>
-                            </div>
+                            <img src="~/images/lidya-logo.png" alt="Lidya Çiçekçilik" class="header-logo brand-logo" />
                         }
                     </a>
                 </div>
             </div>
 
             <!-- 3. KULLANICI İŞLEMLERİ (Sağ Menü) -->
-            <div class="col-6 col-lg-4 d-flex align-items-center justify-content-end order-lg-3">
-                <div class="user-actions d-flex gap-2 gap-lg-4">
+            <div class="col-6 col-lg-3 d-flex align-items-center justify-content-end order-lg-3">
+                <div class="user-actions d-flex gap-2 gap-lg-3">
                     
                     @{
                         bool girisYapildiMi = Context.Request.Cookies.ContainsKey("JWToken");
@@ -36,23 +30,54 @@
 
                     @if (girisYapildiMi)
                     {
-                        <a href="/Hesap/Index" class="action-item text-decoration-none">
-                            <i class="bi bi-person-check action-icon" style="color: #8b0028;"></i>
-                            <span class="action-text d-none d-sm-inline fw-bold" style="color: #8b0028;">Profilim</span>
-                        </a>
+                        <div class="dropdown">
+                            <a href="/Hesap/Index" class="action-item text-decoration-none dropdown-toggle no-arrow" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-check action-icon" style="color: var(--brand-color);"></i>
+                                <span class="action-text d-none d-sm-inline fw-bold" style="color: var(--brand-color);">Profilim</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-4 p-2 mt-2 bf-profile-dropdown">
+                                <li><a class="dropdown-item rounded-3 py-2 small fw-semibold" href="/Hesap/Index"><i class="bi bi-speedometer2 me-2 text-muted"></i> Hesap Paneli</a></li>
+                                <li><a class="dropdown-item rounded-3 py-2 small fw-semibold" href="/Hesap/Siparislerim"><i class="bi bi-box-seam me-2 text-muted"></i> Siparişlerim</a></li>
+                                <li><a class="dropdown-item rounded-3 py-2 small fw-semibold" href="/Favoriler"><i class="bi bi-heart me-2 text-muted"></i> Favorilerim</a></li>
+                                
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <li><hr class="dropdown-divider my-1"></li>
+                                    <li><a class="dropdown-item rounded-3 py-2 small fw-semibold text-primary fw-bold" href="/Admin/Urun/Index" target="_blank"><i class="bi bi-gear me-2"></i> ⚙️ Yönetim</a></li>
+                                }
+                                
+                                <li><hr class="dropdown-divider my-1"></li>
+                                <li><a class="dropdown-item rounded-3 py-2 small fw-semibold text-danger" href="/Hesap/Cikis"><i class="bi bi-box-arrow-right me-2"></i> Çıkış Yap</a></li>
+                            </ul>
+                        </div>
                     }
                     else
                     {
-                        <a href="/Hesap/Giris" class="action-item text-decoration-none">
-                            <i class="bi bi-person action-icon"></i>
-                            <span class="action-text d-none d-sm-inline">Üye Girişi</span>
-                        </a>
+                        <div class="dropdown">
+                            <a href="/Hesap/Giris" class="action-item text-decoration-none dropdown-toggle no-arrow" id="profileDropdownBtn" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person action-icon"></i>
+                                <span class="action-text d-none d-sm-inline">Profilim</span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end shadow-lg border-0 rounded-4 p-3 mt-2 bf-auth-dropdown text-center" style="min-width: 240px;">
+                                <div class="mb-2">
+                                    <span class="rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 44px; height: 44px; background: #ffd9de; color: #984255;">
+                                        <i class="bi bi-flower1 fs-5"></i>
+                                    </span>
+                                    <h6 class="fw-bold text-dark mb-0 font-serif">Lidya Çiçekçilik</h6>
+                                    <small class="text-muted" style="font-size: .75rem;">Hesabınızı yönetin veya yeni üye olun</small>
+                                </div>
+                                <div class="d-grid gap-2 mt-3">
+                                    <a href="/Hesap/Giris" class="btn btn-sm rounded-pill py-2 text-white fw-bold shadow-sm" style="background-color: #1a3a2f; font-size: .8rem; letter-spacing: .05em;">
+                                        GİRİŞ YAP
+                                    </a>
+                                    <a href="/Hesap/Kayit" class="btn btn-sm rounded-pill py-2 fw-semibold" style="border: 1px solid rgba(232, 130, 150, .4); background: #fdfafb; color: #984255; font-size: .8rem;">
+                                        YENİ ÜYE OL
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                     }
 
-                    <a href="/Odeme" class="action-item text-decoration-none d-none d-md-flex">
-                        <i class="bi bi-credit-card action-icon"></i>
-                        <span class="action-text">Ödeme</span>
-                    </a>
                     <a href="/Favoriler" class="action-item text-decoration-none">
                         <i class="bi bi-heart action-icon"></i>
                         <span class="action-text d-none d-sm-inline">Favoriler</span>
@@ -68,19 +93,12 @@
             </div>
 
             <!-- 2. ARAMA KUTUSU VE ETİKETLER -->
-            <div class="col-12 col-lg-5 order-lg-2">
+            <div class="col-12 col-lg-7 order-lg-2">
                 <div class="search-wrapper w-100">
-                    <form action="/Arama" method="get" class="search-form d-flex position-relative">
-                        <input type="text" name="q" class="form-control search-input shadow-none" placeholder="Çiçek, Buket veya Hediye Kutusu Ara..." required />
-                        <button type="submit" class="btn search-btn"><i class="bi bi-search"></i></button>
+                    <form action="/Arama" method="get" class="search-form d-flex position-relative" role="search">
+                        <input type="search" name="q" class="form-control search-input shadow-none" placeholder="Çiçek, buket veya hediye ara..." aria-label="Ürün ara" data-animated-search required />
+                        <button type="submit" class="btn search-btn" aria-label="Ara"><i class="bi bi-search" aria-hidden="true"></i></button>
                     </form>
-                    <div class="popular-searches mt-2 text-truncate">
-                        <span class="text-muted me-1">Popüler:</span>
-                        <a href="/Arama?q=Gül" class="popular-link">Gül</a>,
-                        <a href="/Arama?q=Orkide" class="popular-link">Orkide</a>,
-                        <a href="/Arama?q=Saksı Çiçeği" class="popular-link">Saksı Çiçeği</a>,
-                        <a href="/Arama?q=Karışık Buket" class="popular-link">Karışık Buket</a>
-                    </div>
                 </div>
             </div>
 
@@ -95,29 +113,25 @@
     }
     .text-brand { color: var(--brand-color); }
     .bg-brand { background-color: var(--brand-color) !important; color: #fff; }
+    .header-main { padding: 8px 0; }
     .logo-wrapper { display: flex; align-items: center; }
-    .header-logo { height: auto; max-height: 70px; max-width: 200px; object-fit: contain; display: block; }
+    .header-logo { height: auto; max-height: 64px; max-width: 180px; object-fit: contain; display: block; }
+    .header-logo.brand-logo { width: 64px; height: 64px; max-width: none; max-height: none; object-fit: cover; object-position: center; }
     @@media (min-width: 992px) {
-        .header-logo { max-height: 95px; max-width: 280px; }
+        .header-logo { max-height: 80px; max-width: 230px; }
+        .header-logo.brand-logo { width: 80px; height: 80px; max-height: none; max-width: none; }
     }
     .search-wrapper { width: 100%; }
-    .search-form { border: 2px solid var(--brand-color); border-radius: 40px; overflow: hidden; background: #fff; }
-    .search-input { border: none; padding: 0.7rem 1rem; font-size: 0.9rem; border-radius: 40px 0 0 40px; color: #24213d; background: transparent; }
+    .search-form { align-items: center; border: 1px solid #e7b4c9; border-radius: 999px; overflow: hidden; background: #fff9fb; box-shadow: 0 6px 20px rgba(174, 66, 116, .1); transition: border-color .2s ease, box-shadow .2s ease; }
+    .search-form:focus-within { border-color: #c9578c; box-shadow: 0 0 0 3px rgba(214, 88, 144, .2); }
+    .search-input { min-width: 0; flex: 1; border: none; padding: 0.7rem 1.15rem; font-size: 0.9rem; border-radius: 999px; color: #51414a; background: transparent; }
     @@media (min-width: 992px) {
-        .search-input { padding: 0.85rem 1.4rem; font-size: 0.95rem; }
+        .search-input { padding: 0.8rem 1.35rem; font-size: 0.95rem; }
     }
-    .search-input::placeholder { color: #9a959e; }
-    .search-btn { background-color: var(--brand-color); color: white; border: none; padding: 0 1.5rem; border-radius: 0 40px 40px 0; transition: background 0.2s ease; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; }
-    @@media (min-width: 992px) {
-        .search-btn { padding: 0 2rem; }
-    }
-    .search-btn:hover { background-color: var(--brand-hover); color: white; }
-    .popular-searches { font-size: 0.75rem; color: #716c75; padding-left: 10px; }
-    @@media (min-width: 992px) {
-        .popular-searches { font-size: 0.8rem; padding-left: 15px; }
-    }
-    .popular-link { color: #5275a5; text-decoration: none; font-weight: 500; transition: color 0.2s ease; }
-    .popular-link:hover { color: var(--brand-color); text-decoration: underline; }
+    .search-input::placeholder { color: #ac8997; opacity: 1; }
+    .header-main .search-form .search-btn { flex: 0 0 38px; width: 38px; height: 38px; margin: 5px; padding: 0; border: 0 !important; border-radius: 50%; background: #bd4d82 !important; color: #fff !important; box-shadow: none; font-size: 1rem; display: flex; align-items: center; justify-content: center; transition: background .2s ease, color .2s ease; }
+    .header-main .search-form .search-btn:hover { background: #9d3069 !important; color: #fff !important; }
+    .header-main .search-form .search-btn:focus-visible { outline: 2px solid #a65e79; outline-offset: 2px; }
     .user-actions { display: flex; align-items: center; }
     .action-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: #495057; transition: all 0.2s ease; gap: 2px; padding: 0 4px; }
     @@media (min-width: 992px) {
@@ -135,4 +149,61 @@
     .action-item:hover .action-icon,
     .action-item:hover .action-text { color: var(--brand-color); }
     .action-item:hover .action-icon { transform: translateY(-2px); }
+    .no-arrow::after { display: none !important; }
+    .bf-auth-dropdown, .bf-profile-dropdown {
+        border: 1px solid rgba(232, 130, 150, .25) !important;
+        background: #ffffff !important;
+        box-shadow: 0 16px 36px -4px rgba(26, 58, 47, .12), 0 4px 12px rgba(232, 130, 150, .1) !important;
+    }
+    .bf-profile-dropdown .dropdown-item:hover {
+        background-color: #fcf6f8;
+        color: #984255 !important;
+    }
 </style>
+
+<script>
+    (() => {
+        const input = document.querySelector('.header-main [data-animated-search]');
+        if (!input || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+        const phrases = ['Gül buketi ara...', 'Orkide ara...', 'Doğum günü çiçeği ara...', 'Sevdiklerine bir sürpriz ara...'];
+        let phraseIndex = 0;
+        let letterIndex = 0;
+        let deleting = false;
+        let timer;
+
+        function animatePlaceholder() {
+            const phrase = phrases[phraseIndex];
+            input.placeholder = phrase.slice(0, letterIndex);
+
+            if (!deleting && letterIndex < phrase.length) {
+                letterIndex++;
+                timer = window.setTimeout(animatePlaceholder, 85);
+            } else if (!deleting) {
+                deleting = true;
+                timer = window.setTimeout(animatePlaceholder, 1400);
+            } else if (letterIndex > 0) {
+                letterIndex--;
+                timer = window.setTimeout(animatePlaceholder, 45);
+            } else {
+                deleting = false;
+                phraseIndex = (phraseIndex + 1) % phrases.length;
+                timer = window.setTimeout(animatePlaceholder, 350);
+            }
+        }
+
+        input.addEventListener('focus', () => {
+            window.clearTimeout(timer);
+            input.placeholder = 'Ne arıyorsunuz?';
+        });
+
+        input.addEventListener('blur', () => {
+            if (input.value) return;
+            letterIndex = 0;
+            deleting = false;
+            timer = window.setTimeout(animatePlaceholder, 350);
+        });
+
+        animatePlaceholder();
+    })();
+</script>

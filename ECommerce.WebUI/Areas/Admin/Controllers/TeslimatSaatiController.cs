@@ -8,7 +8,7 @@ using System.Text.Json;
 namespace ECommerce.WebUI.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class TeslimatSaatiController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;

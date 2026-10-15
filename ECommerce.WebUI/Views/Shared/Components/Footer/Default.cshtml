@@ -1,209 +1,604 @@
-﻿@model ECommerce.WebUI.Models.FooterViewModel
+@model ECommerce.WebUI.Models.FooterViewModel
 
-<footer class="site-footer text-white pt-5 pb-3" style="background-color: var(--site-primary);">
-    <div class="container py-4">
-        <div class="row g-4 justify-content-between align-items-start">
+@{
+    string waNumara = !string.IsNullOrEmpty(Model.AdminWhatsAppNumarasi) ? Model.AdminWhatsAppNumarasi : Model.Telefon1;
+    if (string.IsNullOrEmpty(waNumara)) waNumara = "05345268550";
 
-            <!-- 1. KOLON: Logo, Slogan ve İletişim Bilgileri -->
-            <div class="col-lg-3 col-md-6">
-                @if (!string.IsNullOrEmpty(Model.LogoUrl))
-                {
-                    <div class="mb-3 d-inline-block p-2 bg-white rounded-3 shadow-sm footer-logo-wrapper">
-                        <img src="@Model.LogoUrl" alt="@Model.FirmaAdi" style="max-height: 50px; width: auto; object-fit: contain;" />
-                    </div>
-                }
-                else
-                {
-                    <h4 class="fw-bold text-white mb-3" style="letter-spacing: 0.5px;">@Model.FirmaAdi</h4>
-                }
+    var temizTel = waNumara.Replace(" ", "").Replace("-", "").Replace("(", "").Replace(")", "").Replace("+", "");
+    if (!temizTel.StartsWith("90")) temizTel = "90" + temizTel;
 
-                <p class="small text-white-50 mb-4" style="line-height: 1.7;">
-                    En şık ve hızlı teslimatlı çiçekçiniz olarak siparişlerinizi web sitemizden hızlı ve güvenli şekilde gerçekleştirebilirsiniz.
-                </p>
+    string firma = string.IsNullOrWhiteSpace(Model.FirmaAdi) || Model.FirmaAdi == "Çiçekçilik" ? "Lidya Çiçekçilik" : Model.FirmaAdi;
+    string telefonGoster = !string.IsNullOrWhiteSpace(Model.Telefon1) ? Model.Telefon1 : "0850 308 00 00";
+    string emailGoster = !string.IsNullOrWhiteSpace(Model.Email) ? Model.Email : "info@lidyacicekcilik.com";
+    string adresGoster = !string.IsNullOrWhiteSpace(Model.Adres) ? Model.Adres : "Çiçekçiler Caddesi, No: 18 Merkez";
+}
 
-                <ul class="list-unstyled small text-white-50 d-flex flex-column gap-2 mb-0">
-                    @if (!string.IsNullOrEmpty(Model.Adres))
-                    {
-                        <li class="d-flex align-items-start gap-2">
-                            <i class="bi bi-geo-alt-fill mt-1 text-white"></i>
-                            <span>@Model.Adres</span>
-                        </li>
-                    }
-                    @if (!string.IsNullOrEmpty(Model.Telefon1))
-                    {
-                        <li class="d-flex align-items-center gap-2">
-                            <i class="bi bi-telephone-fill text-white"></i>
-                            <a href="tel:@Model.Telefon1" class="text-white text-decoration-none">@Model.Telefon1</a>
-                        </li>
-                    }
-                    @if (!string.IsNullOrEmpty(Model.Email))
-                    {
-                        <li class="d-flex align-items-center gap-2">
-                            <i class="bi bi-envelope-fill text-white"></i>
-                            <a href="mailto:@Model.Email" class="text-white text-decoration-none">@Model.Email</a>
-                        </li>
-                    }
-                </ul>
-            </div>
+<footer class="site-footer">
 
-            <!-- 2. KOLON: Kurumsal (Admin Menü Yönetiminden Dinamik - Konum: FooterKurumsal) -->
-            <div class="col-lg-2 col-md-6 col-6">
-                <h6 class="fw-bold mb-3 text-white text-uppercase" style="font-size: 0.95rem; letter-spacing: 1px;">Kurumsal</h6>
-                @await Component.InvokeAsync("Menu", new { konum = "FooterKurumsal" })
-            </div>
-
-            <!-- 3. KOLON: Hızlı Erişim / Popüler (Admin Menü Yönetiminden Dinamik - Konum: Footer) -->
-            <div class="col-lg-2 col-md-6 col-6">
-                <h6 class="fw-bold mb-3 text-white text-uppercase" style="font-size: 0.95rem; letter-spacing: 1px;">Hızlı Erişim</h6>
-                @await Component.InvokeAsync("Menu", new { konum = "Footer" })
-            </div>
-
-            <!-- 4. KOLON: WhatsApp Destek Kutusu -->
-            <div class="col-lg-4 col-md-6">
-                <div class="p-4 rounded-4 shadow-sm border border-white border-opacity-10" style="background: rgba(0, 0, 0, 0.15);">
-                    <div class="d-flex align-items-center gap-2 mb-2 text-white">
-                        <i class="bi bi-whatsapp fs-4 text-success"></i>
-                        <h6 class="fw-bold mb-0 text-white">WhatsApp Destek Hattı</h6>
-                    </div>
-                    <p class="small text-white-50 mb-3" style="font-size: 0.85rem;">
-                        Sorularınız için WhatsApp destek hattımızdan bize ulaşabilirsiniz.
-                    </p>
-
-                    @{
-                        string waNumara = !string.IsNullOrEmpty(Model.AdminWhatsAppNumarasi) ? Model.AdminWhatsAppNumarasi : Model.Telefon1;
-                        if (string.IsNullOrEmpty(waNumara)) waNumara = "05345268550";
-
-                        var temizTel = waNumara.Replace(" ", "").Replace("-", "").Replace("(", "").Replace(")", "").Replace("+", "");
-                        if (!temizTel.StartsWith("90")) temizTel = "90" + temizTel;
-                    }
-
-                    <a href="https://wa.me/@temizTel" target="_blank" class="whatsapp-btn text-white fw-bold rounded-pill py-3 px-4 mb-3 shadow-sm d-flex align-items-center justify-content-center gap-2 text-decoration-none" style="font-size: 1rem;">
-                        <i class="bi bi-whatsapp fs-5"></i> WhatsApp'tan Mesaj Gönder
-                    </a>
-
-                    <div class="d-flex align-items-center gap-2 text-white small p-2.5 rounded-3" style="background-color: rgba(255, 255, 255, 0.1);">
-                        <i class="bi bi-clock fs-5 text-white-50"></i>
-                        <span>Çalışma Saatleri: <strong>Her gün: 09:00-20:00</strong></span>
+    <!-- =========================================================
+         1. GÜVEN & HİZMET ROZETLERİ (Çiçekçilik Standartları)
+    ========================================================= -->
+    <div class="footer-trust-strip py-4">
+        <div class="container">
+            <div class="row g-3 justify-content-between align-items-center">
+                <div class="col-6 col-md-3">
+                    <div class="d-flex align-items-center gap-3 trust-item">
+                        <div class="trust-icon">
+                            <i class="bi bi-truck"></i>
+                        </div>
+                        <div>
+                            <div class="trust-title">Aynı Gün Teslimat</div>
+                            <div class="trust-desc">Özel saat aralığında teslim</div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Sosyal Medya -->
-                <div class="d-flex align-items-center justify-content-between mt-3 flex-wrap gap-2">
-                    <div class="d-flex gap-2">
-                        @if (!string.IsNullOrEmpty(Model.InstagramUrl))
-                        {
-                            <a href="@Model.InstagramUrl" target="_blank" class="social-icon-btn"><i class="bi bi-instagram"></i></a>
-                        }
-                        @if (!string.IsNullOrEmpty(Model.FacebookUrl))
-                        {
-                            <a href="@Model.FacebookUrl" target="_blank" class="social-icon-btn"><i class="bi bi-facebook"></i></a>
-                        }
-                        @if (!string.IsNullOrEmpty(Model.TwitterUrl))
-                        {
-                            <a href="@Model.TwitterUrl" target="_blank" class="social-icon-btn"><i class="bi bi-twitter-x"></i></a>
-                        }
-                    </div>
-                    <div class="d-flex gap-2">
-                        <span class="badge bg-white bg-opacity-10 text-white px-3 py-2 rounded-pill small border border-white border-opacity-10">Elazığ Çiçekçi</span>
-                        <span class="badge bg-white bg-opacity-10 text-white px-3 py-2 rounded-pill small border border-white border-opacity-10">Merkez Çiçek</span>
+                <div class="col-6 col-md-3">
+                    <div class="d-flex align-items-center gap-3 trust-item">
+                        <div class="trust-icon">
+                            <i class="bi bi-flower1"></i>
+                        </div>
+                        <div>
+                            <div class="trust-title">%100 Taze Çiçek</div>
+                            <div class="trust-desc">Günlük mezattan seçilmiş</div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-        </div>
-
-        <hr class="border-white border-opacity-25 my-4">
-
-        <!-- ALT TELİF VE ÖDEME LOGOLARI ŞERİDİ -->
-        <div class="row align-items-center justify-content-between gy-3">
-            <div class="col-md-4 text-center text-md-start small text-white-50">
-                &copy; 2026 @Model.FirmaAdi. Tüm Hakları Saklıdır.
-            </div>
-
-            <div class="col-md-4 text-center">
-                <div class="d-flex justify-content-center align-items-center gap-3 bg-white py-2 px-3 rounded-pill shadow-sm d-inline-flex">
-                    <span class="fw-bold text-dark small" style="font-size: 0.75rem; letter-spacing: 0.5px;">GÜVENLİ ÖDEME</span>
-                    <span class="text-muted">|</span>
-                    <span class="fw-bold text-primary small">iyzico</span>
-                    <span class="text-danger fw-bold small">mastercard</span>
-                    <span class="text-primary fw-bold small">VISA</span>
-                    <span class="text-dark fw-bold small">TROY</span>
+                <div class="col-6 col-md-3">
+                    <div class="d-flex align-items-center gap-3 trust-item">
+                        <div class="trust-icon">
+                            <i class="bi bi-camera"></i>
+                        </div>
+                        <div>
+                            <div class="trust-title">Fotoğraflı Onay</div>
+                            <div class="trust-desc">Yola çıkmadan hazır hali</div>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <div class="col-md-4 text-center text-md-end small text-white-50">
-                Kodlama ve Tasarım <i class="bi bi-heart-fill text-danger"></i> by
-                <a href="https://www.hayatisleri.com.tr" target="_blank" class="text-white text-decoration-none fw-bold footer-brand-link">
-                    Hayat İşleri İşletme Çözümleri
-                </a>
+                <div class="col-6 col-md-3">
+                    <div class="d-flex align-items-center gap-3 trust-item">
+                        <div class="trust-icon">
+                            <i class="bi bi-shield-check"></i>
+                        </div>
+                        <div>
+                            <div class="trust-title">Güvenli Alışveriş</div>
+                            <div class="trust-desc">256-Bit SSL & 3D Secure</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
+    <!-- =========================================================
+         2. ANA FOOTER GÖVDESİ
+    ========================================================= -->
+    <div class="footer-main-content py-5">
+        <div class="container">
+            <div class="row g-4 justify-content-between">
+
+                <!-- 1. SÜTUN: Marka, Açıklama ve İletişim -->
+                <div class="col-lg-3 col-md-6">
+                    <div class="footer-brand mb-3">
+                        @if (!string.IsNullOrEmpty(Model.LogoUrl))
+                        {
+                            <div class="logo-box d-inline-flex p-2 bg-white rounded-3 shadow-sm mb-3">
+                                <img src="@Model.LogoUrl" alt="@firma" style="max-height: 48px; width: auto; object-fit: contain;" />
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="logo-box d-inline-flex align-items-center gap-2 p-2 px-3 bg-white text-dark rounded-3 shadow-sm mb-3">
+                                <i class="bi bi-flower2 text-success fs-4"></i>
+                                <span class="fw-bold fs-5 text-dark" style="font-family: 'Playfair Display', serif;">@firma</span>
+                            </div>
+                        }
+                        <p class="footer-text mb-4">
+                            En taze çiçekler, özenle hazırlanan tasarım buketler ve hızlı teslimat güvencesiyle özel anlarınıza zarafet katıyoruz.
+                        </p>
+                    </div>
+
+                    <div class="footer-contact-list">
+                        <div class="contact-row">
+                            <i class="bi bi-geo-alt-fill contact-icon"></i>
+                            <span>@adresGoster</span>
+                        </div>
+                        <div class="contact-row">
+                            <i class="bi bi-telephone-fill contact-icon"></i>
+                            <a href="tel:@telefonGoster" class="contact-link">@telefonGoster</a>
+                        </div>
+                        <div class="contact-row">
+                            <i class="bi bi-envelope-fill contact-icon"></i>
+                            <a href="mailto:@emailGoster" class="contact-link">@emailGoster</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. SÜTUN: Kurumsal Linkler -->
+                <div class="col-lg-2 col-md-6 col-6">
+                    <h5 class="footer-column-title">KURUMSAL</h5>
+                    <ul class="footer-links-list">
+                        <li><a href="/Hakkimizda"><i class="bi bi-chevron-right"></i> Hakkımızda</a></li>
+                        <li><a href="/Iletisim"><i class="bi bi-chevron-right"></i> İletişim & Konum</a></li>
+                        <li><a href="/BankaHesaplari"><i class="bi bi-chevron-right"></i> Banka Hesapları</a></li>
+                        <li><a href="/BlogSite"><i class="bi bi-chevron-right"></i> Çiçek Bakım Rehberi</a></li>
+                        <li><a href="/SayfaSite/Detay/mesafeli-satis-sozlesmesi"><i class="bi bi-chevron-right"></i> Mesafeli Satış Sözleşmesi</a></li>
+                        <li><a href="/SayfaSite/Detay/iptal-ve-iade"><i class="bi bi-chevron-right"></i> İptal ve İade Şartları</a></li>
+                        <li><a href="/SayfaSite/Detay/gizlilik-ve-guvenlik"><i class="bi bi-chevron-right"></i> Gizlilik & Güvenlik</a></li>
+                    </ul>
+                </div>
+
+                <!-- 3. SÜTUN: Popüler Kategoriler -->
+                <div class="col-lg-3 col-md-6 col-6">
+                    <h5 class="footer-column-title">HIZLI ERİŞİM</h5>
+                    <ul class="footer-links-list">
+                        <li><a href="/Urun"><i class="bi bi-chevron-right"></i> Tüm Çiçekler</a></li>
+                        <li><a href="/Urun?kategori=guller"><i class="bi bi-chevron-right"></i> Güller & Buketler</a></li>
+                        <li><a href="/Urun?kategori=kutuda-cicekler"><i class="bi bi-chevron-right"></i> Kutuda Çiçek Aranjmanları</a></li>
+                        <li><a href="/Urun?kategori=saksi-cicekleri"><i class="bi bi-chevron-right"></i> Saksı & İç Mekan Bitkileri</a></li>
+                        <li><a href="/Urun?kategori=dogum-gunu"><i class="bi bi-chevron-right"></i> Doğum Günü Çiçekleri</a></li>
+                        <li><a href="/Urun?kategori=vip"><i class="bi bi-chevron-right"></i> VIP Tasarım Çiçekler</a></li>
+                        <li><a href="/Urun?kategori=celenk"><i class="bi bi-chevron-right"></i> Çelenk & Ferforje</a></li>
+                    </ul>
+                </div>
+
+                <!-- 4. SÜTUN: WhatsApp Destek & Çalışma Saatleri -->
+                <div class="col-lg-3 col-md-6">
+                    <div class="footer-card-box">
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <i class="bi bi-whatsapp fs-3 text-success"></i>
+                            <div>
+                                <h6 class="fw-bold mb-0">WhatsApp Canlı Destek</h6>
+                                <span class="card-subtitle">Sipariş & Bilgi Hattı</span>
+                            </div>
+                        </div>
+
+                        <p class="card-desc">
+                            Sorularınız, özel sipariş talepleriniz ve sipariş durumunuz için bize hemen WhatsApp'tan yazabilirsiniz.
+                        </p>
+
+                        <a href="https://wa.me/@temizTel?text=Merhaba,%20çiçek%20siparişi%20hakkında%20bilgi%20almak%20istiyorum." target="_blank" class="footer-wa-btn">
+                            <i class="bi bi-whatsapp fs-5"></i>
+                            <span>WhatsApp'tan Mesaj Gönder</span>
+                        </a>
+
+                        <div class="hours-badge">
+                            <i class="bi bi-clock-history"></i>
+                            <span>Çalışma Saatleri: <strong>Her gün 09:00 - 20:00</strong></span>
+                        </div>
+                    </div>
+
+                    <!-- Sosyal Medya ve Rozetler -->
+                    <div class="d-flex align-items-center justify-content-between mt-3 flex-wrap gap-2">
+                        <div class="footer-social-icons">
+                            @if (!string.IsNullOrEmpty(Model.InstagramUrl))
+                            {
+                                <a href="@Model.InstagramUrl" target="_blank" title="Instagram"><i class="bi bi-instagram"></i></a>
+                            }
+                            else
+                            {
+                                <a href="#" title="Instagram"><i class="bi bi-instagram"></i></a>
+                            }
+
+                            @if (!string.IsNullOrEmpty(Model.FacebookUrl))
+                            {
+                                <a href="@Model.FacebookUrl" target="_blank" title="Facebook"><i class="bi bi-facebook"></i></a>
+                            }
+                            else
+                            {
+                                <a href="#" title="Facebook"><i class="bi bi-facebook"></i></a>
+                            }
+
+                            @if (!string.IsNullOrEmpty(Model.TwitterUrl))
+                            {
+                                <a href="@Model.TwitterUrl" target="_blank" title="Twitter"><i class="bi bi-twitter-x"></i></a>
+                            }
+                            <a href="https://wa.me/@temizTel" target="_blank" class="wa-social" title="WhatsApp"><i class="bi bi-whatsapp"></i></a>
+                        </div>
+
+                        <div class="d-flex gap-1">
+                            <span class="location-badge">Yerel Teslimat</span>
+                            <span class="location-badge">Özel Kurye</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         3. ALT TELİF & ÖDEME LOGOLARI ŞERİDİ
+    ========================================================= -->
+    <div class="footer-bottom-bar py-3">
+        <div class="container">
+            <div class="row align-items-center justify-content-between gy-3">
+                <div class="col-md-4 text-center text-md-start">
+                    <span class="copyright-text">&copy; @DateTime.Now.Year @firma. Tüm Hakları Saklıdır.</span>
+                </div>
+
+                <div class="col-md-4 text-center">
+                    <div class="payment-badge-pill">
+                        <span class="payment-label">GÜVENLİ ÖDEME</span>
+                        <span class="separator">|</span>
+                        <span class="iyzico-text">iyzico</span>
+                        <span class="mc-text">mastercard</span>
+                        <span class="visa-text">VISA</span>
+                        <span class="troy-text">TROY</span>
+                    </div>
+                </div>
+
+                <div class="col-md-4 text-center text-md-end">
+                    <div class="footer-bottom-links">
+                        <a href="/SayfaSite/Detay/gizlilik-ve-guvenlik">Gizlilik</a>
+                        <span class="dot">•</span>
+                        <a href="/SayfaSite/Detay/mesafeli-satis-sozlesmesi">Mesafeli Satış</a>
+                        <span class="dot">•</span>
+                        <a href="/SayfaSite/Detay/iptal-ve-iade">İptal & İade</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </footer>
 
 <style>
-    .footer-link {
+    /* =========================================================
+       FOOTER MODERN BOTANİK TEMA TASARIMI
+    ========================================================= */
+    .site-footer {
+        background: linear-gradient(180deg, #183e29 0%, #10291b 100%) !important;
+        color: #ffffff;
+        font-family: 'Outfit', sans-serif;
+        border-top: 3px solid #2d6a4f;
+    }
+
+    /* 1. Trust Bar (Güven Bandı) */
+    .footer-trust-strip {
+        background: rgba(0, 0, 0, 0.22);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .trust-item {
+        padding: 0.5rem 0.25rem;
+    }
+
+    .trust-icon {
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #a7f3d0;
+        font-size: 1.35rem;
+        transition: transform 0.25s ease, background 0.25s ease;
+    }
+
+    .trust-item:hover .trust-icon {
+        transform: translateY(-3px) scale(1.05);
+        background: rgba(255, 255, 255, 0.2);
+        color: #ffffff;
+    }
+
+    .trust-title {
+        font-weight: 600;
+        font-size: 0.92rem;
+        color: #ffffff;
+        line-height: 1.2;
+    }
+
+    .trust-desc {
+        font-size: 0.78rem;
+        color: rgba(255, 255, 255, 0.6);
+        margin-top: 2px;
+    }
+
+    /* 2. Ana Gövde & Kolonlar */
+    .footer-main-content {
+        background: transparent;
+    }
+
+    .footer-text {
+        color: rgba(255, 255, 255, 0.75);
+        font-size: 0.88rem;
+        line-height: 1.65;
+    }
+
+    .footer-contact-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.65rem;
+    }
+
+    .contact-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.6rem;
+        font-size: 0.88rem;
+        color: rgba(255, 255, 255, 0.85);
+    }
+
+    .contact-icon {
+        color: #a7f3d0;
+        font-size: 1rem;
+        margin-top: 2px;
+        flex-shrink: 0;
+    }
+
+    .contact-link {
+        color: rgba(255, 255, 255, 0.85);
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    .contact-link:hover {
+        color: #ffffff;
+        text-decoration: underline;
+    }
+
+    /* Kolon Başlıkları */
+    .footer-column-title {
+        font-size: 0.95rem;
+        font-weight: 700;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+        color: #ffffff;
+        margin-bottom: 1.25rem;
+        position: relative;
+        padding-bottom: 0.5rem;
+    }
+
+    .footer-column-title::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 32px;
+        height: 2px;
+        background: #52b788;
+        border-radius: 2px;
+    }
+
+    /* Link Listeleri */
+    .footer-links-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.65rem;
+    }
+
+    .footer-links-list li a {
+        color: rgba(255, 255, 255, 0.72);
+        text-decoration: none;
+        font-size: 0.88rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
         transition: all 0.2s ease;
     }
 
-        .footer-link:hover {
-            color: #ffffff !important;
-            padding-left: 4px;
-        }
+    .footer-links-list li a i {
+        font-size: 0.7rem;
+        color: #74c69d;
+        transition: transform 0.2s ease;
+    }
 
-    /* WhatsApp Butonu */
-    .whatsapp-btn {
-        background-color: #25d366 !important;
-        color: #ffffff !important;
-        border: none !important;
-        transition: all 0.3s ease;
-        width: 100%;
+    .footer-links-list li a:hover {
+        color: #ffffff;
+        transform: translateX(4px);
+    }
+
+    .footer-links-list li a:hover i {
+        color: #ffffff;
+        transform: translateX(2px);
+    }
+
+    /* 4. Kolon: WhatsApp Destek Kutusu */
+    .footer-card-box {
+        background: rgba(0, 0, 0, 0.25);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 1rem;
+        padding: 1.25rem;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-subtitle {
+        font-size: 0.78rem;
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    .card-desc {
+        font-size: 0.82rem;
+        color: rgba(255, 255, 255, 0.75);
+        margin: 0.75rem 0 1rem;
+        line-height: 1.5;
+    }
+
+    .footer-wa-btn {
+        background: #25D366;
+        color: #ffffff;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.92rem;
+        padding: 0.75rem 1rem;
+        border-radius: 50rem;
         display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        transition: all 0.25s ease;
+        box-shadow: 0 4px 15px rgba(37, 211, 102, 0.35);
+        margin-bottom: 0.85rem;
     }
 
-        .whatsapp-btn:hover {
-            background-color: #128c7e !important;
-            color: #ffffff !important;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4) !important;
-        }
-
-    /* Siyah/Çizim Logolar İçin Şık Beyaz Zemin Kutusu */
-    .footer-logo-wrapper {
-        background-color: #ffffff;
-        border-radius: 8px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    .footer-wa-btn:hover {
+        background: #1da851;
+        color: #ffffff;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(37, 211, 102, 0.5);
     }
 
-    /* Sosyal Medya Yuvarlak Butonları */
-    .social-icon-btn {
-        width: 38px;
-        height: 38px;
-        background-color: #ffffff;
-        color: #24213d;
+    .hours-badge {
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 0.5rem;
+        padding: 0.55rem 0.75rem;
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.85);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    /* Sosyal Medya İkonları */
+    .footer-social-icons {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .footer-social-icons a {
+        width: 36px;
+        height: 36px;
         border-radius: 50%;
+        background: #ffffff;
+        color: #1b4332;
         display: flex;
         align-items: center;
         justify-content: center;
         text-decoration: none;
-        font-size: 1.1rem;
-        transition: all 0.25s ease;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        font-size: 1rem;
+        transition: all 0.2s ease;
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
     }
 
-        .social-icon-btn:hover {
-            background-color: var(--site-primary);
-            color: #ffffff;
-            transform: translateY(-2px);
-        }
+    .footer-social-icons a:hover {
+        background: #52b788;
+        color: #ffffff;
+        transform: translateY(-2px);
+    }
 
-    /* Firma Linki Hover Efekti */
-    .footer-brand-link {
+    .location-badge {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: rgba(255, 255, 255, 0.85);
+        padding: 0.25rem 0.6rem;
+        border-radius: 50rem;
+        font-size: 0.75rem;
+    }
+
+    /* 3. Alt Bar */
+    .footer-bottom-bar {
+        background: rgba(0, 0, 0, 0.4);
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .copyright-text {
+        font-size: 0.82rem;
+        color: rgba(255, 255, 255, 0.65);
+    }
+
+    .payment-badge-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.65rem;
+        background: #ffffff;
+        padding: 0.35rem 0.85rem;
+        border-radius: 50rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .payment-label {
+        font-weight: 700;
+        font-size: 0.7rem;
+        color: #1b4332;
+        letter-spacing: 0.5px;
+    }
+
+    .separator {
+        color: #ccc;
+        font-size: 0.75rem;
+    }
+
+    .iyzico-text {
+        font-weight: 700;
+        font-size: 0.78rem;
+        color: #1b4d89;
+    }
+
+    .mc-text {
+        font-weight: 700;
+        font-size: 0.75rem;
+        color: #eb001b;
+    }
+
+    .visa-text {
+        font-weight: 800;
+        font-size: 0.78rem;
+        color: #1a1f71;
+    }
+
+    .troy-text {
+        font-weight: 800;
+        font-size: 0.75rem;
+        color: #0b2f6d;
+    }
+
+    .footer-bottom-links {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        font-size: 0.8rem;
+    }
+
+    @@media (min-width: 768px) {
+        .footer-bottom-links {
+            justify-content: flex-end;
+        }
+    }
+
+    .footer-bottom-links a {
+        color: rgba(255, 255, 255, 0.65);
+        text-decoration: none;
         transition: color 0.2s ease;
     }
 
-        .footer-brand-link:hover {
-            color: #f8f9fa !important;
-            text-decoration: underline !important;
-        }
+    .footer-bottom-links a:hover {
+        color: #ffffff;
+        text-decoration: underline;
+    }
+
+    .footer-bottom-links .dot {
+        color: rgba(255, 255, 255, 0.3);
+    }
+
+    .site-footer {
+        background: linear-gradient(180deg, #f4efeb 0%, #eee8e3 100%) !important;
+        color: #34483e;
+        border-top: 1px solid #ead9dc;
+    }
+
+    .footer-trust-strip { background: #e9eee8; border-bottom-color: rgba(26, 58, 47, .1); }
+    .trust-icon { background: #dce8dd; color: #984255; }
+    .trust-item:hover .trust-icon { background: #1a3a2f; color: #fff; }
+    .trust-title, .footer-column-title { color: #243b31; }
+    .trust-desc, .footer-text, .contact-row, .contact-link, .card-subtitle, .card-desc, .hours-badge { color: #637168; }
+    .contact-icon, .footer-links-list li a i { color: #984255; }
+    .footer-column-title::after { background: #c77d8e; }
+    .footer-links-list li a, .footer-bottom-links a { color: #53645b; }
+    .footer-links-list li a:hover, .footer-links-list li a:hover i, .footer-bottom-links a:hover { color: #984255; }
+    .footer-card-box { background: #fff; border-color: rgba(26, 58, 47, .1); box-shadow: 0 8px 24px rgba(26, 58, 47, .06); }
+    .footer-card-box h6 { color: #1a3a2f; }
+    .hours-badge, .location-badge { background: #f4f7f3; border-color: #e1e9e1; color: #53645b; }
+    .footer-social-icons a { color: #1b4332; box-shadow: 0 3px 8px rgba(26, 58, 47, .1); }
+    .footer-social-icons a:hover { background: #1a3a2f; color: #fff; }
+    .footer-bottom-bar { background: #e8e3de; border-top-color: rgba(26, 58, 47, .1); }
+    .copyright-text { color: #68766d; }
+    .footer-bottom-links .dot { color: #a5aaa5; }
 </style>

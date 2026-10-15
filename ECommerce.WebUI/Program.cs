@@ -1,35 +1,35 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
+ï»¿using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
-// 1. WebAPI Projesine Ýstek Atacak HttpClient Yapýlandýrmasý
-// PORT NUMARASINI 7192 OLARAK GÜNCELLÝYORUZ
+// 1. WebAPI Projesine ï¿½stek Atacak HttpClient Yapï¿½landï¿½rmasï¿½
+// PORT NUMARASINI 7192 OLARAK Gï¿½NCELLï¿½YORUZ
 builder.Services.AddHttpClient("ApiClient", client =>
 {
     client.BaseAddress = new Uri("https://localhost:7192/api/");
 });
 
-//// 1. WebAPI Projesine Ýstek Atacak HttpClient Yapýlandýrmasý
+//// 1. WebAPI Projesine ï¿½stek Atacak HttpClient Yapï¿½landï¿½rmasï¿½
 //builder.Services.AddHttpClient("ApiClient", client =>
 //{
-//    // appsettings.json dosyasýndan okur, eðer bulamazsa canlý adresinizi baz alýr
+//    // appsettings.json dosyasï¿½ndan okur, eï¿½er bulamazsa canlï¿½ adresinizi baz alï¿½r
 //    var apiBaseUrl = builder.Configuration["ApiSettings:ApiBaseUrl"] ?? "https://api.demo.elaziglidyacicekcilik.com";
 //    client.BaseAddress = new Uri(apiBaseUrl.EndsWith("/") ? apiBaseUrl : apiBaseUrl + "/");
 //});
 
-// HttpContext'e ve tarayýcýdaki Cookie'lere eriþebilmek için eklenen servis
+// HttpContext'e ve tarayï¿½cï¿½daki Cookie'lere eriï¿½ebilmek iï¿½in eklenen servis
 builder.Services.AddHttpContextAccessor();
 
-// 2. Tarayýcýda Oturum Yönetimi (Cookie Authentication)
+// 2. Tarayï¿½cï¿½da Oturum Yï¿½netimi (Cookie Authentication)
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/Admin/Auth/Login";
-        options.LogoutPath = "/Admin/Auth/Logout";
-        options.AccessDeniedPath = "/Admin/Auth/AccessDenied";
-        options.Cookie.Name = "ECommerceAdminAuth";
+        options.LoginPath = "/Hesap/Giris";
+        options.LogoutPath = "/Hesap/Cikis";
+        options.AccessDeniedPath = "/Hesap/Giris";
+        options.Cookie.Name = "ECommerceAuth";
         options.ExpireTimeSpan = TimeSpan.FromDays(7);
     });
 
@@ -46,10 +46,10 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthentication(); // Cookie'yi okumasý için eklendi
+app.UseAuthentication(); // Cookie'yi okumasï¿½ iï¿½in eklendi
 app.UseAuthorization();
 
-// 3. Admin Paneli (Area) Yönlendirmesi
+// 3. Admin Paneli (Area) Yï¿½nlendirmesi
 app.MapControllerRoute(
     name: "areas",
     pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}");

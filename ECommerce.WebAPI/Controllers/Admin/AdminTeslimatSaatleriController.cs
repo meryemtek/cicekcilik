@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerce.WebAPI.Controllers.Admin
 {
-    [Authorize] // Admin yetkilendirmesi
+    [Authorize(Roles = "Admin")] // Admin yetkilendirmesi
     [Route("api/admin/teslimat-saatleri")]
     [ApiController]
     public class AdminTeslimatSaatleriController : ControllerBase

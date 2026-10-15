@@ -13,7 +13,7 @@ using ECommerce.Application.DTOs.Blog;
 namespace ECommerce.WebUI.Areas.Admin.Controllers;
 
 [Area("Admin")]
-[Authorize]
+[Authorize(Roles = "Admin")]
 public class BlogController : Controller
 {
     private readonly IHttpClientFactory _httpClientFactory;

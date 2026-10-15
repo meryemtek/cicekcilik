@@ -14,7 +14,7 @@ using ECommerce.Application.DTOs.Urun;
 namespace ECommerce.WebUI.Areas.Admin.Controllers;
 
 [Area("Admin")]
-[Authorize]
+[Authorize(Roles = "Admin")]
 public class UrunVaryantController : Controller
 {
     private readonly IHttpClientFactory _httpClientFactory;

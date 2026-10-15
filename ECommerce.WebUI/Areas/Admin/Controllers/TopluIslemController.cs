@@ -14,7 +14,7 @@ using ECommerce.Application.DTOs.Kategori;
 namespace ECommerce.WebUI.Areas.Admin.Controllers;
 
 [Area("Admin")]
-[Authorize]
+[Authorize(Roles = "Admin")]
 public class TopluIslemController : Controller
 {
     private readonly IHttpClientFactory _httpClientFactory;

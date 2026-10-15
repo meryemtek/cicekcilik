@@ -39,6 +39,7 @@ public class UygulamaDbContext : IdentityDbContext<UygulamaKullanicisi, Identity
     public DbSet<OdemeBildirimi> OdemeBildirimleri { get; set; }
     public DbSet<TeslimatSaati> TeslimatSaatleri { get; set; }
     public DbSet<Favori> Favoriler { get; set; } = null!;
+    public DbSet<KayitliAdres> KayitliAdresler { get; set; } = null!;
 
     // --- YENİ MENÜ SİSTEMİ TABLOLARI ---
     public DbSet<MenuGrup> MenuGruplari { get; set; } = null!;
@@ -47,6 +48,22 @@ public class UygulamaDbContext : IdentityDbContext<UygulamaKullanicisi, Identity
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+
+        builder.Entity<KayitliAdres>(entity =>
+        {
+            entity.HasKey(a => a.Id);
+            entity.Property(a => a.Baslik).HasMaxLength(60).IsRequired();
+            entity.Property(a => a.AliciAdSoyad).HasMaxLength(120).IsRequired();
+            entity.Property(a => a.Telefon).HasMaxLength(25).IsRequired();
+            entity.Property(a => a.Il).HasMaxLength(80).IsRequired();
+            entity.Property(a => a.Ilce).HasMaxLength(80).IsRequired();
+            entity.Property(a => a.AcikAdres).HasMaxLength(500).IsRequired();
+            entity.HasIndex(a => a.KullaniciId);
+            entity.HasOne(a => a.Kullanici)
+                .WithMany(k => k.KayitliAdresler)
+                .HasForeignKey(a => a.KullaniciId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
 
         builder.Entity<Urun>(entity =>
         {

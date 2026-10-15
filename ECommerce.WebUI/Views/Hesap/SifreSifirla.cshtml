@@ -1,0 +1,220 @@
+@model ECommerce.Application.DTOs.Auth.SifreSifirlaDto
+@{
+    ViewData["Title"] = "Yeni Şifre Belirleme";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="bf-auth-page py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 col-lg-5">
+                <div class="bf-auth-card">
+                    <!-- Üst Başlık & Rozet -->
+                    <div class="text-center mb-4">
+                        <span class="bf-auth-badge mb-3">
+                            <i class="bi bi-shield-check" aria-hidden="true"></i> Güvenli Hesap
+                        </span>
+                        <h1 class="bf-auth-title">Yeni Şifre Belirleyin</h1>
+                        <p class="bf-auth-subtitle">
+                            <strong>@Model.Email</strong> hesabınız için yeni bir şifre tanımlayın.
+                        </p>
+                    </div>
+
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert bf-auth-alert alert-dismissible fade show" role="alert">
+                            <i class="bi bi-exclamation-circle-fill me-2"></i>
+                            <div asp-validation-summary="All" class="d-inline m-0"></div>
+                            <button type="button" class="btn-close shadow-none" data-bs-dismiss="alert" aria-label="Kapat"></button>
+                        </div>
+                    }
+
+                    <form asp-action="SifreSifirla" method="post" class="bf-auth-form">
+                        <input type="hidden" asp-for="Email" />
+                        <input type="hidden" asp-for="Token" />
+
+                        <div class="mb-3">
+                            <label asp-for="YeniSifre" class="form-label bf-form-label">Yeni Şifre</label>
+                            <div class="input-group bf-input-group">
+                                <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                <input asp-for="YeniSifre" type="password" id="yeniSifreInput" class="form-control" placeholder="En az 6 karakter" required autocomplete="new-password" />
+                                <button type="button" class="btn btn-outline-secondary bf-toggle-pass" onclick="togglePasswordVisibility('yeniSifreInput', this)">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="YeniSifreTekrar" class="form-label bf-form-label">Yeni Şifre (Tekrar)</label>
+                            <div class="input-group bf-input-group">
+                                <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                                <input asp-for="YeniSifreTekrar" type="password" id="yeniSifreTekrarInput" class="form-control" placeholder="Şifrenizi tekrar yazın" required autocomplete="new-password" />
+                                <button type="button" class="btn btn-outline-secondary bf-toggle-pass" onclick="togglePasswordVisibility('yeniSifreTekrarInput', this)">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn bf-auth-submit-btn w-100">
+                            <span>Şifremi Güncelle</span>
+                            <i class="bi bi-check-lg ms-2"></i>
+                        </button>
+                    </form>
+
+                    <div class="text-center mt-4 pt-3 border-top bf-auth-footer">
+                        <p class="text-muted small mb-0">
+                            Şifrenizi hatırladınız mı?
+                            <a href="/Hesap/Giris" class="bf-register-link">Giriş Yap</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bf-auth-page {
+        background: radial-gradient(circle at 10% 15%, rgba(255, 217, 222, .35), transparent 45%),
+                    radial-gradient(circle at 90% 85%, rgba(199, 235, 218, .35), transparent 45%),
+                    #fcf9f8;
+        min-height: 75vh;
+        display: flex;
+        align-items: center;
+    }
+
+    .bf-auth-card {
+        background: #ffffff;
+        border: 1px solid rgba(232, 130, 150, .25);
+        border-radius: 28px;
+        padding: 42px 36px;
+        box-shadow: 0 16px 40px -8px rgba(26, 58, 47, .08), 0 6px 16px rgba(232, 130, 150, .08);
+    }
+
+    .bf-auth-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 14px;
+        border-radius: 999px;
+        background: #c7ebda;
+        color: #1a3a2f;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+    }
+
+    .bf-auth-title {
+        color: #02241a;
+        font-family: 'Playfair Display', Georgia, serif !important;
+        font-size: 1.85rem;
+        font-weight: 600;
+        letter-spacing: -.01em;
+        margin-bottom: 6px;
+    }
+
+    .bf-auth-subtitle {
+        color: #727974;
+        font-size: .88rem;
+        font-weight: 300;
+        line-height: 1.5;
+        margin-bottom: 0;
+    }
+
+    .bf-form-label {
+        font-size: .78rem;
+        font-weight: 600;
+        letter-spacing: .02em;
+        color: #1a3a2f;
+    }
+
+    .bf-input-group {
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid rgba(114, 121, 116, .3);
+        transition: border-color .2s ease, box-shadow .2s ease;
+    }
+    .bf-input-group:focus-within {
+        border-color: #1a3a2f !important;
+        box-shadow: 0 0 0 3px rgba(26, 58, 47, .1);
+    }
+    .bf-input-group .input-group-text {
+        background-color: #fbfaf9;
+        border: none;
+        color: #984255;
+        padding-left: 14px;
+    }
+    .bf-input-group .form-control {
+        border: none;
+        padding: 11px 14px;
+        font-size: .92rem;
+        box-shadow: none !important;
+    }
+
+    .bf-toggle-pass {
+        border: none;
+        background: #fbfaf9;
+        color: #727974;
+    }
+    .bf-toggle-pass:hover {
+        background: #f0eded;
+        color: #02241a;
+    }
+
+    .bf-auth-submit-btn {
+        background: #1a3a2f;
+        color: #fcf9f8;
+        border-radius: 999px;
+        padding: 13px 24px;
+        font-size: .85rem;
+        font-weight: 600;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        border: none;
+        box-shadow: 0 6px 16px rgba(26, 58, 47, .2);
+        transition: all .25s ease;
+    }
+    .bf-auth-submit-btn:hover {
+        background: #02241a;
+        color: #ffffff;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 22px rgba(26, 58, 47, .3);
+    }
+
+    .bf-register-link {
+        color: #984255;
+        font-weight: 700;
+        text-decoration: none;
+        margin-left: 4px;
+    }
+    .bf-register-link:hover {
+        color: #3f0015;
+        text-decoration: underline;
+    }
+
+    .bf-auth-alert {
+        background-color: #ffd9de;
+        border: 1px solid rgba(152, 66, 85, .3);
+        color: #3f0015;
+        border-radius: 14px;
+        font-size: .82rem;
+        padding: 10px 14px;
+    }
+</style>
+
+<script>
+    function togglePasswordVisibility(inputId, btn) {
+        const input = document.getElementById(inputId);
+        const icon = btn.querySelector('i');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.remove('bi-eye');
+            icon.classList.add('bi-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.remove('bi-eye-slash');
+            icon.classList.add('bi-eye');
+        }
+    }
+</script>

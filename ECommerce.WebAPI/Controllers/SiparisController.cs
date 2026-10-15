@@ -31,6 +31,18 @@ namespace ECommerce.WebAPI.Controllers
             return Ok(siparisler);
         }
 
+        [Authorize]
+        [HttpGet("benim-siparislerim/{id:guid}")]
+        public async Task<IActionResult> BenimSiparisDetayim(Guid id)
+        {
+            var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!Guid.TryParse(userIdString, out var kullaniciId)) return Unauthorized();
+            var siparisler = await _siparisServisi.KullanicininSiparisleriniGetirAsync(kullaniciId);
+            if (!siparisler.Any(s => s.Id == id)) return NotFound();
+            var detay = await _siparisServisi.SiparisDetayGetirAsync(id);
+            return detay == null ? NotFound() : Ok(detay);
+        }
+
         [HttpPost("olustur")]
         public async Task<IActionResult> SiparisOlustur([FromBody] SiparisOlusturDto dto)
         {

@@ -31,7 +31,7 @@ public class KategorilerController : ControllerBase
         return Ok(kategori);
     }
 
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<IActionResult> Ekle([FromBody] KategoriEkleDto dto)
     {
@@ -39,7 +39,7 @@ public class KategorilerController : ControllerBase
         return Ok(new { Id = id, Mesaj = "Kategori başarıyla eklendi." });
     }
 
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     [HttpPut]
     public async Task<IActionResult> Guncelle([FromBody] KategoriGuncelleDto dto)
     {
@@ -47,7 +47,7 @@ public class KategorilerController : ControllerBase
         return Ok(new { Mesaj = "Kategori başarıyla güncellendi." });
     }
 
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Sil(Guid id)
     {

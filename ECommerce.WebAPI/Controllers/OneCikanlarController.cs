@@ -24,7 +24,7 @@ namespace ECommerce.WebAPI.Controllers
             return Ok(urunler);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpGet("ayarlar")]
         public async Task<IActionResult> GetirAyarlar()
         {
@@ -32,7 +32,7 @@ namespace ECommerce.WebAPI.Controllers
             return Ok(ayarlar);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpPost("ayarlar")]
         public async Task<IActionResult> GuncelleAyarlar([FromBody] OneCikanDto dto)
         {

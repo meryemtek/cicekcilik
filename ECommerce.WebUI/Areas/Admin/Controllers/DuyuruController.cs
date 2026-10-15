@@ -7,7 +7,7 @@ using ECommerce.Application.DTOs.Duyuru;
 namespace ECommerce.WebUI.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class DuyuruController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;

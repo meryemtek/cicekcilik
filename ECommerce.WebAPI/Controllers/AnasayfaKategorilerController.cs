@@ -26,7 +26,7 @@ namespace ECommerce.WebAPI.Controllers
             return Ok(liste);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> TumunuGetir()
         {
@@ -35,7 +35,7 @@ namespace ECommerce.WebAPI.Controllers
             return Ok(liste);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> Getir(Guid id)
         {
@@ -47,7 +47,7 @@ namespace ECommerce.WebAPI.Controllers
             return Ok(item);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Ekle(
             [FromBody] AnasayfaKategoriEkleDto dto)
@@ -71,7 +71,7 @@ namespace ECommerce.WebAPI.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpPut]
         public async Task<IActionResult> Guncelle(
             [FromBody] AnasayfaKategoriGuncelleDto dto)
@@ -94,7 +94,7 @@ namespace ECommerce.WebAPI.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Sil(Guid id)
         {
@@ -106,7 +106,7 @@ namespace ECommerce.WebAPI.Controllers
             });
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpPut("sirala")]
         public async Task<IActionResult> Sirala([FromBody] List<Guid> idler)
         {

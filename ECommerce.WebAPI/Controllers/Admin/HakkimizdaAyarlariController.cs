@@ -5,7 +5,7 @@ using ECommerce.Application.Interfaces;
 
 namespace ECommerce.WebAPI.Controllers.Admin
 {
-    [Authorize] // Sadece giriş yapmış adminler
+    [Authorize(Roles = "Admin")] // Sadece giriş yapmış adminler
     [Route("api/admin/hakkimizda")]
     [ApiController]
     public class HakkimizdaAyarlariController : ControllerBase

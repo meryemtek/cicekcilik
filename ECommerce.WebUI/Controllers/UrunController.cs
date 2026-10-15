@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using System.Text;
 using ECommerce.Application.DTOs.Urun;
@@ -63,9 +63,11 @@ namespace ECommerce.WebUI.Controllers
                 if (bolgeResponse.IsSuccessStatusCode)
                 {
                     var bolgeContent = await bolgeResponse.Content.ReadAsStringAsync();
-                    var bolgeler = JsonSerializer.Deserialize<List<TeslimatBolgeTempDto>>(bolgeContent, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                    var bolgeler = JsonSerializer.Deserialize<List<ECommerce.Application.DTOs.SemtTeslimatBolgesi.SemtBolgeListeDto>>(bolgeContent, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-                    var aktifBolgeler = bolgeler?.Where(x => x.AktifMi).ToList() ?? new List<TeslimatBolgeTempDto>();
+                    var aktifBolgeler = bolgeler?.Where(x => x.AktifMi && (string.IsNullOrEmpty(x.IlAdi) || x.IlAdi.Equals("Elazığ", StringComparison.OrdinalIgnoreCase))).OrderBy(x => x.MahalleAdi).ToList() ?? new List<ECommerce.Application.DTOs.SemtTeslimatBolgesi.SemtBolgeListeDto>();
+
+                    ViewBag.TeslimatBolgeleri = aktifBolgeler;
 
                     // JavaScript tarafında kolayca okuyabilmek için camelCase formatında JSON'a çeviriyoruz
                     var jsonAyarlar = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
@@ -73,6 +75,7 @@ namespace ECommerce.WebUI.Controllers
                 }
                 else
                 {
+                    ViewBag.TeslimatBolgeleri = new List<ECommerce.Application.DTOs.SemtTeslimatBolgesi.SemtBolgeListeDto>();
                     ViewBag.TeslimatBolgeleriJson = "[]";
                 }
             }
@@ -192,8 +195,10 @@ namespace ECommerce.WebUI.Controllers
         }
 
         [HttpGet("urunler")]
-        public async Task<IActionResult> Urunler()
+        [HttpGet("Arama")]
+        public async Task<IActionResult> Urunler(string? q)
         {
+            var aramaMetni = q?.Trim();
             var client = _httpClientFactory.CreateClient("ApiClient");
             var response = await client.GetAsync("urunler");
 
@@ -209,6 +214,14 @@ namespace ECommerce.WebUI.Controllers
                 }
             }
 
+            if (!string.IsNullOrWhiteSpace(aramaMetni))
+            {
+                urunler = urunler.Where(x =>
+                    x.Ad.Contains(aramaMetni, StringComparison.OrdinalIgnoreCase) ||
+                    (x.UrunKodu?.Contains(aramaMetni, StringComparison.OrdinalIgnoreCase) ?? false)).ToList();
+            }
+
+            ViewBag.AramaMetni = aramaMetni;
             return View(urunler);
         }
 

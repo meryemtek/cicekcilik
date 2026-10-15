@@ -363,6 +363,24 @@ namespace ECommerce.Infrastructure.Migrations
                     b.ToTable("KartNotuSablonlari");
                 });
 
+            modelBuilder.Entity("ECommerce.Domain.Entities.KayitliAdres", b =>
+                {
+                    b.Property<Guid>("Id").ValueGeneratedOnAdd().HasColumnType("uniqueidentifier");
+                    b.Property<string>("AcikAdres").IsRequired().HasMaxLength(500).HasColumnType("nvarchar(500)");
+                    b.Property<string>("AliciAdSoyad").IsRequired().HasMaxLength(120).HasColumnType("nvarchar(120)");
+                    b.Property<string>("Baslik").IsRequired().HasMaxLength(60).HasColumnType("nvarchar(60)");
+                    b.Property<DateTime?>("GuncellenmeTarihi").HasColumnType("datetime2");
+                    b.Property<string>("Il").IsRequired().HasMaxLength(80).HasColumnType("nvarchar(80)");
+                    b.Property<string>("Ilce").IsRequired().HasMaxLength(80).HasColumnType("nvarchar(80)");
+                    b.Property<Guid>("KullaniciId").HasColumnType("uniqueidentifier");
+                    b.Property<DateTime>("OlusturulmaTarihi").HasColumnType("datetime2");
+                    b.Property<string>("Telefon").IsRequired().HasMaxLength(25).HasColumnType("nvarchar(25)");
+                    b.Property<bool>("VarsayilanMi").HasColumnType("bit");
+                    b.HasKey("Id");
+                    b.HasIndex("KullaniciId");
+                    b.ToTable("KayitliAdresler");
+                });
+
             modelBuilder.Entity("ECommerce.Domain.Entities.Kategori", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1558,6 +1576,17 @@ namespace ECommerce.Infrastructure.Migrations
                     b.Navigation("Urun");
                 });
 
+            modelBuilder.Entity("ECommerce.Domain.Entities.KayitliAdres", b =>
+                {
+                    b.HasOne("ECommerce.Domain.Entities.UygulamaKullanicisi", "Kullanici")
+                        .WithMany("KayitliAdresler")
+                        .HasForeignKey("KullaniciId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Kullanici");
+                });
+
             modelBuilder.Entity("ECommerce.Domain.Entities.Kategori", b =>
                 {
                     b.HasOne("ECommerce.Domain.Entities.Kategori", "UstKategori")
@@ -1748,6 +1777,8 @@ namespace ECommerce.Infrastructure.Migrations
 
             modelBuilder.Entity("ECommerce.Domain.Entities.UygulamaKullanicisi", b =>
                 {
+                    b.Navigation("KayitliAdresler");
+
                     b.Navigation("Siparisler");
                 });
 

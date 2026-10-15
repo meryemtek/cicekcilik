@@ -12,7 +12,7 @@ using ECommerce.Application.DTOs.BankaHesabi;
 namespace ECommerce.WebUI.Areas.Admin.Controllers;
 
 [Area("Admin")]
-[Authorize]
+[Authorize(Roles = "Admin")]
 public class BankaHesabiController : Controller
 {
     private readonly IHttpClientFactory _httpClientFactory;

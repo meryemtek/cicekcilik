@@ -1,62 +1,162 @@
-﻿@model IEnumerable<ECommerce.Application.DTOs.Duyuru.DuyuruDto>
+@model IEnumerable<ECommerce.Application.DTOs.Duyuru.DuyuruDto>
 
-@if (Model != null && Model.Any())
-{
-    <div class="announcement-bar">
-        <div class="container">
-            <div class="announcement-content">
-                @foreach (var duyuru in Model)
-                {
-                    <span>
-                        @if (!string.IsNullOrEmpty(duyuru.LinkUrl))
-                        {
-                            <a href="@duyuru.LinkUrl" class="text-white text-decoration-none">@duyuru.Metin</a>
-                        }
-                        else
-                        {
-                            @duyuru.Metin
-                        }
-                    </span>
-                    <!-- İstediğin gibi duyurular arasına çiçek ikonunu koyuyoruz -->
-                    <span class="mx-3 flower-separator"><i class="bi bi-flower1"></i></span>
-                }
-            </div>
-        </div>
-    </div>
+@{
+    var duyurular = Model?.ToList() ?? new List<ECommerce.Application.DTOs.Duyuru.DuyuruDto>();
 }
 
-<style>
-    .announcement-bar {
-        background-color: var(--site-primary, #7b1fa2);
-        color: #fff;
-        font-size: 0.85rem;
-        font-weight: 500;
-        padding: 8px 0;
-        overflow: hidden;
-        white-space: nowrap;
-    }
+@if (duyurular.Any())
+{
+    <section class="announcement-bar" aria-label="Duyurular">
+        <div class="announcement-inner">
+            <span class="announcement-badge"><i class="bi bi-stars"></i> LİDYA'DAN HABERLER</span>
+            <div class="announcement-viewport">
+                <div class="announcement-track">
+                    @foreach (var duyuru in duyurular)
+                    {
+                        <span class="announcement-item">
+                            <i class="bi bi-flower1" aria-hidden="true"></i>
+                            @if (!string.IsNullOrWhiteSpace(duyuru.LinkUrl))
+                            {
+                                <a href="@duyuru.LinkUrl">@duyuru.Metin</a>
+                            }
+                            else
+                            {
+                                <span>@duyuru.Metin</span>
+                            }
+                        </span>
+                    }
+                    @foreach (var duyuru in duyurular)
+                    {
+                        <span class="announcement-item" aria-hidden="true">
+                            <i class="bi bi-flower1"></i>
+                            @if (!string.IsNullOrWhiteSpace(duyuru.LinkUrl))
+                            {
+                                <a href="@duyuru.LinkUrl" tabindex="-1">@duyuru.Metin</a>
+                            }
+                            else
+                            {
+                                <span>@duyuru.Metin</span>
+                            }
+                        </span>
+                    }
+                </div>
+            </div>
+            <span class="announcement-sparkle" aria-hidden="true"><i class="bi bi-heart-fill"></i></span>
+        </div>
+    </section>
 
-    .announcement-content {
-        display: inline-block;
-        animation: marquee 30s linear infinite;
-    }
-
-    .flower-separator {
-        color: rgba(255, 255, 255, 0.7);
-        font-size: 0.9rem;
-    }
-
-    .announcement-bar:hover .announcement-content {
-        animation-play-state: paused;
-    }
-
-    @@keyframes marquee {
-        0% {
-            transform: translateX(100%);
+    <style>
+        .announcement-bar {
+            --announcement-green: rgba(232, 244, 235, .78);
+            --announcement-pink: rgba(250, 232, 239, .72);
+            position: relative;
+            overflow: hidden;
+            padding: 6px 0;
+            color: #486b56;
+            background: linear-gradient(105deg, var(--announcement-green), rgba(250, 241, 243, .66) 48%, var(--announcement-pink));
+            border-bottom: 1px solid rgba(201, 160, 174, .12);
         }
 
-        100% {
-            transform: translateX(-100%);
+        .announcement-inner {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 24px;
         }
-    }
-</style>
+
+        .announcement-badge {
+            display: inline-flex;
+            flex: 0 0 auto;
+            align-items: center;
+            gap: 7px;
+            padding: 5px 10px;
+            color: #a76f82;
+            background: rgba(255, 255, 255, .58);
+            border: 1px solid rgba(214, 174, 187, .2);
+            border-radius: 999px;
+            font-size: .66rem;
+            font-weight: 700;
+            letter-spacing: .08em;
+        }
+
+        .announcement-badge i,
+        .announcement-sparkle {
+            color: #c38b9e;
+        }
+
+        .announcement-viewport {
+            min-width: 0;
+            flex: 1;
+            overflow: hidden;
+            mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent);
+        }
+
+        .announcement-track {
+            display: flex;
+            width: max-content;
+            animation: announcement-scroll 15s linear infinite;
+        }
+
+        .announcement-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 30px;
+            color: #496d56;
+            font-family: 'Playfair Display', Georgia, serif !important;
+            font-size: 1rem;
+            font-weight: 500;
+            letter-spacing: .01em;
+            white-space: nowrap;
+        }
+
+        .announcement-item > span,
+        .announcement-item > a {
+            font-family: 'Playfair Display', Georgia, serif !important;
+        }
+
+        .announcement-item > i {
+            color: #c695a4;
+            font-size: 1rem;
+        }
+
+        .announcement-item a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .announcement-item a:hover {
+            color: #a76f82;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        .announcement-sparkle {
+            flex: 0 0 auto;
+            font-size: .85rem;
+        }
+
+        .announcement-bar:hover .announcement-track {
+            animation-play-state: paused;
+        }
+
+        @@keyframes announcement-scroll {
+            to { transform: translateX(-50%); }
+        }
+
+        @@media (prefers-reduced-motion: reduce) {
+            .announcement-track { animation: none; }
+            .announcement-viewport { overflow-x: auto; }
+        }
+
+        @@media (max-width: 576px) {
+            .announcement-bar { padding: 6px 0; }
+            .announcement-inner { gap: 10px; padding: 0 12px; }
+            .announcement-badge { padding: 4px 8px; font-size: .58rem; }
+            .announcement-item { padding: 0 20px; font-size: .92rem; }
+            .announcement-sparkle { display: none; }
+        }
+    </style>
+}

@@ -7,7 +7,7 @@ using ECommerce.Application.Interfaces;
 
 namespace ECommerce.WebAPI.Controllers.Admin
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     [Route("api/admin/duyurular")]
     [ApiController]
     public class AdminDuyuruController : ControllerBase

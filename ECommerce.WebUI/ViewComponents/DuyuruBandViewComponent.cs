@@ -19,8 +19,15 @@ namespace ECommerce.WebUI.ViewComponents
         {
             var client = _httpClientFactory.CreateClient("ApiClient");
 
-            // WebAPI'den aktif duyuruları çekiyoruz
-            var duyurular = await client.GetFromJsonAsync<List<DuyuruDto>>("duyurular/aktif");
+            List<DuyuruDto>? duyurular = null;
+            try
+            {
+                duyurular = await client.GetFromJsonAsync<List<DuyuruDto>>("duyurular/aktif");
+            }
+            catch (HttpRequestException)
+            {
+                // API erişilemiyorsa sayfanın geri kalanı gösterilmeye devam eder.
+            }
 
             return View(duyurular ?? new List<DuyuruDto>());
         }

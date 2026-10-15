@@ -1,4 +1,5 @@
-﻿using ECommerce.Application.DTOs.SemtTeslimatBolgesi;
+﻿using Microsoft.AspNetCore.Authorization;
+using ECommerce.Application.DTOs.SemtTeslimatBolgesi;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Headers;
 using System.Text.Json;
@@ -7,6 +8,7 @@ using System.Text;
 namespace ECommerce.WebUI.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class TeslimatController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;

@@ -9,7 +9,7 @@ using ECommerce.Application.DTOs.Hakkimizda;
 namespace ECommerce.WebUI.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class HakkimizdaAyariController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;

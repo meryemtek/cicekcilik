@@ -1,4 +1,4 @@
-﻿.product-detail-container
+.product-detail-container
 
 {
     max-width: 1200px;
@@ -350,3 +350,1284 @@
     color: #3b1154;
     font-weight: 700;
 }
+
+/* ========================================================
+   HAUTE BOTANIQUE LUXURY FLORAL DETAIL STYLES
+   ======================================================== */
+:root {
+    --fl-primary: #0D382B;
+    --fl-primary-hover: #07251C;
+    --fl-accent-pink: #A84B66;
+    --fl-accent-pink-soft: #FFF2F4;
+    --fl-accent-pink-border: #F8D3DA;
+    --fl-bg-card: #FAF8F5;
+    --fl-border: #EAE5DC;
+    --fl-border-active: #0D382B;
+    --fl-text-dark: #1A2820;
+    --fl-text-muted: #6C7770;
+    --fl-font-serif: 'Playfair Display', Georgia, serif;
+    --fl-font-sans: 'Outfit', sans-serif;
+}
+
+.fl-luxury-detail {
+    font-family: var(--fl-font-sans);
+    color: var(--fl-text-dark);
+}
+
+/* Breadcrumb */
+.fl-breadcrumb-nav {
+    margin-bottom: 24px;
+}
+.fl-breadcrumb-nav .breadcrumb {
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+.fl-breadcrumb-nav .breadcrumb-item a {
+    color: var(--fl-text-muted);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+.fl-breadcrumb-nav .breadcrumb-item a:hover {
+    color: var(--fl-primary);
+}
+.fl-breadcrumb-nav .breadcrumb-item.active {
+    color: var(--fl-primary);
+    font-weight: 700;
+}
+
+/* Sol Kolon: Galeri ve Güvence */
+.fl-gallery-box {
+    position: sticky;
+    top: 24px;
+}
+
+.fl-main-viewport {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    background: #FAF8F5;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+    border: 1px solid var(--fl-border);
+    cursor: zoom-in;
+}
+
+/* Modern Hikaye / Segmentli İlerleme Çubukları */
+.fl-progress-bars {
+    position: absolute;
+    top: 10px;
+    left: 12px;
+    right: 12px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    z-index: 10;
+}
+
+.fl-progress-segment {
+    height: 3px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(4px);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.2s ease;
+}
+
+.fl-progress-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 0%;
+    background: #FFFFFF;
+    border-radius: 4px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    transition: width 0.3s ease;
+}
+
+.fl-progress-segment.active .fl-progress-fill,
+.fl-progress-segment.completed .fl-progress-fill {
+    width: 100%;
+}
+
+.fl-progress-segment:hover {
+    background: rgba(255, 255, 255, 0.7);
+}
+
+.fl-floating-badges {
+    position: absolute;
+    top: 24px;
+    left: 12px;
+    right: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    z-index: 5;
+    pointer-events: none;
+}
+.fl-badge-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 30px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    line-height: 1;
+}
+
+.fl-badge-dark {
+    background: rgba(13, 56, 43, 0.92);
+    color: #FFFFFF;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 12px rgba(13, 56, 43, 0.2);
+}
+
+.fl-badge-glass {
+    background: rgba(255, 255, 255, 0.88);
+    color: #1A2820;
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.fl-main-img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    display: block;
+    transition: opacity 0.3s ease, transform 0.4s ease;
+}
+
+.fl-main-viewport:hover .fl-main-img {
+    transform: scale(1.02);
+}
+
+/* Galeri Sıralı Gezinme Okları - Ultra Modern Glassmorphism */
+.fl-nav-arrow {
+    position: absolute !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    width: 42px !important;
+    height: 42px !important;
+    border-radius: 50% !important;
+    background: rgba(255, 255, 255, 0.88) !important;
+    backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.7) !important;
+    color: var(--fl-primary) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 1.15rem !important;
+    z-index: 8 !important;
+    cursor: pointer !important;
+    transition: all 0.25s ease !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15) !important;
+    opacity: 0;
+    padding: 0 !important;
+    margin: 0 !important;
+    outline: none !important;
+}
+
+.fl-main-viewport:hover .fl-nav-arrow {
+    opacity: 1;
+}
+
+.fl-nav-arrow:hover {
+    background: var(--fl-primary) !important;
+    color: #FFFFFF !important;
+    border-color: var(--fl-primary) !important;
+    transform: translateY(-50%) scale(1.1) !important;
+    box-shadow: 0 8px 24px rgba(13, 56, 43, 0.35) !important;
+}
+
+.fl-nav-prev {
+    left: 12px !important;
+}
+
+.fl-nav-next {
+    right: 12px !important;
+}
+
+@media (max-width: 991px) {
+    .fl-nav-arrow {
+        opacity: 0.9;
+    }
+}
+
+/* Büyütme İpucu Rozeti */
+.fl-zoom-hint-badge {
+    position: absolute;
+    bottom: 14px;
+    right: 14px;
+    background: rgba(13, 56, 43, 0.82);
+    color: #FFFFFF;
+    backdrop-filter: blur(6px);
+    border-radius: 30px;
+    padding: 5px 12px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    z-index: 4;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.fl-main-viewport:hover .fl-zoom-hint-badge {
+    opacity: 0.95;
+    background: var(--fl-primary);
+}
+
+/* Gelişmiş Lightbox Modal Stilleri */
+#gorselLightboxModal .modal-content {
+    background: transparent !important;
+}
+
+.fl-lightbox-container {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 92vw;
+    max-height: 90vh;
+    margin: auto;
+}
+
+.fl-lightbox-img {
+    max-height: 82vh;
+    max-width: 88vw;
+    object-fit: contain;
+    border-radius: 18px;
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.6);
+    background: #FFFFFF;
+    transition: transform 0.3s ease, opacity 0.2s ease;
+}
+
+.fl-lightbox-nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: #FFFFFF;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+
+.fl-lightbox-nav-btn:hover {
+    background: #FFFFFF;
+    color: var(--fl-primary);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.fl-lightbox-prev {
+    left: -26px;
+}
+
+.fl-lightbox-next {
+    right: -26px;
+}
+
+@media (max-width: 768px) {
+    .fl-lightbox-prev { left: 10px; }
+    .fl-lightbox-next { right: 10px; }
+}
+
+.fl-lightbox-caption {
+    position: absolute;
+    bottom: -36px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #FFFFFF;
+    font-size: 0.88rem;
+    font-weight: 700;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+    white-space: nowrap;
+}
+
+/* Görsel Altı Botanik Başlık, Renk Paleti ve İkonlar */
+.fl-botanical-caption-bar {
+    padding: 16px 4px 12px 4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.fl-botanical-latin-title {
+    font-family: var(--fl-font-serif);
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: #17271F;
+    margin: 0;
+    letter-spacing: 0.3px;
+}
+
+.fl-caption-actions-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.fl-palette-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--fl-text-muted);
+}
+
+.fl-palette-dots {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.fl-palette-dot {
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+}
+
+.fl-action-btns {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.fl-circle-icon-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--fl-border);
+    background: #FFFFFF;
+    color: var(--fl-text-dark);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.fl-circle-icon-btn:hover {
+    border-color: var(--fl-primary);
+    color: var(--fl-primary);
+    background: #FAF8F5;
+    transform: translateY(-2px);
+}
+
+/* 4'lü Küçük Galeri (Thumbnails) */
+.fl-thumbnails-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-top: 14px;
+}
+
+.fl-thumb-item {
+    position: relative;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 2px solid var(--fl-border);
+    background: #FAF8F5;
+    aspect-ratio: 1 / 1;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    padding: 0;
+}
+
+.fl-thumb-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.fl-thumb-item:hover {
+    border-color: var(--fl-primary);
+    transform: translateY(-3px);
+}
+
+.fl-thumb-item:hover img {
+    transform: scale(1.05);
+}
+
+.fl-thumb-item.active {
+    border-color: var(--fl-primary);
+    box-shadow: 0 4px 14px rgba(13, 56, 43, 0.2);
+}
+
+.fl-thumb-tag {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(13, 56, 43, 0.88);
+    backdrop-filter: blur(4px);
+    color: #FFFFFF;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    text-align: center;
+    padding: 4px 2px;
+    line-height: 1.2;
+    transition: background 0.2s;
+}
+
+.fl-thumb-item.active .fl-thumb-tag {
+    background: var(--fl-primary);
+}
+
+/* Fotoğraflı Onay Güvence Rozeti */
+.fl-photo-guarantee-card {
+    background: var(--fl-accent-pink-soft);
+    border: 1px solid var(--fl-accent-pink-border);
+    border-radius: 16px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 18px;
+    box-shadow: 0 4px 14px rgba(168, 75, 102, 0.04);
+}
+
+.fl-photo-icon-box {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #FCE6EB;
+    color: var(--fl-accent-pink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.fl-photo-content h6 {
+    font-size: 0.92rem;
+    font-weight: 800;
+    color: var(--fl-accent-pink);
+    margin: 0 0 2px 0;
+}
+
+.fl-photo-content p {
+    font-size: 0.78rem;
+    color: #7A5B64;
+    margin: 0;
+    line-height: 1.35;
+}
+
+.fl-photo-check-icon {
+    margin-left: auto;
+    font-size: 1.25rem;
+    color: var(--fl-accent-pink);
+    flex-shrink: 0;
+}
+
+/* SAĞ KOLON: Sipariş ve Özelleştirme Kartı */
+.fl-order-card {
+    background: #FFFFFF;
+    border: 1px solid var(--fl-border);
+    border-radius: 20px;
+    padding: 32px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
+}
+
+/* Koleksiyon ve Puan Başlığı */
+.fl-header-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.fl-collection-tag {
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--fl-accent-pink);
+}
+
+.fl-rating-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--fl-accent-pink-soft);
+    color: var(--fl-accent-pink);
+    border: 1px solid var(--fl-accent-pink-border);
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 800;
+}
+
+.fl-rating-badge i {
+    color: #E23A5B;
+    font-size: 0.72rem;
+}
+
+.fl-product-main-title {
+    font-family: var(--fl-font-sans);
+    font-size: clamp(1.7rem, 2.7vw, 2.15rem);
+    font-weight: 600;
+    color: #17271F;
+    line-height: 1.25;
+    margin: 0 0 12px 0;
+    letter-spacing: -0.025em;
+}
+
+.fl-product-description {
+    font-size: 0.93rem;
+    color: var(--fl-text-muted);
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+/* Fiyat Satırı */
+.fl-price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 26px;
+    padding-bottom: 22px;
+    border-bottom: 1px solid var(--fl-border);
+}
+
+.fl-big-price {
+    font-family: var(--fl-font-sans);
+    font-size: 2.2rem;
+    font-weight: 600;
+    color: var(--fl-primary);
+    line-height: 1;
+}
+
+.fl-big-price-sub {
+    font-size: 0.8rem;
+    color: #7F8B83;
+    font-weight: 500;
+}
+
+/* Bölüm Başlıkları */
+.fl-section-wrap {
+    margin-bottom: 24px;
+}
+
+.fl-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.fl-section-title {
+    font-family: var(--fl-font-sans);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.045em;
+    text-transform: uppercase;
+    color: #1A2820;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.fl-section-link {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--fl-accent-pink);
+    text-decoration: none;
+    transition: color 0.2s;
+    cursor: pointer;
+}
+
+.fl-section-link:hover {
+    color: #832C44;
+    text-decoration: underline;
+}
+
+.fl-free-pill {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--fl-accent-pink);
+    background: var(--fl-accent-pink-soft);
+    padding: 2px 8px;
+    border-radius: 12px;
+    border: 1px solid var(--fl-accent-pink-border);
+}
+
+/* 1. BOYUT TERCİHİ (Grid) */
+.fl-sizes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.fl-size-card {
+    position: relative;
+    background: var(--fl-bg-card);
+    border: 1.5px solid var(--fl-border);
+    border-radius: 12px;
+    padding: 14px 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+}
+
+.fl-size-card:hover {
+    border-color: var(--fl-primary);
+    background: #F4F6F4;
+}
+
+.fl-size-card.active {
+    border-color: var(--fl-primary);
+    background: #FFFFFF;
+    box-shadow: 0 0 0 1px var(--fl-primary), 0 4px 12px rgba(13, 56, 43, 0.08);
+}
+
+.fl-radio-dot {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 1.5px solid #C4C9C5;
+    background: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.fl-size-card.active .fl-radio-dot,
+.fl-vazo-card.active .fl-radio-dot {
+    border-color: var(--fl-primary);
+    background: var(--fl-primary);
+}
+
+.fl-size-card.active .fl-radio-dot::after,
+.fl-vazo-card.active .fl-radio-dot::after {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #FFFFFF;
+}
+
+.fl-size-title {
+    font-size: 0.88rem;
+    font-weight: 800;
+    color: #17271F;
+    margin-bottom: 2px;
+}
+
+.fl-size-desc {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--fl-text-muted);
+    margin-bottom: 8px;
+}
+
+.fl-size-price {
+    font-size: 0.92rem;
+    font-weight: 800;
+    color: var(--fl-primary);
+}
+
+/* 2. SUNUM & VAZO TERCİHİ (Dikey Liste) */
+.fl-vazo-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.fl-vazo-card {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--fl-bg-card);
+    border: 1.5px solid var(--fl-border);
+    border-radius: 12px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.fl-vazo-card:hover {
+    border-color: var(--fl-primary);
+    background: #F4F6F4;
+}
+
+.fl-vazo-card.active {
+    border-color: var(--fl-primary);
+    background: #FFFFFF;
+    box-shadow: 0 0 0 1px var(--fl-primary), 0 4px 12px rgba(13, 56, 43, 0.06);
+}
+
+.fl-vazo-card .fl-radio-dot {
+    position: static;
+    flex-shrink: 0;
+}
+
+.fl-vazo-info {
+    flex-grow: 1;
+}
+
+.fl-vazo-title {
+    font-size: 0.88rem;
+    font-weight: 800;
+    color: #17271F;
+    margin: 0 0 2px 0;
+}
+
+.fl-vazo-desc {
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--fl-text-muted);
+    margin: 0;
+}
+
+.fl-vazo-price {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #17271F;
+    flex-shrink: 0;
+}
+
+.fl-vazo-card.active .fl-vazo-price {
+    color: var(--fl-primary);
+}
+
+/* 3. TESLİMAT GÜNÜ & SAAT ARALIĞI */
+.fl-location-badge-btn {
+    background: #FAF8F5;
+    border: 1px solid var(--fl-border);
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #1A2820;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.fl-location-badge-btn:hover {
+    border-color: var(--fl-primary);
+    background: #FFFFFF;
+}
+
+.fl-date-tabs-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.fl-date-tab-btn {
+    background: var(--fl-bg-card);
+    border: 1.5px solid var(--fl-border);
+    border-radius: 12px;
+    padding: 10px 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.fl-date-tab-btn:hover {
+    border-color: var(--fl-primary);
+}
+
+.fl-date-tab-btn.active {
+    background: var(--fl-primary);
+    border-color: var(--fl-primary);
+    color: #FFFFFF;
+    box-shadow: 0 4px 14px rgba(13, 56, 43, 0.25);
+}
+
+.fl-date-tab-main {
+    font-size: 0.85rem;
+    font-weight: 800;
+    display: block;
+    line-height: 1.2;
+}
+
+.fl-date-tab-sub {
+    font-size: 0.68rem;
+    font-weight: 600;
+    display: block;
+    margin-top: 2px;
+    opacity: 0.8;
+}
+
+.fl-time-sub-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--fl-text-muted);
+    margin-bottom: 8px;
+    display: block;
+}
+
+.fl-time-pills-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.fl-time-pill-btn {
+    background: var(--fl-bg-card);
+    border: 1.5px solid var(--fl-border);
+    border-radius: 12px;
+    padding: 10px 6px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.fl-time-pill-btn:hover:not(.disabled) {
+    border-color: var(--fl-primary);
+}
+
+.fl-time-pill-btn.active {
+    background: var(--fl-primary);
+    border-color: var(--fl-primary);
+    color: #FFFFFF;
+    box-shadow: 0 4px 14px rgba(13, 56, 43, 0.25);
+}
+
+.fl-time-pill-btn.disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    background: #F0ECE4;
+}
+
+.fl-time-pill-hours {
+    font-size: 0.82rem;
+    font-weight: 800;
+    display: block;
+    line-height: 1.2;
+}
+
+.fl-time-pill-badge {
+    font-size: 0.65rem;
+    font-weight: 600;
+    display: block;
+    margin-top: 2px;
+    opacity: 0.85;
+}
+
+/* VIP Teslimat Satırı */
+.fl-vip-row {
+    background: #FFFDF4;
+    border: 1px solid #F3E6B2;
+    border-radius: 12px;
+    padding: 10px 14px;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* 4. MÜHÜRLÜ EL YAZISI TEBRİK KARTI */
+.fl-card-templates {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.fl-template-chip {
+    background: #FAF8F5;
+    border: 1px solid var(--fl-border);
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: #4A3E38;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.fl-template-chip:hover {
+    border-color: var(--fl-accent-pink);
+    color: var(--fl-accent-pink);
+    background: var(--fl-accent-pink-soft);
+    transform: translateY(-1px);
+}
+
+.fl-template-chip.active {
+    background: var(--fl-accent-pink-soft);
+    border-color: var(--fl-accent-pink);
+    color: var(--fl-accent-pink);
+}
+
+.fl-custom-input {
+    background: #FAF8F5;
+    border: 1.5px solid var(--fl-border);
+    border-radius: 12px;
+    padding: 11px 14px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #17271F;
+    width: 100%;
+    transition: all 0.2s;
+    margin-bottom: 10px;
+}
+
+.fl-custom-input:focus {
+    background: #FFFFFF;
+    border-color: var(--fl-primary);
+    box-shadow: 0 0 0 3px rgba(13, 56, 43, 0.08);
+    outline: none;
+}
+
+.fl-custom-textarea {
+    background: #FAF8F5;
+    border: 1.5px solid var(--fl-border);
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 0.82rem;
+    font-weight: 400;
+    color: #17271F;
+    width: 100%;
+    min-height: 85px;
+    resize: vertical;
+    transition: all 0.2s;
+    line-height: 1.5;
+}
+
+.fl-custom-textarea:focus {
+    background: #FFFFFF;
+    border-color: var(--fl-primary);
+    box-shadow: 0 0 0 3px rgba(13, 56, 43, 0.08);
+    outline: none;
+}
+
+/* 5. AKSİYON & SİPARİŞ BUTONLARI */
+.fl-action-buttons-wrap {
+    margin-top: 24px;
+}
+
+.fl-quantity-order-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.fl-qty-stepper {
+    display: inline-flex;
+    align-items: center;
+    background: #FAF8F5;
+    border: 1.5px solid var(--fl-border);
+    border-radius: 14px;
+    padding: 4px;
+    flex-shrink: 0;
+}
+
+.fl-qty-btn {
+    background: transparent;
+    border: none;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--fl-primary);
+    cursor: pointer;
+    border-radius: 10px;
+    transition: background 0.2s;
+}
+
+.fl-qty-btn:hover {
+    background: #EDE8DF;
+}
+
+.fl-qty-input {
+    width: 38px;
+    border: none;
+    background: transparent;
+    text-align: center;
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #17271F;
+    pointer-events: none;
+}
+
+.fl-submit-btn {
+    flex-grow: 1;
+    background: var(--fl-primary);
+    color: #FFFFFF;
+    border: none;
+    border-radius: 14px;
+    padding: 14px 20px;
+    font-size: 1rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 6px 20px rgba(13, 56, 43, 0.25);
+}
+
+.fl-submit-btn:hover {
+    background: var(--fl-primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(13, 56, 43, 0.35);
+}
+
+.fl-submit-btn:disabled {
+    background: #A8B4AD;
+    box-shadow: none;
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+.fl-submit-btn:disabled:hover {
+    background: #A8B4AD;
+    transform: none;
+}
+
+.fl-whatsapp-btn {
+    width: 100%;
+    background: #25D366;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 14px;
+    padding: 13px 20px;
+    font-size: 0.95rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 15px rgba(37, 211, 102, 0.2);
+}
+
+.fl-whatsapp-btn:hover {
+    background: #20BA5A;
+    color: #FFFFFF;
+    transform: translateY(-1px);
+}
+
+.fl-whatsapp-btn.is-disabled {
+    background: #A8B4AD;
+    box-shadow: none;
+    cursor: not-allowed;
+    opacity: 0.72;
+}
+
+.fl-whatsapp-btn.is-disabled:hover {
+    background: #A8B4AD;
+    color: #FFFFFF;
+    transform: none;
+}
+
+@media (max-width: 991px) {
+    .fl-order-card {
+        padding: 20px;
+        margin-top: 20px;
+    }
+    .fl-sizes-grid, .fl-date-tabs-grid, .fl-time-pills-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* ========================================================
+   ÇİÇEĞİ PAYLAŞ BUTONU & LIGHTBOX DİREKT SAĞ ÜST KAPATMA
+   ======================================================== */
+.fl-share-pill-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: #FFFFFF;
+    border: 1.5px solid var(--fl-border);
+    border-radius: 30px;
+    padding: 6px 16px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--fl-text-dark);
+    cursor: pointer;
+    transition: all 0.22s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.fl-share-pill-btn i {
+    font-size: 0.95rem;
+    color: var(--fl-primary);
+    transition: transform 0.2s ease;
+}
+
+.fl-share-pill-btn:hover {
+    background: #FAF8F5;
+    border-color: var(--fl-primary);
+    color: var(--fl-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(13, 56, 43, 0.12);
+}
+
+.fl-share-pill-btn:hover i {
+    transform: scale(1.15);
+}
+
+/* Lightbox Sahnesi & Büyütülen Görselin Direkt Sağ Üst Çarpı Butonu */
+.fl-lightbox-container {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 95vw;
+    margin: 0 auto;
+}
+
+.fl-lightbox-box {
+    position: relative;
+    display: inline-block;
+    max-width: 90vw;
+    line-height: 0;
+    border-radius: 20px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.18);
+    overflow: hidden;
+}
+
+.fl-lightbox-img {
+    max-width: 100%;
+    max-height: 82vh;
+    border-radius: 20px;
+    object-fit: contain;
+    display: block;
+}
+
+.fl-lightbox-close-direct {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: #17271F;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    cursor: pointer;
+    z-index: 1070;
+    line-height: 1;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.fl-lightbox-close-direct:hover {
+    background: #FFFFFF;
+    color: #A84B66;
+    transform: scale(1.1) rotate(90deg);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
+}
+
+.fl-lightbox-nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    color: #17271F;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    cursor: pointer;
+    z-index: 1065;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s ease;
+}
+
+.fl-lightbox-nav-btn:hover {
+    background: #FFFFFF;
+    color: var(--fl-primary);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.fl-lightbox-prev {
+    left: -26px;
+}
+
+.fl-lightbox-next {
+    right: -26px;
+}
+
+@media (max-width: 768px) {
+    .fl-lightbox-prev {
+        left: 8px;
+    }
+    .fl-lightbox-next {
+        right: 8px;
+    }
+}
+
+.fl-lightbox-caption {
+    position: absolute;
+    bottom: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(13, 56, 43, 0.88);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: #FFFFFF;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 6px 18px;
+    border-radius: 30px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    white-space: nowrap;
+    line-height: 1.4;
+    pointer-events: none;
+}
+
+\n

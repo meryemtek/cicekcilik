@@ -1,61 +1,260 @@
-﻿@model ECommerce.Application.DTOs.Auth.KayitDto
+@model ECommerce.Application.DTOs.Auth.KayitDto
 @{
     ViewData["Title"] = "Yeni Üyelik";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container my-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white">
-                <div class="text-center mb-4">
-                    <h2 class="fw-bold text-dark" style="letter-spacing: -0.5px;">Aramıza Katılın</h2>
-                    <p class="text-muted small">Hızlı ve güvenli alışveriş için hesap oluşturun.</p>
-                </div>
-
-                @if (!ViewData.ModelState.IsValid)
-                {
-                    <div class="alert alert-danger rounded-3 small py-2 mb-3">
-                        <div asp-validation-summary="All" class="text-danger m-0"></div>
+<div class="bf-auth-page py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-10 col-lg-6">
+                <div class="bf-auth-card">
+                    <!-- Üst Rozet & Başlık -->
+                    <div class="text-center mb-4">
+                        <span class="bf-auth-badge mb-3">
+                            <i class="bi bi-flower1" aria-hidden="true"></i> Lidya Çiçekçilik
+                        </span>
+                        <h1 class="bf-auth-title">Aramıza Katılın</h1>
+                        <p class="bf-auth-subtitle">Taze çiçekler, özel indirimler ve hızlı sipariş için hesabınızı oluşturun.</p>
                     </div>
-                }
 
-                <form asp-action="Kayit" method="post">
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-semibold small text-muted">Adınız</label>
-                            <input asp-for="Ad" type="text" class="form-control rounded-3 py-2" placeholder="Adınız" required />
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert bf-auth-alert alert-dismissible fade show" role="alert">
+                            <i class="bi bi-exclamation-circle-fill me-2"></i>
+                            <div asp-validation-summary="All" class="d-inline m-0"></div>
+                            <button type="button" class="btn-close shadow-none" data-bs-dismiss="alert" aria-label="Kapat"></button>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-semibold small text-muted">Soyadınız</label>
-                            <input asp-for="Soyad" type="text" class="form-control rounded-3 py-2" placeholder="Soyadınız" required />
+                    }
+
+                    <form asp-action="Kayit" method="post" class="bf-auth-form">
+                        <div class="row g-3 mb-3">
+                            <div class="col-sm-6">
+                                <label asp-for="Ad" class="form-label bf-form-label">Adınız</label>
+                                <div class="input-group bf-input-group">
+                                    <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                    <input asp-for="Ad" type="text" class="form-control" placeholder="Adınız" required autocomplete="given-name" />
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label asp-for="Soyad" class="form-label bf-form-label">Soyadınız</label>
+                                <div class="input-group bf-input-group">
+                                    <span class="input-group-text"><i class="bi bi-person"></i></span>
+                                    <input asp-for="Soyad" type="text" class="form-control" placeholder="Soyadınız" required autocomplete="family-name" />
+                                </div>
+                            </div>
                         </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label bf-form-label">E-posta Adresi</label>
+                            <div class="input-group bf-input-group">
+                                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                <input asp-for="Email" type="email" class="form-control" placeholder="ornek@mail.com" required autocomplete="email" />
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Telefon" class="form-label bf-form-label">Telefon Numarası</label>
+                            <div class="input-group bf-input-group">
+                                <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                                <input asp-for="Telefon" type="tel" class="form-control" placeholder="05XXXXXXXXX" required autocomplete="tel" />
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Sifre" class="form-label bf-form-label">Şifre</label>
+                            <div class="input-group bf-input-group">
+                                <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                                <input asp-for="Sifre" type="password" id="kayitSifreInput" class="form-control" placeholder="En az 6 karakter" required autocomplete="new-password" />
+                                <button type="button" class="btn btn-outline-secondary bf-toggle-pass" onclick="togglePasswordVisibility('kayitSifreInput', this)">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                            <div class="form-text small text-muted">Şifreniz en az 6 karakter uzunluğunda olmalıdır.</div>
+                        </div>
+
+                        <div class="form-check mb-4">
+                            <input class="form-check-input" type="checkbox" id="sozlesmeOnay" required checked>
+                            <label class="form-check-label small text-muted" for="sozlesmeOnay">
+                                <a href="#" class="text-decoration-underline text-dark">Kullanıcı Sözleşmesi</a> ve <a href="#" class="text-decoration-underline text-dark">Gizlilik Politikası</a>'nı okudum, kabul ediyorum.
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn bf-auth-submit-btn w-100">
+                            <span>Üye Ol</span>
+                            <i class="bi bi-arrow-right ms-2" aria-hidden="true"></i>
+                        </button>
+                    </form>
+
+                    <!-- Alt Yönlendirme -->
+                    <div class="text-center mt-4 pt-3 border-top bf-auth-footer">
+                        <p class="text-muted small mb-0">
+                            Zaten bir hesabınız var mı?
+                            <a href="/Hesap/Giris" class="bf-register-link">Giriş Yapın</a>
+                        </p>
                     </div>
-
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold small text-muted">E-posta Adresi</label>
-                        <input asp-for="Email" type="email" class="form-control rounded-3 py-2" placeholder="ornek@mail.com" required />
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold small text-muted">Telefon Numarası</label>
-                        <input asp-for="Telefon" type="text" class="form-control rounded-3 py-2" placeholder="05XXXXXXXXX" required />
-                    </div>
-
-                    <div class="mb-4">
-                        <label class="form-label fw-semibold small text-muted">Şifre</label>
-                        <input asp-for="Sifre" type="password" class="form-control rounded-3 py-2" placeholder="En az 6 karakter" required />
-                    </div>
-
-                    <button type="submit" class="btn w-100 text-white py-3 rounded-pill fw-bold shadow-sm" style="background-color: #3b1154;">
-                        Kayıt Ol
-                    </button>
-                </form>
-
-                <div class="text-center mt-4 pt-3 border-top">
-                    <p class="text-muted small mb-0">Zaten hesabınız var mı? <a href="/Hesap/Giris" class="text-decoration-none fw-bold" style="color: #3b1154;">Giriş Yapın</a></p>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    .bf-auth-page {
+        background: radial-gradient(circle at 10% 15%, rgba(255, 217, 222, .35), transparent 45%),
+                    radial-gradient(circle at 90% 85%, rgba(199, 235, 218, .35), transparent 45%),
+                    #fcf9f8;
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+    }
+
+    .bf-auth-card {
+        background: #ffffff;
+        border: 1px solid rgba(232, 130, 150, .25);
+        border-radius: 28px;
+        padding: 42px 36px;
+        box-shadow: 0 16px 40px -8px rgba(26, 58, 47, .08), 0 6px 16px rgba(232, 130, 150, .08);
+    }
+
+    .bf-auth-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 14px;
+        border-radius: 999px;
+        background: #ffd9de;
+        color: #3f0015;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+    }
+    .bf-auth-badge i {
+        color: #984255;
+    }
+
+    .bf-auth-title {
+        color: #02241a;
+        font-family: 'Playfair Display', Georgia, serif !important;
+        font-size: 2rem;
+        font-weight: 600;
+        letter-spacing: -.01em;
+        margin-bottom: 6px;
+    }
+
+    .bf-auth-subtitle {
+        color: #727974;
+        font-size: .88rem;
+        font-weight: 300;
+        line-height: 1.5;
+        margin-bottom: 0;
+    }
+
+    .bf-form-label {
+        font-size: .78rem;
+        font-weight: 600;
+        letter-spacing: .02em;
+        color: #1a3a2f;
+    }
+
+    .bf-input-group {
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid rgba(114, 121, 116, .3);
+        transition: border-color .2s ease, box-shadow .2s ease;
+    }
+    .bf-input-group:focus-within {
+        border-color: #1a3a2f !important;
+        box-shadow: 0 0 0 3px rgba(26, 58, 47, .1);
+    }
+    .bf-input-group .input-group-text {
+        background-color: #fbfaf9;
+        border: none;
+        color: #984255;
+        padding-left: 14px;
+    }
+    .bf-input-group .form-control {
+        border: none;
+        padding: 11px 14px;
+        font-size: .92rem;
+        box-shadow: none !important;
+    }
+
+    .bf-toggle-pass {
+        border: none;
+        background: #fbfaf9;
+        color: #727974;
+    }
+    .bf-toggle-pass:hover {
+        background: #f0eded;
+        color: #02241a;
+    }
+
+    .bf-auth-submit-btn {
+        background: #1a3a2f;
+        color: #fcf9f8;
+        border-radius: 999px;
+        padding: 13px 24px;
+        font-size: .85rem;
+        font-weight: 600;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        border: none;
+        box-shadow: 0 6px 16px rgba(26, 58, 47, .2);
+        transition: all .25s ease;
+    }
+    .bf-auth-submit-btn:hover {
+        background: #02241a;
+        color: #ffffff;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 22px rgba(26, 58, 47, .3);
+    }
+
+    .bf-register-link {
+        color: #984255;
+        font-weight: 700;
+        text-decoration: none;
+        margin-left: 4px;
+        transition: color .2s ease;
+    }
+    .bf-register-link:hover {
+        color: #3f0015;
+        text-decoration: underline;
+    }
+
+    .bf-auth-alert {
+        background-color: #ffd9de;
+        border: 1px solid rgba(152, 66, 85, .3);
+        color: #3f0015;
+        border-radius: 14px;
+        font-size: .82rem;
+        padding: 10px 14px;
+    }
+
+    @@media (max-width: 575px) {
+        .bf-auth-card {
+            padding: 30px 22px;
+            border-radius: 22px;
+        }
+        .bf-auth-title {
+            font-size: 1.65rem;
+        }
+    }
+</style>
+
+<script>
+    function togglePasswordVisibility(inputId, btn) {
+        const input = document.getElementById(inputId);
+        const icon = btn.querySelector('i');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.remove('bi-eye');
+            icon.classList.add('bi-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.remove('bi-eye-slash');
+            icon.classList.add('bi-eye');
+        }
+    }
+</script>

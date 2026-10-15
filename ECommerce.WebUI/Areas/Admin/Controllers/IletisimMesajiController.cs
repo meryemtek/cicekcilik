@@ -7,7 +7,7 @@ using ECommerce.Application.DTOs.IletisimMesaji; // DTO'larını ana DTO klasör
 namespace ECommerce.WebUI.Areas.Admin.Controllers;
 
 [Area("Admin")]
-[Authorize]
+[Authorize(Roles = "Admin")]
 public class IletisimMesajiController : Controller
 {
     private readonly IHttpClientFactory _httpClientFactory;

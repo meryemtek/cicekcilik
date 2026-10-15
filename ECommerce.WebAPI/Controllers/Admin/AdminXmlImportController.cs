@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace ECommerce.WebAPI.Controllers.Admin;
 
-[Authorize]
+[Authorize(Roles = "Admin")]
 [Route("api/admin/xml-import")]
 [ApiController]
 public class AdminXmlImportController : ControllerBase

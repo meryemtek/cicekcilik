@@ -1,178 +1,65 @@
-﻿@{
+@{
     ViewData["Title"] = "Anasayfa";
 }
 
-<!-- =========================================================
-     1. SLIDER
-========================================================= -->
-@await Component.InvokeAsync("Slider")
+<div class="bf-home">
+    <h1 class="visually-hidden">Lidya Çiçekçilik - Elazığ'da çiçek siparişi</h1>
 
+    <!-- =========================================================
+         GÖRSEL ODAKLI ÇİÇEK KATEGORİLERİ VİTRİNİ
+    ========================================================= -->
+    @await Component.InvokeAsync("KategoriBand")
 
-<!-- =========================================================
-     2. KATEGORİLER
-========================================================= -->
-@await Component.InvokeAsync("KategoriBand")
-
-
-<!-- =========================================================
-     3. KATEGORİ BANDI ALTINDAN BAŞLAYAN
-        DEKORATİF ANA SAYFA ALANI
-========================================================= -->
-<div class="homepage-decorative-area">
-
-    <!-- =====================================================
-         DEKORATİF LOGOLAR
-         Arka planda çok hafif şekilde görünürler.
-         aria-hidden ile SEO/erişilebilirlik açısından
-         dekoratif oldukları belirtilmiştir.
-    ====================================================== -->
-
-    <img src="~/images/imza_arkaplan.png"
-         class="decorative-logo decorative-logo-1"
-         alt=""
-         aria-hidden="true" />
-
-    <img src="~/images/imza_arkaplan.png"
-         class="decorative-logo decorative-logo-2"
-         alt=""
-         aria-hidden="true" />
-
-    <img src="~/images/imza_arkaplan.png"
-         class="decorative-logo decorative-logo-3"
-         alt=""
-         aria-hidden="true" />
-
-    <img src="~/images/imza_arkaplan.png"
-         class="decorative-logo decorative-logo-4"
-         alt=""
-         aria-hidden="true" />
-
-    <img src="~/images/imza_arkaplan.png"
-         class="decorative-logo decorative-logo-5"
-         alt=""
-         aria-hidden="true" />
-
-    <img src="~/images/imza_arkaplan.png"
-         class="decorative-logo decorative-logo-6"
-         alt=""
-         aria-hidden="true" />
-
-
-    <!-- =====================================================
-         3. KATEGORİ BANNERLARI
-    ====================================================== -->
-    @await Component.InvokeAsync("KategoriBannerlar")
-
-
-    <!-- =====================================================
-         4. ÖNE ÇIKAN ÜRÜNLER
-    ====================================================== -->
+    @await Component.InvokeAsync("Slider")
     @await Component.InvokeAsync("OneCikanUrunler")
 
-    <!-- =====================================================
-         5. KAMPANYALAR
-    ====================================================== -->
-    @await Component.InvokeAsync("Kampanyalar")
-
-
-    <!-- =====================================================
-         6. BLOG
-    ====================================================== -->
-    @await Component.InvokeAsync("Blog")
-
-
-    <!-- =====================================================
-         YEREL SEO / KURUMSAL İÇERİK
-    ====================================================== -->
-    <section class="local-seo-section">
-
-        <div class="container">
-
-            <div class="local-seo-wrapper">
-
-                <div class="local-seo-content">
-
-                    <div class="local-seo-label">
-                        <i class="bi bi-flower1"></i>
-                        Elazığ Çiçekçilik
-                    </div>
-
-                    <h2 class="local-seo-title">
-                        Elazığ Çiçekçi ve Çiçek Gönderimi
-                    </h2>
-
-                    <p>
-                        <strong>Lidya Çiçekçilik</strong>, Elazığ'da sevdiklerinize
-                        çiçek göndermek isteyenler için özenle hazırlanan çiçek
-                        tasarımları ve çiçek gönderimi hizmetleri sunmaktadır.
-                        Doğum günü, yıldönümü, sevgililer günü, anneler günü,
-                        açılış, tebrik, geçmiş olsun ve özel günleriniz için
-                        farklı çiçek seçeneklerini bir araya getiriyoruz.
-                    </p>
-
-                    <p>
-                        Elazığ'da <strong>çiçek siparişi</strong> vermek,
-                        sevdiklerinize çiçek göndermek veya özel bir gün için
-                        şık bir çiçek arıyorsanız Lidya Çiçekçilik'in
-                        hazırladığı ürünleri inceleyebilirsiniz. Gül buketleri,
-                        orkide, aranjman, buket çiçekler, saksı çiçekleri ve
-                        özel tasarım çiçek seçenekleri arasından
-                        ihtiyacınıza uygun ürünü seçebilirsiniz.
-                    </p>
-
-                    <div class="local-seo-divider"></div>
-
-                    <h3>
-                        Elazığ Çiçek Siparişi
-                    </h3>
-
-                    <p>
-                        <strong>Elazığ çiçek siparişi</strong> arayan müşteriler
-                        için hazırlanan Lidya Çiçekçilik ürünleri, farklı
-                        bütçe ve zevklere uygun seçenekler sunar. Sevdiklerinize
-                        göndermek istediğiniz çiçeği seçerek sipariş sürecinizi
-                        kolayca gerçekleştirebilirsiniz.
-                    </p>
-
-                    <h3>
-                        Elazığ Çiçek Gönderimi
-                    </h3>
-
-                    <p>
-                        Özel günlerde sevdiklerinizi mutlu etmek için
-                        <strong>Elazığ çiçek gönderimi</strong> hizmetinden
-                        yararlanabilirsiniz. Doğum günü çiçekleri, romantik
-                        buketler, geçmiş olsun çiçekleri, açılış çiçekleri ve
-                        kutlama çiçekleri gibi farklı ihtiyaçlara yönelik
-                        tasarımlar Lidya Çiçekçilik tarafından sunulmaktadır.
-                    </p>
-
-                    <h3>
-                        Elazığ'da Online Çiçekçi
-                    </h3>
-
-                    <p>
-                        İnternet üzerinden çiçek seçmek ve sipariş vermek
-                        isteyenler için <strong>Lidya Çiçekçilik</strong>,
-                        Elazığ'da online çiçekçi hizmeti sunmaktadır.
-                        Çiçek modellerini inceleyebilir, özel gününüze uygun
-                        ürünü seçebilir ve sipariş işleminizi kolayca
-                        gerçekleştirebilirsiniz.
-                    </p>
-
-                    <p>
-                        Lidya Çiçekçilik olarak amacımız, yalnızca bir çiçek
-                        göndermek değil; sevdiklerinize iletmek istediğiniz
-                        duyguyu en güzel şekilde ifade eden çiçeği
-                        hazırlamaktır.
-                    </p>
-
+    <section class="bf-journal" aria-labelledby="bf-journal-title">
+        <div class="bf-container">
+            <div class="bf-journal-box">
+                <div class="bf-journal-intro">
+                    <span class="bf-eyebrow">Lidya Rehber</span>
+                    <h2 id="bf-journal-title">Çiçeklerinizin ömrünü uzatacak 3 bakım ipucu</h2>
+                    <p>Sap kesimi, suyun sıcaklığı ve vazo temizliği çiçeklerinizin tazeliğini günlerce korumasına yardımcı olur.</p>
+                    <a href="/Arama?q=Buket" class="bf-journal-link">Buketleri keşfet <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
                 </div>
-
+                <div class="bf-journal-tips">
+                    <div class="bf-tip"><img src="/images/anasayfa/rehber-1.jpg" alt="" loading="lazy" /><div><h3>45 derece kuralı</h3><p>Sapları su altında çapraz keserek hava kabarcıklarını önleyin.</p></div></div>
+                    <div class="bf-tip"><img src="/images/anasayfa/rehber-2.jpg" alt="" loading="lazy" /><div><h3>Serin ve temiz su</h3><p>Soğuk su çiçekleri canlandırır, vazo suyunu düzenli yenileyin.</p></div></div>
+                    <div class="bf-tip"><img src="/images/anasayfa/rehber-3.jpg" alt="" loading="lazy" /><div><h3>Yaprakları ayıklayın</h3><p>Suya değen yaprakları temizleyerek suyun berrak kalmasını sağlayın.</p></div></div>
+                    <div class="bf-tip"><img src="/images/anasayfa/rehber-4.jpg" alt="" loading="lazy" /><div><h3>Doğru yerleşim</h3><p>Çiçekleri doğrudan güneşten ve sıcak hava akımından uzak tutun.</p></div></div>
+                </div>
             </div>
-
         </div>
-
     </section>
-
 </div>
+
+<style>
+    .bf-home {
+        --bf-primary: #02241a; --bf-green: #1a3a2f; --bf-rose: #984255; --bf-rose-soft: #ffd9de;
+        background: #fcf9f8;
+        overflow: hidden;
+    }
+    .bf-container { width: 100%; max-width: 1320px; margin: 0 auto; padding: 0 16px; }
+    .bf-catbar { border-bottom: 1px solid rgba(254, 148, 168, .25); background: rgba(252, 249, 248, .96); }
+    .bf-catbar-list { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 0; padding: 12px 0; list-style: none; overflow-x: auto; scrollbar-width: none; }
+    .bf-catbar-list::-webkit-scrollbar { display: none; }
+    .bf-catbar-item { display: inline-flex; align-items: center; gap: 8px; flex: 0 0 auto; padding: 9px 18px; border: 1px solid rgba(232, 130, 150, .3); border-radius: 999px; background: #fff; color: #02241a; font-size: .78rem; font-weight: 600; letter-spacing: .02em; white-space: nowrap; text-decoration: none; transition: background .2s ease, color .2s ease, border-color .2s ease, transform .2s ease; }
+    .bf-catbar-item i { color: #984255; font-size: 1rem; transition: color .2s ease; }
+    .bf-catbar-item:hover { background: #1a3a2f; border-color: #1a3a2f; color: #fcf9f8; transform: translateY(-2px); }
+    .bf-catbar-item:hover i { color: #fe94a8; }
+    @@media (max-width: 1199px) { .bf-catbar-list { justify-content: flex-start; } }
+    .bf-journal { padding: 56px 0 64px; border-top: 1px solid rgba(254, 148, 168, .22); }
+    .bf-journal-box { display: grid; grid-template-columns: 5fr 7fr; align-items: center; gap: 36px; padding: 40px; border: 1px solid rgba(232, 130, 150, .22); border-radius: 26px; background: #fff; box-shadow: 0 12px 32px -4px rgba(26, 58, 47, .06), 0 4px 12px rgba(232, 130, 150, .08); }
+    .bf-journal-intro h2 { margin: 0 0 14px; color: #02241a; font-family: 'Playfair Display', Georgia, serif !important; font-size: clamp(1.4rem, 2.4vw, 2rem); font-weight: 500; line-height: 1.3; }
+    .bf-journal-intro p { margin: 0 0 18px; color: #414845; font-size: .88rem; font-weight: 300; line-height: 1.7; }
+    .bf-journal-link { display: inline-flex; align-items: center; gap: 10px; color: #1a3a2f; font-size: .74rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; text-decoration: none; }
+    .bf-journal-link:hover { color: #984255; }
+    .bf-journal-tips { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .bf-tip { display: flex; align-items: center; gap: 14px; padding: 14px; border-radius: 16px; background: rgba(246, 243, 242, .7); transition: background .25s ease, transform .25s ease; }
+    .bf-tip:hover { background: #f0eded; transform: translateY(-2px); }
+    .bf-tip > img { width: 72px; height: 72px; flex: 0 0 72px; border-radius: 12px; object-fit: cover; }
+    .bf-tip h3 { margin: 0 0 5px; color: #02241a; font-family: 'Playfair Display', Georgia, serif !important; font-size: 1.05rem; font-weight: 500; }
+    .bf-tip p { margin: 0; color: #727974; font-size: .78rem; font-weight: 300; line-height: 1.55; }
+    @@media (max-width: 991px) { .bf-journal-box { grid-template-columns: 1fr; padding: 28px; } }
+    @@media (max-width: 575px) { .bf-journal { padding: 38px 0 42px; } .bf-journal-tips { grid-template-columns: 1fr; } .bf-journal-box { padding: 22px; } }
+</style>
