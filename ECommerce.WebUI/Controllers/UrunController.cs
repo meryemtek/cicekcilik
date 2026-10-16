@@ -37,6 +37,26 @@ namespace ECommerce.WebUI.Controllers
             return $"{baseUrl.TrimEnd('/')}/{gorselUrl.TrimStart('/')}".Replace("\\", "/");
         }
 
+        [HttpGet("urun/id/{id:guid}")]
+        public async Task<IActionResult> DetayById(Guid id)
+        {
+            var client = _httpClientFactory.CreateClient("ApiClient");
+            var response = await client.GetAsync($"urunler/id-ile/{id}");
+            if (!response.IsSuccessStatusCode)
+            {
+                return NotFound();
+            }
+
+            var content = await response.Content.ReadAsStringAsync();
+            var urun = JsonSerializer.Deserialize<UrunDetayDto>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            if (urun == null || string.IsNullOrWhiteSpace(urun.SeoUrl))
+            {
+                return NotFound();
+            }
+
+            return RedirectToAction("Detay", new { seoUrl = urun.SeoUrl });
+        }
+
         [HttpGet("urun/{seoUrl}")]
         public async Task<IActionResult> Detay(string seoUrl)
         {

@@ -24,7 +24,9 @@ public class EmailServisi : IEmailServisi
             var host = _configuration["SmtpSettings:Host"];
             var portStr = _configuration["SmtpSettings:Port"];
             var kullanici = _configuration["SmtpSettings:KullaniciAdi"];
-            var sifre = _configuration["SmtpSettings:Sifre"];
+            // Google uygulama şifreleri kopyalanırken araya boşluk girebilir.
+            // SMTP kimlik doğrulamasında bu boşluklar geçerli olmadığı için temizlenir.
+            var sifre = _configuration["SmtpSettings:Sifre"]?.Replace(" ", string.Empty).Trim();
             var gonderenEmail = _configuration["SmtpSettings:GonderenEmail"] ?? "bilgi@lidyacicekcilik.com";
             var gonderenBaslik = _configuration["SmtpSettings:GonderenBaslik"] ?? "Lidya Çiçekçilik";
             var sslStr = _configuration["SmtpSettings:EnableSsl"];

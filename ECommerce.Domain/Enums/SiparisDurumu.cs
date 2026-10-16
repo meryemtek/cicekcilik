@@ -12,6 +12,7 @@ namespace ECommerce.Domain.Enums
         Islemde = 1,
         Kargoda = 2,
         TeslimEdildi = 3,
-        IptalEdildi = 4
+        IptalEdildi = 4,
+        TeslimEdilemedi = 5
     }
 }

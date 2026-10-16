@@ -15,28 +15,14 @@
                     {
                         <span class="announcement-item">
                             <i class="bi bi-flower1" aria-hidden="true"></i>
-                            @if (!string.IsNullOrWhiteSpace(duyuru.LinkUrl))
-                            {
-                                <a href="@duyuru.LinkUrl">@duyuru.Metin</a>
-                            }
-                            else
-                            {
-                                <span>@duyuru.Metin</span>
-                            }
+                            <span>@duyuru.Metin</span>
                         </span>
                     }
                     @foreach (var duyuru in duyurular)
                     {
                         <span class="announcement-item" aria-hidden="true">
                             <i class="bi bi-flower1"></i>
-                            @if (!string.IsNullOrWhiteSpace(duyuru.LinkUrl))
-                            {
-                                <a href="@duyuru.LinkUrl" tabindex="-1">@duyuru.Metin</a>
-                            }
-                            else
-                            {
-                                <span>@duyuru.Metin</span>
-                            }
+                            <span>@duyuru.Metin</span>
                         </span>
                     }
                 </div>
@@ -112,25 +98,13 @@
             white-space: nowrap;
         }
 
-        .announcement-item > span,
-        .announcement-item > a {
+        .announcement-item > span {
             font-family: 'Playfair Display', Georgia, serif !important;
         }
 
         .announcement-item > i {
             color: #c695a4;
             font-size: 1rem;
-        }
-
-        .announcement-item a {
-            color: inherit;
-            text-decoration: none;
-        }
-
-        .announcement-item a:hover {
-            color: #a76f82;
-            text-decoration: underline;
-            text-underline-offset: 3px;
         }
 
         .announcement-sparkle {

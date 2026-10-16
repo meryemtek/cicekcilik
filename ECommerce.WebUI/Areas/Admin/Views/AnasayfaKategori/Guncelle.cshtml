@@ -125,7 +125,7 @@
     </div>
 
     <div class="t-card">
-        <form asp-action="Guncelle" method="post">
+        <form asp-action="Guncelle" method="post" enctype="multipart/form-data">
             @Html.AntiForgeryToken()
             <input asp-for="Id" type="hidden" />
 
@@ -138,6 +138,8 @@
                 </select>
                 <span asp-validation-for="KategoriId" class="text-danger small"></span>
             </div>
+
+            <partial name="_VitrinGorselEditor" />
 
             <div class="mb-3">
                 <label asp-for="SiraNo" class="form-label">Sıra No</label>
@@ -163,4 +165,5 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <partial name="_VitrinGorselScripts" />
 }

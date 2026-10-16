@@ -35,38 +35,11 @@
         <div class="text-center mb-3 text-muted small">
             <i class="bi bi-shield-lock-fill text-success"></i> PayTR Güvenli Sanal POS Altyapısı
         </div>
-        <div class="row g-3">
-            <div class="col-12">
-                <label class="form-label small fw-bold text-muted">Kart Üzerindeki İsim</label>
-                <input type="text" name="KartSahibi" class="form-control" placeholder="AD SOYAD" />
-            </div>
-            <div class="col-12">
-                <label class="form-label small fw-bold text-muted">Kart Numarası</label>
-                <input type="text" name="KartNumarasi" class="form-control" maxlength="19" placeholder="XXXX XXXX XXXX XXXX" />
-            </div>
-            <div class="col-md-4">
-                <label class="form-label small fw-bold text-muted">Ay</label>
-                <select name="SonKullanmaAy" class="form-select">
-                    <option value="">Ay</option>
-                    @for (int i = 1; i <= 12; i++)
-                    {
-                        <option value="@i.ToString("D2")">@i.ToString("D2")</option>
-                    }
-                </select>
-            </div>
-            <div class="col-md-4">
-                <label class="form-label small fw-bold text-muted">Yıl</label>
-                <select name="SonKullanmaYil" class="form-select">
-                    <option value="">Yıl</option>
-                    @for (int i = 2026; i <= 2036; i++)
-                    {
-                        <option value="@i">@i</option>
-                    }
-                </select>
-            </div>
-            <div class="col-md-4">
-                <label class="form-label small fw-bold text-muted">CVV</label>
-                <input type="password" name="Cvv" class="form-control" maxlength="4" placeholder="CVC" />
+        <div class="d-flex align-items-start gap-3 rounded-3 bg-white border p-3">
+            <i class="bi bi-lock-fill text-success fs-4"></i>
+            <div>
+                <div class="fw-semibold text-dark">Kart bilgileri PayTR ödeme ekranında girilir</div>
+                <div class="small text-muted mt-1">Kart bilgilerin bu site üzerinde saklanmaz veya işlenmez. PayTR hesabı bağlandığında güvenli ödeme formu burada açılacaktır.</div>
             </div>
         </div>
     </div>

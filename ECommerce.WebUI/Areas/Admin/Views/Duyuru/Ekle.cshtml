@@ -133,7 +133,7 @@
         <div>
             <div class="s-eyebrow"><i class="bi bi-bullhorn"></i> Duyuru Yönetimi</div>
             <h1 class="s-title">Yeni Duyuru Ekle</h1>
-            <p class="s-subtitle">Üst bantta akacak yeni kampanya metnini ve isteğe bağlı yönlendirme bağlantısını tanımlayın.</p>
+            <p class="s-subtitle">Üst bantta akacak yeni kampanya duyurusunu tanımlayın.</p>
         </div>
         <a asp-action="Index" class="s-back-btn"><i class="bi bi-arrow-left"></i> Listeye Dön</a>
     </div>
@@ -144,12 +144,6 @@
                 <label class="s-label">Duyuru Metni</label>
                 <input asp-for="Metin" class="s-input" placeholder="Örn: İLK ÜYELİĞE ÖZEL 100TL İNDİRİM!" required />
                 <span asp-validation-for="Metin" class="text-danger small"></span>
-            </div>
-
-            <div class="s-form-group">
-                <label class="s-label">Yönlendirme Linki (Opsiyonel)</label>
-                <input asp-for="LinkUrl" class="s-input" placeholder="Örn: /kampanyalar veya https://..." />
-                <span asp-validation-for="LinkUrl" class="text-danger small"></span>
             </div>
 
             <div class="row">

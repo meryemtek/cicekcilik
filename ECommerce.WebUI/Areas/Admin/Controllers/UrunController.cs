@@ -12,6 +12,16 @@ namespace ECommerce.WebUI.Areas.Admin.Controllers
     [Authorize(Roles = "Admin")]
     public class UrunController : Controller
     {
+        private static readonly HashSet<string> AnaMenuSeoUrlListesi = new(StringComparer.OrdinalIgnoreCase)
+        {
+            "gonderim-amaci",
+            "cicekler",
+            "dogum-gunu",
+            "saksi-cicekleri",
+            "haftanin-cicekleri",
+            "kutuda-cicekler"
+        };
+
         private readonly IHttpClientFactory _httpClientFactory;
         public UrunController(IHttpClientFactory httpClientFactory)
         {
@@ -101,10 +111,13 @@ namespace ECommerce.WebUI.Areas.Admin.Controllers
                     var content = await response.Content.ReadAsStringAsync();
                     var kategoriler = JsonSerializer.Deserialize<List<KategoriListeDto>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<KategoriListeDto>();
 
-                    // Ana Kategoriler (UstKategoriId == null - Header menü başlıkları)
-                    var anaKategoriler = kategoriler
-                        .Where(k => k.UstKategoriId == null)
+                    // Ürünlerin ana kategorisi yalnızca Header menüsündeki altı sabit başlıktan seçilir.
+                    var anaMenuKategorileri = kategoriler
+                        .Where(k => k.UstKategoriId == null && AnaMenuSeoUrlListesi.Contains(k.SeoUrl))
                         .OrderBy(k => k.Ad)
+                        .ToList();
+
+                    var anaKategoriler = anaMenuKategorileri
                         .Select(k => new SelectListItem
                         {
                             Value = k.Id.ToString(),
@@ -124,9 +137,7 @@ namespace ECommerce.WebUI.Areas.Admin.Controllers
                     ViewBag.TumKategorilerJson = JsonSerializer.Serialize(jsonListe);
 
                     // Geriye dönük uyumluluk için hiyerarşik liste
-                    var hiyerarsikListe = kategoriler
-                        .Where(k => k.UstKategoriId == null)
-                        .OrderBy(k => k.Ad)
+                    var hiyerarsikListe = anaMenuKategorileri
                         .SelectMany(ana => new[] { ana }.Concat(
                             kategoriler
                                 .Where(alt => alt.UstKategoriId == ana.Id)

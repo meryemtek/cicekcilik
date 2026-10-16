@@ -31,37 +31,6 @@ public class SiparisGorselOnayServisi : ISiparisGorselOnayServisi
         };
     }
 
-    public async Task<Guid> GorselEkleVeyaGuncelleAsync(GorselOnayEkleDto dto)
-    {
-        var liste = await _gorselDeposu.GetirAsync(g => g.SiparisId == dto.SiparisId);
-        var mevcut = liste.FirstOrDefault();
-
-        if (mevcut == null)
-        {
-            var yeniGorsel = new SiparisGorselOnay
-            {
-                SiparisId = dto.SiparisId,
-                GorselUrl = dto.GorselUrl,
-                YuklemeTarihi = DateTime.UtcNow,
-                MusteriOnayladiMi = false
-            };
-
-            await _gorselDeposu.EkleAsync(yeniGorsel);
-            await _gorselDeposu.DegisiklikleriKaydetAsync();
-
-            return yeniGorsel.Id;
-        }
-        else
-        {
-            mevcut.GorselUrl = dto.GorselUrl;
-            mevcut.YuklemeTarihi = DateTime.UtcNow;
-            _gorselDeposu.Guncelle(mevcut);
-            await _gorselDeposu.DegisiklikleriKaydetAsync();
-
-            return mevcut.Id;
-        }
-    }
-
     public async Task MusteriOnayiVerAsync(Guid siparisId)
     {
         var liste = await _gorselDeposu.GetirAsync(g => g.SiparisId == siparisId);
@@ -75,15 +44,4 @@ public class SiparisGorselOnayServisi : ISiparisGorselOnayServisi
         }
     }
 
-    public async Task SilAsync(Guid siparisId)
-    {
-        var liste = await _gorselDeposu.GetirAsync(g => g.SiparisId == siparisId);
-        var mevcut = liste.FirstOrDefault();
-
-        if (mevcut != null)
-        {
-            _gorselDeposu.Sil(mevcut);
-            await _gorselDeposu.DegisiklikleriKaydetAsync();
-        }
-    }
 }

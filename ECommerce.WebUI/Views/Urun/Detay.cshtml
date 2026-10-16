@@ -32,7 +32,26 @@
             <div class="product-gallery-wrapper">
                 <div class="product-image-box">
                     <img src="@gorselYolu" alt="@Model.Ad" id="anaUrunGorseli" />
-                    <div class="static-badge">İndirimli Ürün</div>
+                    @if (!string.IsNullOrWhiteSpace(Model.Etiket))
+                    {
+                        <div class="static-badge">@Model.Etiket</div>
+                    }
+
+                    @if (Model.TumGorseller != null && Model.TumGorseller.Count > 1)
+                    {
+                        <!-- İLERİ / GERİ TUŞLARI -->
+                        <button type="button" class="gallery-nav-btn gallery-prev-btn" onclick="resimAdimla(-1)" aria-label="Önceki Fotoğraf" title="Önceki Fotoğraf">
+                            <i class="bi bi-chevron-left"></i>
+                        </button>
+                        <button type="button" class="gallery-nav-btn gallery-next-btn" onclick="resimAdimla(1)" aria-label="Sonraki Fotoğraf" title="Sonraki Fotoğraf">
+                            <i class="bi bi-chevron-right"></i>
+                        </button>
+
+                        <!-- FOTOĞRAF SAYAÇ ROZETİ -->
+                        <div class="gallery-counter-badge" id="galleryCounterBadge">
+                            1 / @Model.TumGorseller.Count
+                        </div>
+                    }
                 </div>
 
                 @if (Model.TumGorseller != null && Model.TumGorseller.Count > 1)
@@ -41,7 +60,7 @@
                         @for (int i = 0; i < Model.TumGorseller.Count; i++)
                         {
                             var gorsel = Model.TumGorseller[i];
-                            <div class="thumb-item @(i == 0 ? "active" : "")" data-gorsel="@gorsel" onclick="resimDegistir(this, this.getAttribute('data-gorsel'))">
+                            <div class="thumb-item @(i == 0 ? "active" : "")" data-index="@i" data-gorsel="@gorsel" onclick="resimDegistir(this, this.getAttribute('data-gorsel'), @i)">
                                 <img src="@gorsel" alt="@Model.Ad - Fotoğraf @(i + 1)" />
                             </div>
                         }
@@ -64,6 +83,77 @@
     @await Component.InvokeAsync("BenzerUrunler", new { kategoriId = Model.KategoriId, mevcutUrunId = Model.Id })
 </div>
 
+<style>
+    .product-image-box {
+        position: relative;
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+    .gallery-nav-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.94);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        color: #1A2820;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        cursor: pointer;
+        z-index: 6;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+        transition: all 0.22s ease;
+        padding: 0;
+        line-height: 1;
+        outline: none;
+    }
+
+    .gallery-nav-btn:hover {
+        background: #8b0028;
+        color: #ffffff;
+        border-color: #8b0028;
+        transform: translateY(-50%) scale(1.1);
+        box-shadow: 0 8px 24px rgba(139, 0, 40, 0.35);
+    }
+
+    .gallery-nav-btn:active {
+        transform: translateY(-50%) scale(0.95);
+    }
+
+    .gallery-prev-btn {
+        left: 14px;
+    }
+
+    .gallery-next-btn {
+        right: 14px;
+    }
+
+    .gallery-counter-badge {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        background: rgba(13, 56, 43, 0.85);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        color: #ffffff;
+        font-family: 'Outfit', sans-serif;
+        font-size: 0.76rem;
+        font-weight: 700;
+        padding: 5px 12px;
+        border-radius: 20px;
+        letter-spacing: 0.5px;
+        z-index: 6;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+</style>
+
 <!-- MODALLAR -->
 @await Html.PartialAsync("_TeslimatModalPartial")
 @await Html.PartialAsync("_YorumYapModalPartial", Model)
@@ -74,19 +164,66 @@
     const rawWhatsappNo = "@(ViewBag.WhatsappNo as string ?? "905010146623")";
     const baseUrunAd = "@Html.Raw(Model.Ad)";
     const baseUrunKod = "@Html.Raw(Model.UrunKodu)";
+    const galeriListesi = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.TumGorseller ?? new List<string>()));
+    let aktifResimIndex = 0;
 
-    function resimDegistir(elem, yeniGorselUrl) {
+    function resimAdimla(yon) {
+        if (!galeriListesi || galeriListesi.length <= 1) return;
+
+        aktifResimIndex += yon;
+        if (aktifResimIndex >= galeriListesi.length) {
+            aktifResimIndex = 0;
+        } else if (aktifResimIndex < 0) {
+            aktifResimIndex = galeriListesi.length - 1;
+        }
+
+        const yeniUrl = galeriListesi[aktifResimIndex];
+        const thumbs = document.querySelectorAll('.thumb-item');
+        const aktifThumb = (thumbs && thumbs.length > aktifResimIndex) ? thumbs[aktifResimIndex] : null;
+
+        resimDegistir(aktifThumb, yeniUrl, aktifResimIndex);
+
+        if (aktifThumb) {
+            aktifThumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        }
+    }
+
+    function resimDegistir(elem, yeniGorselUrl, index) {
         const anaResim = document.getElementById('anaUrunGorseli');
         if (!anaResim) return;
 
-        anaResim.style.opacity = '0.4';
+        anaResim.style.opacity = '0.35';
         setTimeout(() => {
             anaResim.src = yeniGorselUrl;
             anaResim.style.opacity = '1';
         }, 150);
 
         document.querySelectorAll('.thumb-item').forEach(el => el.classList.remove('active'));
-        elem.classList.add('active');
+        if (elem) elem.classList.add('active');
+
+        if (typeof index === 'number') {
+            aktifResimIndex = index;
+        } else if (elem) {
+            const idx = parseInt(elem.getAttribute('data-index') || '0');
+            aktifResimIndex = isNaN(idx) ? 0 : idx;
+        }
+
+        const sayac = document.getElementById('galleryCounterBadge');
+        if (sayac && galeriListesi && galeriListesi.length > 0) {
+            sayac.textContent = `${aktifResimIndex + 1} / ${galeriListesi.length}`;
+        }
     }
+
+    // Klavye Yön Tuşları ile Geçiş
+    document.addEventListener('keydown', function (e) {
+        const activeTag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
+        if (activeTag === 'input' || activeTag === 'textarea' || activeTag === 'select') return;
+
+        if (e.key === 'ArrowLeft') {
+            resimAdimla(-1);
+        } else if (e.key === 'ArrowRight') {
+            resimAdimla(1);
+        }
+    });
 </script>
 <script src="~/js/product-detail.js" asp-append-version="true"></script>

@@ -10,5 +10,6 @@ public class SiparisListeDto
     public DateTime SiparisTarihi { get; set; }
     public decimal ToplamTutar { get; set; }
     public SiparisDurumu Durum { get; set; }
+    public string DurumAdi => Durum.GorunumAdi();
     public string MusteriAdSoyad { get; set; } = string.Empty;
 }

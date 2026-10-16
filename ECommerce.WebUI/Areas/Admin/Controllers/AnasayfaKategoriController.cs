@@ -14,11 +14,14 @@ namespace ECommerce.WebUI.Areas.Admin.Controllers
     public class AnasayfaKategoriController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IWebHostEnvironment _environment;
 
         public AnasayfaKategoriController(
-            IHttpClientFactory httpClientFactory)
+            IHttpClientFactory httpClientFactory,
+            IWebHostEnvironment environment)
         {
             _httpClientFactory = httpClientFactory;
+            _environment = environment;
         }
 
         private HttpClient CreateClientWithToken()
@@ -83,8 +86,23 @@ namespace ECommerce.WebUI.Areas.Admin.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Ekle(
-            AnasayfaKategoriEkleDto model)
+            AnasayfaKategoriEkleDto model,
+            IFormFile? gorselDosyasi)
         {
+            if (gorselDosyasi != null)
+            {
+                try
+                {
+                    model.GorselUrl = await VitrinGorseliniKaydetAsync(gorselDosyasi);
+                }
+                catch (InvalidOperationException ex)
+                {
+                    ModelState.AddModelError("gorselDosyasi", ex.Message);
+                    await KategorileriYukleAsync();
+                    return View(model);
+                }
+            }
+
             if (!ModelState.IsValid)
             {
                 await KategorileriYukleAsync();
@@ -152,6 +170,8 @@ namespace ECommerce.WebUI.Areas.Admin.Controllers
                 SiraNo = item.SiraNo,
                 AktifMi = item.AktifMi
             };
+            ViewBag.GorselOnizlemeUrl = item.GorselUrl;
+            ViewBag.VitrinGorselOverrideUrl = item.VitrinGorselUrl;
 
             await KategorileriYukleAsync(
                 item.KategoriId);
@@ -162,8 +182,23 @@ namespace ECommerce.WebUI.Areas.Admin.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Guncelle(
-            AnasayfaKategoriGuncelleDto model)
+            AnasayfaKategoriGuncelleDto model,
+            IFormFile? gorselDosyasi)
         {
+            if (gorselDosyasi != null)
+            {
+                try
+                {
+                    model.GorselUrl = await VitrinGorseliniKaydetAsync(gorselDosyasi);
+                }
+                catch (InvalidOperationException ex)
+                {
+                    ModelState.AddModelError("gorselDosyasi", ex.Message);
+                    await KategorileriYukleAsync(model.KategoriId);
+                    return View(model);
+                }
+            }
+
             if (!ModelState.IsValid)
             {
                 await KategorileriYukleAsync(
@@ -315,6 +350,26 @@ namespace ECommerce.WebUI.Areas.Admin.Controllers
                     "Id",
                     "Ad",
                     seciliKategoriId);
+        }
+
+        private async Task<string> VitrinGorseliniKaydetAsync(IFormFile dosya)
+        {
+            if (dosya.Length == 0 || dosya.Length > 5 * 1024 * 1024)
+                throw new InvalidOperationException("Görsel 5 MB'dan küçük olmalıdır.");
+
+            if (!string.Equals(dosya.ContentType, "image/webp", StringComparison.OrdinalIgnoreCase))
+                throw new InvalidOperationException("Lütfen kırpma penceresinden hazırlanmış bir görsel seçin.");
+
+            var klasor = Path.Combine(_environment.WebRootPath, "uploads", "anasayfa-kategoriler");
+            Directory.CreateDirectory(klasor);
+
+            var dosyaAdi = $"{Guid.NewGuid():N}.webp";
+            var dosyaYolu = Path.Combine(klasor, dosyaAdi);
+
+            await using var stream = System.IO.File.Create(dosyaYolu);
+            await dosya.CopyToAsync(stream);
+
+            return $"/uploads/anasayfa-kategoriler/{dosyaAdi}";
         }
     }
 }

@@ -1,23 +1,27 @@
-﻿@{
+@{
     int mesajSayisi = ViewBag.OkunmamisMesajSayisi ?? 0;
+    var yeniSiparisler = ViewBag.YeniSiparisler as List<ECommerce.Application.DTOs.Siparis.SiparisListeDto>
+        ?? new List<ECommerce.Application.DTOs.Siparis.SiparisListeDto>();
     int toplamBildirim = ViewBag.ToplamBildirim ?? 0;
+    var yeniSiparisIdleri = string.Join(",", yeniSiparisler.Select(x => x.Id));
 }
 
-<div class="dropdown notification-dropdown">
-    <!-- Şık yuvarlak buton yapısı ve ok işaretini kaldıran yapı -->
+<div class="dropdown notification-dropdown" data-order-ids="@yeniSiparisIdleri">
     <a href="#" class="notification-btn dropdown-toggle" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
         <i class="bi bi-bell"></i>
         @if (toplamBildirim > 0)
         {
-            <span class="notification-badge">@toplamBildirim</span>
+            <span class="notification-badge" id="notificationBadge">@toplamBildirim</span>
         }
     </a>
 
-    <!-- Dropdown Menü (Açılır Kutu) -->
     <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 py-2 mt-2" aria-labelledby="notificationDropdown" style="width: 300px; border-radius: 16px;">
         <li class="px-3 py-2 border-bottom d-flex justify-content-between align-items-center">
             <span class="fw-bold small text-dark"><i class="bi bi-bell me-1 text-danger"></i> Bildirimler</span>
-            <span class="badge bg-danger rounded-pill">@toplamBildirim Yeni</span>
+            @if (toplamBildirim > 0)
+            {
+                <span class="badge bg-danger rounded-pill" id="notificationSummaryBadge">@toplamBildirim Yeni</span>
+            }
         </li>
         <li>
             <a class="dropdown-item py-2 px-3 d-flex align-items-center gap-3 mt-1 text-wrap" href="/Admin/IletisimMesaji/Index">
@@ -30,16 +34,25 @@
                 </div>
             </a>
         </li>
+        @foreach (var siparis in yeniSiparisler)
+        {
+            <li>
+                <a class="dropdown-item py-2 px-3 d-flex align-items-center gap-3 text-wrap" href="/Admin/Siparis/Detay/@siparis.Id">
+                    <div class="rounded-circle bg-success bg-opacity-10 p-2 text-success d-flex align-items-center justify-content-center flex-shrink-0" style="width: 38px; height: 38px;">
+                        <i class="bi bi-bag-check-fill"></i>
+                    </div>
+                    <div class="overflow-hidden">
+                        <p class="mb-0 small fw-semibold text-dark">Yeni Sipariş</p>
+                        <small class="text-muted text-truncate d-block">#@siparis.SiparisNumarasi · @siparis.MusteriAdSoyad</small>
+                    </div>
+                </a>
+            </li>
+        }
     </ul>
 </div>
 
 <style>
-    /* Bootstrap'in varsayılan dropdown ok işaretini tamamen gizler */
-    .notification-dropdown .dropdown-toggle::after {
-        display: none !important;
-    }
-
-    /* Çan ikonunun arkasındaki şık modern buton çerçevesi */
+    .notification-dropdown .dropdown-toggle::after { display: none !important; }
     .notification-btn {
         position: relative;
         width: 42px;
@@ -54,13 +67,7 @@
         text-decoration: none;
         transition: background .2s ease, color .2s ease, transform .2s ease;
     }
-
-        .notification-btn:hover {
-            background: #e9ebef;
-            color: #8b0028;
-        }
-
-    /* Kırmızı bildirim sayısının çanın sağ üst köşesine kusursuz oturması */
+    .notification-btn:hover { background: #e9ebef; color: #8b0028; }
     .notification-badge {
         position: absolute;
         top: -4px;
@@ -74,3 +81,83 @@
         border: 2px solid #fff;
     }
 </style>
+
+<script>
+    (() => {
+        const notificationRoot = document.querySelector('.notification-dropdown[data-order-ids]');
+        if (!notificationRoot) return;
+
+        let knownOrderIds = new Set((notificationRoot.dataset.orderIds || '').split(',').filter(Boolean));
+        let audioContext;
+        let soundEnabled = false;
+
+        const enableSound = () => {
+            soundEnabled = true;
+            if (audioContext?.state === 'suspended') audioContext.resume();
+        };
+
+        document.addEventListener('pointerdown', enableSound, { once: true });
+        document.addEventListener('keydown', enableSound, { once: true });
+
+        const playNewOrderSound = () => {
+            if (!soundEnabled) return;
+            audioContext ??= new (window.AudioContext || window.webkitAudioContext)();
+            if (audioContext.state === 'suspended') audioContext.resume();
+
+            const now = audioContext.currentTime;
+            // 10 saniyeye yayılan, aralıklı ve daha güçlü bir bildirim melodisi.
+            const frequencies = [784, 988, 1175, 988, 880, 1175, 1318, 1175, 988, 1175, 784, 988, 1175, 988];
+            frequencies.forEach((frequency, index) => {
+                const oscillator = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                const startAt = now + index * 0.72;
+                oscillator.type = 'triangle';
+                oscillator.frequency.value = frequency;
+                gain.gain.setValueAtTime(0.0001, startAt);
+                gain.gain.exponentialRampToValueAtTime(0.34, startAt + 0.04);
+                gain.gain.exponentialRampToValueAtTime(0.0001, startAt + 0.46);
+                oscillator.connect(gain);
+                gain.connect(audioContext.destination);
+                oscillator.start(startAt);
+                oscillator.stop(startAt + 0.48);
+            });
+        };
+
+        const updateNotificationCount = (orderCount) => {
+            const messageCount = @mesajSayisi;
+            const total = messageCount + orderCount;
+            const badge = document.getElementById('notificationBadge');
+            const summaryBadge = document.getElementById('notificationSummaryBadge');
+
+            if (badge) {
+                badge.textContent = total;
+                badge.hidden = total === 0;
+            }
+            if (summaryBadge) {
+                summaryBadge.textContent = `${total} Yeni`;
+                summaryBadge.hidden = total === 0;
+            }
+        };
+
+        const checkNewOrders = async () => {
+            try {
+                const response = await fetch('/Admin/Siparis/YeniBildirimler', { credentials: 'same-origin' });
+                if (!response.ok) return;
+                const data = await response.json();
+                const currentOrderIds = new Set((data.ids || []).map(String));
+                const hasNewOrder = [...currentOrderIds].some(id => !knownOrderIds.has(id));
+
+                if (hasNewOrder) {
+                    playNewOrderSound();
+                    notificationRoot.classList.add('new-order-notification');
+                    setTimeout(() => notificationRoot.classList.remove('new-order-notification'), 1200);
+                }
+
+                knownOrderIds = currentOrderIds;
+                updateNotificationCount(data.count || 0);
+            } catch { }
+        };
+
+        setInterval(checkNewOrders, 10000);
+    })();
+</script>

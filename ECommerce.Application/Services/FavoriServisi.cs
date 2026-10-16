@@ -18,7 +18,7 @@ public class FavoriServisi : IFavoriServisi
         var favoriler = await _favoriDeposu.GetirAsync(f => f.KullaniciId == kullaniciId);
         var sonuc = new List<FavoriListeDto>();
 
-        foreach (var fav in favoriler)
+        foreach (var fav in favoriler.GroupBy(f => f.UrunId).Select(grup => grup.First()))
         {
             var urun = await _urunDeposu.IdIleGetirAsync(fav.UrunId);
             if (urun != null)
@@ -42,12 +42,14 @@ public class FavoriServisi : IFavoriServisi
     public async Task<bool> FavoriToggleAsync(string kullaniciId, Guid urunId)
     {
         var mevcutListesi = await _favoriDeposu.GetirAsync(f => f.KullaniciId == kullaniciId && f.UrunId == urunId);
-        var mevcut = mevcutListesi.FirstOrDefault();
-
-        if (mevcut != null)
+        if (mevcutListesi.Any())
         {
-            // Zaten favorilerdeyse çıkar (Sil)
-            _favoriDeposu.Sil(mevcut);
+            // Yinelenmiş eski kayıtlar varsa hepsini temizle.
+            foreach (var mevcut in mevcutListesi)
+            {
+                _favoriDeposu.Sil(mevcut);
+            }
+
             await _favoriDeposu.DegisiklikleriKaydetAsync();
             return false; // Artık favoride değil
         }

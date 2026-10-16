@@ -17,6 +17,7 @@ namespace ECommerce.Application.DTOs.Siparis
         public string? KullanilanKuponKodu { get; set; }
         public decimal ToplamTutar { get; set; }
         public SiparisDurumu Durum { get; set; }
+        public string DurumAdi => Durum.GorunumAdi();
         public string FaturaTipi { get; set; } = "Bireysel";
         public string? FirmaAdi { get; set; }
         public string? VergiNo { get; set; }

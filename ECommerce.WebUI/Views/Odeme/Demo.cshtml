@@ -1,0 +1,22 @@
+@model ECommerce.Application.DTOs.Siparis.SiparisDetayDto
+@{
+    ViewData["Title"] = "Demo Ödeme";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="container my-5" style="max-width:760px">
+    <div class="payment-card p-4 p-md-5 bg-white border rounded-4 shadow-sm text-center">
+        <span class="badge rounded-pill text-bg-warning mb-3">Geliştirme modu</span>
+        <h1 class="h3 fw-bold text-dark">Demo PayTR Ödeme Ekranı</h1>
+        <p class="text-muted mb-4">PayTR hesabı ve mağaza bilgileri henüz eklenmedi. Bu ekran ödeme sonrası sipariş akışını denemek içindir; gerçek kart işlemi yapılmaz.</p>
+        <div class="bg-light rounded-3 p-3 mb-4 text-start">
+            <div class="d-flex justify-content-between"><span>Sipariş</span><strong>@Model.SiparisNumarasi</strong></div>
+            <div class="d-flex justify-content-between mt-2"><span>Toplam</span><strong>₺@Model.ToplamTutar.ToString("N2")</strong></div>
+        </div>
+        <form asp-action="DemoTamamla" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="@Model.Id" />
+            <button type="submit" class="btn btn-success rounded-pill px-4 py-3 fw-semibold">Demo ödemeyi başarılı tamamla</button>
+            <a asp-action="Index" class="btn btn-link text-muted ms-2">Ödeme sayfasına dön</a>
+        </form>
+    </div>
+</div>

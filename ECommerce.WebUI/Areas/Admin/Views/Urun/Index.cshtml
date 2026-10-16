@@ -17,8 +17,8 @@
         display: flex;
         align-items: flex-end;
         justify-content: space-between;
-        gap: 24px;
-        margin-bottom: 28px;
+        gap: 18px;
+        margin-bottom: 20px;
     }
 
     .urun-hero-content {
@@ -42,7 +42,7 @@
         }
 
     .urun-title {
-        font-size: 2rem;
+        font-size: 1.7rem;
         font-weight: 700;
         color: #24213d;
         margin: 0 0 6px;
@@ -52,7 +52,7 @@
     .urun-subtitle {
         margin: 0;
         color: #85818c;
-        font-size: .95rem;
+        font-size: .86rem;
     }
 
     .urun-action-group {
@@ -69,8 +69,8 @@
         border: 1px solid #e5e0e5;
         border-radius: 13px;
         color: #403b46;
-        padding: 13px 20px;
-        font-size: .9rem;
+        padding: 10px 16px;
+        font-size: .84rem;
         font-weight: 600;
         text-decoration: none;
         box-shadow: 0 4px 12px rgba(0,0,0,.03);
@@ -96,7 +96,7 @@
         font-size: .9rem;
         font-weight: 600;
         text-decoration: none;
-        box-shadow: 0 8px 22px rgba(139,0,40,.2);
+        box-shadow: 0 4px 12px rgba(139,0,40,.14);
         transition: all .2s ease;
         white-space: nowrap;
     }
@@ -110,8 +110,8 @@
     .urun-stats {
         display: grid;
         grid-template-columns: repeat(3,1fr);
-        gap: 16px;
-        margin-bottom: 24px;
+        gap: 12px;
+        margin-bottom: 18px;
     }
 
     .urun-stat {
@@ -119,18 +119,18 @@
         overflow: hidden;
         background: #fff;
         border: 1px solid #f0edf0;
-        border-radius: 17px;
-        padding: 20px 22px;
-        box-shadow: 0 7px 25px rgba(35,28,40,.055);
+        border-radius: 14px;
+        padding: 15px 18px;
+        box-shadow: 0 4px 14px rgba(35,28,40,.04);
     }
 
         .urun-stat::after {
             content: "";
             position: absolute;
-            width: 85px;
-            height: 85px;
-            right: -28px;
-            bottom: -34px;
+            width: 56px;
+            height: 56px;
+            right: -22px;
+            bottom: -28px;
             border-radius: 50%;
             background: rgba(139,0,40,.045);
         }
@@ -139,7 +139,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 12px;
+        margin-bottom: 8px;
     }
 
     .urun-stat-label {
@@ -151,19 +151,19 @@
     }
 
     .urun-stat-icon {
-        width: 38px;
-        height: 38px;
-        border-radius: 11px;
+        width: 32px;
+        height: 32px;
+        border-radius: 9px;
         display: flex;
         align-items: center;
         justify-content: center;
         background: #fff2f5;
         color: #9a1640;
-        font-size: 1.1rem;
+        font-size: .95rem;
     }
 
     .urun-stat-number {
-        font-size: 1.8rem;
+        font-size: 1.55rem;
         line-height: 1;
         font-weight: 700;
         color: #24213d;
@@ -256,6 +256,7 @@
     .urun-card {
         position: relative;
         overflow: hidden;
+        cursor: pointer;
         background: #fff;
         border: 1px solid #eee9ed;
         border-radius: 19px;
@@ -263,6 +264,11 @@
         box-shadow: 0 8px 28px rgba(35,28,40,.055);
         transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
     }
+
+        .urun-card:focus-visible {
+            outline: 3px solid rgba(139,0,40,.28);
+            outline-offset: 3px;
+        }
 
         .urun-card:hover {
             transform: translateY(-4px);
@@ -600,7 +606,7 @@
         {
             foreach (var item in urunler)
             {
-                <div class="urun-card" data-name="@item.Ad.ToLowerInvariant()" data-sku="@(item.UrunKodu?.ToLowerInvariant() ?? "")" data-status="@(item.AktifMi ? "active" : "passive")">
+                <div class="urun-card" data-detail-url="@Url.Action("Detay", new { id = item.Id })" data-name="@item.Ad.ToLowerInvariant()" data-sku="@(item.UrunKodu?.ToLowerInvariant() ?? "")" data-status="@(item.AktifMi ? "active" : "passive")" role="link" tabindex="0" aria-label="@item.Ad ürün detayını aç">
                     <!-- Üst kısım: Sol üstte orijinal çiçek ikonu, Sağ üstte aktiflik switch'i -->
                     <div class="urun-card-top">
                         <div class="urun-flower-icon">
@@ -639,7 +645,6 @@
 
                     <div class="urun-card-footer">
                         <div class="urun-card-actions-left">
-                            <a asp-action="Detay" asp-route-id="@item.Id" class="urun-action-link urun-btn-detail"><i class="bi bi-eye"></i> İncele</a>
                             <a asp-action="Guncelle" asp-route-id="@item.Id" class="urun-action-link urun-btn-edit"><i class="bi bi-pencil"></i> Düzenle</a>
                             <a asp-controller="UrunVaryant" asp-action="Index" asp-route-urunId="@item.Id" class="urun-action-link" style="color:#d35400;" title="Bu ürüne boyut veya varyant seçenekleri ekle"><i class="bi bi-arrows-angle-expand"></i> Boyut / Varyant</a>
                         </div>
@@ -670,6 +675,21 @@
         const cards = document.querySelectorAll(".urun-card");
         const filterButtons = document.querySelectorAll(".urun-filter-btn");
         let currentFilter = "all";
+
+        cards.forEach(card => {
+            function openDetails(event) {
+                if (event.target.closest("a, button, input, select, textarea, form, label")) return;
+                window.location.href = card.dataset.detailUrl;
+            }
+
+            card.addEventListener("click", openDetails);
+            card.addEventListener("keydown", function (event) {
+                if ((event.key === "Enter" || event.key === " ") && event.target === card) {
+                    event.preventDefault();
+                    openDetails(event);
+                }
+            });
+        });
 
         function filterCards() {
             const query = (search?.value || "").toLowerCase().trim();

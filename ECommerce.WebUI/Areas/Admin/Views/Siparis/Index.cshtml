@@ -147,16 +147,6 @@
         cursor: pointer;
     }
 
-    .btn-camera {
-        background: #fff4f7;
-        color: #8b0028;
-    }
-
-        .btn-camera:hover {
-            background: #fce8ed;
-            color: #65001f;
-        }
-
     .btn-detail {
         background: #f4f5f7;
         color: #24213d;
@@ -215,15 +205,11 @@
                             <td><span class="fee-badge">@item.ToplamTutar.ToString("C2")</span></td>
                             <td>
                                 <span class="status-badge status-info">
-                                    <i class="bi bi-clock-history"></i> @item.Durum.ToString()
+                                    <i class="bi bi-clock-history"></i> @item.DurumAdi
                                 </span>
                             </td>
                             <td>
                                 <div class="action-links">
-                                    <!-- Görsel Yükleme Sayfasına Yönlendiren Kamera Butonu -->
-                                    <a href="/Admin/SiparisGorsel/Yonet?siparisId=@item.Id" class="t-btn-action btn-camera" title="Kurye/Çiçek Görseli Yükle">
-                                        <i class="bi bi-camera"></i>
-                                    </a>
                                     <!-- Detay Sayfasına Yönlendiren Buton -->
                                     <a asp-action="Detay" asp-route-id="@item.Id" class="t-btn-action btn-detail" title="Sipariş Detayı">
                                         <i class="bi bi-eye"></i>

@@ -3,6 +3,8 @@
     ViewData["Title"] = $"Sipariş Detayı - {Model.SiparisNumarasi}";
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 }
+@using ECommerce.Application.DTOs.Siparis
+@using ECommerce.Domain.Enums
 
 <style>
     .t-page {
@@ -46,6 +48,129 @@
         padding: 25px;
         margin-bottom: 24px;
     }
+
+    .order-info-group {
+        padding: 14px 0;
+        border-top: 1px solid #f0edf0;
+    }
+
+    .order-info-group:first-of-type {
+        padding-top: 0;
+        border-top: 0;
+    }
+
+    .order-info-label {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        margin-bottom: 7px;
+        color: #9a1640;
+        font-size: .78rem;
+        font-weight: 700;
+        letter-spacing: .02em;
+        text-transform: uppercase;
+    }
+
+    .order-info-label i {
+        font-size: .92rem;
+    }
+
+    .order-info-value {
+        color: #24213d;
+        font-size: 1rem;
+        font-weight: 700;
+    }
+
+    .order-info-muted {
+        display: inline-block;
+        margin: 4px 14px 0 0;
+        color: #716b77;
+        font-size: .84rem;
+    }
+
+    .order-info-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 5px 0;
+        color: #4d4854;
+        font-size: .86rem;
+    }
+
+    .order-info-row strong {
+        color: #716b77;
+        font-weight: 600;
+    }
+
+    .order-info-row span {
+        color: #24213d;
+        font-weight: 600;
+        text-align: right;
+        overflow-wrap: anywhere;
+    }
+
+    .order-note-box {
+        min-height: 54px;
+        padding: 11px 13px;
+        border: 1px solid #eee4e8;
+        border-radius: 10px;
+        background: #fffafb;
+        color: #4d4854;
+        font-size: .88rem;
+        line-height: 1.5;
+        white-space: pre-wrap;
+    }
+
+    .order-total-box {
+        max-width: 390px;
+        margin-left: auto;
+    }
+
+    .order-total-row,
+    .order-total-final {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 5px 0;
+        color: #716b77;
+        font-size: .9rem;
+    }
+
+    .order-total-row strong {
+        color: #24213d;
+        font-weight: 700;
+    }
+
+    .order-total-discount,
+    .order-total-discount strong {
+        color: #a22d4e;
+    }
+
+    .order-total-final {
+        margin-top: 9px;
+        padding-top: 13px;
+        border-top: 1px solid #e8e1e5;
+        color: #24213d;
+        font-size: 1.12rem;
+        font-weight: 700;
+    }
+
+    .order-total-final strong {
+        color: var(--site-primary);
+        font-size: 1.3rem;
+    }
+
+    @@media (max-width: 575.98px) {
+        .order-info-row {
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .order-info-row span {
+            text-align: left;
+        }
+    }
 </style>
 
 <div class="t-page">
@@ -82,11 +207,33 @@
         <div class="col-lg-6">
             <div class="card-custom">
                 <h5 class="fw-bold text-dark mb-3"><i class="bi bi-person-badge text-danger me-2"></i> Müşteri ve Teslimat Bilgileri</h5>
-                <p class="mb-2"><strong>Ad Soyad:</strong> @Model.MusteriAd @Model.MusteriSoyad</p>
-                <p class="mb-2"><strong>Telefon:</strong> @Model.MusteriTelefon</p>
-                <p class="mb-2"><strong>E-Posta:</strong> @Model.MusteriEmail</p>
-                <p class="mb-2"><strong>Teslimat Adresi:</strong> @Model.TeslimatAdresi</p>
-                <p class="mb-0"><strong>Fatura Adresi:</strong> @Model.FaturaAdresi</p>
+                <div class="order-info-group">
+                    <div class="order-info-label"><i class="bi bi-person"></i> Siparişi Veren Müşteri</div>
+                    <div class="order-info-value">@Model.MusteriAd @Model.MusteriSoyad</div>
+                    <div class="order-info-muted"><i class="bi bi-telephone me-1"></i>@(string.IsNullOrWhiteSpace(Model.MusteriTelefon) ? "Telefon belirtilmedi" : Model.MusteriTelefon)</div>
+                    <div class="order-info-muted"><i class="bi bi-envelope me-1"></i>@(string.IsNullOrWhiteSpace(Model.MusteriEmail) ? "E-posta belirtilmedi" : Model.MusteriEmail)</div>
+                </div>
+
+                <div class="order-info-group">
+                    <div class="order-info-label"><i class="bi bi-gift"></i> Alıcı ve Teslimat</div>
+                    <div class="order-info-row"><strong>Alıcı Adı Soyadı</strong><span>@(string.IsNullOrWhiteSpace(Model.AliciAdSoyad) ? "Belirtilmedi" : Model.AliciAdSoyad)</span></div>
+                    <div class="order-info-row"><strong>Alıcı Telefonu</strong><span>@(string.IsNullOrWhiteSpace(Model.AliciTelefon) ? "Belirtilmedi" : Model.AliciTelefon)</span></div>
+                    <div class="order-info-row"><strong>Gönderim Yeri</strong><span>@(string.IsNullOrWhiteSpace(Model.GonderimYeriAdi) ? "Belirtilmedi" : Model.GonderimYeriAdi)</span></div>
+                    <div class="order-info-row"><strong>Teslimat Adresi</strong><span>@(string.IsNullOrWhiteSpace(Model.TeslimatAdresi) ? "Belirtilmedi" : Model.TeslimatAdresi)</span></div>
+                </div>
+
+                <div class="order-info-group">
+                    <div class="order-info-label"><i class="bi bi-envelope-paper-heart"></i> Kart ve Gönderen Bilgileri</div>
+                    <div class="order-info-row"><strong>Gönderen Adı</strong><span>@(string.IsNullOrWhiteSpace(Model.GonderenGorunenAd) ? "Belirtilmedi" : Model.GonderenGorunenAd)</span></div>
+                    <div class="order-note-box">@(string.IsNullOrWhiteSpace(Model.KartNotu) ? "Not eklenmedi." : Model.KartNotu)</div>
+                </div>
+
+                <div class="order-info-group mb-0">
+                    <div class="order-info-label"><i class="bi bi-receipt"></i> Fatura ve Ödeme</div>
+                    <div class="order-info-row"><strong>Fatura Tipi</strong><span>@Model.FaturaTipi</span></div>
+                    <div class="order-info-row"><strong>Fatura Adresi</strong><span>@(string.IsNullOrWhiteSpace(Model.FaturaAdresi) ? "Belirtilmedi" : Model.FaturaAdresi)</span></div>
+                    <div class="order-info-row"><strong>Ödeme Yöntemi</strong><span>@Model.OdemeYontemi</span></div>
+                </div>
             </div>
         </div>
 
@@ -97,13 +244,15 @@
                 <form asp-action="DurumGuncelle" method="post">
                     <input type="hidden" name="Id" value="@Model.Id" />
                     <div class="mb-3">
-                        <label class="form-label small fw-bold">Mevcut Durum: <span class="text-danger">@Model.Durum</span></label>
-                        <select name="YeniDurum" class="form-select rounded-3">
-                            @foreach (var durum in Enum.GetValues(typeof(ECommerce.Domain.Enums.SiparisDurumu)))
+                        <label for="yeniDurum" class="form-label small fw-bold">Mevcut Durum: <span class="text-danger">@Model.DurumAdi</span></label>
+                        <select id="yeniDurum" name="YeniDurum" class="form-select rounded-3" required>
+                            <option value="" disabled selected="@(Model.Durum == SiparisDurumu.Beklemede)">Yeni durum seçin</option>
+                            @foreach (var durum in Enum.GetValues<SiparisDurumu>().Where(x => x != SiparisDurumu.Beklemede))
                             {
-                                <option value="@durum" selected="@(Model.Durum.ToString() == durum.ToString())">@durum</option>
+                                <option value="@((int)durum)" selected="@(Model.Durum == durum)">@durum.GorunumAdi()</option>
                             }
                         </select>
+                        <div class="form-text">Kaydedilen durum müşterinin Siparişlerim sayfasında gösterilir.</div>
                     </div>
                     <button type="submit" class="btn btn-dark w-100 rounded-3 py-2 fw-bold">Durumu Güncelle</button>
                 </form>
@@ -142,8 +291,43 @@
                 </tbody>
             </table>
         </div>
-        <div class="d-flex justify-content-end mt-3 border-top pt-3">
-            <h4 class="fw-bold text-dark">Genel Toplam: <span class="text-danger" style="color: var(--site-primary) !important;">@Model.ToplamTutar.ToString("N2") ₺</span></h4>
+        <div class="order-total-box mt-3 border-top pt-3">
+            <div class="order-total-row">
+                <span>Ara Toplam</span>
+                <strong>@Model.AraToplam.ToString("N2") ₺</strong>
+            </div>
+            @if (Model.TeslimatToplamUcreti > 0)
+            {
+                <div class="order-total-row">
+                    <span>Teslimat Ücreti</span>
+                    <strong>@Model.TeslimatToplamUcreti.ToString("N2") ₺</strong>
+                </div>
+            }
+            @if (Model.VipToplamUcreti > 0)
+            {
+                <div class="order-total-row">
+                    <span>VIP Teslimat Ücreti</span>
+                    <strong>@Model.VipToplamUcreti.ToString("N2") ₺</strong>
+                </div>
+            }
+            @if (Model.KampanyaIndirimTutari > 0)
+            {
+                <div class="order-total-row order-total-discount">
+                    <span><i class="bi bi-stars me-1"></i>@(string.IsNullOrWhiteSpace(Model.UygulananKampanyaAdi) ? "Kampanya İndirimi" : Model.UygulananKampanyaAdi)</span>
+                    <strong>-@Model.KampanyaIndirimTutari.ToString("N2") ₺</strong>
+                </div>
+            }
+            @if (Model.KuponIndirimTutari > 0)
+            {
+                <div class="order-total-row order-total-discount">
+                    <span><i class="bi bi-tag me-1"></i>Kupon İndirimi@(string.IsNullOrWhiteSpace(Model.KullanilanKuponKodu) ? "" : $" ({Model.KullanilanKuponKodu})")</span>
+                    <strong>-@Model.KuponIndirimTutari.ToString("N2") ₺</strong>
+                </div>
+            }
+            <div class="order-total-final">
+                <span>Genel Toplam</span>
+                <strong>@Model.ToplamTutar.ToString("N2") ₺</strong>
+            </div>
         </div>
     </div>
 </div>

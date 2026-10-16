@@ -5,5 +5,6 @@
         public Guid KategoriId { get; set; }
         public int SiraNo { get; set; }
         public bool AktifMi { get; set; } = true;
+        public string? GorselUrl { get; set; }
     }
 }

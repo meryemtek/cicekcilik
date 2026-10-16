@@ -2,6 +2,7 @@ using ECommerce.Application.DTOs.BankaHesabi;
 using ECommerce.Application.DTOs.KartNotuSablonu;
 using ECommerce.Application.DTOs.Sayfa;
 using ECommerce.Application.DTOs.Siparis;
+using ECommerce.Application.DTOs.Odeme;
 using ECommerce.Application.Models;
 using ECommerce.WebUI.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -222,6 +223,42 @@ namespace ECommerce.WebUI.Controllers
                 using var doc = JsonDocument.Parse(responseContent);
                 var siparisId = doc.RootElement.GetProperty("siparisId").GetGuid();
 
+                if (string.Equals(odemeYontemi, "KrediKarti", StringComparison.OrdinalIgnoreCase))
+                {
+                    var detayResponse = await client.GetAsync($"siparis/benim-siparislerim/{siparisId}");
+                    if (detayResponse.IsSuccessStatusCode)
+                    {
+                        var detay = await detayResponse.Content.ReadFromJsonAsync<SiparisDetayDto>();
+                        if (detay != null)
+                        {
+                            var odemeIstek = new OdemeIstekDto
+                            {
+                                SiparisNumarasi = detay.SiparisNumarasi,
+                                ToplamTutar = detay.ToplamTutar,
+                                MusteriEmail = detay.MusteriEmail,
+                                MusteriAdSoyad = $"{detay.MusteriAd} {detay.MusteriSoyad}".Trim(),
+                                MusteriTelefon = detay.MusteriTelefon,
+                                IPAdresi = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "127.0.0.1",
+                                MerchantOkUrl = Url.Action(nameof(Basarili), "Odeme", new { id = siparisId }, Request.Scheme) ?? string.Empty,
+                                MerchantFailUrl = Url.Action(nameof(Index), "Odeme", null, Request.Scheme) ?? string.Empty,
+                                NotificationUrl = Url.Action("Bildirim", "Odeme", null, Request.Scheme) ?? string.Empty,
+                                Urunler = detay.Kalemler.Select(k => new OdemeUrunDto { Adi = k.UrunAdi, Fiyat = k.BirimFiyat, Adet = k.Miktar }).ToList()
+                            };
+
+                            var paymentResponse = await client.PostAsJsonAsync("odeme/baslat", odemeIstek);
+                            var payment = await paymentResponse.Content.ReadFromJsonAsync<OdemeYanitDto>();
+                            if (payment?.BasariliMi == true)
+                            {
+                                TempData["PaytrToken"] = payment.TokenVeyaUrl;
+                                return RedirectToAction(payment.DemoModu ? nameof(Demo) : nameof(Paytr), new { id = siparisId });
+                            }
+
+                            TempData["HataMesaji"] = payment?.HataMesaji ?? "Ödeme ekranı başlatılamadı.";
+                            return RedirectToAction(nameof(Index));
+                        }
+                    }
+                }
+
                 return RedirectToAction("Basarili", new { id = siparisId });
             }
 
@@ -239,6 +276,39 @@ namespace ECommerce.WebUI.Controllers
 
             TempData["HataMesaji"] = errorMessage;
             return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Demo(Guid id)
+        {
+            var siparis = await SiparisDetayiniGetirAsync(id);
+            if (siparis == null) return NotFound();
+            return View(siparis);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult DemoTamamla(Guid id)
+        {
+            return RedirectToAction(nameof(Basarili), new { id });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Paytr(Guid id)
+        {
+            var siparis = await SiparisDetayiniGetirAsync(id);
+            var token = TempData["PaytrToken"] as string;
+            if (siparis == null || string.IsNullOrWhiteSpace(token)) return RedirectToAction(nameof(Index));
+            ViewBag.PaytrUrl = token;
+            return View(siparis);
+        }
+
+        private async Task<SiparisDetayDto?> SiparisDetayiniGetirAsync(Guid id)
+        {
+            var response = await CreateApiClient().GetAsync($"siparis/benim-siparislerim/{id}");
+            return response.IsSuccessStatusCode
+                ? await response.Content.ReadFromJsonAsync<SiparisDetayDto>()
+                : null;
         }
 
         [HttpGet]

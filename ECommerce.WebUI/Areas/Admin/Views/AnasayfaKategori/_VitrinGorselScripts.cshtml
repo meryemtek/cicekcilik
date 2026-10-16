@@ -1,0 +1,82 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const input = document.getElementById('vitrinGorselDosyasi');
+        const modalElement = document.getElementById('vitrinCropModal');
+        const image = document.getElementById('vitrinCropImage');
+        const preview = document.getElementById('vitrinImagePreview');
+        const urlField = document.getElementById('GorselUrl');
+        const modal = new bootstrap.Modal(modalElement);
+        let cropper;
+        let source;
+        let croppedBlob;
+
+        function setPreview(url, alt) {
+            preview.replaceChildren();
+            if (!url) {
+                const placeholder = document.createElement('div');
+                placeholder.className = 'w-100 h-100 d-flex align-items-center justify-content-center text-success';
+                placeholder.innerHTML = '<i class="bi bi-flower1 fs-2"></i>';
+                preview.appendChild(placeholder);
+                return;
+            }
+            const img = document.createElement('img');
+            img.src = url;
+            img.alt = alt;
+            preview.appendChild(img);
+        }
+
+        if (modalElement.parentElement !== document.body) document.body.appendChild(modalElement);
+
+        input.addEventListener('change', () => {
+            const file = input.files?.[0];
+            if (!file) return;
+            if (!file.type.startsWith('image/')) {
+                input.value = '';
+                alert('Lütfen bir görsel dosyası seçin.');
+                return;
+            }
+            source = URL.createObjectURL(file);
+            image.src = source;
+            modal.show();
+        });
+
+        modalElement.addEventListener('shown.bs.modal', () => {
+            cropper?.destroy();
+            cropper = new Cropper(image, { aspectRatio: 1, viewMode: 1, dragMode: 'move', autoCropArea: .9, preview: '#vitrinCropPreview', responsive: true, background: false });
+        });
+        modalElement.addEventListener('hidden.bs.modal', () => {
+            cropper?.destroy();
+            cropper = null;
+            if (source) URL.revokeObjectURL(source);
+            if (!croppedBlob) input.value = '';
+        });
+        document.getElementById('vitrinZoomIn').addEventListener('click', () => cropper?.zoom(.1));
+        document.getElementById('vitrinZoomOut').addEventListener('click', () => cropper?.zoom(-.1));
+        document.getElementById('vitrinRotate').addEventListener('click', () => cropper?.rotate(90));
+        document.getElementById('vitrinCropApply').addEventListener('click', () => {
+            if (!cropper) return;
+            cropper.getCroppedCanvas({ width: 500, height: 500, imageSmoothingEnabled: true, imageSmoothingQuality: 'high' }).toBlob(blob => {
+                if (!blob) return;
+                croppedBlob = blob;
+                const previewUrl = URL.createObjectURL(blob);
+                setPreview(previewUrl, 'Kırpılmış vitrin görseli');
+                modal.hide();
+            }, 'image/webp', .9);
+        });
+        document.getElementById('vitrinGorselKaldir').addEventListener('click', () => {
+            urlField.value = '';
+            croppedBlob = null;
+            input.value = '';
+            const fallback = preview.dataset.fallback;
+            setPreview(fallback, 'Kategori görseli');
+        });
+        document.querySelector('form[enctype="multipart/form-data"]').addEventListener('submit', () => {
+            if (!croppedBlob) return;
+            const file = new File([croppedBlob], 'vitrin.webp', { type: 'image/webp' });
+            const transfer = new DataTransfer();
+            transfer.items.add(file);
+            input.files = transfer.files;
+        });
+    });
+</script>

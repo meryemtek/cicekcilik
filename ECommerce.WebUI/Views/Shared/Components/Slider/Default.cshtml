@@ -100,8 +100,8 @@
     .bf-hero-trust i { color: #984255; font-size: 1.25rem; line-height: 1.2; }
     .bf-hero-trust strong { display: block; color: #02241a; font-size: .76rem; font-weight: 600; line-height: 1.3; }
     .bf-hero-trust small { display: block; margin-top: 2px; color: #727974; font-size: .68rem; line-height: 1.3; }
-    .bf-hero-visual { position: relative; display: grid; place-items: center; min-width: 0; }
-    .bf-hero-visual img { width: 100%; height: 440px; object-fit: cover; object-position: center 40%; border-radius: 24px; border: 1px solid rgba(232, 130, 150, .2); box-shadow: 0 24px 44px -8px rgba(26, 58, 47, .16); }
+    .bf-hero-visual { position: relative; display: grid; place-items: center; justify-self: center; width: fit-content; max-width: 100%; min-width: 0; }
+    .bf-hero-visual img { display: block; width: auto; height: auto; max-width: 100%; max-height: 440px; object-fit: contain; object-position: center; border-radius: 24px; border: 1px solid rgba(232, 130, 150, .2); box-shadow: 0 24px 44px -8px rgba(26, 58, 47, .16); }
     .bf-hero-illustration { position: relative; width: 100%; height: 440px; overflow: hidden; border-radius: 24px; background: radial-gradient(circle at 48% 40%, rgba(255, 255, 255, .95), rgba(255, 217, 222, .55) 60%, rgba(171, 206, 191, .55)); box-shadow: 0 24px 44px -8px rgba(26, 58, 47, .12); }
     .bf-hero-flower, .bf-hero-leaf { position: absolute; display: block; font-family: Georgia, serif !important; line-height: 1; }
     .bf-hero-flower { color: #d96391; }
@@ -119,7 +119,8 @@
     .bf-hero-controls button:hover { background: #1a3a2f; color: #fff; }
     @@media (max-width: 991px) {
         .bf-hero-slide { grid-template-columns: 1fr; gap: 28px; min-height: 0; padding: 40px 36px 72px; }
-        .bf-hero-visual img, .bf-hero-illustration { height: 320px; }
+        .bf-hero-visual img { max-height: 320px; }
+        .bf-hero-illustration { height: 320px; }
         .bf-hero-indicators { left: 36px; }
     }
     @@media (max-width: 575px) {
@@ -127,7 +128,8 @@
         .bf-hero-carousel { border-radius: 22px; }
         .bf-hero-slide { padding: 30px 22px 70px; }
         .bf-hero-trust { grid-template-columns: 1fr; gap: 10px; }
-        .bf-hero-visual img, .bf-hero-illustration { height: 230px; }
+        .bf-hero-visual img { max-height: 230px; border-radius: 18px; }
+        .bf-hero-illustration { height: 230px; }
         .flower-main { font-size: 9rem; } .flower-back, .flower-front, .bf-hero-leaf { font-size: 6rem; }
         .bf-hero-indicators { left: 22px; bottom: 28px; }
         .bf-hero-controls { right: 16px; bottom: 18px; }

@@ -38,17 +38,8 @@
         <!-- ÜRÜN BAŞLIĞI -->
         <h1 class="fl-product-main-title">@Model.Ad</h1>
 
-        <!-- ŞİİRSEL / BOTANİK AÇIKLAMA -->
-        <p class="fl-product-description">
-            @if (!string.IsNullOrWhiteSpace(Model.Aciklama))
-            {
-                @Html.Raw(Model.Aciklama.Length > 220 ? Model.Aciklama.Substring(0, 220) + "..." : Model.Aciklama)
-            }
-            else
-            {
-                <text>Fransız bahçe gülleri, pudra pembe şakayıklar, taze okaliptüs yaprakları ve atölyemize özel ipek ambalaj tanzimi ile zarafetin somut hali.</text>
-            }
-        </p>
+        <!-- ÜRÜN KODU -->
+        <p class="fl-product-description fl-product-code">Ürün Kodu: @Model.UrunKodu</p>
 
         <!-- FİYAT ALANI -->
         <div class="fl-price-row d-flex align-items-center justify-content-between">
@@ -59,12 +50,6 @@
             {
                 <span class="badge bg-danger fs-6 px-3 py-2 rounded-pill shadow-sm">
                     <i class="bi bi-x-circle-fill me-1"></i> Tükendi / Stokta Yok
-                </span>
-            }
-            else if (Model.StokMiktari <= 5)
-            {
-                <span class="badge bg-warning text-dark fs-6 px-3 py-2 rounded-pill shadow-sm">
-                    <i class="bi bi-fire me-1"></i> Son @Model.StokMiktari Ürün!
                 </span>
             }
         </div>
@@ -135,8 +120,8 @@
                 <!-- TARİH VE SAAT SEÇİM ALANI -->
                 <div class="fl-delivery-datetime-sub">
                     <div class="date-type-grid">
-                        <label class="date-type-card active" onclick="tarihTuruSec(this, 'Bugun')">
-                            <input type="radio" name="GorselTeslimatGunu" value="Bugun" checked />
+                        <label class="date-type-card" onclick="tarihTuruSec(this, 'Bugun')">
+                            <input type="radio" name="GorselTeslimatGunu" value="Bugun" />
                             <i class="bi bi-truck d-block fs-5 mb-1"></i> Bugün
                         </label>
                         <label class="date-type-card" onclick="tarihTuruSec(this, 'Yarin')">
@@ -306,8 +291,8 @@
             <input type="hidden" name="Il" id="gizliIl" value="Elazığ" />
             <input type="hidden" name="Ilce" id="gizliIlce" value="Merkez" />
             <input type="hidden" name="Mahalle" id="gizliMahalle" value="" />
-            <input type="hidden" name="TeslimatGunu" id="gizliTeslimatGunu" value="Bugun" />
-            <input type="hidden" name="TeslimatSaati" id="gizliTeslimatSaati" value="13:00 - 17:00" />
+            <input type="hidden" name="TeslimatGunu" id="gizliTeslimatGunu" value="" />
+            <input type="hidden" name="TeslimatSaati" id="gizliTeslimatSaati" value="" />
 
             <input type="hidden" name="MahalleFarki" id="gizliMahalleFark" value="0" />
             <input type="hidden" name="VipFarki" id="gizliVipFark" value="0" data-ucret="@vipUcret.ToString(System.Globalization.CultureInfo.InvariantCulture)" />

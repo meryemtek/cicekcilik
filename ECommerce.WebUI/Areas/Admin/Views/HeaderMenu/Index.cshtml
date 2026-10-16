@@ -450,9 +450,9 @@
                                         <i class="bi bi-pencil"></i>
                                     </button>
 
-                                    <form asp-action="AltMenuSil" asp-route-id="@alt.Id" method="post" onsubmit="return confirm('\'@alt.Ad\' alt menüsünü silmek istediğinize emin misiniz?');" style="display:inline;">
+                                    <form asp-action="AltMenuSil" asp-route-id="@alt.Id" method="post" style="display:inline;" data-menu-name="@alt.Ad">
                                         @Html.AntiForgeryToken()
-                                        <button type="submit" class="hm-btn-action hm-btn-delete" title="Sil">
+                                        <button type="button" class="hm-btn-action hm-btn-delete" title="Sil" onclick="openDeleteModal(this.closest('form'))">
                                             <i class="bi bi-trash3"></i>
                                         </button>
                                     </form>
@@ -477,6 +477,30 @@
                 </div>
             </div>
         }
+    </div>
+</div>
+
+<!-- SİLME ONAY MODALI -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 border-0 shadow">
+            <div class="modal-header border-bottom-0 pb-0">
+                <h5 class="modal-title fw-bold" id="deleteModalTitle" style="color: #24213d;">
+                    <i class="bi bi-trash3 me-2 text-danger"></i>Alt Menüyü Sil
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+            </div>
+            <div class="modal-body py-3">
+                <p class="mb-0 text-secondary" id="deleteModalMessage"></p>
+                <small class="d-block mt-2 text-muted">Bu işlem geri alınamaz.</small>
+            </div>
+            <div class="modal-footer border-top-0 pt-0">
+                <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Vazgeç</button>
+                <button type="button" class="btn btn-danger rounded-pill px-4" onclick="confirmDeleteMenu()">
+                    <i class="bi bi-trash3 me-1"></i>Sil
+                </button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -515,6 +539,27 @@
 
 @section Scripts {
     <script>
+        let pendingDeleteForm = null;
+
+        function openDeleteModal(form) {
+            pendingDeleteForm = form;
+
+            const modalElement = document.getElementById('deleteModal');
+            if (modalElement.parentElement !== document.body) {
+                document.body.appendChild(modalElement);
+            }
+
+            const menuName = form.dataset.menuName;
+            document.getElementById('deleteModalMessage').textContent = `“${menuName}” alt menüsünü silmek istediğinize emin misiniz?`;
+            bootstrap.Modal.getOrCreateInstance(modalElement).show();
+        }
+
+        function confirmDeleteMenu() {
+            if (pendingDeleteForm) {
+                pendingDeleteForm.requestSubmit();
+            }
+        }
+
         function selectAndFocusMenu(menuId) {
             const select = document.getElementById('anaMenuSelect');
             const input = document.getElementById('altMenuAdiInput');
@@ -533,7 +578,12 @@
             document.getElementById('modalAltMenuAd').value = ad;
             document.getElementById('modalAltMenuAktif').checked = aktifMi;
 
-            var modal = new bootstrap.Modal(document.getElementById('editModal'));
+            const modalElement = document.getElementById('editModal');
+            if (modalElement.parentElement !== document.body) {
+                document.body.appendChild(modalElement);
+            }
+
+            var modal = bootstrap.Modal.getOrCreateInstance(modalElement);
             modal.show();
         }
     </script>

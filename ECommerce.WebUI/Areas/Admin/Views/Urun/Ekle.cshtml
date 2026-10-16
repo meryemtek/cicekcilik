@@ -204,12 +204,23 @@
         }
 
         .select2-container--default .select2-selection--multiple .select2-selection__rendered {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 4px;
+            width: 100%;
             margin: 0;
             padding: 0;
+            overflow: visible;
+            white-space: normal;
             line-height: normal;
         }
 
         .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            display: inline-flex;
+            align-items: center;
+            float: none;
+            max-width: 100%;
             background-color: #fff2f5;
             border: 1px solid #f8c9d4;
             color: #8b0028;
@@ -217,8 +228,8 @@
             border-radius: 8px;
             padding: 4px 10px;
             font-size: .8rem;
-            margin-top: 4px;
-            margin-right: 6px;
+            margin: 0;
+            white-space: normal;
         }
 
         .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
@@ -232,7 +243,10 @@
         }
 
     .select2-container--default .select2-search--inline .select2-search__field {
-        margin-top: 6px;
+        flex: 1 1 100px;
+        min-width: 80px;
+        max-width: 100%;
+        margin: 2px 0;
         font-size: .88rem;
         font-family: inherit;
     }
@@ -594,10 +608,10 @@
                         </div>
                         <div class="col-md-6">
                             <div class="urun-field">
-                                <label for="altKategoriSelect">Alt Menüler / Kategoriler (Çoklu Seçilebilir)</label>
+                                <label for="altKategoriSelect">Diğer Kategoriler (Çoklu Seçilebilir)</label>
                                 <select name="AltKategoriIdleri" id="altKategoriSelect" multiple="multiple" style="width: 100%;">
                                 </select>
-                                <span class="urun-help" id="altKategoriHelp">Ürünün ait olacağı alt kategorileri seçin (isteğe bağlı).</span>
+                                <span class="urun-help" id="altKategoriHelp">Ürünü başka kategorilerde de göstermek için seçim yapın (isteğe bağlı).</span>
                             </div>
                         </div>
                     </div>
@@ -738,11 +752,11 @@
 
             $('#altKategoriSelect').select2({
                 width: '100%',
-                placeholder: "Birden fazla alt kategori seçebilirsiniz...",
+                placeholder: "Ek kategorileri seçin...",
                 allowClear: true,
                 closeOnSelect: false,
                 language: {
-                    noResults: function () { return "Alt kategori bulunamadı"; }
+                    noResults: function () { return "Kategori bulunamadı"; }
                 }
             });
 
@@ -774,33 +788,36 @@
                 }
             })();
 
-            $('#anaKategoriSelect').on('change', async function () {
-                await kategoriYukleme;
-
-                const selectedAnaId = String($(this).val() ?? "").trim().toLowerCase();
+            function ekKategorileriDoldur(selectedAnaId, seciliIdler = []) {
                 const $altSelect = $('#altKategoriSelect');
                 $altSelect.empty();
-
-                if (!selectedAnaId) {
-                    $altSelect.trigger('change');
-                    $('#altKategoriHelp').text("Ürünün ait olacağı alt kategorileri seçin (isteğe bağlı).").css('color', '#85818c');
-                    return;
-                }
-
-                // ustKategoriId eşleşen alt kategoriler
-                const altlar = tumKategoriler.filter(k =>
-                    k.ustKategoriId && k.ustKategoriId.toLowerCase() === selectedAnaId);
-
-                if (altlar.length > 0) {
-                    altlar.forEach(function (alt) {
-                        $altSelect.append(new Option(alt.ad, alt.id, false, false));
+                const anaId = String(selectedAnaId ?? "").trim().toLowerCase();
+                const seciliIdSeti = new Set(seciliIdler.map(id => String(id).toLowerCase()));
+                const ekKategoriler = tumKategoriler
+                    .filter(k => k.id.toLowerCase() !== anaId)
+                    .sort((a, b) => {
+                        const aAd = a.ustKategoriId ? `${tumKategoriler.find(x => x.id.toLowerCase() === a.ustKategoriId.toLowerCase())?.ad ?? ''} / ${a.ad}` : a.ad;
+                        const bAd = b.ustKategoriId ? `${tumKategoriler.find(x => x.id.toLowerCase() === b.ustKategoriId.toLowerCase())?.ad ?? ''} / ${b.ad}` : b.ad;
+                        return aAd.localeCompare(bAd, 'tr');
                     });
-                    $('#altKategoriHelp').text(altlar.length + " adet alt kategori bulundu. İstediklerinizi seçebilirsiniz.").css('color', '#2d6a4f');
-                } else {
-                    $('#altKategoriHelp').html('Bu ana kategorinin altında henüz alt menü yok. <a href="/Admin/HeaderMenu" target="_blank" style="color:#8b0028; font-weight:600;"><i class="bi bi-plus-circle"></i> Yeni alt menü ekle</a>');
-                }
 
+                ekKategoriler.forEach(function (kategori) {
+                    const ustKategori = kategori.ustKategoriId
+                        ? tumKategoriler.find(x => x.id.toLowerCase() === kategori.ustKategoriId.toLowerCase())
+                        : null;
+                    const etiket = ustKategori ? `${ustKategori.ad} / ${kategori.ad}` : kategori.ad;
+                    const secili = seciliIdSeti.has(kategori.id.toLowerCase());
+                    $altSelect.append(new Option(etiket, kategori.id, secili, secili));
+                });
+
+                $('#altKategoriHelp').text("Ana kategori dışında, ürünün listeleneceği tüm kategorileri seçebilirsiniz.").css('color', '#85818c');
                 $altSelect.trigger('change');
+            }
+
+            $('#anaKategoriSelect').on('change', async function () {
+                await kategoriYukleme;
+                const seciliIdler = $('#altKategoriSelect').val() || [];
+                ekKategorileriDoldur($(this).val(), seciliIdler);
             });
 
             var quill = new Quill('#editor', {

@@ -35,7 +35,18 @@ public class AdminSiparislerController : ControllerBase
     [HttpPut("durum-guncelle")]
     public async Task<IActionResult> DurumGuncelle([FromBody] SiparisDurumGuncelleDto dto)
     {
-        await _siparisServisi.DurumGuncelleAsync(dto);
-        return Ok(new { Mesaj = "Sipariş durumu başarıyla güncellendi." });
+        try
+        {
+            var sonuc = await _siparisServisi.DurumGuncelleAsync(dto);
+            return Ok(sonuc);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { Mesaj = ex.Message });
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { Mesaj = ex.Message });
+        }
     }
 }

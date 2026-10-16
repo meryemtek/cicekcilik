@@ -140,16 +140,12 @@
 
     <div class="s-card">
         <form asp-action="Guncelle" method="post">
+            <div asp-validation-summary="All" class="text-danger mb-3"></div>
             <input type="hidden" asp-for="Id" />
 
             <div class="s-form-group">
                 <label class="s-label">Duyuru Metni</label>
                 <input asp-for="Metin" class="s-input" required />
-            </div>
-
-            <div class="s-form-group">
-                <label class="s-label">Yönlendirme Linki (Opsiyonel)</label>
-                <input asp-for="LinkUrl" class="s-input" />
             </div>
 
             <div class="row">

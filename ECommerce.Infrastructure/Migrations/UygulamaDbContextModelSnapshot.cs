@@ -31,6 +31,9 @@ namespace ECommerce.Infrastructure.Migrations
                     b.Property<bool>("AktifMi")
                         .HasColumnType("bit");
 
+                    b.Property<string>("GorselUrl")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("GuncellenmeTarihi")
                         .HasColumnType("datetime2");
 

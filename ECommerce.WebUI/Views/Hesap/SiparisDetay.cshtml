@@ -17,7 +17,7 @@
                         <h1 class="h3 fw-bold mb-1">@Model.SiparisNumarasi</h1>
                         <span class="text-muted small">@Model.SiparisTarihi.ToString("dd.MM.yyyy HH:mm")</span>
                     </div>
-                    <span class="badge rounded-pill bg-light text-dark border px-3 py-2">@Model.Durum</span>
+                    <span class="badge rounded-pill bg-light text-dark border px-3 py-2">@Model.DurumAdi</span>
                 </div>
                 <hr />
                 <div class="row g-3 small">
@@ -26,15 +26,79 @@
                 </div>
             </div>
             <div class="card border-0 shadow-sm rounded-4 p-4">
-                <h2 class="h5 fw-bold mb-3">Ürünler</h2>
+                <h2 class="h5 fw-bold mb-3">Sipariş Edilen Ürünler</h2>
                 @foreach (var kalem in Model.Kalemler)
                 {
-                    <div class="d-flex justify-content-between align-items-start gap-3 py-3 border-bottom">
-                        <div><strong>@kalem.UrunAdi</strong><div class="small text-muted">@kalem.Miktar adet @kalem.VaryantAdi</div></div>
-                        <strong>@kalem.ToplamFiyat.ToString("N2") ₺</strong>
+                    <div class="d-flex justify-content-between align-items-center gap-3 py-3 border-bottom">
+                        <div class="d-flex align-items-center gap-3">
+                            <a href="/urun/id/@kalem.UrunId" class="d-block rounded-3 overflow-hidden border shadow-sm" style="width: 64px; height: 64px; min-width: 64px;" title="@kalem.UrunAdi Detayına Git">
+                                <img src="@(string.IsNullOrEmpty(kalem.GorselUrl) ? "/images/no-image.jpg" : kalem.GorselUrl)" alt="@kalem.UrunAdi" class="w-100 h-100 object-fit-cover" onerror="this.src='/images/no-image.jpg'" />
+                            </a>
+                            <div>
+                                <a href="/urun/id/@kalem.UrunId" class="text-decoration-none text-dark fw-bold d-inline-block mb-1" title="@kalem.UrunAdi Detayına Git" style="transition: color 0.2s;">
+                                    @kalem.UrunAdi
+                                </a>
+                                <div class="small text-muted">@kalem.Miktar adet @(kalem.VaryantAdi != "Standart Boy / Model" && !string.IsNullOrEmpty(kalem.VaryantAdi) ? "— " + kalem.VaryantAdi : "")</div>
+                                <div class="small text-muted">Birim Fiyat: ₺@kalem.BirimFiyat.ToString("N2")</div>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <strong class="text-dark fs-6">₺@kalem.ToplamFiyat.ToString("N2")</strong>
+                        </div>
                     </div>
                 }
-                <div class="d-flex justify-content-between mt-4 fs-5"><strong>Toplam</strong><strong class="text-success">@Model.ToplamTutar.ToString("N2") ₺</strong></div>
+
+                <div class="mt-4 pt-2">
+                    <div class="d-flex justify-content-between text-muted small mb-2">
+                        <span>Ara Toplam</span>
+                        <span>₺@Model.AraToplam.ToString("N2")</span>
+                    </div>
+                    @if (Model.TeslimatToplamUcreti > 0)
+                    {
+                        <div class="d-flex justify-content-between text-muted small mb-2">
+                            <span>Teslimat Ücreti</span>
+                            <span>₺@Model.TeslimatToplamUcreti.ToString("N2")</span>
+                        </div>
+                    }
+                    @if (Model.VipToplamUcreti > 0)
+                    {
+                        <div class="d-flex justify-content-between small mb-2" style="color: #bfa100;">
+                            <span><i class="bi bi-crown-fill me-1"></i> VIP Teslimat Ücreti</span>
+                            <span>₺@Model.VipToplamUcreti.ToString("N2")</span>
+                        </div>
+                    }
+                    @if (Model.KampanyaIndirimTutari > 0)
+                    {
+                        <div class="d-flex justify-content-between text-success small mb-2">
+                            <span><i class="bi bi-stars me-1"></i> Kampanya İndirimi (@(Model.UygulananKampanyaAdi ?? "Kampanya"))</span>
+                            <span>-₺@Model.KampanyaIndirimTutari.ToString("N2")</span>
+                        </div>
+                    }
+                    @if (Model.KuponIndirimTutari > 0)
+                    {
+                        <div class="d-flex justify-content-between text-success small mb-2">
+                            <span><i class="bi bi-tag-fill me-1"></i> İndirim Kuponu (@Model.KullanilanKuponKodu)</span>
+                            <span>-₺@Model.KuponIndirimTutari.ToString("N2")</span>
+                        </div>
+                    }
+                    <hr />
+                    <div class="d-flex justify-content-between fs-5">
+                        <strong class="text-dark">Toplam</strong>
+                        <strong class="text-success">₺@Model.ToplamTutar.ToString("N2")</strong>
+                    </div>
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.KartNotu))
+                {
+                    <div class="mt-4 p-3 bg-light rounded-3 border">
+                        <span class="small fw-bold text-muted d-block mb-1"><i class="bi bi-card-text me-1"></i> Çiçek Kart Notu:</span>
+                        <p class="mb-0 small fst-italic text-dark">"@Model.KartNotu"</p>
+                        @if (!string.IsNullOrEmpty(Model.GonderenGorunenAd))
+                        {
+                            <span class="small text-muted d-block mt-1">— Gönderen: <strong>@Model.GonderenGorunenAd</strong></span>
+                        }
+                    </div>
+                }
             </div>
         </div>
     </div>

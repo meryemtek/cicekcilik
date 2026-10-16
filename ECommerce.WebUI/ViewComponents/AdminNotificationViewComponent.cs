@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using ECommerce.Application.DTOs.Siparis;
+using ECommerce.Domain.Enums;
 using System.Net.Http.Headers;
+using System.Text.Json;
 
 namespace ECommerce.WebUI.ViewComponents
 {
@@ -22,7 +25,6 @@ namespace ECommerce.WebUI.ViewComponents
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             }
 
-            // EĞER ÖDEME BİLDİRİMLERİ İÇİN ÇAĞRILDIYSA
             if (viewName == "OdemeBadge")
             {
                 int okunmamisOdemeSayisi = 0;
@@ -40,7 +42,6 @@ namespace ECommerce.WebUI.ViewComponents
                 return View("OdemeBadge");
             }
 
-            // Standart İletişim Mesajları / Çan Mantığı
             int okunmamisMesajSayisi = 0;
             try
             {
@@ -52,8 +53,26 @@ namespace ECommerce.WebUI.ViewComponents
             }
             catch { }
 
+            var yeniSiparisler = new List<SiparisListeDto>();
+            try
+            {
+                var response = await client.GetAsync("admin/siparisler");
+                if (response.IsSuccessStatusCode)
+                {
+                    var siparisler = await response.Content.ReadFromJsonAsync<List<SiparisListeDto>>(
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                    yeniSiparisler = siparisler?
+                        .Where(x => x.Durum == SiparisDurumu.Beklemede)
+                        .OrderByDescending(x => x.SiparisTarihi)
+                        .ToList() ?? new List<SiparisListeDto>();
+                }
+            }
+            catch { }
+
             ViewBag.OkunmamisMesajSayisi = okunmamisMesajSayisi;
-            ViewBag.ToplamBildirim = okunmamisMesajSayisi;
+            ViewBag.YeniSiparisler = yeniSiparisler;
+            ViewBag.ToplamBildirim = okunmamisMesajSayisi + yeniSiparisler.Count;
 
             if (viewName == "Badge")
             {

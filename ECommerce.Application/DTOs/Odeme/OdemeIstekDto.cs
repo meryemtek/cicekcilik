@@ -14,6 +14,9 @@ namespace ECommerce.Application.DTOs.Odeme
         public string MusteriAdSoyad { get; set; } = string.Empty;
         public string MusteriTelefon { get; set; } = string.Empty;
         public string IPAdresi { get; set; } = string.Empty;
+        public string MerchantOkUrl { get; set; } = string.Empty;
+        public string MerchantFailUrl { get; set; } = string.Empty;
+        public string NotificationUrl { get; set; } = string.Empty;
         public List<OdemeUrunDto> Urunler { get; set; } = new List<OdemeUrunDto>();
     }
 }

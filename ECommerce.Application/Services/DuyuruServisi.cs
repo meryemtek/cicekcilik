@@ -75,7 +75,7 @@ namespace ECommerce.Infrastructure.Services
             {
                 Id = Guid.NewGuid(),
                 Metin = dto.Metin,
-                LinkUrl = dto.LinkUrl,
+                LinkUrl = dto.LinkUrl ?? string.Empty,
                 SiraNo = dto.SiraNo,
                 AktifMi = dto.AktifMi
             };
@@ -90,7 +90,8 @@ namespace ECommerce.Infrastructure.Services
             if (entity != null)
             {
                 entity.Metin = dto.Metin;
-                entity.LinkUrl = dto.LinkUrl;
+                if (dto.LinkUrl != null)
+                    entity.LinkUrl = dto.LinkUrl;
                 entity.SiraNo = dto.SiraNo;
                 entity.AktifMi = dto.AktifMi;
 

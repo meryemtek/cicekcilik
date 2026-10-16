@@ -1,9 +1,19 @@
-﻿@model List<ECommerce.Application.DTOs.Siparis.SiparisListeDto>
+@model List<ECommerce.Application.DTOs.Siparis.SiparisListeDto>
 @{
     ViewData["Title"] = "Tüm Siparişlerim";
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["AktifMenu"] = "Siparislerim";
 }
+
+<style>
+    .order-table-row {
+        cursor: pointer;
+        transition: background-color 0.15s ease;
+    }
+    .order-table-row:hover {
+        background-color: #fcf8fa;
+    }
+</style>
 
 <div class="container my-5">
     <div class="row">
@@ -34,15 +44,19 @@
                             <tbody>
                                 @foreach (var siparis in Model)
                                 {
-                                    <tr>
-                                        <td class="ps-3 fw-bold text-dark">@siparis.SiparisNumarasi</td>
+                                    <tr class="order-table-row" onclick="window.location='/Hesap/SiparisDetay/@siparis.Id'">
+                                        <td class="ps-3 fw-bold text-dark">
+                                            <i class="bi bi-box-seam me-1 text-muted"></i> @siparis.SiparisNumarasi
+                                        </td>
                                         <td class="text-muted small">@siparis.SiparisTarihi.ToString("dd.MM.yyyy HH:mm")</td>
                                         <td class="fw-bold text-success">@siparis.ToplamTutar.ToString("N2") ₺</td>
                                         <td>
-                                            <span class="badge bg-light text-dark border px-3 py-2 rounded-pill">@siparis.Durum</span>
+                                            <span class="badge bg-light text-dark border px-3 py-2 rounded-pill">@siparis.DurumAdi</span>
                                         </td>
                                         <td class="text-end pe-3">
-                                            <a href="/Hesap/SiparisDetay/@siparis.Id" class="btn btn-sm btn-outline-dark rounded-pill px-3">Detay</a>
+                                            <a href="/Hesap/SiparisDetay/@siparis.Id" class="btn btn-sm text-white rounded-pill px-3 fw-semibold shadow-sm" style="background-color: #8b0028;">
+                                                Detay <i class="bi bi-chevron-right ms-1"></i>
+                                            </a>
                                         </td>
                                     </tr>
                                 }

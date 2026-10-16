@@ -71,6 +71,31 @@ namespace ECommerce.WebUI.Controllers
                 return !string.IsNullOrEmpty(referer) ? Redirect(referer) : RedirectToAction("Index", "Home");
             }
 
+            if (string.IsNullOrWhiteSpace(dto.TeslimatGunu))
+            {
+                TempData["HataMesaji"] = "Sipariş vermek için teslimat gününü seçmelisiniz.";
+                return !string.IsNullOrEmpty(referer) ? Redirect(referer) : RedirectToAction("Index", "Home");
+            }
+
+            var ozelTarihSecilmis = DateTime.TryParseExact(
+                dto.TeslimatGunu,
+                "yyyy-MM-dd",
+                System.Globalization.CultureInfo.InvariantCulture,
+                System.Globalization.DateTimeStyles.None,
+                out _);
+
+            if (dto.TeslimatGunu == "TarihSec" || (!ozelTarihSecilmis && dto.TeslimatGunu != "Bugun" && dto.TeslimatGunu != "Yarin"))
+            {
+                TempData["HataMesaji"] = "Sipariş vermek için geçerli bir teslimat tarihi seçmelisiniz.";
+                return !string.IsNullOrEmpty(referer) ? Redirect(referer) : RedirectToAction("Index", "Home");
+            }
+
+            if (string.IsNullOrWhiteSpace(dto.TeslimatSaati))
+            {
+                TempData["HataMesaji"] = "Sipariş vermek için teslimat saatini seçmelisiniz.";
+                return !string.IsNullOrEmpty(referer) ? Redirect(referer) : RedirectToAction("Index", "Home");
+            }
+
             var urunResponse = await client.GetAsync($"urunler/id-ile/{dto.UrunId}");
             if (!urunResponse.IsSuccessStatusCode)
             {
@@ -191,6 +216,25 @@ namespace ECommerce.WebUI.Controllers
             var sepetId = GetOrCreateSepetId();
             var client = CreateApiClient();
             await client.DeleteAsync($"sepet/{sepetId}/cikar/{kalemId}"); // API'ye kalemId gönderiliyor
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> MiktarGuncelle(Guid kalemId, int miktar)
+        {
+            var sepetId = GetOrCreateSepetId();
+            var client = CreateApiClient();
+
+            if (miktar <= 0)
+            {
+                await client.DeleteAsync($"sepet/{sepetId}/cikar/{kalemId}");
+            }
+            else
+            {
+                var jsonContent = new StringContent(JsonSerializer.Serialize(miktar), Encoding.UTF8, "application/json");
+                await client.PutAsync($"sepet/{sepetId}/guncelle/{kalemId}", jsonContent);
+            }
+
             return RedirectToAction(nameof(Index));
         }
 

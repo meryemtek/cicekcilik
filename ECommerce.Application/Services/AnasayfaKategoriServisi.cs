@@ -38,7 +38,8 @@ namespace ECommerce.Infrastructure.Services
                         KategoriId = k.Id,
                         KategoriAdi = k.Ad,
                         SeoUrl = k.SeoUrl,
-                        GorselUrl = k.GorselUrl,
+                        GorselUrl = ak.GorselUrl ?? k.GorselUrl,
+                        VitrinGorselUrl = ak.GorselUrl,
                         Aciklama = k.Aciklama,
                         SiraNo = ak.SiraNo,
                         AktifMi = ak.AktifMi
@@ -66,7 +67,8 @@ namespace ECommerce.Infrastructure.Services
                         KategoriId = k.Id,
                         KategoriAdi = k.Ad,
                         SeoUrl = k.SeoUrl,
-                        GorselUrl = k.GorselUrl,
+                        GorselUrl = ak.GorselUrl ?? k.GorselUrl,
+                        VitrinGorselUrl = ak.GorselUrl,
                         Aciklama = k.Aciklama,
                         SiraNo = ak.SiraNo,
                         AktifMi = ak.AktifMi
@@ -95,7 +97,8 @@ namespace ECommerce.Infrastructure.Services
                 KategoriId = kategori.Id,
                 KategoriAdi = kategori.Ad,
                 SeoUrl = kategori.SeoUrl,
-                GorselUrl = kategori.GorselUrl,
+                GorselUrl = anasayfaKategori.GorselUrl ?? kategori.GorselUrl,
+                VitrinGorselUrl = anasayfaKategori.GorselUrl,
                 Aciklama = kategori.Aciklama,
                 SiraNo = anasayfaKategori.SiraNo,
                 AktifMi = anasayfaKategori.AktifMi
@@ -125,6 +128,7 @@ namespace ECommerce.Infrastructure.Services
             {
                 Id = Guid.NewGuid(),
                 KategoriId = dto.KategoriId,
+                GorselUrl = dto.GorselUrl,
                 SiraNo = dto.SiraNo,
                 AktifMi = dto.AktifMi
             };
@@ -163,6 +167,7 @@ namespace ECommerce.Infrastructure.Services
                     "Bu kategori zaten anasayfa kategorilerine eklenmiş.");
 
             entity.KategoriId = dto.KategoriId;
+            entity.GorselUrl = dto.GorselUrl;
             entity.SiraNo = dto.SiraNo;
             entity.AktifMi = dto.AktifMi;
 

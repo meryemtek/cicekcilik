@@ -104,7 +104,7 @@ builder.Services.AddScoped<IAnasayfaKategoriServisi, AnasayfaKategoriServisi>();
 builder.Services.AddScoped<IOneCikanServisi, OneCikanServisi>();
 builder.Services.AddScoped<IDuyuruServisi, DuyuruServisi>();
 builder.Services.AddScoped<IMenuServisi, MenuServisi>();
-builder.Services.AddScoped<IOdemeServisi, PaytrOdemeServisi>();
+builder.Services.AddHttpClient<IOdemeServisi, PaytrOdemeServisi>();
 builder.Services.AddHttpClient<ISmsServisi, NetGsmSmsServisi>();
 builder.Services.AddScoped<IHiCariEntegrasyonServisi, HiCariTakipServisi>();
 builder.Services.AddScoped<IAiServisi, OpenAiServisi>();

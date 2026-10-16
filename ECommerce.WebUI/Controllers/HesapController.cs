@@ -177,6 +177,19 @@ namespace ECommerce.WebUI.Controllers
             if (response.StatusCode == HttpStatusCode.Unauthorized) return OturumGecersiz();
             if (!response.IsSuccessStatusCode) return StatusCode(502);
             var siparis = await response.Content.ReadFromJsonAsync<SiparisDetayDto>();
+            if (siparis != null && siparis.Kalemler != null)
+            {
+                var baseAddress = client.BaseAddress?.ToString().TrimEnd('/') ?? "https://localhost:7192";
+                var uri = new Uri(baseAddress);
+                var rootUrl = $"{uri.Scheme}://{uri.Authority}";
+                foreach (var kalem in siparis.Kalemler)
+                {
+                    if (!string.IsNullOrEmpty(kalem.GorselUrl) && !kalem.GorselUrl.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+                    {
+                        kalem.GorselUrl = $"{rootUrl}/{kalem.GorselUrl.TrimStart('/')}".Replace("\\", "/");
+                    }
+                }
+            }
             return siparis == null ? NotFound() : View(siparis);
         }
 

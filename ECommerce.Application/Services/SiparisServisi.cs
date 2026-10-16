@@ -3,12 +3,14 @@ using ECommerce.Application.Interfaces;
 using ECommerce.Application.Repositories;
 using ECommerce.Domain.Entities;
 using ECommerce.Domain.Enums;
+using System.Net;
 
 public class SiparisServisi : ISiparisServisi
 {
     private readonly ISiparisDeposu _siparisDeposu; // Özel depo enjekte ediliyor
     private readonly ISepetServisi _sepetServisi;
     private readonly ISmsServisi _smsServisi;
+    private readonly IEmailServisi _emailServisi;
     private readonly IHiCariEntegrasyonServisi _hiCariServisi;
     private readonly IDepo<Urun> _urunDeposu;
     private readonly IDepo<UrunVaryant> _varyantDeposu;
@@ -17,6 +19,7 @@ public class SiparisServisi : ISiparisServisi
         ISiparisDeposu siparisDeposu,
         ISepetServisi sepetServisi,
         ISmsServisi smsServisi,
+        IEmailServisi emailServisi,
         IHiCariEntegrasyonServisi hiCariServisi,
         IDepo<Urun> urunDeposu,
         IDepo<UrunVaryant> varyantDeposu)
@@ -24,6 +27,7 @@ public class SiparisServisi : ISiparisServisi
         _siparisDeposu = siparisDeposu;
         _sepetServisi = sepetServisi;
         _smsServisi = smsServisi;
+        _emailServisi = emailServisi;
         _hiCariServisi = hiCariServisi;
         _urunDeposu = urunDeposu;
         _varyantDeposu = varyantDeposu;
@@ -260,16 +264,82 @@ public class SiparisServisi : ISiparisServisi
         return yeniSiparis.Id;
     }
 
-    public async Task DurumGuncelleAsync(SiparisDurumGuncelleDto dto)
+    public async Task<SiparisDurumGuncelleSonucDto> DurumGuncelleAsync(SiparisDurumGuncelleDto dto)
     {
-        var siparis = await _siparisDeposu.IdIleGetirAsync(dto.Id);
-        if (siparis != null)
+        if (!dto.YeniDurum.HasValue || !Enum.IsDefined(dto.YeniDurum.Value)
+            || dto.YeniDurum.Value == SiparisDurumu.Beklemede)
         {
-            siparis.Durum = dto.YeniDurum;
-            siparis.GuncellenmeTarihi = DateTime.UtcNow;
-
-            _siparisDeposu.Guncelle(siparis);
-            await _siparisDeposu.DegisiklikleriKaydetAsync();
+            throw new ArgumentException("Geçerli bir sipariş durumu seçin.");
         }
+
+        var siparis = await _siparisDeposu.IdIleGetirAsync(dto.Id)
+            ?? throw new KeyNotFoundException("Sipariş bulunamadı.");
+
+        if (siparis.Durum == dto.YeniDurum.Value)
+            return new SiparisDurumGuncelleSonucDto { Mesaj = "Sipariş zaten bu durumda. Yeni bildirim gönderilmedi." };
+
+        siparis.Durum = dto.YeniDurum.Value;
+        siparis.GuncellenmeTarihi = DateTime.UtcNow;
+
+        _siparisDeposu.Guncelle(siparis);
+        await _siparisDeposu.DegisiklikleriKaydetAsync();
+
+        var mesaj = siparis.Durum switch
+        {
+            SiparisDurumu.Kargoda => $"{siparis.SiparisNumarasi} numaralı çiçek siparişiniz teslimat için yola çıktı.",
+            SiparisDurumu.TeslimEdildi => $"{siparis.SiparisNumarasi} numaralı çiçek siparişiniz teslim edildi. Bizi tercih ettiğiniz için teşekkür ederiz.",
+            SiparisDurumu.TeslimEdilemedi => $"{siparis.SiparisNumarasi} numaralı çiçek siparişiniz teslim edilemedi. Teslimatın yeniden planlanması için lütfen bizimle iletişime geçin.",
+            _ => null
+        };
+
+        bool? smsKabulEdildi = mesaj == null ? null : await _smsServisi.SmsGonderAsync(siparis.MusteriTelefon, mesaj);
+
+        var emailBilgisi = siparis.Durum switch
+        {
+            SiparisDurumu.Islemde => (Baslik: "Siparişiniz hazırlanmaya başladı", Aciklama: "Siparişiniz hazırlanıyor. Çiçekleriniz özenle hazırlanıp teslimata hazır hale getiriliyor."),
+            SiparisDurumu.Kargoda => (Baslik: "Siparişiniz kargoya verildi", Aciklama: "Siparişiniz teslimat için yola çıktı. Teslimat bilgilerinizi sipariş detayından takip edebilirsiniz."),
+            SiparisDurumu.TeslimEdildi => (Baslik: "Siparişiniz teslim edildi", Aciklama: "Siparişiniz başarıyla teslim edildi. Bizi tercih ettiğiniz için teşekkür ederiz."),
+            _ => ((string Baslik, string Aciklama)?)null
+        };
+
+        bool? emailKabulEdildi = null;
+        if (emailBilgisi.HasValue && !string.IsNullOrWhiteSpace(siparis.MusteriEmail))
+        {
+            var adSoyad = WebUtility.HtmlEncode($"{siparis.MusteriAd} {siparis.MusteriSoyad}".Trim());
+            var siparisNo = WebUtility.HtmlEncode(siparis.SiparisNumarasi);
+            var html = $"""
+                <div style="font-family:Arial,sans-serif;max-width:620px;margin:0 auto;color:#26352d;line-height:1.6">
+                    <div style="padding:24px 0;border-bottom:1px solid #e8eee9;color:#0d382b;font-size:22px;font-weight:700">Lidya Çiçekçilik</div>
+                    <div style="padding:28px 0">
+                        <p style="margin:0 0 12px;font-size:16px">Merhaba {adSoyad},</p>
+                        <h1 style="margin:0 0 14px;color:#0d382b;font-size:24px">{emailBilgisi.Value.Baslik}</h1>
+                        <p style="margin:0 0 22px;color:#5f6d64">{emailBilgisi.Value.Aciklama}</p>
+                        <div style="padding:16px 18px;background:#f7faf8;border:1px solid #dce9e1;border-radius:12px">
+                            <strong>Sipariş numarası:</strong> {siparisNo}
+                        </div>
+                    </div>
+                    <div style="padding:18px 0;border-top:1px solid #e8eee9;color:#718078;font-size:13px">Sorularınız için bizimle iletişime geçebilirsiniz.</div>
+                </div>
+                """;
+
+            emailKabulEdildi = await _emailServisi.EpostaGonderAsync(
+                siparis.MusteriEmail,
+                $"Lidya Çiçekçilik - {emailBilgisi.Value.Baslik} ({siparis.SiparisNumarasi})",
+                html);
+        }
+
+        var kanalMesajlari = new List<string> { "Sipariş durumu güncellendi." };
+        if (smsKabulEdildi == true) kanalMesajlari.Add("SMS gönderim isteği Netgsm tarafından kabul edildi.");
+        else if (smsKabulEdildi == false) kanalMesajlari.Add("SMS gönderimi doğrulanamadı.");
+        if (emailKabulEdildi == true) kanalMesajlari.Add("E-posta gönderildi.");
+        else if (emailKabulEdildi == false) kanalMesajlari.Add("E-posta gönderimi başarısız oldu.");
+
+        return new SiparisDurumGuncelleSonucDto
+        {
+            DurumDegisti = true,
+            SmsKabulEdildi = smsKabulEdildi,
+            EmailKabulEdildi = emailKabulEdildi,
+            Mesaj = string.Join(" ", kanalMesajlari)
+        };
     }
 }

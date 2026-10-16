@@ -265,15 +265,6 @@
                     <div class="s-card-code">Sıra: @item.SiraNo</div>
                     <h3 class="s-card-title">@item.Metin</h3>
 
-                    @if (!string.IsNullOrEmpty(item.LinkUrl))
-                    {
-                        <div class="s-card-url"><i class="bi bi-link-45deg"></i> @item.LinkUrl</div>
-                    }
-                    else
-                    {
-                        <div class="s-card-url text-muted"><i class="bi bi-dash-circle"></i> Link tanımlanmamış</div>
-                    }
-
                     <div class="s-card-footer">
                         <a asp-action="Guncelle" asp-route-id="@item.Id" class="s-btn s-btn-edit"><i class="bi bi-pencil"></i> Düzenle</a>
                         <form asp-action="Sil" asp-route-id="@item.Id" method="post" onsubmit="return confirm('Bu duyuruyu silmek istediğinize emin misiniz?');" style="margin:0;">
