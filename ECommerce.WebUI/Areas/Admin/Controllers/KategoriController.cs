@@ -44,12 +44,12 @@ public class KategoriController : Controller
             var content = await response.Content.ReadAsStringAsync();
             var kategoriler = JsonSerializer.Deserialize<List<KategoriListeDto>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-            if (haricTutulacakId.HasValue)
-            {
-                kategoriler = kategoriler?.Where(x => x.Id != haricTutulacakId.Value).ToList();
-            }
+            var anaKategoriler = kategoriler?
+                .Where(x => x.UstKategoriId == null && x.Id != haricTutulacakId)
+                .OrderBy(x => x.Ad)
+                .ToList() ?? new List<KategoriListeDto>();
 
-            ViewBag.UstKategoriler = new SelectList(kategoriler, "Id", "Ad");
+            ViewBag.UstKategoriler = new SelectList(anaKategoriler, "Id", "Ad");
         }
         else
         {

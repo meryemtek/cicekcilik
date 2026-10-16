@@ -1,4 +1,4 @@
-﻿using ECommerce.Application.DTOs.BankaHesabi;
+using ECommerce.Application.DTOs.BankaHesabi;
 using ECommerce.Application.DTOs.KartNotuSablonu;
 using ECommerce.Application.DTOs.Sayfa;
 using ECommerce.Application.DTOs.Siparis;
@@ -225,7 +225,19 @@ namespace ECommerce.WebUI.Controllers
                 return RedirectToAction("Basarili", new { id = siparisId });
             }
 
-            TempData["HataMesaji"] = "Sipariş oluşturulamadı. Lütfen bilgilerinizi kontrol edin.";
+            string errorMessage = "Sipariş oluşturulamadı. Lütfen bilgilerinizi kontrol edin.";
+            try
+            {
+                var errContent = await response.Content.ReadAsStringAsync();
+                using var doc = JsonDocument.Parse(errContent);
+                if (doc.RootElement.TryGetProperty("mesaj", out var msgProp) && !string.IsNullOrWhiteSpace(msgProp.GetString()))
+                {
+                    errorMessage = msgProp.GetString()!;
+                }
+            }
+            catch { }
+
+            TempData["HataMesaji"] = errorMessage;
             return RedirectToAction("Index");
         }
 

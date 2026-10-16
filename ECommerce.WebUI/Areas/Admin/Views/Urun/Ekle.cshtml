@@ -1,4 +1,4 @@
-﻿@model ECommerce.Application.DTOs.Urun.UrunEkleDto
+@model ECommerce.Application.DTOs.Urun.UrunEkleDto
 @{
     ViewData["Title"] = "Yeni Ürün Ekle";
 }
@@ -154,6 +154,10 @@
             box-shadow: 0 0 0 4px rgba(139,0,40,.06);
         }
 
+    .select2-container {
+        width: 100% !important;
+    }
+
     .select2-container--default .select2-selection--single {
         height: 48px;
         border: 1px solid #e4dfe4;
@@ -182,6 +186,56 @@
             height: 46px;
             right: 10px;
         }
+
+    .select2-container--default .select2-selection--multiple {
+        min-height: 48px;
+        border: 1px solid #e4dfe4;
+        border-radius: 12px;
+        background: #fff;
+        padding: 5px 10px;
+        outline: 0;
+        transition: all .2s ease;
+    }
+
+        .select2-container--default.select2-container--focus .select2-selection--multiple,
+        .select2-container--default.select2-container--open .select2-selection--multiple {
+            border-color: #c98ca0;
+            box-shadow: 0 0 0 4px rgba(139,0,40,.06);
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__rendered {
+            margin: 0;
+            padding: 0;
+            line-height: normal;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            background-color: #fff2f5;
+            border: 1px solid #f8c9d4;
+            color: #8b0028;
+            font-weight: 600;
+            border-radius: 8px;
+            padding: 4px 10px;
+            font-size: .8rem;
+            margin-top: 4px;
+            margin-right: 6px;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+            color: #8b0028;
+            margin-right: 6px;
+            font-weight: bold;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover {
+            color: #a70b3b;
+        }
+
+    .select2-container--default .select2-search--inline .select2-search__field {
+        margin-top: 6px;
+        font-size: .88rem;
+        font-family: inherit;
+    }
 
     .select2-dropdown {
         border: 1px solid #c98ca0;
@@ -251,6 +305,69 @@
         border-radius: 15px;
         background: #fcfafb;
         padding: 15px;
+    }
+
+    .multi-images-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+        gap: 12px;
+        margin-top: 14px;
+    }
+
+    .multi-image-slot {
+        position: relative;
+        width: 100%;
+        height: 110px;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 2px solid #eee7eb;
+        background: #fdfbfc;
+        transition: transform .15s ease, border-color .15s ease;
+    }
+
+    .multi-image-slot.is-cover {
+        border-color: #8b0028;
+        box-shadow: 0 4px 12px rgba(139,0,40,.15);
+    }
+
+    .multi-image-slot img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .cover-tag {
+        position: absolute;
+        bottom: 5px;
+        left: 5px;
+        background: #8b0028;
+        color: #fff;
+        font-size: 0.65rem;
+        font-weight: 700;
+        padding: 2px 6px;
+        border-radius: 6px;
+    }
+
+    .slot-remove-btn {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        width: 22px;
+        height: 22px;
+        background: rgba(0,0,0,0.65);
+        color: #fff;
+        border: 0;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        cursor: pointer;
+        transition: background .15s;
+    }
+
+    .slot-remove-btn:hover {
+        background: #dc3545;
     }
 
     .urun-image-preview {
@@ -457,12 +574,32 @@
                         </div>
                     </div>
 
-                    <div class="urun-field">
-                        <label asp-for="KategoriId">Kategori Seçimi <span>*</span></label>
-                        <select asp-for="KategoriId" style="width: 100%;" asp-items="ViewBag.Kategoriler" id="kategoriSelect">
-                            <option value="">-- Kategori Ara veya Seç --</option>
-                        </select>
-                        <span asp-validation-for="KategoriId" class="urun-validation"></span>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="urun-field">
+                                <label asp-for="KategoriId">Ana Kategori (Zorunlu) <span>*</span></label>
+                                <select asp-for="KategoriId" id="anaKategoriSelect" style="width: 100%;" required>
+                                    <option value="">-- Ana Kategori Seçin --</option>
+                                    @if (ViewBag.AnaKategoriler != null)
+                                    {
+                                        foreach (var ana in (IEnumerable<SelectListItem>)ViewBag.AnaKategoriler)
+                                        {
+                                            <option value="@ana.Value">@ana.Text</option>
+                                        }
+                                    }
+                                </select>
+                                <span class="urun-help">Header menüsündeki ana kategorilerden birini seçin.</span>
+                                <span asp-validation-for="KategoriId" class="urun-validation"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="urun-field">
+                                <label for="altKategoriSelect">Alt Menüler / Kategoriler (Çoklu Seçilebilir)</label>
+                                <select name="AltKategoriIdleri" id="altKategoriSelect" multiple="multiple" style="width: 100%;">
+                                </select>
+                                <span class="urun-help" id="altKategoriHelp">Ürünün ait olacağı alt kategorileri seçin (isteğe bağlı).</span>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="row">
@@ -526,18 +663,21 @@
                     </div>
 
                     <div class="urun-field">
-                        <label>Ürün Görseli</label>
-                        <div class="urun-image-upload">
-                            <div class="urun-image-preview" id="imagePreview">
-                                <img id="previewImage" alt="Önizleme" />
-                                <button type="button" class="urun-image-remove" id="removeImage"><i class="bi bi-x-lg"></i></button>
-                            </div>
-                            <label class="urun-file-label" for="gorselDosyasi">
-                                <i class="bi bi-cloud-arrow-up"></i>
-                                <span>Görsel seçmek için tıklayın<br><small>JPG, JPEG, PNG veya WEBP</small></span>
-                            </label>
-                            <input type="file" name="gorselDosyasi" id="gorselDosyasi" class="urun-file-input" accept="image/jpeg,image/png,image/webp" />
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <label class="m-0">Ürün Fotoğrafları <span>* (En az 1, en fazla 5 fotoğraf)</span></label>
+                            <span id="gorselSayacBadge" class="badge bg-light text-muted border" style="font-size:0.75rem;">0 / 5 Seçildi</span>
                         </div>
+                        <div class="urun-image-upload">
+                            <label class="urun-file-label" for="gorselDosyalari" id="uploadDropZone">
+                                <i class="bi bi-images" style="font-size: 1.8rem; color:#8b0028;"></i>
+                                <span class="fw-semibold">Fotoğrafları seçmek için tıklayın<br><small>En az 1, en fazla 5 fotoğraf (JPG, PNG, WEBP)</small></span>
+                            </label>
+                            <input type="file" name="gorselDosyalari" id="gorselDosyalari" class="urun-file-input" accept="image/jpeg,image/png,image/webp" multiple />
+
+                            <!-- Çoklu Önizleme Alanı -->
+                            <div class="multi-images-grid" id="multiImagesGrid" style="display:none;"></div>
+                        </div>
+                        <span class="urun-help">İlk sıradaki fotoğraf ürünün ana vitrin kapağı olacaktır. En fazla 5 adet seçebilirsiniz.</span>
                     </div>
                 </div>
 
@@ -574,27 +714,93 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            function formatCategory(state) {
-                if (!state.id) return state.text;
-                var text = state.text;
-                if (text.startsWith("- ")) {
-                    var cleanText = text.substring(2);
-                    return $('<span style="padding-left: 18px; font-weight: normal; color: #555;"><i class="bi bi-arrow-return-right me-1" style="font-size: 0.8rem; color:#aaa;"></i> ' + cleanText + '</span>');
-                }
-                return $('<strong style="color: #24213d; font-size: 0.92rem;">' + text + '</strong>');
-            };
+            let tumKategoriler = @Html.Raw(ViewBag.TumKategorilerJson ?? "[]");
 
-            $('#kategoriSelect').select2({
-                placeholder: "-- Kategori Ara veya Seç --",
+            function kategoriModeliniNormalizeEt(kategori) {
+                const id = kategori.id ?? kategori.Id ?? "";
+                const ustKategoriId = kategori.ustKategoriId ?? kategori.UstKategoriId ?? "";
+
+                return {
+                    id: String(id).trim(),
+                    ad: String(kategori.ad ?? kategori.Ad ?? "").trim(),
+                    ustKategoriId: String(ustKategoriId).trim() || null
+                };
+            }
+
+            $('#anaKategoriSelect').select2({
+                width: '100%',
+                placeholder: "-- Ana Kategori Seçin --",
                 allowClear: true,
-                templateResult: formatCategory,
-                templateSelection: function (state) {
-                    if (!state.id) return state.text;
-                    return state.text.replace("- ", "");
-                },
                 language: {
-                    noResults: function () { return "Aradığınız kategori bulunamadı"; }
+                    noResults: function () { return "Ana kategori bulunamadı"; }
                 }
+            });
+
+            $('#altKategoriSelect').select2({
+                width: '100%',
+                placeholder: "Birden fazla alt kategori seçebilirsiniz...",
+                allowClear: true,
+                closeOnSelect: false,
+                language: {
+                    noResults: function () { return "Alt kategori bulunamadı"; }
+                }
+            });
+
+            const kategoriYukleme = (async function () {
+                if (!tumKategoriler || tumKategoriler.length === 0) {
+                    try {
+                        const res = await fetch('/admin/kategoriler-json');
+                        if (res.ok) {
+                            tumKategoriler = await res.json();
+                        }
+                    } catch (err) {
+                        console.error("Kategoriler yüklenirken hata:", err);
+                    }
+                }
+
+                tumKategoriler = Array.isArray(tumKategoriler)
+                    ? tumKategoriler.map(kategoriModeliniNormalizeEt)
+                    : [];
+
+                // Ana kategori select'i doldur (eğer henüz boşsa)
+                const $anaSelect = $('#anaKategoriSelect');
+                if ($anaSelect.find('option').length <= 1 && tumKategoriler && tumKategoriler.length > 0) {
+                    const anaList = tumKategoriler.filter(k => !k.ustKategoriId);
+                    anaList.sort((a, b) => a.ad.localeCompare(b.ad, 'tr'));
+                    anaList.forEach(function (ana) {
+                        $anaSelect.append(new Option(ana.ad, ana.id, false, false));
+                    });
+                    $anaSelect.trigger('change.select2');
+                }
+            })();
+
+            $('#anaKategoriSelect').on('change', async function () {
+                await kategoriYukleme;
+
+                const selectedAnaId = String($(this).val() ?? "").trim().toLowerCase();
+                const $altSelect = $('#altKategoriSelect');
+                $altSelect.empty();
+
+                if (!selectedAnaId) {
+                    $altSelect.trigger('change');
+                    $('#altKategoriHelp').text("Ürünün ait olacağı alt kategorileri seçin (isteğe bağlı).").css('color', '#85818c');
+                    return;
+                }
+
+                // ustKategoriId eşleşen alt kategoriler
+                const altlar = tumKategoriler.filter(k =>
+                    k.ustKategoriId && k.ustKategoriId.toLowerCase() === selectedAnaId);
+
+                if (altlar.length > 0) {
+                    altlar.forEach(function (alt) {
+                        $altSelect.append(new Option(alt.ad, alt.id, false, false));
+                    });
+                    $('#altKategoriHelp').text(altlar.length + " adet alt kategori bulundu. İstediklerinizi seçebilirsiniz.").css('color', '#2d6a4f');
+                } else {
+                    $('#altKategoriHelp').html('Bu ana kategorinin altında henüz alt menü yok. <a href="/Admin/HeaderMenu" target="_blank" style="color:#8b0028; font-weight:600;"><i class="bi bi-plus-circle"></i> Yeni alt menü ekle</a>');
+                }
+
+                $altSelect.trigger('change');
             });
 
             var quill = new Quill('#editor', {
@@ -627,7 +833,9 @@
                     return;
                 }
 
-                const kategoriAdi = kategoriSelect.options[kategoriSelect.selectedIndex]?.text.replace("- ", "") || "";
+                const altText = $('#altKategoriSelect option:selected').text();
+                const anaText = $('#anaKategoriSelect option:selected').text();
+                const kategoriAdi = (altText && !altText.startsWith("--")) ? altText : (anaText && !anaText.startsWith("--") ? anaText : "");
                 btnAiUret.disabled = true;
                 btnAiUret.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span> Yapay zeka yazıyor...`;
 
@@ -657,12 +865,11 @@
             const seo = document.getElementById("urunSeo");
             const price = document.getElementById("urunFiyat");
             const stock = document.getElementById("urunStok");
-            const file = document.getElementById("gorselDosyasi");
-            const imagePreview = document.getElementById("imagePreview");
-            const previewImage = document.getElementById("previewImage");
+            const fileInput = document.getElementById("gorselDosyalari");
+            const multiGrid = document.getElementById("multiImagesGrid");
+            const sayacBadge = document.getElementById("gorselSayacBadge");
             const cardPreviewImage = document.getElementById("cardPreviewImage");
             const previewIcon = document.getElementById("previewIcon");
-            const removeImage = document.getElementById("removeImage");
             const previewName = document.getElementById("previewName");
             const previewPrice = document.getElementById("previewPrice");
             const previewStock = document.getElementById("previewStock");
@@ -680,41 +887,125 @@
 
             name?.addEventListener("blur", function () {
                 if (seo && !seo.value.trim() && name.value.trim()) {
-                    seo.value = name.value.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ı/g, "i").replace(/ğ/g, "g").replace(/ü/g, "u").replace(/ş/g, "s").replace(/ö/g, "o").replace(/ç/g, "c").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+                    seo.value = name.value.trim().toLowerCase()
+                        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+                        .replace(/ı/g, "i").replace(/ğ/g, "g").replace(/ü/g, "u")
+                        .replace(/ş/g, "s").replace(/ö/g, "o").replace(/ç/g, "c")
+                        .replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
                 }
             });
 
-            file?.addEventListener("change", function () {
-                const selected = this.files[0];
-                if (!selected) return;
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    if (previewImage) previewImage.src = e.target.result;
-                    if (imagePreview) {
-                        imagePreview.style.display = "block";
-                        imagePreview.classList.add("show");
-                    }
+            let dt = new DataTransfer();
+
+            function renderGallery() {
+                multiGrid.innerHTML = "";
+                const files = dt.files;
+                const count = files.length;
+
+                sayacBadge.textContent = `${count} / 5 Seçildi`;
+                if (count > 0) {
+                    sayacBadge.className = "badge bg-success-subtle text-success border border-success-subtle";
+                    multiGrid.style.display = "grid";
+                } else {
+                    sayacBadge.textContent = "0 / 5 Seçildi";
+                    sayacBadge.className = "badge bg-light text-muted border";
+                    multiGrid.style.display = "none";
                     if (cardPreviewImage) {
-                        cardPreviewImage.src = e.target.result;
-                        cardPreviewImage.style.display = "block";
+                        cardPreviewImage.src = "";
+                        cardPreviewImage.style.display = "none";
                     }
-                    if (previewIcon) previewIcon.style.display = "none";
-                };
-                reader.readAsDataURL(selected);
+                    if (previewIcon) previewIcon.style.display = "block";
+                }
+
+                Array.from(files).forEach((f, idx) => {
+                    const slot = document.createElement("div");
+                    slot.className = `multi-image-slot ${idx === 0 ? "is-cover" : ""}`;
+
+                    const img = document.createElement("img");
+                    img.src = URL.createObjectURL(f);
+                    slot.appendChild(img);
+
+                    if (idx === 0) {
+                        const tag = document.createElement("span");
+                        tag.className = "cover-tag";
+                        tag.innerHTML = '<i class="bi bi-star-fill me-1"></i>Kapak';
+                        slot.appendChild(tag);
+
+                        // Canlı kart önizlemesini ilk fotoğrafla güncelle
+                        if (cardPreviewImage) {
+                            cardPreviewImage.src = img.src;
+                            cardPreviewImage.style.display = "block";
+                        }
+                        if (previewIcon) previewIcon.style.display = "none";
+                    }
+
+                    const removeBtn = document.createElement("button");
+                    removeBtn.type = "button";
+                    removeBtn.className = "slot-remove-btn";
+                    removeBtn.innerHTML = '<i class="bi bi-x"></i>';
+                    removeBtn.title = "Kaldır";
+                    removeBtn.addEventListener("click", function (e) {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        removeFile(idx);
+                    });
+                    slot.appendChild(removeBtn);
+
+                    multiGrid.appendChild(slot);
+                });
+            }
+
+            function removeFile(index) {
+                const newDt = new DataTransfer();
+                Array.from(dt.files).forEach((f, i) => {
+                    if (i !== index) newDt.items.add(f);
+                });
+                dt = newDt;
+                fileInput.files = dt.files;
+                renderGallery();
+            }
+
+            fileInput?.addEventListener("change", function () {
+                const incoming = Array.from(this.files);
+                const currentCount = dt.files.length;
+                const available = 5 - currentCount;
+
+                if (available <= 0) {
+                    alert("En fazla 5 adet fotoğraf yükleyebilirsiniz.");
+                    this.files = dt.files;
+                    return;
+                }
+
+                if (incoming.length > available) {
+                    alert(`Sadece ${available} adet daha fotoğraf ekleyebilirsiniz. Fazla seçilenler atlandı.`);
+                }
+
+                const toAdd = incoming.slice(0, available);
+                toAdd.forEach(f => {
+                    // Aynı dosya adı ve boyuttaki kopyaları ekleme
+                    const exists = Array.from(dt.files).some(ef => ef.name === f.name && ef.size === f.size);
+                    if (!exists) {
+                        dt.items.add(f);
+                    }
+                });
+
+                fileInput.files = dt.files;
+                renderGallery();
             });
 
-            removeImage?.addEventListener("click", function () {
-                if (file) file.value = "";
-                if (previewImage) previewImage.src = "";
-                if (imagePreview) {
-                    imagePreview.style.display = "none";
-                    imagePreview.classList.remove("show");
+            // Form Submit Kontrolü (En az 1 fotoğraf zorunlu)
+            form?.addEventListener("submit", function (e) {
+                if (dt.files.length === 0) {
+                    e.preventDefault();
+                    alert("Lütfen ürün için en az 1 adet fotoğraf seçin.");
+                    fileInput.focus();
+                    return false;
                 }
-                if (cardPreviewImage) {
-                    cardPreviewImage.src = "";
-                    cardPreviewImage.style.display = "none";
+                if (dt.files.length > 5) {
+                    e.preventDefault();
+                    alert("Bir ürün için en fazla 5 adet fotoğraf yükleyebilirsiniz.");
+                    return false;
                 }
-                if (previewIcon) previewIcon.style.display = "block";
             });
         });
     </script>

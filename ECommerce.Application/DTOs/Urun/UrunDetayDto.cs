@@ -1,4 +1,4 @@
-﻿using ECommerce.Application.DTOs.UrunVaryant;
+using ECommerce.Application.DTOs.UrunVaryant;
 using ECommerce.Application.DTOs.UrunYorum;
 
 namespace ECommerce.Application.DTOs.Urun
@@ -13,10 +13,15 @@ namespace ECommerce.Application.DTOs.Urun
         public string AiAciklama { get; set; } = string.Empty;
         public decimal Fiyat { get; set; }
         public int StokMiktari { get; set; }
+        public bool AktifMi { get; set; } = true;
         public string GorselUrl { get; set; } = string.Empty;
+        public List<string> EkGorseller { get; set; } = new();
+        public List<string> TumGorseller { get; set; } = new();
         public string? Etiket { get; set; }
         public Guid KategoriId { get; set; }
-        public string KategoriAdi { get; set; } = string.Empty; // Kategori ismi için
+        public string KategoriAdi { get; set; } = string.Empty; // Ana Kategori ismi
+        public List<Guid> AltKategoriIdleri { get; set; } = new();
+        public List<string> AltKategoriAdlari { get; set; } = new();
 
         // İlgili Alt Listeler
         public List<UrunVaryantListeDto> Varyantlar { get; set; } = new();

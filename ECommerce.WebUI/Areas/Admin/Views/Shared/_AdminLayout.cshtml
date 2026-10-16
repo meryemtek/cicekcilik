@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="utf-8" />
@@ -90,6 +90,8 @@
             padding: 0;
             margin: 0;
             flex: 1;
+            display: flex;
+            flex-direction: column;
         }
 
         .sidebar-heading {
@@ -406,10 +408,14 @@
 <body>
     @{
         var currentPath = Context.Request.Path.Value?.ToLowerInvariant() ?? "";
-        bool IsActive(string path)
+        bool IsActive(string path, bool exact = false)
         {
             path = path.ToLowerInvariant();
-            return currentPath == path || currentPath.StartsWith(path + "/");
+            if (exact)
+            {
+                return currentPath == path || currentPath == path + "/" || currentPath == path + "/index";
+            }
+            return currentPath == path || currentPath == path + "/" || currentPath == path + "/index" || currentPath.StartsWith(path + "/");
         }
     }
 
@@ -432,59 +438,67 @@
             </a>
 
             <ul class="sidebar-nav">
-                <div class="sidebar-heading">İçerik Yönetimi</div>
+                <div class="sidebar-heading">Siparişler</div>
 
                 <li class="nav-item">
-                    <a class="nav-link @(IsActive("/Admin/Duyuru") ? "active" : "")" href="/Admin/Duyuru">
-                        <i class="bi bi-megaphone-fill"></i>
-                        <span>Kayan Duyurular</span>
+                    <a class="nav-link @(IsActive("/Admin/Siparis") ? "active" : "")" href="/Admin/Siparis">
+                        <i class="bi bi-bag-heart-fill"></i>
+                        <span>Tüm Siparişler</span>
+                    </a>
+                </li>
+
+
+                <div class="sidebar-heading">Ürünler & Menüler</div>
+
+                <li class="nav-item">
+                    <a class="nav-link @(currentPath == "/admin/urun" || currentPath == "/admin/urun/" ? "active" : "")" href="/Admin/Urun">
+                        <i class="bi bi-box-seam-fill"></i>
+                        <span>Ürünler</span>
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link @(IsActive("/Admin/Slider") ? "active" : "")" href="/Admin/Slider">
-                        <i class="bi bi-images"></i>
-                        <span>Slider Yönetimi</span>
+                    <a class="nav-link @(IsActive("/Admin/Urun/Ekle") ? "active" : "")" href="/Admin/Urun/Ekle">
+                        <i class="bi bi-plus-circle"></i>
+                        <span>Yeni Ürün Ekle</span>
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link @(IsActive("/Admin/Blog") ? "active" : "")" href="/Admin/Blog">
-                        <i class="bi bi-newspaper"></i>
-                        <span>Blog Yazıları</span>
+                    <a class="nav-link @(IsActive("/Admin/HeaderMenu") ? "active" : "")" href="/Admin/HeaderMenu">
+                        <i class="bi bi-segmented-nav"></i>
+                        <span>Header Menü & Kategoriler</span>
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link @(IsActive("/Admin/Sayfa") ? "active" : "")" href="/Admin/Sayfa">
-                        <i class="bi bi-file-earmark-text-fill"></i>
-                        <span>Sabit Sayfalar</span>
-                    </a>
-                </li>
-
-                <div class="sidebar-heading">Kurumsal Sayfalar</div>
-
-                <li class="nav-item">
-                    <a class="nav-link @(IsActive("/Admin/HakkimizdaAyari") ? "active" : "")" href="/Admin/HakkimizdaAyari">
-                        <i class="bi bi-building-fill"></i>
-                        <span>Hakkımızda Yönetimi</span>
-                    </a>
-                </li>
-
-                <div class="sidebar-heading">Site Yönetimi</div>
-
-                <li class="nav-item">
-                    <a class="nav-link @(IsActive("/Admin/Kategori") ? "active" : "")" href="/Admin/Kategori">
-                        <i class="bi bi-tags-fill"></i>
-                        <span>Kategori Yönetimi</span>
+                    <a class="nav-link @(IsActive("/Admin/UrunYorum") ? "active" : "")" href="/Admin/UrunYorum">
+                        <i class="bi bi-chat-square-text-fill"></i>
+                        <span>Ürün Yorumları</span>
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link @(IsActive("/Admin/AnasayfaKategori") ? "active" : "")"
-                       href="/Admin/AnasayfaKategori">
-                        <i class="bi bi-grid-3x3-gap-fill"></i>
-                        <span>Anasayfa Kategorileri</span>
+                    <a class="nav-link @(IsActive("/Admin/KartNotuSablonu") ? "active" : "")" href="/Admin/KartNotuSablonu">
+                        <i class="bi bi-chat-square-quote-fill"></i>
+                        <span>Hazır Kart Notları</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link @(IsActive("/Admin/TopluIslem") ? "active" : "")" href="/Admin/TopluIslem">
+                        <i class="bi bi-layers-fill"></i>
+                        <span>Toplu İşlemler</span>
+                    </a>
+                </li>
+
+
+                <div class="sidebar-heading">Site Ayarları</div>
+
+                <li class="nav-item">
+                    <a class="nav-link @(IsActive("/Admin/AnasayfaKategori") ? "active" : "")" href="/Admin/AnasayfaKategori">
+                        <i class="bi bi-grid-3x3-gap"></i>
+                        <span>Anasayfa Görselli Kategoriler</span>
                     </a>
                 </li>
 
@@ -530,36 +544,35 @@
                 </li>
 
 
-                <div class="sidebar-heading">Mağaza</div>
+                <div class="sidebar-heading">İçerik Yönetimi</div>
 
                 <li class="nav-item">
-                    <a class="nav-link @(IsActive("/Admin/Urun") ? "active" : "")" href="/Admin/Urun">
-                        <i class="bi bi-box-seam-fill"></i>
-                        <span>Ürünler</span>
+                    <a class="nav-link @(IsActive("/Admin/Duyuru") ? "active" : "")" href="/Admin/Duyuru">
+                        <i class="bi bi-megaphone-fill"></i>
+                        <span>Kayan Duyurular</span>
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link @(IsActive("/Admin/UrunYorum") ? "active" : "")" href="/Admin/UrunYorum">
-                        <i class="bi bi-chat-square-text-fill"></i>
-                        <span>Ürün Yorumları</span>
+                    <a class="nav-link @(IsActive("/Admin/Slider") ? "active" : "")" href="/Admin/Slider">
+                        <i class="bi bi-images"></i>
+                        <span>Slider Yönetimi</span>
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link @(IsActive("/Admin/KartNotuSablonu") ? "active" : "")" href="/Admin/KartNotuSablonu">
-                        <i class="bi bi-chat-square-quote-fill"></i>
-                        <span>Hazır Kart Notları</span>
+                    <a class="nav-link @(IsActive("/Admin/Sayfa") ? "active" : "")" href="/Admin/Sayfa">
+                        <i class="bi bi-file-earmark-text-fill"></i>
+                        <span>Sabit Sayfalar</span>
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link @(IsActive("/Admin/TopluIslem") ? "active" : "")" href="/Admin/TopluIslem">
-                        <i class="bi bi-layers-fill"></i>
-                        <span>Toplu İşlemler</span>
+                    <a class="nav-link @(IsActive("/Admin/HakkimizdaAyari") ? "active" : "")" href="/Admin/HakkimizdaAyari">
+                        <i class="bi bi-building-fill"></i>
+                        <span>Hakkımızda Yönetimi</span>
                     </a>
                 </li>
-
 
                 <div class="sidebar-heading">İletişim</div>
 
@@ -594,14 +607,7 @@
                     </a>
                 </li>
 
-                <div class="sidebar-heading">Siparişler</div>
-
-                <li class="nav-item">
-                    <a class="nav-link @(IsActive("/Admin/Siparis") ? "active" : "")" href="/Admin/Siparis">
-                        <i class="bi bi-bag-heart-fill"></i>
-                        <span>Tüm Siparişler</span>
-                    </a>
-                </li>
+                <div class="sidebar-heading">Teslimat</div>
 
                 <li class="nav-item">
                     <a class="nav-link @(IsActive("/Admin/Teslimat") ? "active" : "")" href="/Admin/Teslimat">
@@ -609,14 +615,13 @@
                         <span>Teslimat Bölgeleri</span>
                     </a>
                 </li>
+
                 <li class="nav-item">
                     <a class="nav-link @(IsActive("/Admin/TeslimatSaati") ? "active" : "")" href="/Admin/TeslimatSaati">
                         <i class="bi bi-clock-history"></i>
                         <span>Teslimat Saatleri</span>
                     </a>
                 </li>
-
-                <div class="sidebar-heading">Sistem</div>
 
                 <li class="nav-item logout-item">
                     <a class="nav-link logout-btn" href="/Hesap/Cikis">

@@ -1,4 +1,4 @@
-﻿using ECommerce.Application.DTOs.Siparis;
+using ECommerce.Application.DTOs.Siparis;
 using ECommerce.Application.Interfaces;
 using ECommerce.Application.Repositories;
 using ECommerce.Domain.Entities;
@@ -10,17 +10,23 @@ public class SiparisServisi : ISiparisServisi
     private readonly ISepetServisi _sepetServisi;
     private readonly ISmsServisi _smsServisi;
     private readonly IHiCariEntegrasyonServisi _hiCariServisi;
+    private readonly IDepo<Urun> _urunDeposu;
+    private readonly IDepo<UrunVaryant> _varyantDeposu;
 
     public SiparisServisi(
         ISiparisDeposu siparisDeposu,
         ISepetServisi sepetServisi,
         ISmsServisi smsServisi,
-        IHiCariEntegrasyonServisi hiCariServisi)
+        IHiCariEntegrasyonServisi hiCariServisi,
+        IDepo<Urun> urunDeposu,
+        IDepo<UrunVaryant> varyantDeposu)
     {
         _siparisDeposu = siparisDeposu;
         _sepetServisi = sepetServisi;
         _smsServisi = smsServisi;
         _hiCariServisi = hiCariServisi;
+        _urunDeposu = urunDeposu;
+        _varyantDeposu = varyantDeposu;
     }
 
     public async Task<IReadOnlyList<SiparisListeDto>> TumSiparisleriGetirAsync()
@@ -119,6 +125,33 @@ public class SiparisServisi : ISiparisServisi
         if (sepet == null || !sepet.Kalemler.Any())
             throw new InvalidOperationException("Sepetiniz boş.");
 
+        // 1. Stok ve Aktiflik Kontrolü
+        foreach (var k in sepet.Kalemler)
+        {
+            var urun = await _urunDeposu.IdIleGetirAsync(k.UrunId);
+            if (urun == null)
+                throw new InvalidOperationException($"'{k.UrunAdi}' adlı ürün sistemde bulunamadı.");
+
+            if (!urun.AktifMi || urun.StokMiktari <= 0)
+                throw new InvalidOperationException($"'{urun.Ad}' ürünü stokta tükenmiştir veya satışa kapalıdır.");
+
+            if (urun.StokMiktari < k.Miktar)
+                throw new InvalidOperationException($"'{urun.Ad}' ürünü için yeterli stok bulunmamaktadır (Mevcut Stok: {urun.StokMiktari}, İstenen: {k.Miktar}).");
+
+            if (k.VaryantId.HasValue && k.VaryantId.Value != Guid.Empty)
+            {
+                var varyant = await _varyantDeposu.IdIleGetirAsync(k.VaryantId.Value);
+                if (varyant != null)
+                {
+                    if (!varyant.AktifMi || varyant.StokMiktari <= 0)
+                        throw new InvalidOperationException($"'{urun.Ad}' ürününün '{varyant.VaryantAdi}' seçeneği tükenmiştir.");
+
+                    if (varyant.StokMiktari < k.Miktar)
+                        throw new InvalidOperationException($"'{urun.Ad}' ({varyant.VaryantAdi}) için yeterli stok bulunmamaktadır (Mevcut Stok: {varyant.StokMiktari}, İstenen: {k.Miktar}).");
+                }
+            }
+        }
+
         decimal araToplam = sepet.Kalemler.Sum(k => k.BirimFiyat * k.Miktar);
         decimal teslimatToplam = sepet.Kalemler.Sum(k => k.TeslimatUcreti);
         decimal vipToplam = sepet.Kalemler.Sum(k => k.VipUcreti);
@@ -183,6 +216,42 @@ public class SiparisServisi : ISiparisServisi
 
         await _siparisDeposu.EkleAsync(yeniSiparis);
         await _siparisDeposu.DegisiklikleriKaydetAsync();
+
+        // 2. Stok Düşürme ve Stok 0 Olunca Pasife Çekme İşlemi
+        foreach (var k in sepet.Kalemler)
+        {
+            var urun = await _urunDeposu.IdIleGetirAsync(k.UrunId);
+            if (urun != null)
+            {
+                urun.StokMiktari -= k.Miktar;
+                if (urun.StokMiktari <= 0)
+                {
+                    urun.StokMiktari = 0;
+                    urun.AktifMi = false; // Stok 0 olunca ürün pasif duruma geçer
+                }
+                urun.GuncellenmeTarihi = DateTime.UtcNow;
+                _urunDeposu.Guncelle(urun);
+            }
+
+            if (k.VaryantId.HasValue && k.VaryantId.Value != Guid.Empty)
+            {
+                var varyant = await _varyantDeposu.IdIleGetirAsync(k.VaryantId.Value);
+                if (varyant != null)
+                {
+                    varyant.StokMiktari -= k.Miktar;
+                    if (varyant.StokMiktari <= 0)
+                    {
+                        varyant.StokMiktari = 0;
+                        varyant.AktifMi = false;
+                    }
+                    varyant.GuncellenmeTarihi = DateTime.UtcNow;
+                    _varyantDeposu.Guncelle(varyant);
+                }
+            }
+        }
+
+        await _urunDeposu.DegisiklikleriKaydetAsync();
+        await _varyantDeposu.DegisiklikleriKaydetAsync();
 
         await _sepetServisi.SepetiTemizleAsync(dto.SepetId);
         await _smsServisi.SmsGonderAsync(dto.MusteriTelefon, $"Sayin {dto.MusteriAd} {dto.MusteriSoyad}, {yeniSiparis.SiparisNumarasi} numarali siparisiniz basariyla alinmistir.");

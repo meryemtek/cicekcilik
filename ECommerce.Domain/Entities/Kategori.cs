@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace ECommerce.Domain.Entities;
@@ -18,4 +18,5 @@ public class Kategori : TemelVarlik
     // ----------------------------------------
 
     public virtual ICollection<Urun> Urunler { get; set; } = new List<Urun>();
+    public virtual ICollection<UrunKategori> UrunKategorileri { get; set; } = new List<UrunKategori>();
 }

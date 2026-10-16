@@ -1,4 +1,4 @@
-﻿@model ECommerce.Application.DTOs.Urun.UrunDetayDto
+@model ECommerce.Application.DTOs.Urun.UrunDetayDto
 @{
     ViewData["Title"] = Model.Ad;
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -8,7 +8,7 @@
         : Model.GorselUrl;
 }
 
-<link rel="stylesheet" href="~/css/product-detail.css" />
+<link rel="stylesheet" href="~/css/product-detail.css" asp-append-version="true" />
 
 <div class="product-detail-container">
     @if (TempData["BasariliMesaj"] != null)
@@ -27,11 +27,26 @@
     }
 
     <div class="row g-5">
-        <!-- SOL: Görsel -->
+        <!-- SOL: Çoklu Fotoğraf Galerisi (1-5 Fotoğraf) -->
         <div class="col-lg-6">
-            <div class="product-image-box">
-                <img src="@gorselYolu" alt="@Model.Ad" id="anaUrunGorseli" />
-                <div class="static-badge">İndirimli Ürün</div>
+            <div class="product-gallery-wrapper">
+                <div class="product-image-box">
+                    <img src="@gorselYolu" alt="@Model.Ad" id="anaUrunGorseli" />
+                    <div class="static-badge">İndirimli Ürün</div>
+                </div>
+
+                @if (Model.TumGorseller != null && Model.TumGorseller.Count > 1)
+                {
+                    <div class="product-thumbnails-strip">
+                        @for (int i = 0; i < Model.TumGorseller.Count; i++)
+                        {
+                            var gorsel = Model.TumGorseller[i];
+                            <div class="thumb-item @(i == 0 ? "active" : "")" data-gorsel="@gorsel" onclick="resimDegistir(this, this.getAttribute('data-gorsel'))">
+                                <img src="@gorsel" alt="@Model.Ad - Fotoğraf @(i + 1)" />
+                            </div>
+                        }
+                    </div>
+                }
             </div>
         </div>
 
@@ -59,5 +74,19 @@
     const rawWhatsappNo = "@(ViewBag.WhatsappNo as string ?? "905010146623")";
     const baseUrunAd = "@Html.Raw(Model.Ad)";
     const baseUrunKod = "@Html.Raw(Model.UrunKodu)";
+
+    function resimDegistir(elem, yeniGorselUrl) {
+        const anaResim = document.getElementById('anaUrunGorseli');
+        if (!anaResim) return;
+
+        anaResim.style.opacity = '0.4';
+        setTimeout(() => {
+            anaResim.src = yeniGorselUrl;
+            anaResim.style.opacity = '1';
+        }, 150);
+
+        document.querySelectorAll('.thumb-item').forEach(el => el.classList.remove('active'));
+        elem.classList.add('active');
+    }
 </script>
-<script src="~/js/product-detail.js"></script>
+<script src="~/js/product-detail.js" asp-append-version="true"></script>

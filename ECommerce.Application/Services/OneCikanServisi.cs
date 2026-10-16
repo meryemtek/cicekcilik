@@ -1,4 +1,4 @@
-﻿using ECommerce.Application.DTOs.OneCikan;
+using ECommerce.Application.DTOs.OneCikan;
 using ECommerce.Application.DTOs.Urun;
 using ECommerce.Application.Interfaces;
 using ECommerce.Application.Repositories;
@@ -82,7 +82,7 @@ namespace ECommerce.Application.Services
             var ayarlar = await AyarlariGetirAsync();
             var tumUrunler = await _urunDeposu.TumunuGetirAsync();
 
-            var aktifUrunler = tumUrunler.Where(x => x.AktifMi);
+            var aktifUrunler = tumUrunler.Where(x => x.AktifMi && x.StokMiktari > 0);
 
             // Eğer tüm ürünleri göster kapalıysa, hem ürün hem kategori filtrelemesini uygulayabiliriz
             if (!ayarlar.TumUrunleriGoster)

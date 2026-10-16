@@ -1,0 +1,56 @@
+@model List<ECommerce.Application.DTOs.Kategori.KategoriListeDto>
+
+@{
+    // Kullanıcının belirlediği 6 ana menü sırası, eşleşen SEO url / ad varyasyonları ve görseldeki ikonlar
+    var anaMenuTanimlari = new List<(string SeoUrl, string Baslik, string IconClass)>
+    {
+        ("gonderim-amaci", "GÖNDERİM AMACI", "bi-heart"),
+        ("cicekler", "ÇİÇEKLER", "bi-flower2"),
+        ("dogum-gunu", "DOĞUM GÜNÜ", "bi-balloon"),
+        ("saksi-cicekleri", "SAKSI ÇİÇEKLERİ", "bi-flower1"),
+        ("haftanin-cicekleri", "HAFTANIN ÇİÇEKLERİ", "bi-bookmark-star"),
+        ("kutuda-cicekler", "KUTUDA ÇİÇEKLER", "bi-box-seam")
+    };
+}
+
+<ul class="flower-category-list">
+    @foreach (var tanim in anaMenuTanimlari)
+    {
+        // Modelden ilgili ana kategoriyi bul (SeoUrl veya Ad ile)
+        var anaKategori = Model.FirstOrDefault(x =>
+            x.UstKategoriId == null && (
+                x.SeoUrl == tanim.SeoUrl ||
+                (tanim.SeoUrl == "cicekler" && x.SeoUrl == "cicek") ||
+                (tanim.SeoUrl == "saksi-cicekleri" && x.SeoUrl == "saksida-cicekler") ||
+                x.Ad.Replace(" ", "").Equals(tanim.Baslik.Replace(" ", ""), StringComparison.OrdinalIgnoreCase)
+            )
+        );
+
+        var altKategoriler = anaKategori != null
+            ? Model.Where(x => x.AktifMi && x.UstKategoriId == anaKategori.Id).OrderBy(x => x.Ad).ToList()
+            : new List<ECommerce.Application.DTOs.Kategori.KategoriListeDto>();
+
+        var linkUrl = anaKategori != null ? $"/kategori/{anaKategori.SeoUrl}" : $"/kategori/{tanim.SeoUrl}";
+
+        <li class="flower-category-item @(altKategoriler.Any() ? "has-submenu" : "")">
+            <a class="flower-category-link" href="@linkUrl">
+                <i class="bi @tanim.IconClass" aria-hidden="true"></i>
+                <span>@tanim.Baslik</span>
+                @if (altKategoriler.Any())
+                {
+                    <i class="bi bi-chevron-down ms-1" style="font-size: 0.65rem; opacity: 0.6;" aria-hidden="true"></i>
+                }
+            </a>
+
+            @if (altKategoriler.Any())
+            {
+                <div class="flower-category-submenu">
+                    @foreach (var alt in altKategoriler)
+                    {
+                        <a href="/kategori/@alt.SeoUrl">@alt.Ad</a>
+                    }
+                </div>
+            }
+        </li>
+    }
+</ul>

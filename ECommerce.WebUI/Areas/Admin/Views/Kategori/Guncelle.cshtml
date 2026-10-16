@@ -413,7 +413,7 @@
                         <select asp-for="UstKategoriId" asp-items="ustKategoriler" class="kategori-select">
                             <option value="">-- Ana Kategori (En Üst Seviye) --</option>
                         </select>
-                        <span class="kategori-help">Kategorinin bağlı olduğu üst kategoriyi değiştirebilirsiniz.</span>
+                        <span class="kategori-help">Üst kategori seçilirse bu kategori header menüsünde alt başlık olur. Ana menü başlığı yapmak için boş bırakın. Görselli anasayfa alanı ayrı yönetilir.</span>
                     </div>
 
                     <div class="kategori-field">
@@ -447,8 +447,14 @@
                             <button type="button" class="btn-recrop" id="btnRecrop" style="@(hasImage ? "display:block;" : "display:none;")">
                                 <i class="bi bi-crop me-1"></i> Yeni Görsel Seç ve Kırp
                             </button>
+
+                            <div class="mt-3 pt-2 border-top">
+                                <label asp-for="GorselUrl" class="small text-muted fw-bold mb-1 d-block"><i class="bi bi-link-45deg"></i> VEYA Doğrudan Görsel Web Linki (URL)</label>
+                                <input asp-for="GorselUrl" class="kategori-input" id="gorselUrlInput" placeholder="https://images.unsplash.com/photo-..." autocomplete="off" />
+                                <span class="kategori-help">Harici bir web görsel bağlantısı yapıştırarak da güncelleyebilirsiniz.</span>
+                            </div>
                         </div>
-                        <span class="kategori-help">Yeni bir görsel seçmediğiniz sürece mevcut görsel korunur.</span>
+                        <span class="kategori-help">Yeni bir görsel seçmediğiniz veya URL değiştirmediğiniz sürece mevcut görsel korunur.</span>
                     </div>
 
                     <div class="kategori-field">
@@ -657,6 +663,24 @@
                 previewIcon.style.display = "block";
                 cardPreviewImage.style.display = "none";
                 btnRecrop.style.display = "none";
+                const urlInput = document.getElementById("gorselUrlInput");
+                if (urlInput) urlInput.value = "";
+            });
+
+            const gorselUrlInput = document.getElementById("gorselUrlInput");
+            gorselUrlInput?.addEventListener("input", function () {
+                const url = this.value.trim();
+                if (url) {
+                    cardPreviewImage.src = url;
+                    cardPreviewImage.style.display = "block";
+                    previewIcon.style.display = "none";
+                    hiddenGorselUrl.value = url;
+                } else if (!fileInput.files.length) {
+                    cardPreviewImage.src = "";
+                    cardPreviewImage.style.display = "none";
+                    previewIcon.style.display = "block";
+                    hiddenGorselUrl.value = "";
+                }
             });
         });
     </script>

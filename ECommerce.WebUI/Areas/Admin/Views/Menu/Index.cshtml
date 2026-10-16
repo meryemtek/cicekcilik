@@ -1,170 +1,278 @@
-﻿@model List<ECommerce.Application.DTOs.Menu.MenuGrupListeDto>
+@model List<ECommerce.Application.DTOs.Menu.MenuGrupListeDto>
 @{
     ViewData["Title"] = "Menü Yönetimi";
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+
+    var toplamGrup = Model?.Count ?? 0;
+    var aktifGrup = Model?.Count(x => x.AktifMi) ?? 0;
+    var pasifGrup = toplamGrup - aktifGrup;
+    var toplamBaglanti = Model?.Sum(x => x.ElemanSayisi) ?? 0;
 }
 
 <style>
-    .t-page {
+    .menu-page {
         max-width: 1400px;
         margin: 0 auto;
     }
 
-    .t-hero {
+    .menu-hero {
         display: flex;
         align-items: flex-end;
         justify-content: space-between;
-        gap: 24px;
-        margin-bottom: 28px;
+        gap: 20px;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
     }
 
-    .t-eyebrow {
+    .menu-eyebrow {
         display: flex;
         align-items: center;
         gap: 8px;
-        color: #9a1640;
-        font-size: .72rem;
+        color: #8b0028;
+        font-size: .75rem;
         font-weight: 700;
         letter-spacing: 1.5px;
         text-transform: uppercase;
-        margin-bottom: 8px;
+        margin-bottom: 6px;
     }
 
-    .t-title {
-        font-size: 2rem;
+    .menu-title {
+        font-size: 1.85rem;
         font-weight: 700;
         color: #24213d;
-        margin: 0 0 6px;
+        margin: 0 0 4px;
         letter-spacing: -.5px;
     }
 
-    .t-subtitle {
+    .menu-subtitle {
         margin: 0;
-        color: #85818c;
-        font-size: .95rem;
+        color: #7a7682;
+        font-size: .92rem;
     }
 
-    .t-btn-primary {
+    .nav-switcher {
+        display: flex;
+        gap: 8px;
+        background: #f1ecf0;
+        padding: 5px;
+        border-radius: 14px;
+        margin-bottom: 24px;
+        width: fit-content;
+    }
+
+    .nav-switcher-link {
         display: inline-flex;
         align-items: center;
-        justify-content: center;
-        gap: 9px;
-        background: linear-gradient(135deg,#8b0028,#a70b3b);
-        border: 0;
-        border-radius: 12px;
-        color: #fff;
-        padding: 12px 24px;
-        font-size: .95rem;
+        gap: 8px;
+        padding: 9px 18px;
+        border-radius: 10px;
+        font-size: .88rem;
         font-weight: 600;
         text-decoration: none;
-        box-shadow: 0 8px 22px rgba(139,0,40,.2);
+        color: #635e69;
         transition: all .2s ease;
-        cursor: pointer;
     }
 
-        .t-btn-primary:hover {
-            color: #fff;
-            transform: translateY(-2px);
-            box-shadow: 0 12px 28px rgba(139,0,40,.28);
-        }
+    .nav-switcher-link.active {
+        background: #fff;
+        color: #8b0028;
+        box-shadow: 0 3px 10px rgba(0,0,0,.06);
+    }
 
+    .nav-switcher-link:hover:not(.active) {
+        color: #24213d;
+    }
+
+    /* İstatistik Kartları */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    .stat-card {
+        background: #fff;
+        border: 1px solid #eee8ec;
+        border-radius: 16px;
+        padding: 18px 20px;
+        box-shadow: 0 4px 16px rgba(35,28,40,.03);
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.35rem;
+    }
+
+    .stat-icon.red { background: #fff2f5; color: #8b0028; }
+    .stat-icon.green { background: #ecfdf5; color: #059669; }
+    .stat-icon.orange { background: #fffbeb; color: #d97706; }
+    .stat-icon.blue { background: #eff6ff; color: #2563eb; }
+
+    .stat-val {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #24213d;
+        line-height: 1.2;
+    }
+
+    .stat-lbl {
+        font-size: .8rem;
+        color: #7a7682;
+        font-weight: 500;
+    }
+
+    /* Toolbar Arama & Filtre */
+    .filter-toolbar {
+        background: #fff;
+        border: 1px solid #eee8ec;
+        border-radius: 16px;
+        padding: 16px 20px;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+
+    .search-box {
+        position: relative;
+        flex: 1;
+        min-width: 260px;
+    }
+
+    .search-box i {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #9d97a5;
+        font-size: .95rem;
+    }
+
+    .search-box input {
+        width: 100%;
+        height: 42px;
+        border: 1px solid #e2dce0;
+        border-radius: 10px;
+        padding: 0 14px 0 40px;
+        font-size: .9rem;
+        outline: none;
+        transition: border-color .15s;
+    }
+
+    .search-box input:focus {
+        border-color: #8b0028;
+    }
+
+    .filter-pills {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+
+    .pill-btn {
+        background: #f8f6f8;
+        border: 1px solid #eae4e8;
+        padding: 7px 14px;
+        border-radius: 9px;
+        font-size: .82rem;
+        font-weight: 600;
+        color: #635e69;
+        cursor: pointer;
+        transition: all .15s ease;
+    }
+
+    .pill-btn.active, .pill-btn:hover {
+        background: #8b0028;
+        border-color: #8b0028;
+        color: #fff;
+    }
+
+    /* Grid ve Kartlar */
     .menu-grid {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 22px;
+        gap: 20px;
     }
 
     .menu-group-card {
         background: #fff;
-        border: 1px solid #eee9ed;
-        border-radius: 20px;
-        padding: 24px;
-        box-shadow: 0 8px 28px rgba(35,28,40,.055);
-        transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+        border: 1px solid #eee8ec;
+        border-radius: 18px;
+        padding: 22px;
+        box-shadow: 0 4px 18px rgba(35,28,40,.04);
         display: flex;
         flex-direction: column;
+        transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+        position: relative;
     }
 
-        .menu-group-card:hover {
-            transform: translateY(-4px);
-            border-color: #e5d5db;
-            box-shadow: 0 15px 35px rgba(35,28,40,.09);
-        }
+    .menu-group-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 28px rgba(35,28,40,.08);
+        border-color: #e5d5db;
+    }
 
     .card-top {
         display: flex;
         align-items: flex-start;
         justify-content: space-between;
-        margin-bottom: 18px;
+        margin-bottom: 14px;
     }
 
-    .card-icon {
-        width: 48px;
-        height: 48px;
-        border-radius: 14px;
-        background: linear-gradient(145deg,#fff2f5,#fbe3e9);
-        color: #8b0028;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.4rem;
-    }
-
-    .status-badge {
+    .loc-badge {
         display: inline-flex;
         align-items: center;
         gap: 5px;
-        padding: 5px 12px;
+        padding: 5px 10px;
         border-radius: 8px;
         font-size: .75rem;
         font-weight: 700;
     }
 
-    .status-active {
-        background: #edf9f4;
-        color: #287c5d;
-    }
-
-    .status-passive {
-        background: #fff0f2;
-        color: #a4364b;
-    }
+    .loc-header { background: #eff6ff; color: #1e40af; }
+    .loc-footer { background: #f3f4f6; color: #374151; }
+    .loc-sidebar { background: #fdf2f8; color: #9d174d; }
 
     .card-title {
         font-size: 1.15rem;
         font-weight: 700;
         color: #24213d;
-        margin: 0 0 4px;
+        margin: 0 0 6px;
     }
 
-    .card-location {
-        font-size: .85rem;
+    .card-meta {
+        font-size: .82rem;
         color: #85818c;
-        margin-bottom: 20px;
-    }
-
-    .card-stats {
         display: flex;
         align-items: center;
-        gap: 8px;
-        font-size: .85rem;
-        color: #716c75;
-        font-weight: 600;
-        margin-top: auto;
-        padding-bottom: 18px;
+        gap: 12px;
+        margin-bottom: 18px;
     }
 
-        .card-stats i {
-            color: #c98ca0;
-            font-size: 1.1rem;
-        }
+    .card-meta span {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
 
     .card-footer-actions {
         display: flex;
         align-items: center;
         justify-content: space-between;
         padding-top: 16px;
-        border-top: 1px solid #f0edef;
+        border-top: 1px solid #f2edf0;
+        margin-top: auto;
     }
 
     .btn-manage {
@@ -176,19 +284,20 @@
         border: 1px solid #f2d6dc;
         padding: 8px 16px;
         border-radius: 10px;
-        font-size: .85rem;
+        font-size: .84rem;
         font-weight: 600;
         text-decoration: none;
         transition: all .2s;
     }
 
-        .btn-manage:hover {
-            background: #8b0028;
-            color: #fff;
-        }
+    .btn-manage:hover {
+        background: #8b0028;
+        color: #fff;
+    }
 
     .action-group {
         display: flex;
+        align-items: center;
         gap: 6px;
     }
 
@@ -200,137 +309,238 @@
         align-items: center;
         justify-content: center;
         text-decoration: none;
-        transition: all .2s ease;
         border: 0;
         cursor: pointer;
+        transition: all .15s ease;
     }
 
-    .btn-edit {
-        background: #f4f5f7;
-        color: #24213d;
+    .btn-edit { background: #f4f5f7; color: #24213d; }
+    .btn-edit:hover { background: #e5e7eb; color: #111827; }
+    .btn-delete { background: #fff0f2; color: #a4364b; }
+    .btn-delete:hover { background: #8b0028; color: #fff; }
+
+    /* AJAX Switch */
+    .switch-wrap {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-size: .78rem;
+        font-weight: 600;
     }
 
-        .btn-edit:hover {
-            background: #e5e7eb;
-            color: #111827;
-        }
-
-    .btn-delete {
-        background: #fff0f2;
-        color: #a4364b;
+    .form-check-input.hizli-switch {
+        cursor: pointer;
+        width: 36px;
+        height: 20px;
     }
 
-        .btn-delete:hover {
-            background: #fce8ed;
-            color: #8b0028;
-        }
+    .form-check-input.hizli-switch:checked {
+        background-color: #059669;
+        border-color: #059669;
+    }
 
-    .blog-empty {
+    .t-btn-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: linear-gradient(135deg,#8b0028,#a70b3b);
+        border: 0;
+        border-radius: 12px;
+        color: #fff;
+        padding: 10px 20px;
+        font-size: .92rem;
+        font-weight: 600;
+        text-decoration: none;
+        box-shadow: 0 6px 18px rgba(139,0,40,.2);
+        cursor: pointer;
+        transition: all .2s;
+    }
+
+    .t-btn-primary:hover {
+        color: #fff;
+        transform: translateY(-1px);
+        box-shadow: 0 8px 22px rgba(139,0,40,.28);
+    }
+
+    .empty-state {
+        grid-column: 1 / -1;
         background: #fff;
-        border: 1px dashed #d9cbd1;
-        border-radius: 20px;
-        padding: 60px 20px;
+        border: 2px dashed #e2dce0;
+        border-radius: 18px;
+        padding: 50px 20px;
         text-align: center;
-        grid-column: 1/-1;
     }
 
-        .blog-empty > i {
-            font-size: 2.5rem;
-            color: #9a1640;
-            margin-bottom: 15px;
-            display: inline-block;
-            padding: 20px;
-            background: #fff2f5;
-            border-radius: 20px;
-        }
-
-    @@media(max-width:1100px) {
-        .menu-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
+    .empty-state i {
+        font-size: 2.8rem;
+        color: #c98ca0;
+        margin-bottom: 12px;
+        display: inline-block;
     }
 
-    @@media(max-width:768px) {
-        .menu-grid {
-            grid-template-columns: 1fr;
-        }
+    @@media(max-width: 1100px) {
+        .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        .menu-grid { grid-template-columns: repeat(2, 1fr); }
+    }
 
-        .t-hero {
-            flex-direction: column;
-            align-items: flex-start;
-        }
+    @@media(max-width: 768px) {
+        .stats-grid { grid-template-columns: 1fr; }
+        .menu-grid { grid-template-columns: 1fr; }
     }
 </style>
 
-<div class="t-page">
-    <div class="t-hero">
+<div class="menu-page">
+    <!-- HERO -->
+    <div class="menu-hero">
         <div>
-            <div class="t-eyebrow"><i class="bi bi-diagram-3"></i> Site Navigasyonu</div>
-            <h1 class="t-title">Menü Yönetimi</h1>
-            <p class="t-subtitle">Sitenizin farklı alanlarındaki menü kutularını hızlı ve kolay bir şekilde yönetin.</p>
+            <div class="menu-eyebrow"><i class="bi bi-diagram-3"></i> Site Navigasyonu</div>
+            <h1 class="menu-title">Menü Yönetimi</h1>
+            <p class="menu-subtitle">Header, Footer ve yan menüler gibi tüm sitenin navigasyon bağlantılarını buradan yönetin.</p>
         </div>
-        <a asp-action="GrupEkle" class="t-btn-primary"><i class="bi bi-plus-lg"></i> Yeni Menü Grubu Ekle</a>
+        <a asp-action="GrupEkle" class="t-btn-primary">
+            <i class="bi bi-plus-lg"></i> Yeni Menü Grubu Ekle
+        </a>
     </div>
 
+    <!-- HIZLI GEÇİŞ SEKMELERİ -->
+    <div class="nav-switcher">
+        <a href="/Admin/Menu" class="nav-switcher-link active">
+            <i class="bi bi-diagram-3"></i> Genel Menü Grupları (@toplamGrup)
+        </a>
+        <a href="/Admin/HeaderMenu" class="nav-switcher-link">
+            <i class="bi bi-segmented-nav"></i> Header Çiçek & Kategori Menüsü
+        </a>
+    </div>
+
+    <!-- BİLDİRİMLER -->
     @if (TempData["BasariliMesaj"] != null)
     {
-        <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius:12px; background: #edf9f4; color: #287c5d; border: 1px solid #d4f0e5;">
+        <div class="alert alert-success alert-dismissible fade show rounded-4 shadow-sm" role="alert">
             <i class="bi bi-check-circle-fill me-2"></i>@TempData["BasariliMesaj"]
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     }
     @if (TempData["HataMesaji"] != null)
     {
-        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius:12px;">
-            <i class="bi bi-exclamation-circle-fill me-2"></i>@TempData["HataMesaji"]
+        <div class="alert alert-danger alert-dismissible fade show rounded-4 shadow-sm" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["HataMesaji"]
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     }
 
-    <div class="menu-grid">
+    <!-- İSTATİSTİK KARTLARI -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon red"><i class="bi bi-collection"></i></div>
+            <div>
+                <div class="stat-val">@toplamGrup</div>
+                <div class="stat-lbl">Toplam Menü Grubu</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon green"><i class="bi bi-check2-circle"></i></div>
+            <div>
+                <div class="stat-val" id="aktifSayac">@aktifGrup</div>
+                <div class="stat-lbl">Aktif / Yayında</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon orange"><i class="bi bi-eye-slash"></i></div>
+            <div>
+                <div class="stat-val" id="pasifSayac">@pasifGrup</div>
+                <div class="stat-lbl">Pasif / Gizli</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon blue"><i class="bi bi-link-45deg"></i></div>
+            <div>
+                <div class="stat-val">@toplamBaglanti</div>
+                <div class="stat-lbl">Toplam Bağlantı</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FİLTRE VE ARAMA TOOLBARI -->
+    <div class="filter-toolbar">
+        <div class="search-box">
+            <i class="bi bi-search"></i>
+            <input type="text" id="menuAramaInput" placeholder="Menü adı veya konuma göre filtreleyin..." autocomplete="off" />
+        </div>
+        <div class="filter-pills">
+            <button type="button" class="pill-btn active" data-filter="all">Tümü (@toplamGrup)</button>
+            <button type="button" class="pill-btn" data-filter="aktif">Aktifler</button>
+            <button type="button" class="pill-btn" data-filter="pasif">Pasifler</button>
+            <button type="button" class="pill-btn" data-filter="Header">Header</button>
+            <button type="button" class="pill-btn" data-filter="Footer">Footer</button>
+        </div>
+    </div>
+
+    <!-- MENÜ GRUPLARI LİSTESİ -->
+    <div class="menu-grid" id="menuGridContainer">
         @if (Model != null && Model.Any())
         {
             foreach (var grup in Model)
             {
-                <div class="menu-group-card">
+                var locClass = grup.Konum.StartsWith("Header") ? "loc-header"
+                             : grup.Konum.StartsWith("Footer") ? "loc-footer"
+                             : "loc-sidebar";
+
+                <div class="menu-group-card"
+                     data-id="@grup.Id"
+                     data-baslik="@grup.Baslik.ToLower()"
+                     data-konum="@grup.Konum"
+                     data-aktif="@(grup.AktifMi ? "aktif" : "pasif")">
+                    
                     <div class="card-top">
-                        <div class="card-icon"><i class="bi bi-menu-app"></i></div>
-                        <div class="d-flex align-items-center gap-1">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="loc-badge @locClass">
+                                <i class="bi bi-geo-alt-fill"></i> @grup.Konum
+                            </span>
                             @if (grup.SistemMi)
                             {
-                                <span class="badge bg-warning text-dark" title="Bu menü grubu sistem tarafından korunmaktadır"><i class="bi bi-shield-lock-fill"></i> Sistem</span>
+                                <span class="badge bg-warning text-dark" style="font-size:0.7rem;" title="Sistem tarafından korunan menü grubu">
+                                    <i class="bi bi-shield-lock-fill"></i> Sistem
+                                </span>
                             }
-                            @if (grup.AktifMi)
-                            {
-                                <span class="status-badge status-active"><i class="bi bi-check-circle-fill"></i> Aktif</span>
-                            }
-                            else
-                            {
-                                <span class="status-badge status-passive"><i class="bi bi-eye-slash-fill"></i> Pasif</span>
-                            }
+                        </div>
+
+                        <!-- AJAX Durum Switch -->
+                        <div class="switch-wrap">
+                            <span class="durum-etiket @(grup.AktifMi ? "text-success" : "text-muted")">
+                                @(grup.AktifMi ? "Aktif" : "Pasif")
+                            </span>
+                            <div class="form-check form-switch m-0 p-0">
+                                <input class="form-check-input hizli-switch"
+                                       type="checkbox"
+                                       role="switch"
+                                       @(grup.AktifMi ? "checked" : "")
+                                       data-id="@grup.Id"
+                                       title="Tek tıkla aktif/pasif yapın" />
+                            </div>
                         </div>
                     </div>
 
                     <h3 class="card-title">@grup.Baslik</h3>
-                    <div class="card-location"><i class="bi bi-geo-alt me-1"></i> Konum: <strong>@grup.Konum</strong></div>
-
-                    <div class="card-stats">
-                        <i class="bi bi-link-45deg"></i> Bu menüde <strong>@grup.ElemanSayisi</strong> öğe bulunuyor
+                    
+                    <div class="card-meta">
+                        <span><i class="bi bi-link-45deg text-danger"></i> <strong>@grup.ElemanSayisi</strong> Bağlantı</span>
+                        <span><i class="bi bi-calendar3"></i> Güncel</span>
                     </div>
 
                     <div class="card-footer-actions">
                         <a asp-action="Detay" asp-route-grupId="@grup.Id" class="btn-manage">
-                            <i class="bi bi-list-nested"></i> İçeriği Yönet
+                            <i class="bi bi-list-nested"></i> İçeriği Yönet (@grup.ElemanSayisi)
                         </a>
+
                         <div class="action-group">
                             <a asp-action="GrupGuncelle" asp-route-id="@grup.Id" class="t-btn-action btn-edit" title="Grubu Düzenle">
                                 <i class="bi bi-pencil-square"></i>
                             </a>
 
-                            <!-- SADECE SİSTEM GRUBU OLMAYANLAR SİLİNEBİLİR -->
                             @if (!grup.SistemMi)
                             {
-                                <form asp-action="GrupSil" asp-route-id="@grup.Id" method="post" onsubmit="return confirm('Bu menü grubunu ve içerisindeki tüm alt linkleri silmek istediğinize emin misiniz?');" style="display:inline;">
+                                <form asp-action="GrupSil" asp-route-id="@grup.Id" method="post" onsubmit="return confirm('\'@grup.Baslik\' menü grubunu ve altındaki tüm linkleri silmek istediğinize emin misiniz?');" style="display:inline;">
+                                    @Html.AntiForgeryToken()
                                     <button type="submit" class="t-btn-action btn-delete" title="Grubu Sil">
                                         <i class="bi bi-trash3"></i>
                                     </button>
@@ -343,12 +553,108 @@
         }
         else
         {
-            <div class="blog-empty">
+            <div class="empty-state">
                 <i class="bi bi-diagram-3"></i>
-                <h3>Henüz Menü Grubu Bulunmuyor</h3>
-                <p>Header veya Footer gibi alanlar için ilk menü grubunu oluşturarak başlayın.</p>
-                <a asp-action="GrupEkle" class="t-btn-primary mt-2"><i class="bi bi-plus-lg"></i> İlk Menü Grubunu Oluştur</a>
+                <h3 class="fw-bold" style="color:#24213d;">Henüz Menü Grubu Bulunmuyor</h3>
+                <p class="text-muted small mb-3">Header veya Footer gibi alanlar için ilk menü grubunu oluşturarak başlayın.</p>
+                <a asp-action="GrupEkle" class="t-btn-primary">
+                    <i class="bi bi-plus-lg"></i> İlk Menü Grubunu Oluştur
+                </a>
             </div>
         }
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const aramaInput = document.getElementById("menuAramaInput");
+            const pillBtns = document.querySelectorAll(".pill-btn");
+            const cards = document.querySelectorAll(".menu-group-card");
+            let aktifFiltre = "all";
+
+            function filtrele() {
+                const aramaMetni = aramaInput.value.trim().toLowerCase();
+
+                cards.forEach(card => {
+                    const baslik = card.getAttribute("data-baslik") || "";
+                    const konum = card.getAttribute("data-konum") || "";
+                    const durum = card.getAttribute("data-aktif") || "";
+
+                    const aramaEslesti = !aramaMetni || baslik.includes(aramaMetni) || konum.toLowerCase().includes(aramaMetni);
+
+                    let filtreEslesti = true;
+                    if (aktifFiltre === "aktif") filtreEslesti = (durum === "aktif");
+                    else if (aktifFiltre === "pasif") filtreEslesti = (durum === "pasif");
+                    else if (aktifFiltre === "Header") filtreEslesti = konum.startsWith("Header");
+                    else if (aktifFiltre === "Footer") filtreEslesti = konum.startsWith("Footer");
+
+                    if (aramaEslesti && filtreEslesti) {
+                        card.style.display = "flex";
+                    } else {
+                        card.style.display = "none";
+                    }
+                });
+            }
+
+            aramaInput?.addEventListener("input", filtrele);
+
+            pillBtns.forEach(btn => {
+                btn.addEventListener("click", function () {
+                    pillBtns.forEach(b => b.classList.remove("active"));
+                    this.classList.add("active");
+                    aktifFiltre = this.getAttribute("data-filter");
+                    filtrele();
+                });
+            });
+
+            // AJAX DURUM SWITCH
+            document.querySelectorAll(".hizli-switch").forEach(sw => {
+                sw.addEventListener("change", async function () {
+                    const id = this.getAttribute("data-id");
+                    const aktifMi = this.checked;
+                    const card = this.closest(".menu-group-card");
+                    const etiket = card.querySelector(".durum-etiket");
+
+                    this.disabled = true;
+
+                    try {
+                        const response = await fetch(`/Admin/Menu/DurumDegistir?id=${id}&aktifMi=${aktifMi}`, {
+                            method: "POST",
+                            headers: { "X-Requested-With": "XMLHttpRequest" }
+                        });
+
+                        const res = await response.json();
+                        if (res.success) {
+                            card.setAttribute("data-aktif", aktifMi ? "aktif" : "pasif");
+                            if (etiket) {
+                                etiket.textContent = aktifMi ? "Aktif" : "Pasif";
+                                etiket.className = `durum-etiket ${aktifMi ? "text-success" : "text-muted"}`;
+                            }
+
+                            // Sayaçları güncelle
+                            const aktifEl = document.getElementById("aktifSayac");
+                            const pasifEl = document.getElementById("pasifSayac");
+                            if (aktifEl && pasifEl) {
+                                let a = parseInt(aktifEl.textContent) || 0;
+                                let p = parseInt(pasifEl.textContent) || 0;
+                                if (aktifMi) { a++; p--; } else { a--; p++; }
+                                aktifEl.textContent = Math.max(0, a);
+                                pasifEl.textContent = Math.max(0, p);
+                            }
+                        } else {
+                            alert(res.message || "Durum değiştirilemedi.");
+                            this.checked = !aktifMi;
+                        }
+                    } catch (err) {
+                        alert("İşlem sırasında bağlantı hatası oluştu.");
+                        this.checked = !aktifMi;
+                    } finally {
+                        this.disabled = false;
+                        filtrele();
+                    }
+                });
+            });
+        });
+    </script>
+}

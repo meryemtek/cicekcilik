@@ -1,4 +1,4 @@
-﻿using ECommerce.Application.DTOs.Urun;
+using ECommerce.Application.DTOs.Urun;
 using ECommerce.Application.DTOs.UrunVaryant;
 using ECommerce.Application.DTOs.UrunYorum;
 using ECommerce.Application.Interfaces;
@@ -13,22 +13,26 @@ public class UrunServisi : IUrunServisi
     private readonly IDepo<UrunVaryant> _varyantDeposu;
     private readonly IDepo<UrunYorum> _yorumDeposu;
     private readonly IDepo<Kategori> _kategoriDeposu;
+    private readonly IDepo<UrunKategori> _urunKategoriDeposu;
 
     public UrunServisi(
         IDepo<Urun> urunDeposu,
         IDepo<UrunVaryant> varyantDeposu,
         IDepo<UrunYorum> yorumDeposu,
-        IDepo<Kategori> kategoriDeposu)
+        IDepo<Kategori> kategoriDeposu,
+        IDepo<UrunKategori> urunKategoriDeposu)
     {
         _urunDeposu = urunDeposu;
         _varyantDeposu = varyantDeposu;
         _yorumDeposu = yorumDeposu;
         _kategoriDeposu = kategoriDeposu;
+        _urunKategoriDeposu = urunKategoriDeposu;
     }
 
     public async Task<IReadOnlyList<UrunListeDto>> TumUrunleriGetirAsync()
     {
         var urunler = await _urunDeposu.TumunuGetirAsync();
+        var tumUrunKategorileri = await _urunKategoriDeposu.TumunuGetirAsync();
 
         return urunler.Select(u => new UrunListeDto
         {
@@ -40,6 +44,7 @@ public class UrunServisi : IUrunServisi
             StokMiktari = u.StokMiktari,
             AktifMi = u.AktifMi,
             KategoriId = u.KategoriId,
+            AltKategoriIdleri = tumUrunKategorileri.Where(uk => uk.UrunId == u.Id).Select(uk => uk.KategoriId).ToList(),
             Etiket = u.Etiket,
             GorselUrl = u.GorselUrl
         }).ToList();
@@ -49,6 +54,11 @@ public class UrunServisi : IUrunServisi
     {
         var urun = await _urunDeposu.IdIleGetirAsync(id);
         if (urun == null) return null;
+
+        var altKategoriler = await _urunKategoriDeposu.GetirAsync(uk => uk.UrunId == id);
+        var ekGorseller = !string.IsNullOrWhiteSpace(urun.EkGorsellerJson)
+            ? System.Text.Json.JsonSerializer.Deserialize<List<string>>(urun.EkGorsellerJson) ?? new()
+            : new();
 
         return new UrunGuncelleDto
         {
@@ -61,7 +71,9 @@ public class UrunServisi : IUrunServisi
             Fiyat = urun.Fiyat,
             StokMiktari = urun.StokMiktari,
             GorselUrl = urun.GorselUrl,
+            EkGorseller = ekGorseller,
             KategoriId = urun.KategoriId,
+            AltKategoriIdleri = altKategoriler.Select(x => x.KategoriId).ToList(),
             Etiket = urun.Etiket,
             AktifMi = urun.AktifMi
         };
@@ -79,6 +91,9 @@ public class UrunServisi : IUrunServisi
             Fiyat = dto.Fiyat,
             StokMiktari = dto.StokMiktari,
             GorselUrl = dto.GorselUrl,
+            EkGorsellerJson = dto.EkGorseller != null && dto.EkGorseller.Any()
+                ? System.Text.Json.JsonSerializer.Serialize(dto.EkGorseller.Take(4).ToList())
+                : null,
             KategoriId = dto.KategoriId,
             Etiket = dto.Etiket,
             AktifMi = dto.AktifMi
@@ -86,6 +101,23 @@ public class UrunServisi : IUrunServisi
 
         await _urunDeposu.EkleAsync(yeniUrun);
         await _urunDeposu.DegisiklikleriKaydetAsync();
+
+        // Ek Alt Kategorileri Bağla
+        if (dto.AltKategoriIdleri != null && dto.AltKategoriIdleri.Any())
+        {
+            foreach (var altKategoriId in dto.AltKategoriIdleri.Distinct())
+            {
+                if (altKategoriId != Guid.Empty && altKategoriId != dto.KategoriId)
+                {
+                    await _urunKategoriDeposu.EkleAsync(new UrunKategori
+                    {
+                        UrunId = yeniUrun.Id,
+                        KategoriId = altKategoriId
+                    });
+                }
+            }
+            await _urunKategoriDeposu.DegisiklikleriKaydetAsync();
+        }
 
         return yeniUrun.Id;
     }
@@ -110,10 +142,41 @@ public class UrunServisi : IUrunServisi
                 urun.GorselUrl = dto.GorselUrl;
             }
 
+            if (dto.EkGorseller != null)
+            {
+                urun.EkGorsellerJson = dto.EkGorseller.Any()
+                    ? System.Text.Json.JsonSerializer.Serialize(dto.EkGorseller.Take(4).ToList())
+                    : null;
+            }
+
             urun.GuncellenmeTarihi = DateTime.UtcNow;
 
             _urunDeposu.Guncelle(urun);
             await _urunDeposu.DegisiklikleriKaydetAsync();
+
+            // Alt kategorileri güncelle
+            var mevcutKategoriler = await _urunKategoriDeposu.GetirAsync(uk => uk.UrunId == dto.Id);
+            foreach (var item in mevcutKategoriler)
+            {
+                _urunKategoriDeposu.Sil(item);
+            }
+
+            if (dto.AltKategoriIdleri != null && dto.AltKategoriIdleri.Any())
+            {
+                foreach (var altKategoriId in dto.AltKategoriIdleri.Distinct())
+                {
+                    if (altKategoriId != Guid.Empty && altKategoriId != dto.KategoriId)
+                    {
+                        await _urunKategoriDeposu.EkleAsync(new UrunKategori
+                        {
+                            UrunId = dto.Id,
+                            KategoriId = altKategoriId
+                        });
+                    }
+                }
+            }
+
+            await _urunKategoriDeposu.DegisiklikleriKaydetAsync();
         }
     }
 
@@ -141,10 +204,20 @@ public class UrunServisi : IUrunServisi
 
     public async Task<List<UrunListeDto>> KategoriIdyeGoreGetirAsync(Guid kategoriId)
     {
-        var tumUrunler = await _urunDeposu.TumunuGetirAsync();
+        // 1. Tıklanan kategori bir ana kategori ise alt kategorilerini de dahil et
+        var altKategoriler = await _kategoriDeposu.GetirAsync(k => k.UstKategoriId == kategoriId && k.AktifMi);
+        var hedefKategoriIdleri = altKategoriler.Select(k => k.Id).Concat(new[] { kategoriId }).ToHashSet();
 
+        // 2. Tüm ürünleri ve UrunKategori ara tablosunu çek
+        var tumUrunler = await _urunDeposu.TumunuGetirAsync();
+        var tumUrunKategorileri = await _urunKategoriDeposu.TumunuGetirAsync();
+
+        // 3. Ana kategorisi VEYA bağlı olduğu alt kategorilerden biri eşleşen ürünleri filtrele
         var urunler = tumUrunler
-            .Where(x => x.KategoriId == kategoriId && x.AktifMi)
+            .Where(x => x.AktifMi && x.StokMiktari > 0 && (
+                hedefKategoriIdleri.Contains(x.KategoriId) ||
+                tumUrunKategorileri.Any(uk => uk.UrunId == x.Id && hedefKategoriIdleri.Contains(uk.KategoriId))
+            ))
             .Select(x => new UrunListeDto
             {
                 Id = x.Id,
@@ -155,6 +228,7 @@ public class UrunServisi : IUrunServisi
                 StokMiktari = x.StokMiktari,
                 AktifMi = x.AktifMi,
                 KategoriId = x.KategoriId,
+                AltKategoriIdleri = tumUrunKategorileri.Where(uk => uk.UrunId == x.Id).Select(uk => uk.KategoriId).ToList(),
                 Etiket = x.Etiket,
                 GorselUrl = x.GorselUrl
             })
@@ -165,16 +239,41 @@ public class UrunServisi : IUrunServisi
 
     public async Task<UrunDetayDto?> SeoUrlIleDetayGetirAsync(string seoUrl)
     {
-        var urunler = await _urunDeposu.GetirAsync(u => u.SeoUrl == seoUrl && u.AktifMi);
-        var tekUrun = urunler.FirstOrDefault();
+        var urunler = await _urunDeposu.TumunuGetirAsync();
+        var tekUrun = urunler.FirstOrDefault(u => u.SeoUrl == seoUrl && u.AktifMi);
+
         if (tekUrun == null) return null;
 
         var kategori = await _kategoriDeposu.IdIleGetirAsync(tekUrun.KategoriId);
         var varyantlar = await _varyantDeposu.GetirAsync(v => v.UrunId == tekUrun.Id && v.AktifMi);
         var yorumlar = await _yorumDeposu.GetirAsync(y => y.UrunId == tekUrun.Id);
+        var bagliKategoriler = await _urunKategoriDeposu.GetirAsync(uk => uk.UrunId == tekUrun.Id);
+        var tumKategoriler = await _kategoriDeposu.TumunuGetirAsync();
 
-        var onayliYorumlar = yorumlar.Where(y => y.OnaylandiMi).OrderByDescending(y => y.OlusturulmaTarihi).ToList();
+        var altKategoriAdlari = tumKategoriler
+            .Where(k => bagliKategoriler.Any(bk => bk.KategoriId == k.Id))
+            .Select(k => k.Ad)
+            .ToList();
+
+        var onayliYorumlar = yorumlar.Where(y => y.OnaylandiMi).ToList();
         double ortalamaPuan = onayliYorumlar.Any() ? onayliYorumlar.Average(y => y.Puan) : 0;
+
+        var ekGorseller = !string.IsNullOrWhiteSpace(tekUrun.EkGorsellerJson)
+            ? System.Text.Json.JsonSerializer.Deserialize<List<string>>(tekUrun.EkGorsellerJson) ?? new()
+            : new();
+
+        var tumGorseller = new List<string>();
+        if (!string.IsNullOrWhiteSpace(tekUrun.GorselUrl))
+        {
+            tumGorseller.Add(tekUrun.GorselUrl);
+        }
+        foreach (var g in ekGorseller)
+        {
+            if (!string.IsNullOrWhiteSpace(g) && !tumGorseller.Contains(g))
+            {
+                tumGorseller.Add(g);
+            }
+        }
 
         return new UrunDetayDto
         {
@@ -186,10 +285,15 @@ public class UrunServisi : IUrunServisi
             AiAciklama = tekUrun.AiAciklama,
             Fiyat = tekUrun.Fiyat,
             StokMiktari = tekUrun.StokMiktari,
+            AktifMi = tekUrun.AktifMi,
             GorselUrl = tekUrun.GorselUrl,
+            EkGorseller = ekGorseller,
+            TumGorseller = tumGorseller,
             Etiket = tekUrun.Etiket,
             KategoriId = tekUrun.KategoriId,
             KategoriAdi = kategori?.Ad ?? string.Empty,
+            AltKategoriIdleri = bagliKategoriler.Select(x => x.KategoriId).ToList(),
+            AltKategoriAdlari = altKategoriAdlari,
 
             Varyantlar = varyantlar.Select(v => new UrunVaryantListeDto
             {
@@ -215,6 +319,7 @@ public class UrunServisi : IUrunServisi
             ToplamYorumSayisi = onayliYorumlar.Count()
         };
     }
+
     public async Task<UrunDetayDto?> IdIleDetayGetirAsync(Guid id)
     {
         var tekUrun = await _urunDeposu.IdIleGetirAsync(id);
@@ -223,9 +328,33 @@ public class UrunServisi : IUrunServisi
         var kategori = await _kategoriDeposu.IdIleGetirAsync(tekUrun.KategoriId);
         var varyantlar = await _varyantDeposu.GetirAsync(v => v.UrunId == tekUrun.Id && v.AktifMi);
         var yorumlar = await _yorumDeposu.GetirAsync(y => y.UrunId == tekUrun.Id);
+        var bagliKategoriler = await _urunKategoriDeposu.GetirAsync(uk => uk.UrunId == tekUrun.Id);
+        var tumKategoriler = await _kategoriDeposu.TumunuGetirAsync();
+
+        var altKategoriAdlari = tumKategoriler
+            .Where(k => bagliKategoriler.Any(bk => bk.KategoriId == k.Id))
+            .Select(k => k.Ad)
+            .ToList();
 
         var onayliYorumlar = yorumlar.Where(y => y.OnaylandiMi).ToList();
         double ortalamaPuan = onayliYorumlar.Any() ? onayliYorumlar.Average(y => y.Puan) : 0;
+
+        var ekGorseller = !string.IsNullOrWhiteSpace(tekUrun.EkGorsellerJson)
+            ? System.Text.Json.JsonSerializer.Deserialize<List<string>>(tekUrun.EkGorsellerJson) ?? new()
+            : new();
+
+        var tumGorseller = new List<string>();
+        if (!string.IsNullOrWhiteSpace(tekUrun.GorselUrl))
+        {
+            tumGorseller.Add(tekUrun.GorselUrl);
+        }
+        foreach (var g in ekGorseller)
+        {
+            if (!string.IsNullOrWhiteSpace(g) && !tumGorseller.Contains(g))
+            {
+                tumGorseller.Add(g);
+            }
+        }
 
         return new UrunDetayDto
         {
@@ -237,12 +366,16 @@ public class UrunServisi : IUrunServisi
             AiAciklama = tekUrun.AiAciklama,
             Fiyat = tekUrun.Fiyat,
             StokMiktari = tekUrun.StokMiktari,
+            AktifMi = tekUrun.AktifMi,
             GorselUrl = tekUrun.GorselUrl,
+            EkGorseller = ekGorseller,
+            TumGorseller = tumGorseller,
             Etiket = tekUrun.Etiket,
             KategoriId = tekUrun.KategoriId,
             KategoriAdi = kategori?.Ad ?? string.Empty,
+            AltKategoriIdleri = bagliKategoriler.Select(x => x.KategoriId).ToList(),
+            AltKategoriAdlari = altKategoriAdlari,
 
-            // VARYANTLAR ARTIK SEPETE DOĞRU AKTARILACAK
             Varyantlar = varyantlar.Select(v => new UrunVaryantListeDto
             {
                 Id = v.Id,

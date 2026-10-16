@@ -1,4 +1,4 @@
-﻿using ECommerce.Application.DTOs.Kampanya;
+using ECommerce.Application.DTOs.Kampanya;
 using ECommerce.Application.DTOs.Kategori;
 using ECommerce.Application.DTOs.Urun;
 using Microsoft.AspNetCore.Authorization;
@@ -240,6 +240,21 @@ namespace ECommerce.WebUI.Areas.Admin.Controllers
             }
 
             return RedirectToAction("Index");
+        }
+
+        // HIZLI DURUM DEĞİŞTİRME (AJAX)
+        [HttpPost]
+        public async Task<IActionResult> DurumDegistir(Guid id, bool aktifMi)
+        {
+            var client = CreateClientWithToken();
+            var response = await client.PostAsJsonAsync($"kampanya/durum-degistir/{id}", aktifMi);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return Json(new { success = true });
+            }
+
+            return Json(new { success = false, message = "Durum güncellenirken bir hata oluştu." });
         }
     }
 }

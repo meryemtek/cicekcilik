@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Text;
 using ECommerce.Application.DTOs.Urun;
 using ECommerce.Application.DTOs.UrunYorum;
+using ECommerce.Application.DTOs.KartNotuSablonu;
 
 namespace ECommerce.WebUI.Controllers
 {
@@ -54,6 +55,41 @@ namespace ECommerce.WebUI.Controllers
             if (urun != null)
             {
                 urun.GorselUrl = GetFullImageUrl(urun.GorselUrl);
+
+                if (urun.EkGorseller != null)
+                {
+                    urun.EkGorseller = urun.EkGorseller
+                        .Where(g => !string.IsNullOrWhiteSpace(g))
+                        .Select(g => GetFullImageUrl(g))
+                        .ToList();
+                }
+
+                if (urun.TumGorseller != null && urun.TumGorseller.Any())
+                {
+                    urun.TumGorseller = urun.TumGorseller
+                        .Where(g => !string.IsNullOrWhiteSpace(g))
+                        .Select(g => GetFullImageUrl(g))
+                        .Distinct()
+                        .ToList();
+                }
+                else
+                {
+                    urun.TumGorseller = new List<string>();
+                    if (!string.IsNullOrWhiteSpace(urun.GorselUrl))
+                    {
+                        urun.TumGorseller.Add(urun.GorselUrl);
+                    }
+                    if (urun.EkGorseller != null)
+                    {
+                        foreach (var eg in urun.EkGorseller)
+                        {
+                            if (!urun.TumGorseller.Contains(eg))
+                            {
+                                urun.TumGorseller.Add(eg);
+                            }
+                        }
+                    }
+                }
             }
 
             // AKTİF TESLİMAT BÖLGELERİNİ ÇEKME (İL, İLÇE, MAHALLE VE FİYATLAR)
@@ -169,6 +205,26 @@ namespace ECommerce.WebUI.Controllers
                 }
             }
             catch { /* API yanıt vermezse Detay.cshtml içindeki varsayılanlar kullanılır */ }
+
+            // AKTİF KART NOTU ŞABLONLARINI ÇEKME
+            try
+            {
+                var notlarResponse = await client.GetAsync("kart-notlari/aktif");
+                if (notlarResponse.IsSuccessStatusCode)
+                {
+                    var notlarContent = await notlarResponse.Content.ReadAsStringAsync();
+                    var kartNotlari = JsonSerializer.Deserialize<List<KartNotuSablonuListeDto>>(notlarContent, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<KartNotuSablonuListeDto>();
+                    ViewBag.KartNotlari = kartNotlari;
+                }
+                else
+                {
+                    ViewBag.KartNotlari = new List<KartNotuSablonuListeDto>();
+                }
+            }
+            catch
+            {
+                ViewBag.KartNotlari = new List<KartNotuSablonuListeDto>();
+            }
 
             return View(urun);
         }

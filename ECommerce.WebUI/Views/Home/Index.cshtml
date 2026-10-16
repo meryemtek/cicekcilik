@@ -11,7 +11,9 @@
     @await Component.InvokeAsync("KategoriBand")
 
     @await Component.InvokeAsync("Slider")
+    @await Component.InvokeAsync("KategoriBannerlar")
     @await Component.InvokeAsync("OneCikanUrunler")
+    @await Component.InvokeAsync("Kampanyalar")
 
     <section class="bf-journal" aria-labelledby="bf-journal-title">
         <div class="bf-container">
@@ -38,7 +40,35 @@
         --bf-primary: #02241a; --bf-green: #1a3a2f; --bf-rose: #984255; --bf-rose-soft: #ffd9de;
         background: #fcf9f8;
         overflow: hidden;
+        position: relative;
+        isolation: isolate;
     }
+    .bf-home > *:not(.petal-container) { position: relative; z-index: 1; }
+    .petal-container {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        overflow: hidden;
+        pointer-events: none;
+        transition: opacity 1s ease;
+    }
+    .petal-container.is-hidden { opacity: 0; }
+    .petal {
+        position: absolute;
+        top: -30px;
+        display: block;
+        border-radius: 2px 70% 2px 70%;
+        background: linear-gradient(135deg, rgba(232, 130, 150, .78), rgba(152, 66, 85, .45));
+        opacity: .72;
+        animation: petal-fall linear infinite;
+        will-change: transform;
+    }
+    @@keyframes petal-fall {
+        0% { transform: translate3d(0, -5vh, 0) rotate(0deg); }
+        50% { transform: translate3d(45px, 50vh, 0) rotate(360deg); }
+        100% { transform: translate3d(-25px, 110vh, 0) rotate(720deg); }
+    }
+    @@media (prefers-reduced-motion: reduce) { .petal-container { display: none; } }
     .bf-container { width: 100%; max-width: 1320px; margin: 0 auto; padding: 0 16px; }
     .bf-catbar { border-bottom: 1px solid rgba(254, 148, 168, .25); background: rgba(252, 249, 248, .96); }
     .bf-catbar-list { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 0; padding: 12px 0; list-style: none; overflow-x: auto; scrollbar-width: none; }
@@ -63,3 +93,35 @@
     @@media (max-width: 991px) { .bf-journal-box { grid-template-columns: 1fr; padding: 28px; } }
     @@media (max-width: 575px) { .bf-journal { padding: 38px 0 42px; } .bf-journal-tips { grid-template-columns: 1fr; } .bf-journal-box { padding: 22px; } }
 </style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+        const home = document.querySelector(".bf-home");
+        if (!home) return;
+
+        const petalContainer = document.createElement("div");
+        petalContainer.className = "petal-container";
+        petalContainer.setAttribute("aria-hidden", "true");
+        home.appendChild(petalContainer);
+
+        for (let i = 0; i < 30; i++) {
+            const petal = document.createElement("div");
+            petal.className = "petal";
+
+            const size = Math.random() * 15 + 10;
+            petal.style.width = `${size}px`;
+            petal.style.height = `${size * 0.65}px`;
+            petal.style.left = `${Math.random() * 100}vw`;
+            petal.style.animationDuration = `${Math.random() * 4 + 4}s`;
+            petal.style.animationDelay = `${Math.random() * 5}s`;
+            petalContainer.appendChild(petal);
+        }
+
+        window.setTimeout(() => {
+            petalContainer.classList.add("is-hidden");
+            window.setTimeout(() => petalContainer.remove(), 1000);
+        }, 10000);
+    });
+</script>

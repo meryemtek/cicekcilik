@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
@@ -62,6 +62,14 @@ namespace ECommerce.WebAPI.Controllers.Admin
         {
             await _menuServisi.GrupSilAsync(id);
             return Ok(new { Mesaj = "Menü grubu silindi." });
+        }
+
+        [HttpPatch("gruplar/durum-degistir/{id:guid}")]
+        [HttpPost("gruplar/durum-degistir/{id:guid}")]
+        public async Task<IActionResult> GrupDurumDegistir(Guid id, [FromQuery] bool aktifMi)
+        {
+            await _menuServisi.GrupDurumDegistirAsync(id, aktifMi);
+            return Ok(new { Mesaj = "Menü grubu durumu güncellendi.", AktifMi = aktifMi });
         }
 
         [HttpGet("ogeler/{grupId:guid}")]

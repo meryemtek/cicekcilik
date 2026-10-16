@@ -1,4 +1,4 @@
-﻿using ECommerce.Application.DTOs.Kampanya;
+using ECommerce.Application.DTOs.Kampanya;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -12,5 +12,6 @@ namespace ECommerce.Application.Interfaces
         Task AddUrunToKampanyaAsync(KampanyaUrunEkleDto dto);
         Task UpdateKampanyaUrunAsync(KampanyaUrunGuncelleDto dto);
         Task RemoveUrunFromKampanyaAsync(Guid id);
+        Task DurumDegistirAsync(Guid id, bool aktifMi);
     }
 }

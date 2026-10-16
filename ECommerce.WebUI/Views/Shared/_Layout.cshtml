@@ -211,7 +211,7 @@
         .flower-category-mobile-toggle { flex: 0 0 auto; border: 0; border-radius: 9px; color: #454545; }
         .flower-category-list { display: flex; align-items: stretch; justify-content: space-between; gap: 8px; width: 100%; margin: 0; padding: 0; list-style: none; }
         .flower-category-item { position: relative; flex: 0 0 auto; }
-        .flower-category-link { position: relative; display: inline-flex; align-items: center; gap: 9px; min-height: 54px; padding: 0 10px; color: #454545; font-size: .86rem; font-weight: 600; letter-spacing: .02em; text-decoration: none; white-space: nowrap; transition: color .18s ease; }
+        .flower-category-link { position: relative; display: inline-flex; align-items: center; gap: 9px; min-height: 54px; padding: 0 10px; color: #454545; font-size: .86rem; font-weight: 600; letter-spacing: .02em; text-decoration: none; white-space: nowrap; text-transform: uppercase; transition: color .18s ease; }
         .flower-category-link::after { content: ''; position: absolute; right: 10px; bottom: 5px; left: 10px; height: 2px; border-radius: 2px; background: #984255; transform: scaleX(0); transition: transform .18s ease; }
         .flower-category-link i { color: #9c7b84; font-size: 1rem; }
         .flower-category-item:hover > .flower-category-link, .flower-category-item:focus-within > .flower-category-link { color: #984255; }
@@ -321,11 +321,6 @@
 
 <body>
 
-    <!-- =========================================================
-         1. ÜST BAR
-    ========================================================= -->
-    @await Component.InvokeAsync("HeaderInfo")
-
     @if (ViewContext.RouteData.Values["controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["action"]?.ToString() == "Index")
     {
         @await Component.InvokeAsync("DuyuruBand")
@@ -347,46 +342,7 @@
                 <button class="navbar-toggler flower-category-mobile-toggle d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenuOffcanvas" aria-controls="mobileMenuOffcanvas" aria-label="Diğer menü bağlantılarını aç">
                     <i class="bi bi-list fs-4" aria-hidden="true"></i>
                 </button>
-                <ul class="flower-category-list">
-                    <li class="flower-category-item">
-                        <a class="flower-category-link" href="/urunler"><i class="bi bi-gift" aria-hidden="true"></i> ÇİÇEK</a>
-                        <div class="flower-category-submenu">
-                            <a href="/urunler">Tüm Çiçekler</a><a href="/Arama?q=Gül">Gül Buketleri</a><a href="/Arama?q=Orkide">Orkideler</a><a href="/Arama?q=Saksı%20Çiçeği">Saksı Çiçekleri</a>
-                        </div>
-                    </li>
-                    <li class="flower-category-item featured">
-                        <a class="flower-category-link" href="/Arama?q=Yapay%20Çiçek"><i class="bi bi-flower3" aria-hidden="true"></i> YAPAY ÇİÇEK</a>
-                        <div class="flower-category-submenu">
-                            <a href="/Arama?q=Yapay%20Çiçek">Tüm Yapay Çiçekler</a><a href="/Arama?q=Yapay%20Gül">Yapay Gül</a><a href="/Arama?q=Yapay%20Orkide">Yapay Orkide</a>
-                        </div>
-                    </li>
-                    <li class="flower-category-item">
-                        <a class="flower-category-link" href="/Arama?q=Premium%20Çiçek"><i class="bi bi-stars" aria-hidden="true"></i> PREMIUM ÇİÇEK</a>
-                        <div class="flower-category-submenu">
-                            <a href="/Arama?q=Premium%20Çiçek">Premium Tasarımlar</a><a href="/Arama?q=Özel%20Buket">Özel Tasarım Buketler</a><a href="/Arama?q=VIP">VIP Aranjmanlar</a>
-                        </div>
-                    </li>
-                    <li class="flower-category-item">
-                        <a class="flower-category-link" href="/Arama?q=Ayıcık"><i class="bi bi-flower1" aria-hidden="true"></i> AYICIK</a>
-                        <div class="flower-category-submenu"><a href="/Arama?q=Ayıcık">Ayıcık Hediyeleri</a><a href="/Arama?q=Peluş">Peluş Oyuncaklar</a></div>
-                    </li>
-                    <li class="flower-category-item">
-                        <a class="flower-category-link" href="/Arama?q=Balon"><i class="bi bi-balloon" aria-hidden="true"></i> BALON KUTUSU</a>
-                        <div class="flower-category-submenu"><a href="/Arama?q=Balon">Balonlar</a><a href="/Arama?q=Balon%20Kutusu">Balon Kutuları</a><a href="/Arama?q=Hediye%20Kutusu">Hediye Kutuları</a></div>
-                    </li>
-                    <li class="flower-category-item">
-                        <a class="flower-category-link" href="/Arama?q=Sevgiliye"><i class="bi bi-heart" aria-hidden="true"></i> SEVGİLİYE</a>
-                        <div class="flower-category-submenu"><a href="/Arama?q=Sevgiliye%20Çiçek">Sevgiliye Çiçek</a><a href="/Arama?q=Gül">Gül Buketleri</a><a href="/Arama?q=Yıldönümü">Yıldönümü Hediyeleri</a></div>
-                    </li>
-                    <li class="flower-category-item">
-                        <a class="flower-category-link" href="/Arama?q=Doğum%20Günü"><i class="bi bi-emoji-smile" aria-hidden="true"></i> GÖNDERİM AMACI</a>
-                        <div class="flower-category-submenu"><a href="/Arama?q=Doğum%20Günü">Doğum Günü</a><a href="/Arama?q=Geçmiş%20Olsun">Geçmiş Olsun</a><a href="/Arama?q=Açılış">Açılış</a><a href="/Arama?q=Yeni%20Bebek">Yeni Bebek</a></div>
-                    </li>
-                    <li class="flower-category-item">
-                        <a class="flower-category-link" href="/Arama?q=Butik%20Çiçek"><i class="bi bi-flower2" aria-hidden="true"></i> BUTİK ÇİÇEKLER</a>
-                        <div class="flower-category-submenu"><a href="/Arama?q=Butik%20Çiçek">Butik Tasarımlar</a><a href="/Arama?q=Karışık%20Buket">Karışık Buketler</a><a href="/Arama?q=Orkide">Orkide Aranjmanları</a></div>
-                    </li>
-                </ul>
+                @await Component.InvokeAsync("HeaderKategoriMenu")
             </div>
         </nav>
 

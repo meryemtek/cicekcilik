@@ -551,7 +551,6 @@
             <p class="urun-subtitle">Çiçek ve aranjman stoklarınızı, fiyatlarınızı ve vitrin durumunuzu yönetin.</p>
         </div>
         <div class="urun-action-group">
-            <a asp-action="XmlImport" class="urun-import-btn"><i class="bi bi-filetype-xml"></i><span>XML İçe Aktar</span></a>
             <a asp-action="Ekle" class="urun-add-btn"><i class="bi bi-plus-lg"></i><span>Yeni Ürün Ekle</span></a>
         </div>
     </div>
@@ -621,7 +620,13 @@
                             <h3 class="urun-card-name">@item.Ad</h3>
                             <div class="urun-card-sku">SKU: @(string.IsNullOrEmpty(item.UrunKodu) ? "Yok" : item.UrunKodu)</div>
                             <div class="urun-card-price">@item.Fiyat.ToString("C2")</div>
-                            <div class="urun-card-stock">Stok Miktarı: <strong>@item.StokMiktari</strong> adet</div>
+                            <div class="urun-card-stock">
+                                Stok Miktarı: <strong>@item.StokMiktari</strong> adet
+                                @if (item.StokMiktari <= 0)
+                                {
+                                    <span class="badge bg-danger ms-1" style="font-size: 0.72rem; padding: 3px 7px;">Tükendi</span>
+                                }
+                            </div>
                         </div>
 
                         @if (!string.IsNullOrWhiteSpace(item.GorselUrl))
@@ -652,7 +657,6 @@
                 <h3>Henüz ürün bulunmuyor</h3>
                 <p>Mağazanızda sergilemek için ilk ürününüzü ekleyebilirsiniz.</p>
                 <div class="urun-action-group" style="justify-content:center; margin-top:20px;">
-                    <a asp-action="XmlImport" class="urun-import-btn"><i class="bi bi-filetype-xml"></i> XML ile Yükle</a>
                     <a asp-action="Ekle" class="urun-add-btn"><i class="bi bi-plus-lg"></i> İlk Ürünü Oluştur</a>
                 </div>
             </div>

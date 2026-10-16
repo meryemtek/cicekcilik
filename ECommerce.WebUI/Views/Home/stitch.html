@@ -1,0 +1,775 @@
+<!DOCTYPE html><html class="scroll-smooth" lang="tr" style="width: 1280px; height: 4618px; overflow: hidden; position: relative;"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Atelier Flora Botanique | Lüks Çiçek ve Tasarım Aranjmanlar</title>
+<!-- Google Fonts: Playfair Display & Plus Jakarta Sans -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=Plus+Jakarta+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS with forms & container queries -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-bright": "#fcf9f8",
+            "on-error": "#ffffff",
+            "on-secondary-container": "#79293d",
+            "surface-container-low": "#f6f3f2",
+            "secondary-container": "#fe94a8",
+            "outline": "#727974",
+            "error-container": "#ffdad6",
+            "surface-variant": "#e5e2e1",
+            "background": "#fcf9f8",
+            "error": "#ba1a1a",
+            "on-surface": "#1b1b1c",
+            "on-primary-fixed": "#002117",
+            "secondary-fixed-dim": "#ffb2be",
+            "primary-fixed-dim": "#abcebf",
+            "secondary-fixed": "#ffd9de",
+            "inverse-surface": "#303030",
+            "on-error-container": "#93000a",
+            "on-tertiary-fixed": "#2c1600",
+            "tertiary-fixed": "#ffdcbd",
+            "on-primary-fixed-variant": "#2d4d41",
+            "tertiary": "#311900",
+            "primary-container": "#1a3a2f",
+            "inverse-primary": "#abcebf",
+            "surface-container-high": "#eae7e7",
+            "surface": "#fcf9f8",
+            "on-surface-variant": "#414845",
+            "on-secondary-fixed": "#3f0015",
+            "surface-container": "#f0eded",
+            "on-primary-container": "#82a496",
+            "surface-container-lowest": "#ffffff",
+            "secondary": "#984255",
+            "inverse-on-surface": "#f3f0ef",
+            "surface-dim": "#dcd9d9",
+            "on-tertiary": "#ffffff",
+            "on-tertiary-fixed-variant": "#623f18",
+            "on-secondary": "#ffffff",
+            "on-primary": "#ffffff",
+            "primary-fixed": "#c7ebda",
+            "surface-container-highest": "#e5e2e1",
+            "primary": "#02241a",
+            "on-background": "#1b1b1c",
+            "tertiary-fixed-dim": "#f0bd8b",
+            "tertiary-container": "#4d2d07",
+            "on-tertiary-container": "#c39465",
+            "surface-tint": "#456558",
+            "on-secondary-fixed-variant": "#7a2b3e",
+            "outline-variant": "#c1c8c3"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-md": "1rem",
+            "space-lg": "1.5rem",
+            "space-2xl": "4rem",
+            "margin-desktop": "4rem",
+            "gutter-desktop": "2rem",
+            "gutter": "1.5rem",
+            "space-sm": "0.5rem",
+            "margin": "1rem",
+            "space-xs": "0.25rem",
+            "margin-tablet": "2rem",
+            "space-3xl": "6rem",
+            "space-xl": "2.5rem"
+          },
+          "fontFamily": {
+            "display-hero": ["Playfair Display"],
+            "label-caps": ["Plus Jakarta Sans"],
+            "body-md": ["Plus Jakarta Sans"],
+            "headline-lg-mobile": ["Playfair Display"],
+            "title-editorial": ["Playfair Display"],
+            "display-hero-mobile": ["Playfair Display"],
+            "body-lg": ["Plus Jakarta Sans"],
+            "headline-sm": ["Playfair Display"],
+            "label-sm": ["Plus Jakarta Sans"],
+            "label-md": ["Plus Jakarta Sans"],
+            "headline-md": ["Playfair Display"],
+            "headline-lg": ["Playfair Display"],
+            "body-sm": ["Plus Jakarta Sans"]
+          },
+          "fontSize": {
+            "display-hero": ["4rem", { "lineHeight": "4.5rem", "letterSpacing": "-0.02em", "fontWeight": "400" }],
+            "label-caps": ["0.75rem", { "lineHeight": "1rem", "letterSpacing": "0.12em", "fontWeight": "600" }],
+            "body-md": ["1rem", { "lineHeight": "1.5rem", "fontWeight": "400" }],
+            "headline-lg-mobile": ["2rem", { "lineHeight": "2.5rem", "letterSpacing": "-0.01em", "fontWeight": "500" }],
+            "title-editorial": ["1.25rem", { "lineHeight": "1.75rem", "letterSpacing": "0.01em", "fontWeight": "400" }],
+            "display-hero-mobile": ["2.5rem", { "lineHeight": "3rem", "letterSpacing": "-0.01em", "fontWeight": "400" }],
+            "body-lg": ["1.125rem", { "lineHeight": "1.75rem", "fontWeight": "400" }],
+            "headline-sm": ["1.5rem", { "lineHeight": "2rem", "fontWeight": "600" }],
+            "label-sm": ["0.75rem", { "lineHeight": "1rem", "fontWeight": "500" }],
+            "label-md": ["0.875rem", { "lineHeight": "125rem", "fontWeight": "500" }],
+            "headline-md": ["2rem", { "lineHeight": "2.5rem", "fontWeight": "500" }],
+            "headline-lg": ["3rem", { "lineHeight": "3.5rem", "letterSpacing": "-0.015em", "fontWeight": "500" }],
+            "body-sm": ["0.875rem", { "lineHeight": "1.375rem", "fontWeight": "400" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .custom-glass-card {
+      background: rgba(255, 245, 247, 0.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(232, 130, 150, 0.25);
+    }
+    .botanical-shadow {
+      box-shadow: 0px 12px 32px -4px rgba(26, 58, 47, 0.06), 0px 4px 12px 0px rgba(232, 130, 150, 0.08);
+    }
+    .botanical-shadow-hover:hover {
+      box-shadow: 0px 24px 44px -8px rgba(26, 58, 47, 0.12), 0px 8px 16px 0px rgba(232, 130, 150, 0.15);
+      transform: translateY(-3px);
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface antialiased selection:bg-secondary-container selection:text-primary">
+<!-- 1. ANNOUNCEMENT BAR -->
+<aside aria-label="Duyuru ve Teslimat Bilgisi" class="bg-primary-container text-surface-bright py-2.5 px-4 text-center border-b border-primary-container/40">
+<div class="max-w-[1440px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs font-label-caps">
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center justify-center w-2 h-2 rounded-full bg-secondary-container animate-pulse"></span>
+<span class="tracking-wider uppercase">İstanbul içi aynı gün teslimat &amp; her siparişte özel el yazısı tebrik kartı hediyesi</span>
+</div>
+<div class="hidden md:flex items-center gap-3 opacity-90 text-[11px] font-medium tracking-normal">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-secondary-container">local_shipping</span>
+<span class="">750 ₺ üzeri ücretsiz teslimat</span>
+</span>
+<span class="text-secondary-fixed/40">•</span>
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-secondary-container">eco</span>
+<span class="">Sera taze çiçek garantisi</span>
+</span>
+</div>
+</div>
+</aside>
+<!-- 2. TOP NAVIGATION BAR (Shared Component) -->
+<header class="bg-surface/90 backdrop-blur-md dark:bg-surface-container-lowest/90 border-b border-secondary-container/20 dark:border-outline-variant/10 shadow-sm docked full-width top-0 sticky z-50 transition-all duration-300 ease-out">
+<div class="flex justify-between items-center w-full px-6 md:px-margin-desktop max-w-[1440px] mx-auto py-5">
+<!-- Brand Logo -->
+<a class="font-display-hero text-headline-md font-medium tracking-tight text-primary dark:text-inverse-primary hover:opacity-90 transition-opacity flex items-baseline gap-1.5" href="#">
+<span class="">Atelier Flora</span>
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+</a>
+<!-- Center Desktop Navigation Links -->
+<nav aria-label="Ana Menü" class="hidden lg:flex items-center space-x-8">
+<!-- Active Link: Koleksiyonlar -->
+<a class="text-label-caps font-label-caps uppercase tracking-wider text-primary dark:text-inverse-primary border-b border-primary dark:border-inverse-primary pb-1" href="#koleksiyonlar">
+          Koleksiyonlar
+        </a>
+<a class="text-label-caps font-label-caps uppercase tracking-wider text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors pb-1" href="#buketler">
+          Buketler
+        </a>
+<a class="text-label-caps font-label-caps uppercase tracking-wider text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors pb-1" href="#aranjmanlar">
+          Tasarım Aranjmanlar
+        </a>
+<a class="text-label-caps font-label-caps uppercase tracking-wider text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors pb-1" href="#abonelik">
+          Çiçek Aboneliği
+        </a>
+<a class="text-label-caps font-label-caps uppercase tracking-wider text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors pb-1" href="#kurumsal">
+          Kurumsal
+        </a>
+</nav>
+<!-- Trailing Action Cluster (Search, Icons, Primary Action) -->
+<div class="flex items-center space-x-3 sm:space-x-5">
+<!-- Search bar on right -->
+<div class="hidden sm:flex items-center relative">
+<input class="pl-9 pr-4 py-1.5 text-xs font-body-sm bg-surface-container-low/70 border border-outline-variant/50 rounded-full focus:outline-none focus:border-primary focus:ring-1 focus:ring-secondary/30 transition-all w-36 lg:w-48 placeholder:text-on-surface-variant/60" placeholder="Aranjman ara..." type="search">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px] absolute left-2.5 pointer-events-none">search</span>
+</div>
+<!-- Trailing action: favorite -->
+<button aria-label="Favorilerim" class="w-10 h-10 rounded-full flex items-center justify-center text-primary dark:text-inverse-primary hover:bg-secondary-fixed/40 transition-colors duration-200 relative" type="button">
+<span class="material-symbols-outlined text-[22px]">favorite</span>
+<span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-secondary"></span>
+</button>
+<!-- Trailing action: shopping_bag -->
+<button aria-label="Alışveriş Sepeti" class="w-10 h-10 rounded-full flex items-center justify-center text-primary dark:text-inverse-primary hover:bg-secondary-fixed/40 transition-colors duration-200 relative" type="button">
+<span class="material-symbols-outlined text-[22px]">shopping_bag</span>
+<span class="absolute -top-0.5 -right-0.5 bg-primary text-surface-bright text-[10px] font-label-caps px-1.5 py-0.2 rounded-full leading-none flex items-center justify-center min-w-[18px] h-[18px]">2</span>
+</button>
+<!-- Trailing primary action button -->
+<a class="hidden sm:inline-flex items-center justify-center bg-primary-container text-surface-bright hover:bg-primary px-5 py-2 rounded-full text-xs font-label-caps tracking-wider uppercase transition-colors duration-200" href="#giris">
+          Giriş Yap
+        </a>
+<!-- Mobile Navigation Menu Toggle -->
+<button aria-label="Menüyü Aç" class="lg:hidden w-10 h-10 rounded-full flex items-center justify-center text-primary" type="button">
+<span class="material-symbols-outlined text-[26px]">menu</span>
+</button>
+</div>
+</div>
+</header>
+<main>
+<!-- 3. HERO SHOWCASE SECTION -->
+<section class="relative overflow-hidden py-10 lg:py-16 px-6 md:px-margin-desktop max-w-[1440px] mx-auto">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+<!-- Left Editorial Narrative (5 cols) -->
+<div class="lg:col-span-5 space-y-6">
+<div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-secondary-fixed text-on-secondary-fixed text-xs font-label-caps uppercase tracking-wider">
+<span class="material-symbols-outlined text-[16px] text-secondary">local_florist</span>
+<span class="">2026 Sonbahar Koleksiyonu</span>
+</div>
+<h1 class="font-display-hero text-headline-lg-mobile lg:text-headline-lg text-primary leading-tight">
+            Doğanın En Naif Formu, <span class="italic font-normal text-secondary">Sanatla</span> Buluştu.
+          </h1>
+<p class="font-body-lg text-body-md lg:text-body-lg text-on-surface-variant font-light leading-relaxed">Lidya Çiçekçilik; sürdürülebilir yerel seralardan derlenen taze şakayıklar, pudra bahçe gülleri ve heykelsi botanik dokularla mekanlarınıza yaşayan zarafet katıyor.
+          </p>
+<!-- CTAs -->
+<div class="flex flex-wrap items-center gap-4 pt-2">
+<a class="px-8 py-3.5 rounded-full bg-primary-container hover:bg-primary text-surface-bright font-label-caps text-xs tracking-widest uppercase transition-all duration-300 shadow-md hover:shadow-lg inline-flex items-center gap-2" href="#koleksiyonlar">
+<span class="">Koleksiyonu Keşfet</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+
+</div>
+<!-- Trust Badges -->
+<div class="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-6 border-t border-secondary-container/30">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-secondary text-[24px]">schedule</span>
+<div>
+<p class="text-xs font-semibold text-primary">Aynı Gün Teslim</p>
+<p class="text-[11px] text-on-surface-variant">İstanbul içi 14:00'e dek</p>
+</div>
+</div>
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-secondary text-[24px]">water_drop</span>
+<div>
+<p class="text-xs font-semibold text-primary">7 Gün Tazelik</p>
+<p class="text-[11px] text-on-surface-variant">Besin kiti hediyeli</p>
+</div>
+</div>
+<div class="hidden sm:flex items-center gap-2.5">
+<span class="material-symbols-outlined text-secondary text-[24px]">draw</span>
+<div>
+<p class="text-xs font-semibold text-primary">Kalligrafi Notu</p>
+<p class="text-[11px] text-on-surface-variant">El yazısı mühürlü kart</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Hero Visual Showcase (7 cols) -->
+<div class="lg:col-span-7 relative">
+<!-- Ambient blurred rose glow -->
+<div class="absolute -top-10 -right-10 w-96 h-96 bg-secondary-fixed-dim/40 rounded-full blur-3xl pointer-events-none"></div>
+<div class="absolute -bottom-10 -left-10 w-80 h-80 bg-primary-fixed/30 rounded-full blur-3xl pointer-events-none"></div>
+<div class="relative rounded-3xl overflow-hidden botanical-shadow border border-secondary-container/20 group">
+<img class="w-full h-[460px] lg:h-[580px] object-cover group-hover:scale-105 transition-transform duration-700 ease-out" data-alt="A luxurious high-end editorial flatlay and portrait of lush blush pink peonies, cream garden roses, and delicate ranunculus arranged in a matte artisanal ceramic vase. Soft morning greenhouse sunlight streams through linen curtains casting gentle organic botanical shadows onto a warm off-white linen surface. The composition embodies high fashion minimalism with whisper-soft dusty rose tones, fresh dew drops on petals, and deep eucalyptus greenery accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvCezsS49RBcBNpC2dwKaQI8rpQlOZuhJfu2CUpjmqnfC9lhemJITiv7FfpULeLSLM_i5eg7p4t3Wd_65nQxBCTtx54X8qJF-SOwLfYAw14u8S9ns0uz1x9qTtmQ6MGx03jLW8Z56N129uQOrGwPAjm4p2pOt5_O0HNfMv9F67tI9OOPbdbz05rskfkJo32oRUUvJdhUaYN7Num-1QBdxKQYQrKgoitPCLd9aWL05XXGG9NxlGLIvYHg">
+<!-- Floating Translucent Glass Panel (Greenhouse glass effect) -->
+
+</div>
+</div>
+</div>
+</section>
+<!-- 4. QUICK MOOD / OCCASION CAPSULES (Interactive Category Filter Pills) -->
+<section class="py-8 border-y border-secondary-container/20 bg-surface-container-low/40">
+<div class="px-6 md:px-margin-desktop max-w-[1440px] mx-auto">
+<div class="flex items-center justify-between mb-4">
+<p class="font-label-caps text-xs text-primary uppercase tracking-widest flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+            Hangi Duyguyu İfade Etmek İstersiniz?
+          </p>
+<span class="text-xs text-on-surface-variant hidden sm:inline">Küratör Seçkileri</span>
+</div>
+<!-- Filter Chips Carousel / Flex Container -->
+<div class="flex items-center gap-3 overflow-x-auto no-scrollbar py-2">
+<!-- Active Capsule -->
+<button class="flex-shrink-0 px-5 py-2.5 rounded-full bg-primary-container text-surface-bright font-label-caps text-xs tracking-wide flex items-center gap-2.5 shadow-sm" type="button">
+<span class="">🌸</span>
+<span class="">Kendini Şımart</span>
+<span class="text-[10px] bg-secondary px-1.5 py-0.5 rounded-full text-surface-bright">18</span>
+</button>
+<button class="flex-shrink-0 px-5 py-2.5 rounded-full bg-secondary-fixed/50 border border-secondary-container/30 text-on-surface hover:bg-secondary-fixed font-label-caps text-xs tracking-wide flex items-center gap-2.5 transition-colors duration-200" type="button">
+<span class="">💍</span>
+<span class="">Yıldönümü &amp; Aşk</span>
+</button>
+<button class="flex-shrink-0 px-5 py-2.5 rounded-full bg-secondary-fixed/50 border border-secondary-container/30 text-on-surface hover:bg-secondary-fixed font-label-caps text-xs tracking-wide flex items-center gap-2.5 transition-colors duration-200" type="button">
+<span class="">🤍</span>
+<span class="">Özür &amp; Telafi</span>
+</button>
+<button class="flex-shrink-0 px-5 py-2.5 rounded-full bg-secondary-fixed/50 border border-secondary-container/30 text-on-surface hover:bg-secondary-fixed font-label-caps text-xs tracking-wide flex items-center gap-2.5 transition-colors duration-200" type="button">
+<span class="">🕊️</span>
+<span class="">Yeni Başlangıçlar</span>
+</button>
+<button class="flex-shrink-0 px-5 py-2.5 rounded-full bg-secondary-fixed/50 border border-secondary-container/30 text-on-surface hover:bg-secondary-fixed font-label-caps text-xs tracking-wide flex items-center gap-2.5 transition-colors duration-200" type="button">
+<span class="">🌿</span>
+<span class="">Masa &amp; Ofis Yeşili</span>
+</button>
+<button class="flex-shrink-0 px-5 py-2.5 rounded-full bg-secondary-fixed/50 border border-secondary-container/30 text-on-surface hover:bg-secondary-fixed font-label-caps text-xs tracking-wide flex items-center gap-2.5 transition-colors duration-200" type="button">
+<span class="">🎂</span>
+<span class="">Doğum Günü</span>
+</button>
+</div>
+</div>
+</section>
+<!-- 5. HERO CATEGORY BENTO-GRID (The Requested Core Highlight) -->
+<section class="py-16 lg:py-24 px-6 md:px-margin-desktop max-w-[1440px] mx-auto" id="koleksiyonlar">
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
+<div>
+<span class="font-label-caps text-xs text-secondary uppercase tracking-widest block mb-2">Özgün Botanik Koleksiyonlar</span>
+<h2 class="font-display-hero text-headline-md lg:text-headline-lg text-primary">Küratör Bento Seçkisi</h2>
+</div>
+<p class="font-body-md text-on-surface-variant max-w-md font-light text-sm">
+          Her aranjman, usta floristlerimizin taze mevsim çiçekleriyle oluşturduğu heykelvari birer sanat eseridir.
+        </p>
+</div>
+<!-- Bento Grid Architecture (12 columns) -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6">
+<!-- CARD 1: Large Featured (Spans 8 columns on desktop) -->
+<div class="lg:col-span-8 group relative rounded-2xl overflow-hidden border border-secondary-container/20 botanical-shadow bg-surface-container-lowest min-h-[420px] lg:min-h-[460px] flex flex-col justify-end">
+<img class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" data-alt="An expansive panoramic editorial capture of luxury pastel pink peonies, soft coral garden roses, and wild sweet peas loosely cascading over a cream marble pedestal. Natural luminous daylight illuminates dew droplets on velvet petals. Deep organic greenery creates subtle contrast against a warm ivory textured wall in a serene French floral studio setting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwaLV5gF_er0nT0jB40AG-XyqGVPbZkUQZhwC9vLqTybBnlkN2kTEwzpdjb1vlF41lCau1Urr5ua67w6hPGogmtXrJyD00gwK3eZyv0cUsgorFzNn5hY49lYA0pBBxyVol91sh_gxXpoiTimNRrk5dTuDVC12AsQ7WBSrfjnt0FxCgT7BE4rlhpSsv5VSfRZutpLDG7iLEodyQpUYUMHxbpPCNUk-agjtXkAYFxlJnVClZ2vfrd37Dmw">
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/30 to-transparent"></div>
+<!-- Card Content -->
+<div class="relative p-6 lg:p-8 text-surface-bright flex flex-col md:flex-row md:items-end justify-between gap-6 z-10">
+<div class="space-y-2 max-w-lg">
+<div class="flex items-center gap-2">
+<span class="px-3 py-1 rounded-full bg-secondary-container text-on-secondary-container text-xs font-label-caps tracking-wider uppercase font-semibold">
+                  En Çok Tercih Edilen
+                </span>
+<span class="text-xs text-surface-bright/80 font-label-caps uppercase tracking-wider">34 Tasarım</span>
+</div>
+<h3 class="font-display-hero text-headline-sm lg:text-headline-md text-surface-bright">Mevsim Şakayıkları &amp; Güller</h3>
+<p class="text-xs lg:text-sm text-surface-bright/90 font-light leading-relaxed">
+                Mayıs ve Haziran aylarının en görkemli ithal şakayıkları; pudra ve krem güllerle monokrom bir uyum yakalıyor.
+              </p>
+</div>
+<a class="self-start md:self-auto px-6 py-3 rounded-full bg-surface-bright text-primary hover:bg-secondary-fixed font-label-caps text-xs tracking-wider uppercase transition-colors duration-200 inline-flex items-center gap-2 shadow" href="#koleksiyon-sakayik">
+<span class="">Koleksiyonu İncele</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- CARD 2: Tall Vertical Subscription Showcase (Spans 4 columns, rows 1 & 2 on desktop) -->
+<div class="lg:col-span-4 lg:row-span-2 group relative rounded-2xl overflow-hidden border border-secondary-container/20 botanical-shadow bg-surface-container-low min-h-[480px] flex flex-col justify-between p-6 lg:p-8">
+<img class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out opacity-85" data-alt="A chic luxury floral subscription box wrapped in forest green paper with an embossed gold foil Atelier Flora crest, opened gracefully to reveal freshly cut blush ranunculus, white hellebores, and eucalyptus wrapped in damp tissue. Set against a clean modern oak wood vanity with a ceramic water pitcher and bespoke florist shears." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAbYA6l3iJqTjodcituOzpXyb5pDzw26WXY0Z849QBifosCXnPUuD_ERjZIy1jLr_5PmbeOSgilRBBKuvLGf9YSaasqE9woDmdUxpyPWOezW2mW8WJLeLDv3hGBrn6GVK6L9QG-kc4nj2G0LqZtKv4s8l9B9vIzmVuBLYvBnCwQHRrKYC1uHSv5gdKeMXZ1UOOqNY7qeB9JDJY1DJbshg8vpDwRsRoQe0-XkEhdANMyjtyr4vrFzALA3Q">
+<div class="absolute inset-0 bg-gradient-to-b from-primary/70 via-primary/50 to-primary/85"></div>
+<!-- Top header in Card 2 -->
+<div class="relative z-10 flex items-center justify-between">
+<span class="px-3 py-1 rounded-full bg-surface-bright/20 backdrop-blur-md text-surface-bright text-xs font-label-caps uppercase tracking-wider">
+              Abonelik Kulübü
+            </span>
+<span class="w-8 h-8 rounded-full bg-secondary-container/30 backdrop-blur-md flex items-center justify-center text-surface-bright">
+<span class="material-symbols-outlined text-[18px]">cached</span>
+</span>
+</div>
+<!-- Bottom details in Card 2 -->
+<div class="relative z-10 space-y-4 text-surface-bright">
+<div class="space-y-1.5">
+<p class="text-xs uppercase tracking-widest text-secondary-container font-label-caps">Her Pazartesi Taze Yaşam Alanları</p>
+<h3 class="font-display-hero text-headline-sm lg:text-headline-md text-surface-bright leading-snug">Haftalık Çiçek Aboneliği</h3>
+<p class="text-xs text-surface-bright/80 font-light leading-relaxed">
+                Evinize ya da çalışma masanıza her hafta özel soğuk zincir ambalajında gelen taze sürpriz buketler.
+              </p>
+</div>
+<div class="p-4 rounded-xl custom-glass-card border border-white/20 text-on-surface">
+
+<p class="text-[11px] text-on-surface-variant mt-1 font-light">İlk kutuda seramik tasarım vazo hediyemizdir.</p>
+</div>
+<a class="w-full py-3.5 rounded-full bg-secondary-container text-on-secondary-container hover:bg-secondary-fixed text-center font-label-caps text-xs tracking-wider uppercase transition-colors duration-200 block font-semibold shadow" href="#abonelik">
+              Planları Gör &amp; Başla
+            </a>
+</div>
+</div>
+<!-- CARD 3: Minimalist Vazo Aranjmanları (Spans 4 columns) -->
+<div class="lg:col-span-4 group relative rounded-2xl overflow-hidden border border-secondary-container/20 botanical-shadow bg-surface-container-lowest min-h-[300px] flex flex-col justify-end p-6">
+<img class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" data-alt="A minimalist architectural floral arrangement placed inside a handcrafted cream textured Italian ceramic vase. Featuring tall sculptural white calla lilies, single pink anemone, and delicate hanging greenery. Soft directional studio lighting highlights the ceramic vase silhouette against a serene muted beige stone background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCarxUK1QHyx_qmArzOztq0OtwcZUtInCQt2q3JVN1PoXWbypNI2rVoBoeIv5gggmnxsG-8f7hSh_gd7VAqXwz3pPtxLbFASA08Ho-XRDP-FMNwKCWitWd2WA5jtJsifKnp3uBtIzeT5RLzMO0UBFc70qtr0i1usVYm4puhxdEZh2A4A60bSWrpvFpY8iS-NEmn2rtqBwkXxwiIhqOqILjRNScMePyAoBhyYmZ6y_R8icO6dP2THXxtHg">
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/30 to-transparent"></div>
+<div class="relative z-10 space-y-1.5 text-surface-bright">
+<span class="text-[11px] font-label-caps uppercase tracking-wider text-secondary-container">İtalyan Seramik</span>
+<h3 class="font-title-editorial text-title-editorial text-surface-bright">Minimalist Vazo Aranjmanları</h3>
+<p class="text-xs text-surface-bright/80 font-light">Mekana heykelsi bir hava katan özel vazolu konseptler.</p>
+<div class="pt-2 flex items-center justify-between text-xs">
+<span class="font-medium text-secondary-fixed">19 Model</span>
+<span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</div>
+</div>
+</div>
+<!-- CARD 4: Kurutulmuş & Sonsuz Çiçekler (Spans 4 columns) -->
+<div class="lg:col-span-4 group relative rounded-2xl overflow-hidden border border-secondary-container/20 botanical-shadow bg-surface-container-lowest min-h-[300px] flex flex-col justify-end p-6">
+<img class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" data-alt="An ethereal arrangement of preserved eternal flowers, bleach white ruscus, dusty rose dried hydrangeas, pampas grass, and golden seed pods. Arranged in a warm terracotta vessel under gentle golden hour sunbeam, highlighting refined textures and timeless organic botanical preservation." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSlYB1eqe7vSuu916LWGMr4f97DS14e2WoyOjdPYxuD8nPEYUhY75DIUaFqmWn_8PkgWBtyhcickRCmdDXA5L4ug_-Z-wnuz24k8Y-qPfTzvsZLeWQyYt1-YJWw3tZiGz4gNlKdgr5oKg8_3gdURQgBgG2Na8p0hIcw8_Hg5LnCmjxxbIjBHO20fcNRGa7fZ5_2RaIrJBjUu57Pk0WBrg9vyFSWfaMOPVkcCxJyp8ojRIrIXDD63TP-w">
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/30 to-transparent"></div>
+<div class="relative z-10 space-y-1.5 text-surface-bright">
+<span class="text-[11px] font-label-caps uppercase tracking-wider text-secondary-container">Zamansız Estetik</span>
+<h3 class="font-title-editorial text-title-editorial text-surface-bright">Kurutulmuş &amp; Sonsuz Çiçekler</h3>
+<p class="text-xs text-surface-bright/80 font-light">Yıllarca formunu koruyan solmayan couture botanik sanat.</p>
+<div class="pt-2 flex items-center justify-between text-xs">
+<span class="font-medium text-secondary-fixed">14 Tasarım</span>
+<span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</div>
+</div>
+</div>
+<!-- CARD 5: Kurumsal & Etkinlik Tasarımları (Spans 8 columns) -->
+<div class="lg:col-span-8 group relative rounded-2xl overflow-hidden border border-secondary-container/20 botanical-shadow bg-surface-container-lowest min-h-[300px] flex flex-col justify-end p-6 lg:p-8">
+<img class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" data-alt="High-end botanical floral installations along a long luxury banquet table set with fine porcelain, crystal glasses, and candlelit ambiance. Lush cascades of blush roses, ivy, and white delphiniums adorn the table center in an opulent conservatory garden venue at twilight." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAB53KEO5QGISwMO4rnANT8ceqdlEBIhbrZ3eERaZiVTfb93TWWRXSnBUbwrejXbYZ8RKV0p96AORcq4jwAmU8CY29b-RrZqTS1HZNXmIMSa5fNKraZY7SEC-NZsUs6y4hxnV8GOuxyfJrU3HnTGLMmxrYW8Sr0HXykfMp78JGlgfELLav4v9EuhOfoNA-jgmcgSsMuvTveYtgOU9-PTQZDV0-N4VHprD7Unirq93s6alzDRh2xYoMPFw">
+<div class="absolute inset-0 bg-gradient-to-t from-primary/85 via-primary/35 to-transparent"></div>
+<div class="relative z-10 flex flex-col sm:flex-row sm:items-end justify-between gap-4 text-surface-bright">
+<div class="space-y-1.5 max-w-md">
+<span class="text-[11px] font-label-caps uppercase tracking-wider text-secondary-container">Couture Davet Mimarisi</span>
+<h3 class="font-display-hero text-headline-sm text-surface-bright">Kurumsal &amp; Etkinlik Tasarımları</h3>
+<p class="text-xs text-surface-bright/85 font-light">
+                Marka lansmanları, gala yemekleri ve lüks mekanlar için özel konsept çiçek yerleştirmeleri.
+              </p>
+</div>
+<a class="px-5 py-2.5 rounded-full border border-surface-bright/40 hover:bg-surface-bright hover:text-primary text-xs font-label-caps uppercase tracking-wider transition-colors duration-200 self-start sm:self-auto" href="#kurumsal">
+              Teklif Al
+            </a>
+</div>
+</div>
+</div>
+</section>
+<!-- 6. BESTSELLERS / FEATURED ARRANGEMENTS SECTION -->
+<section class="py-16 bg-surface-container-low/50 border-t border-secondary-container/20" id="buketler">
+<div class="px-6 md:px-margin-desktop max-w-[1440px] mx-auto">
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
+<div>
+<span class="font-label-caps text-xs text-secondary uppercase tracking-widest block mb-2">Seçkin Katalog</span>
+<h2 class="font-display-hero text-headline-md lg:text-headline-lg text-primary">Çok Satan İkonik Buketler</h2>
+</div>
+<div class="flex items-center gap-3">
+<button aria-label="Önceki Buketler" class="w-10 h-10 rounded-full border border-outline-variant bg-surface-container-lowest flex items-center justify-center hover:bg-secondary-fixed/30 transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px] text-primary">arrow_back</span>
+</button>
+<button aria-label="Sonraki Buketler" class="w-10 h-10 rounded-full border border-outline-variant bg-surface-container-lowest flex items-center justify-center hover:bg-secondary-fixed/30 transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px] text-primary">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- 4 Arrangement Cards Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Product Card 1 -->
+<article class="bg-surface-container-lowest rounded-2xl overflow-hidden border border-secondary-container/20 botanical-shadow botanical-shadow-hover transition-all duration-300 flex flex-col group">
+<div class="relative overflow-hidden aspect-[4/5] bg-surface-container">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" data-alt="An artisanal bouquet called Pudra Rüya featuring twenty soft powder pink garden roses, white ranunculus, and baby eucalyptus wrapped in pale blush waterproof craft paper and tied with a wide champagne silk ribbon. Soft diffuse studio light on neutral stone background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5aMvcibvRKJwF7jE8NDS552SmswL2g9IUi0Z45gCKxOR0ugFsfXfjETxmcqwD4twEFF6LQUtNC7LwlwryDbWCIokZMDuUs5qGInzO2U1IIpgSsTcpw5uXvuaKatZaXGvNpynALGGiJ0JRimtEWrT55SdxZrh1VmxHkL5zqiespzqdgElJVoBEetHADlKK1SBE1bNsKokothPla5IhUaotAxaQ9aOgfM7nlg97gAH7fVsbwYY77_0H_g">
+<div class="absolute top-3 left-3">
+<span class="px-2.5 py-1 rounded-full bg-surface-bright/90 backdrop-blur-md text-primary text-[10px] font-label-caps uppercase tracking-wider font-semibold">
+                  Aynı Gün Teslim
+                </span>
+</div>
+<button aria-label="Favorilere Ekle" class="absolute top-3 right-3 w-9 h-9 rounded-full bg-surface-bright/80 backdrop-blur-md hover:bg-surface-bright text-primary flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">favorite</span>
+</button>
+</div>
+<div class="p-5 flex-1 flex flex-col justify-between space-y-4">
+<div>
+<!-- Stem Palette Legend -->
+<div class="flex items-center gap-1.5 mb-2.5">
+<span class="w-2.5 h-2.5 rounded-full bg-[#FCE8EE] border border-outline-variant/50" title="Pudra Şakayık"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-[#E88296] border border-outline-variant/50" title="Bahçe Gülü"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-[#456558] border border-outline-variant/50" title="Okaliptüs"></span>
+<span class="text-[10px] text-on-surface-variant font-label-caps uppercase ml-1">Doğal Renk Paleti</span>
+</div>
+<h3 class="font-title-editorial text-title-editorial font-medium text-primary group-hover:text-secondary transition-colors">
+                  Pudra Rüya Buketi
+                </h3>
+<p class="text-xs text-on-surface-variant font-light mt-1">15 Şakayık, Okaliptüs, Pembe Gül</p>
+</div>
+<div class="flex items-center justify-between pt-3 border-t border-secondary-container/20">
+<div>
+<span class="text-[10px] text-on-surface-variant block font-light">Özel Sunum</span>
+<span class="font-display-hero text-headline-sm text-primary">1.950 ₺</span>
+</div>
+<button aria-label="Sepete Ekle" class="w-10 h-10 rounded-full bg-primary-container text-surface-bright hover:bg-primary flex items-center justify-center transition-colors shadow" type="button">
+<span class="material-symbols-outlined text-[20px]">add_shopping_cart</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Product Card 2 -->
+<article class="bg-surface-container-lowest rounded-2xl overflow-hidden border border-secondary-container/20 botanical-shadow botanical-shadow-hover transition-all duration-300 flex flex-col group">
+<div class="relative overflow-hidden aspect-[4/5] bg-surface-container">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" data-alt="A grand flower bouquet named Zümrüt ve Şakayık Senfonisi composed of dark emerald foliage, burgundy ranunculus, vibrant coral pink peonies, and trailing ivy branches in high-end luxury wrapping paper. Dramatic editorial lighting creating soft contrasts and emphasizing petal velvet textures." src="https://lh3.googleusercontent.com/aida-public/AB6AXuACs4uPKRh5MYFOdlobuB4vAWSQazCPs0Vb04N7jfXD3DC1X9CBW8I-s8tcv-Lv0yDAHiKOEma6HuvyQQ85BnyRpxrI4PLFwpDzN9YznY8crYfFT2YtesVSSUFB2qFDPcqhUPXFywGKFlnKPYcYzpx7UBcB4OnhlPngZwGUPquGj9GfEKdQ2yVmWLPzO9fAa5jJr1yV723Av9HszHNVE_WZiFKjHX3q0mB7fPI9DYciBVPs9vgN8W5soQ">
+<div class="absolute top-3 left-3">
+<span class="px-2.5 py-1 rounded-full bg-secondary-container text-on-secondary-container text-[10px] font-label-caps uppercase tracking-wider font-semibold">
+                  Tasarımcı İmzası
+                </span>
+</div>
+<button aria-label="Favorilere Ekle" class="absolute top-3 right-3 w-9 h-9 rounded-full bg-surface-bright/80 backdrop-blur-md hover:bg-surface-bright text-primary flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">favorite</span>
+</button>
+</div>
+<div class="p-5 flex-1 flex flex-col justify-between space-y-4">
+<div>
+<div class="flex items-center gap-1.5 mb-2.5">
+<span class="w-2.5 h-2.5 rounded-full bg-[#1A3A2F]" title="Zümrüt Okaliptüs"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-[#E88296]" title="Mercan Şakayık"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-[#F5E6D3]" title="Krem Lisyantus"></span>
+<span class="text-[10px] text-on-surface-variant font-label-caps uppercase ml-1">Zümrüt &amp; Pudra</span>
+</div>
+<h3 class="font-title-editorial text-title-editorial font-medium text-primary group-hover:text-secondary transition-colors">
+                  Zümrüt &amp; Şakayık Senfonisi
+                </h3>
+<p class="text-xs text-on-surface-variant font-light mt-1">20 İthal Şakayık, Monstera, Skimya</p>
+</div>
+<div class="flex items-center justify-between pt-3 border-t border-secondary-container/20">
+<div>
+<span class="text-[10px] text-on-surface-variant block font-light">Özel Sunum</span>
+<span class="font-display-hero text-headline-sm text-primary">2.650 ₺</span>
+</div>
+<button aria-label="Sepete Ekle" class="w-10 h-10 rounded-full bg-primary-container text-surface-bright hover:bg-primary flex items-center justify-center transition-colors shadow" type="button">
+<span class="material-symbols-outlined text-[20px]">add_shopping_cart</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Product Card 3 -->
+<article class="bg-surface-container-lowest rounded-2xl overflow-hidden border border-secondary-container/20 botanical-shadow botanical-shadow-hover transition-all duration-300 flex flex-col group">
+<div class="relative overflow-hidden aspect-[4/5] bg-surface-container">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" data-alt="A delicate and serene floral arrangement named Krem Bahçe Gülü Aranjmanı featuring ivory David Austin roses, cream carnations, white hydrangeas, and fragrant silver dollar eucalyptus stems presented in a ribbed off-white ceramic pot. Subtle daylight photography on minimalist backdrop." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCHkHA39cKuvnooWlXaQV0Hs7sEOd1352o4lU1LbWR3i9UZWIYMtOlp1VQWxeMidgil0ajimcyiT-LbUbO_sfRhiu1rh1WpjpkU228iCnrB-ljSgJYJn_e6967XGHaBDsq_nWsHdPTDI11xFROaUGgK2blRjYPMVkjAcdzwz9XRML_OtfoOzZuHWtrgt_2sKoqF3MbTbGGn-gmOgEfGucwGvFsRjIvSFJw852FOYLrn18fL39WCrNkORA">
+<div class="absolute top-3 left-3">
+<span class="px-2.5 py-1 rounded-full bg-surface-bright/90 backdrop-blur-md text-primary text-[10px] font-label-caps uppercase tracking-wider font-semibold">
+                  Aromatik
+                </span>
+</div>
+<button aria-label="Favorilere Ekle" class="absolute top-3 right-3 w-9 h-9 rounded-full bg-surface-bright/80 backdrop-blur-md hover:bg-surface-bright text-primary flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">favorite</span>
+</button>
+</div>
+<div class="p-5 flex-1 flex flex-col justify-between space-y-4">
+<div>
+<div class="flex items-center gap-1.5 mb-2.5">
+<span class="w-2.5 h-2.5 rounded-full bg-[#FFFBF0] border border-outline-variant/50" title="Krem Gül"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-[#E5D7CE]" title="Kum Ortanca"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-[#82A496]" title="Gümüş Okaliptüs"></span>
+<span class="text-[10px] text-on-surface-variant font-label-caps uppercase ml-1">Monokrom Krem</span>
+</div>
+<h3 class="font-title-editorial text-title-editorial font-medium text-primary group-hover:text-secondary transition-colors">
+                  Krem Bahçe Gülü Aranjmanı
+                </h3>
+<p class="text-xs text-on-surface-variant font-light mt-1">12 İngiliz Bahçe Gülü, Ortanca, Mimoza</p>
+</div>
+<div class="flex items-center justify-between pt-3 border-t border-secondary-container/20">
+<div>
+<span class="text-[10px] text-on-surface-variant block font-light">Özel Sunum</span>
+<span class="font-display-hero text-headline-sm text-primary">1.750 ₺</span>
+</div>
+<button aria-label="Sepete Ekle" class="w-10 h-10 rounded-full bg-primary-container text-surface-bright hover:bg-primary flex items-center justify-center transition-colors shadow" type="button">
+<span class="material-symbols-outlined text-[20px]">add_shopping_cart</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Product Card 4 -->
+<article class="bg-surface-container-lowest rounded-2xl overflow-hidden border border-secondary-container/20 botanical-shadow botanical-shadow-hover transition-all duration-300 flex flex-col group">
+<div class="relative overflow-hidden aspect-[4/5] bg-surface-container">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" data-alt="An alluring table arrangement titled Velvet Blush Vazo displayed inside a matte charcoal fluted ceramic vase. Featuring velvet dusty rose roses, deep plum calla lilies, pink wax flowers, and delicate olive foliage. Chic editorial still life lighting against a warm clay studio wall." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCzkuQYKv7DuaOJ0oNXo-oJOpWuobVKZNzFAlU0fY7-ho6-X12x66mtv6z4g8DbLcCsUIrNmfmsZwJ5IW1CZ4Lgs7gax0Qd2Y0g-LZf35rJxk_3KZzbeldzS49yHH1Gu-Apwz06TODkAQcCOTevfXQiWL7RN3uXmlTco3nzEXo1jrGm4weieGutEMztpnqzyXz7mZv9sl6ZC2txXfSJKyYl3TP8RidHjBL3aD0qVcJdxs1hWb8myTjxA">
+<div class="absolute top-3 left-3">
+<span class="px-2.5 py-1 rounded-full bg-primary-container text-surface-bright text-[10px] font-label-caps uppercase tracking-wider font-semibold">
+                  Vazo Dahil
+                </span>
+</div>
+<button aria-label="Favorilere Ekle" class="absolute top-3 right-3 w-9 h-9 rounded-full bg-surface-bright/80 backdrop-blur-md hover:bg-surface-bright text-primary flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">favorite</span>
+</button>
+</div>
+<div class="p-5 flex-1 flex flex-col justify-between space-y-4">
+<div>
+<div class="flex items-center gap-1.5 mb-2.5">
+<span class="w-2.5 h-2.5 rounded-full bg-[#984255]" title="Velvet Blush"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-[#311900]" title="Mürdüm Gala"></span>
+<span class="w-2.5 h-2.5 rounded-full bg-[#FCE8EE]" title="Balmumu Çiçeği"></span>
+<span class="text-[10px] text-on-surface-variant font-label-caps uppercase ml-1">Vintage Velvet</span>
+</div>
+<h3 class="font-title-editorial text-title-editorial font-medium text-primary group-hover:text-secondary transition-colors">
+                  Velvet Blush Vazo
+                </h3>
+<p class="text-xs text-on-surface-variant font-light mt-1">Kadife Gül, Mürdüm Gala, Zeytin Dalı</p>
+</div>
+<div class="flex items-center justify-between pt-3 border-t border-secondary-container/20">
+<div>
+<span class="text-[10px] text-on-surface-variant block font-light">Özel Sunum</span>
+<span class="font-display-hero text-headline-sm text-primary">2.350 ₺</span>
+</div>
+<button aria-label="Sepete Ekle" class="w-10 h-10 rounded-full bg-primary-container text-surface-bright hover:bg-primary flex items-center justify-center transition-colors shadow" type="button">
+<span class="material-symbols-outlined text-[20px]">add_shopping_cart</span>
+</button>
+</div>
+</div>
+</article>
+</div>
+</div>
+</section>
+<!-- 7. FLOWER SUBSCRIPTION BANNER (Editorial Promo Strip) -->
+<section class="py-16 px-6 md:px-margin-desktop max-w-[1440px] mx-auto" id="abonelik">
+
+</section>
+<!-- 8. CUSTOMER TESTIMONIALS & BOTANICAL JOURNAL -->
+<section class="py-16 bg-surface-container-low/30 border-t border-secondary-container/20">
+<div class="px-6 md:px-margin-desktop max-w-[1440px] mx-auto space-y-16">
+<!-- Press Mentions & Testimonials -->
+
+<!-- Botanical Journal & Care Guide Teaser -->
+<div class="rounded-3xl bg-surface-container-lowest p-8 lg:p-10 border border-secondary-container/20 botanical-shadow">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+<div class="lg:col-span-5 space-y-4">
+<span class="font-label-caps text-xs text-secondary uppercase tracking-widest block">Atelier Journal</span>
+<h3 class="font-display-hero text-headline-sm lg:text-headline-md text-primary leading-snug">
+                Çiçeklerinizin Ömrünü Uzatacak 5 Bakım İpucu
+              </h3>
+<p class="text-xs text-on-surface-variant font-light leading-relaxed">
+                Sap kesim açısı, suyun ideal sıcaklığı ve vazo temizliğinin çiçeklerinizin tazeliğine nasıl 4 gün kattığını uzman floristlerimizden öğrenin.
+              </p>
+<a class="inline-flex items-center gap-2 font-label-caps text-xs text-primary hover:text-secondary uppercase tracking-wider transition-colors pt-2" href="#bakim-rehberi">
+<span class="">Rehberi Okuyun</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+<!-- Mini Journal Grid (7 cols) -->
+<div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div class="flex gap-4 p-3.5 rounded-xl bg-surface-container-low/50 hover:bg-surface-container-low transition-colors">
+<div class="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Close up photography of brass floral shears cutting rose stems under running water at a 45 degree angle in a bright greenhouse sink." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDxU1S91AYhOyoDVcA8MyLHnIxu76BzDCGTp_rN7uJTnMR51SzBhocqtIyE8sjoJJndiClGoGV6Mh2AhlsuBs4Ay1U3WyG-yYqBNoC22cjQvovgxPqYqVlGsm8zMorC5iMCd-j5i1SQaIKFc_ji1O68JF-PEisvuzT_3mpUEKJhduXzKLjmZcBAQDV-lpyApR3CMpzQAAnbF64TOeBqBziHthUYnbdeojc3gNpsZ0qmDXk-bASlNG06eQ">
+</div>
+<div>
+<h4 class="font-title-editorial text-sm font-medium text-primary">45 Derece Kuralı</h4>
+<p class="text-[11px] text-on-surface-variant font-light mt-0.5">Sapları su altında keserek hava kabarcıklarını önleyin.</p>
+</div>
+</div>
+<div class="flex gap-4 p-3.5 rounded-xl bg-surface-container-low/50 hover:bg-surface-container-low transition-colors">
+<div class="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="A clean crystal vase filled with fresh clear water and ice cubes on a sunlit marble kitchen counter beside a bouquet of peonies." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDvT9z-bRu9OEwqfGBlLqItcxb5Db75y26QrHh6u5zMkO_MZ54i7M57-bgNEfXNWzmRLchY5F8pMhHMk-4QbDHR-ZajdT-c_4HFz4ademouT29U7lKCCBZDmsBuW0m9_tWhAeqy3C45C9s-9jOChjWZirXJvhhk1mZIqrvWOTUkD2EmXm7R_gabK6Hw2Vs7HlcLAIYn_FtaaaDXZleXOPbGxQ0gPLouuhoNxlKgKj34AP7QsToe2j4e_w">
+</div>
+<div>
+<h4 class="font-title-editorial text-sm font-medium text-primary">Buzlu Su Serinliği</h4>
+<p class="text-[11px] text-on-surface-variant font-light mt-0.5">Laleler ve şakayıklar için soğuk suyun canlandırıcı etkisi.</p>
+</div>
+</div>
+<div class="flex gap-4 p-3.5 rounded-xl bg-surface-container-low/50 hover:bg-surface-container-low transition-colors">
+<div class="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="A delicate hand picking fallen green leaves away from the waterline of a ceramic flower vase to keep water crystal clear and odorless." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzXqt3-X6C_tCzeoIDu-b3VrvEriCwL-zEEGnHKSIpaKimNgYH0J5zWCzVQtCknoaNIj7JQm9pZ4Pq0fQqCGaq6WmiBWN3g6MIHVwCnVtxCiaXdgBLNTh6wvCIhTV_fB7U2UX8SmCvsusUwWUP3L9vknAmHdowZ9bgkgKfIQPh0A3MHoAifDXqJn7ztlJLloDmullngdoQZYv_3rJaqfm4oJxsI5qW-YCryzZB4ATa6yiaVIIxMM0SQQ">
+</div>
+<div>
+<h4 class="font-title-editorial text-sm font-medium text-primary">Su Çizgisi Temizliği</h4>
+<p class="text-[11px] text-on-surface-variant font-light mt-0.5">Suya değen yaprakları ayıklayarak bakteri oluşumunu engelleyin.</p>
+</div>
+</div>
+<div class="flex gap-4 p-3.5 rounded-xl bg-surface-container-low/50 hover:bg-surface-container-low transition-colors">
+<div class="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="A packet of organic flower food powder being gently stirred into water inside a chic frosted glass vase." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3I2f7d9-k2U2xbm8frKt-CN6SQ1_DeM4dsyvrzaog20MZD568yF_3reVwc_5CL71vYWKy8VQ2Bn5wmHSLXGwbNtg1LEnaurAWsZLLYQ38md9CQvtxd1psgBGdDFtkjy5EJc5yMmgY1rjeF_6x0e3e5keqpH1S901i7KomQtEEmSFHwYlqSPK8YCrbJGDZ3X_AF3bRGAGQK_-PMWGevFf7MHBqMHmhfvxaGGUNpfh28bu_w0NY52aTaA">
+</div>
+<div>
+<h4 class="font-title-editorial text-sm font-medium text-primary">Besin Denge Kiti</h4>
+<p class="text-[11px] text-on-surface-variant font-light mt-0.5">Her siparişle gelen özel bitki besinini üçüncü gün yenileyin.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- NEWSLETTER SIGNUP BANNER -->
+<section class="py-12 px-6 md:px-margin-desktop max-w-[1440px] mx-auto">
+
+</section>
+</main>
+<!-- 9. FOOTER (Shared Component) -->
+<footer class="bg-primary-container dark:bg-surface-container-lowest border-t border-primary/20 dark:border-outline-variant/20 full-width text-on-primary-container dark:text-primary transition-colors duration-200 ease-in-out">
+<div class="w-full px-6 md:px-margin-desktop py-space-2xl max-w-[1440px] mx-auto">
+<!-- Top Layout Row -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-12 border-b border-primary-container/60 dark:border-outline-variant/20">
+<!-- Brand Summary Column (4 cols) -->
+<div class="lg:col-span-4 space-y-4">
+<a class="font-display-hero text-headline-sm text-surface dark:text-primary block" href="#">
+            Atelier Flora Botanique
+          </a>
+<p class="font-body-sm text-body-sm text-surface-variant dark:text-on-surface-variant font-light leading-relaxed max-w-sm">
+            İstanbul merkezli yüksek botanik tasarım stüdyosu. Doğadan ilham alan el yapımı lüks aranjmanlar, haftalık çiçek aboneliği ve mekan tasarımı.
+          </p>
+<div class="flex items-center space-x-3 pt-2 text-surface dark:text-primary">
+<a aria-label="Instagram" class="w-9 h-9 rounded-full bg-surface-bright/10 dark:bg-surface-container flex items-center justify-center hover:text-secondary-container transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[18px]">photo_camera</span>
+</a>
+<a aria-label="Pinterest" class="w-9 h-9 rounded-full bg-surface-bright/10 dark:bg-surface-container flex items-center justify-center hover:text-secondary-container transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[18px]">collections_bookmark</span>
+</a>
+<a aria-label="WhatsApp İletişim" class="w-9 h-9 rounded-full bg-surface-bright/10 dark:bg-surface-container flex items-center justify-center hover:text-secondary-container transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-[18px]">chat</span>
+</a>
+</div>
+</div>
+<!-- Links Columns (Derived from Shared Component Links: ["Hakkımızda", "Sürdürülebilirlik & Çiftliklerimiz", "Bakım Rehberi", "Teslimat & İadeler", "Abonelik Koşulları", "Gizlilik Sözleşmesi"]) -->
+<div class="lg:col-span-8 grid grid-cols-2 sm:grid-cols-3 gap-8">
+<!-- Column 1 -->
+<div class="space-y-3">
+<h4 class="text-title-editorial font-title-editorial text-surface dark:text-primary font-medium text-base">Atelier</h4>
+<ul class="space-y-2 text-label-caps font-label-caps text-xs">
+<li class="">
+<a class="text-surface-variant dark:text-on-surface-variant hover:text-surface dark:hover:text-primary transition-colors hover:text-secondary-container" href="#hakkimizda">Hakkımızda</a>
+</li>
+<li class="">
+<a class="text-surface-variant dark:text-on-surface-variant hover:text-surface dark:hover:text-primary transition-colors hover:text-secondary-container" href="#surdurulebilirlik">Sürdürülebilirlik &amp; Çiftliklerimiz</a>
+</li>
+<li class="">
+<a class="text-surface-variant dark:text-on-surface-variant hover:text-surface dark:hover:text-primary transition-colors hover:text-secondary-container" href="#bakim-rehberi">Bakım Rehberi</a>
+</li>
+</ul>
+</div>
+<!-- Column 2 -->
+<div class="space-y-3">
+<h4 class="text-title-editorial font-title-editorial text-surface dark:text-primary font-medium text-base">Müşteri Deneyimi</h4>
+<ul class="space-y-2 text-label-caps font-label-caps text-xs">
+<li class="">
+<a class="text-surface-variant dark:text-on-surface-variant hover:text-surface dark:hover:text-primary transition-colors hover:text-secondary-container" href="#teslimat">Teslimat &amp; İadeler</a>
+</li>
+<li class="">
+<a class="text-surface-variant dark:text-on-surface-variant hover:text-surface dark:hover:text-primary transition-colors hover:text-secondary-container" href="#abonelik-kosullari">Abonelik Koşulları</a>
+</li>
+<li class="">
+<a class="text-surface-variant dark:text-on-surface-variant hover:text-surface dark:hover:text-primary transition-colors hover:text-secondary-container" href="#gizlilik">Gizlilik Sözleşmesi</a>
+</li>
+</ul>
+</div>
+<!-- Column 3: Atelier Boutique Contact -->
+<div class="space-y-3 col-span-2 sm:col-span-1">
+<h4 class="text-title-editorial font-title-editorial text-surface dark:text-primary font-medium text-base">Atölye &amp; İletişim</h4>
+<p class="text-body-sm font-body-sm text-surface-variant dark:text-on-surface-variant font-light">
+              Abdi İpekçi Cad. No: 42, Nişantaşı, İstanbul
+            </p>
+<p class="text-body-sm font-body-sm text-surface dark:text-primary font-medium">
+              +90 (212) 345 67 89
+            </p>
+<p class="text-[11px] text-surface-variant/80 font-light">
+              Her gün 09:00 - 20:00
+            </p>
+</div>
+</div>
+</div>
+<!-- Bottom Layout Row: Copyright text & payment reassurance -->
+<div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-body-sm text-surface-variant dark:text-on-surface-variant font-light">
+<p class="">© 2024 Atelier Flora Botanique. Tüm hakları saklıdır.</p>
+<div class="flex items-center space-x-4 opacity-80 text-[11px]">
+<span class="">SSL 256-Bit Güvenli Ödeme</span>
+<span class="">•</span>
+<span class="">Mastercard &amp; Visa</span>
+<span class="">•</span>
+<span class="">Same-Day Cold Chain Delivery</span>
+</div>
+</div>
+</div>
+</footer>
+
+
+</body></html>

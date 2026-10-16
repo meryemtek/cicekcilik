@@ -1,38 +1,178 @@
 <!-- ================= TESLİMAT KONUMU SEÇİM MODALI ================= -->
 <div class="modal fade" id="teslimatModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
-            <div class="modal-header border-0 pb-0 pt-4 px-4">
-                <div>
-                    <span class="text-uppercase fw-bold text-muted small" style="letter-spacing: 0.8px;">Lidya Çiçekçilik</span>
-                    <h5 class="modal-title fw-bold" style="font-family: var(--fl-font-serif, serif); color: #0D382B;">Teslimat Bölgesi Seçimi</h5>
+        <div class="modal-content fl-delivery-modal-content">
+            <div class="modal-header fl-delivery-modal-header">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="fl-delivery-modal-icon">
+                        <i class="bi bi-geo-alt-fill"></i>
+                    </div>
+                    <div>
+                        <span class="fl-delivery-modal-eyebrow">LİDYA ÇİÇEKÇİLİK • KURYE TESLİMAT</span>
+                        <div class="modal-title fl-delivery-modal-title">Gönderim Adresi Seçimi</div>
+                    </div>
                 </div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Kapat"></button>
             </div>
-            <div class="modal-body text-start px-4 py-3">
-                <div class="mb-3">
-                    <label class="form-label small fw-bold text-muted">İl</label>
-                    <select id="modalIl" class="form-select fw-semibold" onchange="ilDegisti()">
+            <div class="modal-body fl-delivery-modal-body">
+                <div class="fl-modal-field-group">
+                    <label class="fl-modal-label"><i class="bi bi-building me-1"></i>İl</label>
+                    <select id="modalIl" class="form-select fl-modal-select" onchange="ilDegisti()">
                         <option value="Elazığ" selected>Elazığ</option>
                     </select>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label small fw-bold text-muted">İlçe</label>
-                    <select id="modalIlce" class="form-select fw-semibold" onchange="ilceDegisti()">
+                <div class="fl-modal-field-group">
+                    <label class="fl-modal-label"><i class="bi bi-signpost-split me-1"></i>İlçe</label>
+                    <select id="modalIlce" class="form-select fl-modal-select" onchange="ilceDegisti()">
                         <option value="Merkez" selected>Merkez</option>
                     </select>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label small fw-bold text-muted">Mahalle / Semt</label>
-                    <select id="modalMahalle" class="form-select fw-semibold">
-                        <option value="" data-fark="0">Mahalle Seçiniz...</option>
+                <div class="fl-modal-field-group mb-2">
+                    <label class="fl-modal-label"><i class="bi bi-pin-map-fill me-1"></i>Mahalle / Semt</label>
+                    <select id="modalMahalle" class="form-select fl-modal-select">
+                        <option value="" data-fark="0">Mahalle / Semt Seçiniz...</option>
                     </select>
                 </div>
+                <div class="fl-delivery-modal-note">
+                    <i class="bi bi-shield-check"></i>
+                    <span>Siparişiniz Elazığ içi özel araçlı kuryemizle taze ve güvenli şekilde teslim edilir.</span>
+                </div>
             </div>
-            <div class="modal-footer border-0 pt-0 px-4 pb-4">
-                <button type="button" class="btn btn-light rounded-3 px-4" data-bs-dismiss="modal">Vazgeç</button>
-                <button type="button" class="btn text-white px-4 fw-bold" style="background: #0D382B; border-radius: 12px;" onclick="konumBilgileriniKaydet()">Konumu Onayla</button>
+            <div class="modal-footer fl-delivery-modal-footer">
+                <button type="button" class="fl-modal-cancel-btn" data-bs-dismiss="modal">Vazgeç</button>
+                <button type="button" class="fl-modal-confirm-btn" onclick="konumBilgileriniKaydet()">
+                    <i class="bi bi-check2-circle me-1"></i>Adresi Onayla
+                </button>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    #teslimatModal,
+    #teslimatModal *:not(i) {
+        font-family: 'Outfit', sans-serif !important;
+    }
+
+    .fl-delivery-modal-content {
+        border: 1px solid #EAE5DC;
+        border-radius: 20px;
+        background: #FFFFFF;
+        box-shadow: 0 24px 60px rgba(23, 39, 31, 0.18);
+        overflow: hidden;
+    }
+
+    .fl-delivery-modal-header {
+        border-bottom: 1px solid #EAE5DC;
+        background: #FAF8F5;
+        padding: 18px 22px;
+    }
+
+    .fl-delivery-modal-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        background: #FFF2F4;
+        border: 1px solid #F8D3DA;
+        color: #A84B66;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+    }
+
+    .fl-delivery-modal-eyebrow {
+        display: block;
+        font-size: 0.65rem;
+        font-weight: 800;
+        letter-spacing: 0.8px;
+        color: #A84B66;
+        margin-bottom: 2px;
+    }
+
+    .fl-delivery-modal-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #1A2820;
+        margin: 0;
+    }
+
+    .fl-delivery-modal-body {
+        padding: 20px 22px 16px;
+    }
+
+    .fl-modal-field-group {
+        margin-bottom: 14px;
+    }
+
+    .fl-modal-label {
+        display: block;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #1A2820;
+        margin-bottom: 6px;
+    }
+
+    .fl-modal-label i {
+        color: #A84B66;
+    }
+
+    .fl-modal-select {
+        background-color: #FAF8F5 !important;
+        border: 1.5px solid #EAE5DC !important;
+        border-radius: 12px !important;
+        padding: 11px 14px !important;
+        font-size: 0.88rem !important;
+        font-weight: 600 !important;
+        color: #1A2820 !important;
+    }
+
+    .fl-modal-select:focus {
+        background-color: #FFFFFF !important;
+        border-color: #0D382B !important;
+        box-shadow: 0 0 0 3px rgba(13, 56, 43, 0.08) !important;
+    }
+
+    .fl-delivery-modal-note {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: #F4F8F6;
+        border: 1px solid #D8E8E0;
+        border-radius: 12px;
+        padding: 10px 14px;
+        margin-top: 12px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: #0D382B;
+    }
+
+    .fl-delivery-modal-footer {
+        border-top: 1px solid #EAE5DC;
+        padding: 14px 22px 18px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .fl-modal-cancel-btn {
+        background: #FAF8F5;
+        border: 1.5px solid #EAE5DC;
+        border-radius: 12px;
+        padding: 9px 18px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #6C7770;
+    }
+
+    .fl-modal-confirm-btn {
+        background: #0D382B;
+        border: 1.5px solid #0D382B;
+        border-radius: 12px;
+        padding: 9px 20px;
+        font-size: 0.86rem;
+        font-weight: 700;
+        color: #FFFFFF;
+    }
+</style>

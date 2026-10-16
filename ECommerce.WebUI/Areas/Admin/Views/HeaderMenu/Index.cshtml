@@ -1,0 +1,540 @@
+@model ECommerce.WebUI.Models.HeaderMenuYonetimViewModel
+@{
+    ViewData["Title"] = "Header Menü Yönetimi";
+}
+
+<style>
+    .hm-page {
+        max-width: 1300px;
+        margin: 0 auto;
+    }
+
+    .hm-hero {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 25px;
+    }
+
+    .hm-eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #8b0028;
+        font-size: .75rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 6px;
+    }
+
+    .hm-title {
+        font-size: 1.85rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0 0 6px;
+        letter-spacing: -.5px;
+    }
+
+    .hm-subtitle {
+        margin: 0;
+        color: #7a7682;
+        font-size: .95rem;
+    }
+
+    .nav-switcher {
+        display: flex;
+        gap: 8px;
+        background: #f1ecf0;
+        padding: 5px;
+        border-radius: 14px;
+        margin-bottom: 24px;
+        width: fit-content;
+    }
+
+    .nav-switcher-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 9px 18px;
+        border-radius: 10px;
+        font-size: .88rem;
+        font-weight: 600;
+        text-decoration: none;
+        color: #635e69;
+        transition: all .2s ease;
+    }
+
+    .nav-switcher-link.active {
+        background: #fff;
+        color: #8b0028;
+        box-shadow: 0 3px 10px rgba(0,0,0,.06);
+    }
+
+    .nav-switcher-link:hover:not(.active) {
+        color: #24213d;
+    }
+
+    .hm-card {
+        background: #fff;
+        border: 1px solid #eee7eb;
+        border-radius: 18px;
+        box-shadow: 0 8px 25px rgba(35, 28, 40, .035);
+        padding: 24px 28px;
+        margin-bottom: 24px;
+    }
+
+    .hm-card-header-custom {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #f2edf0;
+    }
+
+    .hm-card-title {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #24213d;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 0;
+    }
+
+    .hm-card-title i {
+        color: #8b0028;
+        background: #fff2f5;
+        padding: 8px 10px;
+        border-radius: 10px;
+        font-size: 1.1rem;
+    }
+
+    /* Hızlı Ekleme Formu */
+    .hm-add-form {
+        display: grid;
+        grid-template-columns: 280px 1fr auto;
+        gap: 16px;
+        align-items: flex-end;
+    }
+
+    .hm-field label {
+        display: block;
+        font-size: .85rem;
+        font-weight: 600;
+        color: #433e49;
+        margin-bottom: 7px;
+    }
+
+    .hm-input, .hm-select {
+        width: 100%;
+        height: 46px;
+        border: 1px solid #e2dce0;
+        border-radius: 11px;
+        padding: 0 14px;
+        font-size: .9rem;
+        background: #fff;
+        transition: border-color .15s ease, box-shadow .15s ease;
+    }
+
+    .hm-input:focus, .hm-select:focus {
+        border-color: #8b0028;
+        box-shadow: 0 0 0 3px rgba(139, 0, 40, .1);
+        outline: none;
+    }
+
+    .hm-btn-submit {
+        height: 46px;
+        padding: 0 24px;
+        background: linear-gradient(135deg, #8b0028, #a70b3b);
+        color: #fff;
+        font-weight: 600;
+        border: 0;
+        border-radius: 11px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 6px 18px rgba(139, 0, 40, .2);
+        cursor: pointer;
+        transition: transform .15s ease;
+    }
+
+    .hm-btn-submit:hover {
+        transform: translateY(-1px);
+        color: #fff;
+    }
+
+    /* Grid Yapısı */
+    .hm-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 22px;
+    }
+
+    .hm-menu-box {
+        background: #fff;
+        border: 1px solid #efe9ec;
+        border-radius: 16px;
+        padding: 20px 22px;
+        box-shadow: 0 6px 20px rgba(35, 28, 40, .03);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .hm-menu-box-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid #f6f2f4;
+    }
+
+    .hm-menu-box-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #24213d;
+        margin: 0;
+    }
+
+    .hm-menu-box-title i {
+        color: #8b0028;
+        font-size: 1.15rem;
+    }
+
+    .hm-badge {
+        font-size: .75rem;
+        font-weight: 700;
+        padding: 5px 11px;
+        border-radius: 20px;
+    }
+
+    .hm-badge-count {
+        background: #fff2f5;
+        color: #8b0028;
+    }
+
+    .hm-badge-empty {
+        background: #f4f3f6;
+        color: #837f8a;
+    }
+
+    /* Alt Menü Tablosu / Listesi */
+    .hm-item-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        flex: 1;
+    }
+
+    .hm-item-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 14px;
+        background: #fbf9fa;
+        border: 1px solid #f0e9ec;
+        border-radius: 10px;
+        transition: background .15s ease;
+    }
+
+    .hm-item-row:hover {
+        background: #f7f2f4;
+    }
+
+    .hm-item-name {
+        font-size: .9rem;
+        font-weight: 600;
+        color: #332f38;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .hm-item-name i {
+        color: #9d8b92;
+        font-size: .8rem;
+    }
+
+    .hm-item-actions {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .hm-btn-action {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 0;
+        background: #fff;
+        color: #555;
+        font-size: .85rem;
+        box-shadow: 0 2px 6px rgba(0,0,0,.04);
+        cursor: pointer;
+        transition: all .15s ease;
+    }
+
+    .hm-btn-action:hover {
+        background: #8b0028;
+        color: #fff;
+    }
+
+    .hm-btn-delete:hover {
+        background: #dc3545;
+        color: #fff;
+    }
+
+    .hm-empty-box-msg {
+        padding: 24px;
+        text-align: center;
+        color: #95909c;
+        font-size: .88rem;
+        background: #fcfbfc;
+        border: 1px dashed #e8e2e5;
+        border-radius: 12px;
+        margin: auto 0;
+    }
+
+    .hm-quick-add-btn {
+        margin-top: 14px;
+        padding-top: 12px;
+        border-top: 1px solid #f6f2f4;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .hm-quick-add-link {
+        font-size: .82rem;
+        font-weight: 600;
+        color: #8b0028;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        cursor: pointer;
+    }
+
+    .hm-quick-add-link:hover {
+        text-decoration: underline;
+    }
+
+    @@media (max-width: 992px) {
+        .hm-add-form {
+            grid-template-columns: 1fr;
+        }
+        .hm-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="hm-page">
+    <div class="hm-hero">
+        <div>
+            <div class="hm-eyebrow"><i class="bi bi-segmented-nav"></i> Navigasyon & Menü</div>
+            <h1 class="hm-title">Header Menü Yönetimi</h1>
+            <p class="hm-subtitle">Sitedeki sabit 6 ana menünün altındaki açılır (dropdown) alt menüleri buradan kolayca yönetebilirsiniz.</p>
+        </div>
+        <a href="http://localhost:5037" target="_blank" class="btn btn-outline-secondary rounded-pill px-3 py-2" style="font-size: 0.88rem; font-weight: 600;">
+            <i class="bi bi-box-arrow-up-right me-1"></i> Siteyi Önizle
+        </a>
+    </div>
+
+    <!-- HIZLI GEÇİŞ SEKMELERİ -->
+    <div class="nav-switcher">
+        <a href="/Admin/Menu" class="nav-switcher-link">
+            <i class="bi bi-diagram-3"></i> Genel Menü Grupları
+        </a>
+        <a href="/Admin/HeaderMenu" class="nav-switcher-link active">
+            <i class="bi bi-segmented-nav"></i> Header Çiçek & Kategori Menüsü
+        </a>
+    </div>
+
+    @if (TempData["BasariliMesaj"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show rounded-4 shadow-sm" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>@TempData["BasariliMesaj"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["HataMesaji"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show rounded-4 shadow-sm" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["HataMesaji"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- 1. HIZLI ALT MENÜ EKLEME KARTI -->
+    <div class="hm-card">
+        <div class="hm-card-header-custom">
+            <h2 class="hm-card-title"><i class="bi bi-plus-circle"></i> Yeni Alt Menü Ekle</h2>
+            <span style="font-size: 0.85rem; color: #7f7a87;">Bir ana menü seçip altına açılacak yeni başlığı yazın.</span>
+        </div>
+
+        <form asp-action="AltMenuEkle" method="post" class="hm-add-form" id="altMenuEkleForm">
+            @Html.AntiForgeryToken()
+
+            <div class="hm-field">
+                <label for="anaMenuId">Hangi Ana Menüye Eklensin? <span>*</span></label>
+                <select name="anaMenuId" id="anaMenuSelect" class="hm-select" required>
+                    <option value="">-- Ana Menü Seçin --</option>
+                    @foreach (var ana in Model.AnaMenuler)
+                    {
+                        <option value="@ana.Id">@ana.Baslik</option>
+                    }
+                </select>
+            </div>
+
+            <div class="hm-field">
+                <label for="altMenuAdi">Alt Menü Başlığı (Örn: Gül Buketleri, Orkideler) <span>*</span></label>
+                <input type="text" name="altMenuAdi" id="altMenuAdiInput" class="hm-input" placeholder="Örn: Gül Buketleri" required autocomplete="off" />
+            </div>
+
+            <button type="submit" class="hm-btn-submit">
+                <i class="bi bi-plus-lg"></i> Alt Menüyü Ekle
+            </button>
+        </form>
+    </div>
+
+    <!-- 2. SABİT ANA MENÜLER VE ALT MENÜ LİSTESİ -->
+    <div class="hm-grid">
+        @foreach (var ana in Model.AnaMenuler)
+        {
+            <div class="hm-menu-box" id="menu-box-@ana.Id">
+                <div class="hm-menu-box-top">
+                    <h3 class="hm-menu-box-title">
+                        <i class="bi @ana.IconClass"></i>
+                        <span>@ana.Baslik</span>
+                    </h3>
+                    @if (ana.AltMenuler.Any())
+                    {
+                        <span class="hm-badge hm-badge-count">@ana.AltMenuler.Count Alt Menü</span>
+                    }
+                    else
+                    {
+                        <span class="hm-badge hm-badge-empty">Alt Menü Yok (Direkt Link)</span>
+                    }
+                </div>
+
+                @if (ana.AltMenuler.Any())
+                {
+                    <ul class="hm-item-list">
+                        @foreach (var alt in ana.AltMenuler)
+                        {
+                            <li class="hm-item-row">
+                                <div class="hm-item-name">
+                                    <i class="bi bi-arrow-return-right"></i>
+                                    <span>@alt.Ad</span>
+                                    @if (!alt.AktifMi)
+                                    {
+                                        <span class="badge bg-secondary ms-1" style="font-size: 0.65rem;">Gizli</span>
+                                    }
+                                </div>
+                                <div class="hm-item-actions">
+                                    <button type="button" class="hm-btn-action" title="Düzenle"
+                                            onclick="openEditModal('@alt.Id', '@alt.Ad', @(alt.AktifMi ? "true" : "false"))">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+
+                                    <form asp-action="AltMenuSil" asp-route-id="@alt.Id" method="post" onsubmit="return confirm('\'@alt.Ad\' alt menüsünü silmek istediğinize emin misiniz?');" style="display:inline;">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="hm-btn-action hm-btn-delete" title="Sil">
+                                            <i class="bi bi-trash3"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <div class="hm-empty-box-msg">
+                        <i class="bi bi-info-circle d-block mb-1 fs-5 text-muted"></i>
+                        Bu ana menünün altında henüz alt menü yok.<br />
+                        <small class="text-muted">Sitede tıklandığında doğrudan ana kategorisine gider.</small>
+                    </div>
+                }
+
+                <div class="hm-quick-add-btn">
+                    <a href="javascript:void(0)" class="hm-quick-add-link" onclick="selectAndFocusMenu('@ana.Id')">
+                        <i class="bi bi-plus"></i> Bu menüye alt öğe ekle
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- DÜZENLEME MODALI -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 border-0 shadow">
+            <div class="modal-header border-bottom-0 pb-0">
+                <h5 class="modal-title fw-bold" style="color: #24213d;"><i class="bi bi-pencil me-2 text-danger"></i>Alt Menüyü Düzenle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form asp-action="AltMenuGuncelle" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" id="modalAltMenuId" />
+
+                <div class="modal-body py-3">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold" style="font-size: 0.85rem;">Alt Menü Başlığı</label>
+                        <input type="text" name="ad" id="modalAltMenuAd" class="form-control rounded-3" required />
+                    </div>
+
+                    <div class="form-check form-switch mt-3">
+                        <input class="form-check-input" type="checkbox" role="switch" name="aktifMi" value="true" id="modalAltMenuAktif" />
+                        <label class="form-check-label fw-semibold" for="modalAltMenuAktif">Menüde Yayınla (Aktif)</label>
+                    </div>
+                </div>
+
+                <div class="modal-footer border-top-0 pt-0">
+                    <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Vazgeç</button>
+                    <button type="submit" class="btn btn-danger rounded-pill px-4" style="background:#8b0028; border-color:#8b0028;">Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function selectAndFocusMenu(menuId) {
+            const select = document.getElementById('anaMenuSelect');
+            const input = document.getElementById('altMenuAdiInput');
+
+            select.value = menuId;
+            input.focus();
+
+            window.scrollTo({
+                top: document.getElementById('altMenuEkleForm').getBoundingClientRect().top + window.pageYOffset - 100,
+                behavior: 'smooth'
+            });
+        }
+
+        function openEditModal(id, ad, aktifMi) {
+            document.getElementById('modalAltMenuId').value = id;
+            document.getElementById('modalAltMenuAd').value = ad;
+            document.getElementById('modalAltMenuAktif').checked = aktifMi;
+
+            var modal = new bootstrap.Modal(document.getElementById('editModal'));
+            modal.show();
+        }
+    </script>
+}

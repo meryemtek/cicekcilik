@@ -391,8 +391,8 @@
 <div class="kategori-form-page">
     <div class="kategori-form-header">
         <div class="kategori-form-eyebrow"><i class="bi bi-flower1"></i> Mağaza Yönetimi</div>
-        <h1 class="kategori-form-title">Yeni Çiçek Kategorisi</h1>
-        <p class="kategori-form-subtitle">Anasayfa vitrininde ve mağazada yer alacak yeni kategoriyi görseliyle birlikte oluşturun.</p>
+        <h1 class="kategori-form-title">Kategori & Vitrin İkonu Ekle</h1>
+        <p class="kategori-form-subtitle">Anasayfa vitrin şeridinde ve mağazada yer alacak görseli ve başlığı belirleyin.</p>
     </div>
 
     <form asp-action="Ekle" method="post" enctype="multipart/form-data" id="kategoriForm">
@@ -402,20 +402,20 @@
                 <div class="kategori-form-card">
                     <div class="kategori-form-card-title">
                         <div class="kategori-form-card-icon"><i class="bi bi-pencil-square"></i></div>
-                        <div><h2>Kategori Bilgileri</h2><p>Temel alanları eksiksiz doldurun.</p></div>
+                        <div><h2>Kategori ve Vitrin Bilgileri</h2><p>Görsel ve başlık belirleyerek yeni kategori oluşturun.</p></div>
                     </div>
 
                     <div class="kategori-field">
-                        <label asp-for="UstKategoriId">Ana Kategori (Opsiyonel)</label>
+                        <label asp-for="UstKategoriId">Kategori Seviyesi / Ana Kategori</label>
                         <select asp-for="UstKategoriId" asp-items="ustKategoriler" class="kategori-select">
-                            <option value="">-- Ana Kategori (En Üst Seviye) --</option>
+                            <option value="">-- Ana Kategori (Header Menü Başlığı) Olarak Kaydet --</option>
                         </select>
-                        <span class="kategori-help">Başka bir kategorinin altına alt kategori olarak bağlamak isterseniz seçin.</span>
+                        <span class="kategori-help">Ana menü başlığı olarak göstermek için boş bırakın. Header menüsünde alt başlık olması için üst kategori seçin. Görselli anasayfa alanı için kategoriyi ayrıca "Anasayfa Görselli Kategoriler" bölümüne ekleyin.</span>
                     </div>
 
                     <div class="kategori-field">
-                        <label asp-for="Ad">Kategori Adı <span>*</span></label>
-                        <input asp-for="Ad" class="kategori-input" id="kategoriAd" placeholder="Örn. Gül Buketleri" autocomplete="off" />
+                        <label asp-for="Ad">Kategori / Vitrin Başlığı <span>*</span></label>
+                        <input asp-for="Ad" class="kategori-input" id="kategoriAd" placeholder="Örn. Gül Buketleri, Yapay Orkide..." autocomplete="off" />
                         <span asp-validation-for="Ad" class="kategori-validation"></span>
                     </div>
 
@@ -426,9 +426,9 @@
                         <span asp-validation-for="SeoUrl" class="kategori-validation"></span>
                     </div>
 
-                    <!-- GÖRSEL YÜKLEME VE KROPLAMA ALANI -->
+                    <!-- GÖRSEL YÜKLEME VE KROPLAMA / URL ALANI -->
                     <div class="kategori-field">
-                        <label>Kategori Görseli (1:1 Kare Kırpma Destekli)</label>
+                        <label>Kategori / Vitrin Görseli <span>*</span></label>
                         <div class="kategori-image-upload">
                             <div class="kategori-image-preview" id="imagePreview">
                                 <img id="previewImage" alt="Kırpılmış Görsel Önizleme" />
@@ -437,15 +437,21 @@
 
                             <label class="kategori-file-label" for="gorselDosyasi">
                                 <i class="bi bi-crop"></i>
-                                <span>Görsel seçin ve kutucuğa göre kırpın<br><small class="text-muted">JPG, PNG veya WEBP (Kare kırpıcı otomatik açılır)</small></span>
+                                <span>Bilgisayardan Görsel Seçin (1:1 Kare Kırpma Destekli)<br><small class="text-muted">JPG, PNG veya WEBP (Kare kırpıcı otomatik açılır)</small></span>
                             </label>
                             <input type="file" name="gorselDosyasi" id="gorselDosyasi" class="kategori-file-input" accept="image/jpeg,image/png,image/webp" />
 
                             <button type="button" class="btn-recrop" id="btnRecrop" style="display:none;">
                                 <i class="bi bi-crop me-1"></i> Görseli Yeniden Kırp / Hizala
                             </button>
+
+                            <div class="mt-3 pt-2 border-top">
+                                <label asp-for="GorselUrl" class="small text-muted fw-bold mb-1 d-block"><i class="bi bi-link-45deg"></i> VEYA Doğrudan Görsel Web Linki (URL)</label>
+                                <input asp-for="GorselUrl" class="kategori-input" id="gorselUrlInput" placeholder="https://images.unsplash.com/photo-..." autocomplete="off" />
+                                <span class="kategori-help">Web üzerinden bir görsel bağlantısı yapıştırabilirsiniz.</span>
+                            </div>
                         </div>
-                        <span class="kategori-help">Seçtiğiniz görselin vitrinde tam görünmesini istediğiniz kısmını kırparak ayarlayabilirsiniz.</span>
+                        <span class="kategori-help">Seçtiğiniz görsel anasayfa kategori vitrininde ve kategori sayfasında görünecektir.</span>
                     </div>
 
                     <div class="kategori-field">
@@ -671,6 +677,23 @@
                 previewIcon.style.display = "block";
                 cardPreviewImage.style.display = "none";
                 btnRecrop.style.display = "none";
+                const urlInput = document.getElementById("gorselUrlInput");
+                if (urlInput) urlInput.value = "";
+            });
+
+            // Doğrudan URL girişi ile anında önizleme
+            const gorselUrlInput = document.getElementById("gorselUrlInput");
+            gorselUrlInput?.addEventListener("input", function () {
+                const url = this.value.trim();
+                if (url) {
+                    cardPreviewImage.src = url;
+                    cardPreviewImage.style.display = "block";
+                    previewIcon.style.display = "none";
+                } else if (!fileInput.files.length) {
+                    cardPreviewImage.src = "";
+                    cardPreviewImage.style.display = "none";
+                    previewIcon.style.display = "block";
+                }
             });
         });
     </script>

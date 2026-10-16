@@ -1,4 +1,4 @@
-﻿using ECommerce.Application.DTOs.Menu;
+using ECommerce.Application.DTOs.Menu;
 
 namespace ECommerce.Application.Interfaces
 {
@@ -10,6 +10,7 @@ namespace ECommerce.Application.Interfaces
         Task<Guid> GrupEkleAsync(MenuGrupEkleDto dto);
         Task GrupGuncelleAsync(MenuGrupGuncelleDto dto);
         Task GrupSilAsync(Guid id);
+        Task GrupDurumDegistirAsync(Guid id, bool aktifMi);
 
         // Menü Öğesi (Item) İşlemleri (Hiyerarşik Ağaç)
         Task<IReadOnlyList<MenuItemListeDto>> GrubaAitMenuleriGetirAsync(Guid menuGrupId);

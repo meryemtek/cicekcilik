@@ -1,16 +1,17 @@
 ﻿@model ECommerce.Application.DTOs.Kampanya.KampanyaUrunEkleDto
 @{
-    ViewData["Title"] = "Yeni Kampanya Oluştur";
+    ViewData["Title"] = "Yeni Kampanya OluÅŸtur";
 }
 
 <style>
     .s-page {
         max-width: 1400px;
         margin: 0 auto;
+        padding: 0 15px;
     }
 
     .s-hero {
-        margin-bottom: 28px;
+        margin-bottom: 24px;
     }
 
     .s-eyebrow {
@@ -38,20 +39,20 @@
         border-radius: 16px;
         border: 1px solid #eee9ed;
         box-shadow: 0 8px 25px rgba(35,28,40,.04);
-        padding: 40px;
+        padding: 36px;
     }
 
     .f-label {
         font-weight: 600;
         color: #24213d;
         margin-bottom: 8px;
-        font-size: 0.95rem;
+        font-size: 0.92rem;
     }
 
     .f-input {
         border-radius: 12px;
         border: 1px solid #ddd5da;
-        padding: 12px 16px;
+        padding: 11px 16px;
         background: #faf9fa;
         transition: all 0.2s ease;
         box-shadow: none;
@@ -98,62 +99,119 @@
         text-decoration: none;
         font-weight: 600;
         font-size: 0.95rem;
-        transition: color 0.2s;
     }
 
         .s-cancel-link:hover {
             color: #24213d;
         }
 
-    .dynamic-box {
-        background: #fff8f9;
-        border: 1px dashed #e5d5db;
-        border-radius: 14px;
-        padding: 20px;
-        margin-top: 15px;
-        margin-bottom: 20px;
+    /* HAZIR ÅABLON BUTONLARI */
+    .preset-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #fbf9fb;
+        border: 1px solid #e5dfe5;
+        border-radius: 999px;
+        padding: 6px 14px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #49454f;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        user-select: none;
     }
 
-    select.f-input {
-        appearance: auto !important;
-        -webkit-appearance: menulist !important;
-        -moz-appearance: menulist !important;
-        background-color: #faf9fa !important;
-        opacity: 1 !important;
-        pointer-events: auto !important;
-        position: relative;
-        z-index: 10;
+        .preset-pill:hover {
+            background: #fff4f7;
+            border-color: #f2cdd6;
+            color: #8b0028;
+            transform: translateY(-1px);
+        }
+
+    /* Ã–NÄ°ZLEME KUTUSU */
+    .preview-box {
+        background: #fdf5f7;
+        border: 1px dashed #f2cdd6;
+        border-radius: 14px;
+        padding: 16px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+    }
+
+    .dynamic-box {
+        background: #faf6f8;
+        border: 1px dashed #d1b5c2;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 24px;
     }
 </style>
 
 <div class="s-page mt-4">
     <div class="s-hero">
-        <div class="s-eyebrow"><i class="bi bi-arrow-left"></i> <a asp-action="Index" style="color: inherit; text-decoration: none;">Kampanyalara Dön</a></div>
-        <h1 class="s-title">Gelişmiş Kampanya Tasarımcısı</h1>
+        <div class="s-eyebrow">
+            <i class="bi bi-arrow-left"></i>
+            <a asp-action="Index" style="color: inherit; text-decoration: none;">Kampanya Listesine DÃ¶n</a>
+        </div>
+        <h1 class="s-title">Yeni Kampanya OluÅŸtur</h1>
+        <p class="s-subtitle">MÃ¼ÅŸterilerinize Ã¶zel indirimler ve sepet kurallarÄ± tanÄ±mlayÄ±n.</p>
+    </div>
+
+    <!-- HIZLI ÅABLONLAR -->
+    <div class="mb-3 d-flex align-items-center gap-2 flex-wrap">
+        <span class="small fw-bold text-muted me-1"><i class="bi bi-lightning-charge-fill text-warning"></i> HÄ±zlÄ± Åablonlar:</span>
+        <button type="button" class="preset-pill" onclick="sablonUygula('YÃ¼zde 10 Ä°ndirim FÄ±rsatÄ±', 'DuzIndirim', 'Yuzde', 10)">
+            <i class="bi bi-percent"></i> %10 Ä°ndirim
+        </button>
+        <button type="button" class="preset-pill" onclick="sablonUygula('YÃ¼zde 20 Ã–zel Ä°ndirim', 'DuzIndirim', 'Yuzde', 20)">
+            <i class="bi bi-percent"></i> %20 Ä°ndirim
+        </button>
+        <button type="button" class="preset-pill" onclick="sablonUygula('50 TL Net Sepet Ä°ndirimi', 'DuzIndirim', 'Tutar', 50)">
+            <i class="bi bi-cash-stack"></i> 50 â‚º Ä°ndirim
+        </button>
+        <button type="button" class="preset-pill" onclick="sablonUygula('100 TL Net Sepet Ä°ndirimi', 'DuzIndirim', 'Tutar', 100)">
+            <i class="bi bi-cash-stack"></i> 100 â‚º Ä°ndirim
+        </button>
+        <button type="button" class="preset-pill" onclick="sablonUygula('Ä°kinci ÃœrÃ¼ne %50 Ä°ndirim', 'IkinciUrunIndirimli', 'Yuzde', 50)">
+            <i class="bi bi-gift-fill"></i> 2. ÃœrÃ¼ne %50
+        </button>
     </div>
 
     <div class="f-card">
-        <form asp-action="Ekle" method="post">
+        <form asp-action="Ekle" method="post" id="kampanyaForm">
 
             <div class="row mb-4">
                 <div class="col-md-6">
-                    <label class="f-label">Kampanya Adı <span class="text-danger">*</span></label>
-                    <input type="text" asp-for="KampanyaAdi" class="form-control f-input" placeholder="Örn: İkinci Ürüne %15 İndirim" required />
+                    <label class="f-label">Kampanya AdÄ± <span class="text-danger">*</span></label>
+                    <input type="text" asp-for="KampanyaAdi" id="kampanyaAdiInput" class="form-control f-input" placeholder="Ã–rn: YÄ±lbaÅŸÄ±na Ã–zel %15 Ä°ndirim" required />
                 </div>
                 <div class="col-md-6">
-                    <label class="f-label">Kampanya Varyasyonu / Senaryo</label>
+                    <label class="f-label">Kampanya Senaryosu / TÃ¼rÃ¼</label>
                     <select asp-for="KampanyaVaryasyonu" class="form-select f-input" id="varyasyonSelect">
-                        <option value="DuzIndirim">Standart Fiyat İndirimi (% veya Tutar)</option>
-                        <option value="IkinciUrunIndirimli">Birinci Ürüne Karşılık İkinci Ürün İndirimi / Bedava</option>
-                        <option value="KategoriCapraz">Belirli Kategoriden Alışverişe Çapraz İndirim</option>
+                        <option value="DuzIndirim">Standart Fiyat Ä°ndirimi (% veya Tutar)</option>
+                        <option value="IkinciUrunIndirimli">Birinci ÃœrÃ¼ne KarÅŸÄ±lÄ±k Ä°kinci ÃœrÃ¼ne Ä°ndirim</option>
+                        <option value="KategoriCapraz">Belirli Kategoriden AlÄ±ÅŸveriÅŸe Ã‡apraz Ä°ndirim</option>
                     </select>
                 </div>
             </div>
 
-            <!-- Standart veya İkinci Ürün İçin Ana Ürün Seçim Alanı -->
+            <!-- Standart veya Ä°kinci ÃœrÃ¼n Ä°Ã§in Ana ÃœrÃ¼n SeÃ§im AlanÄ± -->
             <div class="mb-4" id="urunSecimAlani">
-                <label class="f-label" id="anaUrunLabel">Kampanyaya Dahil Ürün(ler) <span class="text-danger">*</span></label>
-                <select asp-for="UrunIds" class="form-control select2-multiple" multiple="multiple" style="width: 100%;">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <label class="f-label mb-0" id="anaUrunLabel">Kampanyaya Dahil ÃœrÃ¼n(ler) <span class="text-danger">*</span></label>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-2" style="font-size:0.75rem;" onclick="tumUrunleriSec()">
+                            <i class="bi bi-check-all"></i> TÃ¼mÃ¼nÃ¼ SeÃ§
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-2" style="font-size:0.75rem;" onclick="secimiTemizle()">
+                            <i class="bi bi-x"></i> Temizle
+                        </button>
+                    </div>
+                </div>
+                <select asp-for="UrunIds" id="urunIdsSelect" class="form-control select2-multiple" multiple="multiple" style="width: 100%;">
                     @if (ViewBag.Urunler != null)
                     {
                         foreach (var item in (List<SelectListItem>)ViewBag.Urunler)
@@ -162,14 +220,14 @@
                         }
                     }
                 </select>
-                <div class="form-text mt-2" id="urunSecimAciklama"><i class="bi bi-info-circle"></i> Kampanyayı tetikleyecek veya indirim uygulanacak ana ürünleri seçin.</div>
+                <div class="form-text mt-2 text-muted" id="urunSecimAciklama"><i class="bi bi-info-circle"></i> KampanyanÄ±n uygulanacaÄŸÄ± veya tetikleyeceÄŸi Ã¼rÃ¼nleri seÃ§in.</div>
             </div>
 
-            <!-- Kategori Çapraz İçin Tetikleyici Kategori Alanı -->
+            <!-- Kategori Ã‡apraz Ä°Ã§in Tetikleyici Kategori AlanÄ± -->
             <div class="mb-4" id="tetikleyiciKategoriAlani" style="display: none;">
-                <label class="f-label">Tetikleyici (Alışveriş Yapılacak) Kategori <span class="text-danger">*</span></label>
+                <label class="f-label">Tetikleyici (AlÄ±ÅŸveriÅŸ YapÄ±lacak) Kategori <span class="text-danger">*</span></label>
                 <select asp-for="TetikleyiciKategoriId" class="form-select f-input">
-                    <option value="">-- Kategori Seçin --</option>
+                    <option value="">-- Kategori SeÃ§in --</option>
                     @if (ViewBag.Kategoriler != null)
                     {
                         foreach (var item in (List<SelectListItem>)ViewBag.Kategoriler)
@@ -178,18 +236,18 @@
                         }
                     }
                 </select>
-                <div class="form-text mt-2"><i class="bi bi-info-circle"></i> Müşterinin sepete eklemesi gereken ana kategori.</div>
+                <div class="form-text mt-2 text-muted"><i class="bi bi-info-circle"></i> MÃ¼ÅŸterinin sepetine eklemesi gereken ana kategori.</div>
             </div>
 
-            <!-- İndirim Uygulanacak Hedef Kapsam (İkinci Ürün veya Çapraz Kampanya İçin) -->
+            <!-- Ä°ndirim Uygulanacak Hedef Kapsam (Ä°kinci ÃœrÃ¼n veya Ã‡apraz Kampanya Ä°Ã§in) -->
             <div id="hedefKapsamAlani" class="dynamic-box" style="display: none;">
-                <h6 class="fw-bold text-danger mb-2"><i class="bi bi-gift"></i> İndirim Uygulanacak Hedef Kapsam (İkinci Ürün/Çapraz Şartı)</h6>
-                <p class="text-muted small mb-3">Ana ürün veya kategoriden alışveriş yapıldığında, aşağıdaki hedef kategori veya ürünlerden alınacak **ikinci ürüne** indirim uygulanır.</p>
+                <h6 class="fw-bold text-danger mb-2"><i class="bi bi-gift"></i> Ä°ndirim Uygulanacak Hedef Kapsam (2. ÃœrÃ¼n ÅartÄ±)</h6>
+                <p class="text-muted small mb-3">Ana Ã¼rÃ¼n veya kategoriden alÄ±ÅŸveriÅŸ yapÄ±ldÄ±ÄŸÄ±nda, sepetteki ikinci Ã¼rÃ¼ne uygulanacak indirim hedefi:</p>
 
                 <div class="mb-3">
-                    <label class="f-label">Hedef Kategori</label>
+                    <label class="f-label">Hedef Kategori (Opsiyonel)</label>
                     <select asp-for="HedefKategoriId" class="form-select f-input">
-                        <option value="">-- Hedef Kategori Seçin (Opsiyonel) --</option>
+                        <option value="">-- TÃ¼m Kategorilerde GeÃ§erli --</option>
                         @if (ViewBag.Kategoriler != null)
                         {
                             foreach (var item in (List<SelectListItem>)ViewBag.Kategoriler)
@@ -199,69 +257,83 @@
                         }
                     </select>
                 </div>
+            </div>
 
-                <div class="mb-2">
-                    <label class="f-label">Veya Spesifik Hedef Ürün(ler)</label>
-                    <select asp-for="HedefUrunIds" class="form-control select2-multiple" multiple="multiple" style="width: 100%;">
-                        @if (ViewBag.Urunler != null)
-                        {
-                            foreach (var item in (List<SelectListItem>)ViewBag.Urunler)
-                            {
-                                <option value="@item.Value">@item.Text</option>
-                            }
-                        }
+            <!-- Ä°NDÄ°RÄ°M TÄ°PÄ° VE DEÄERÄ° -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <label class="f-label">Ä°ndirim TÃ¼rÃ¼</label>
+                    <select asp-for="IndirimTipi" id="indirimTipiSelect" class="form-select f-input">
+                        <option value="Yuzde">YÃ¼zde Ä°ndirim (%)</option>
+                        <option value="Tutar">Net Tutar Ä°ndirimi (â‚º)</option>
                     </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="f-label">Ä°ndirim MiktarÄ± / DeÄŸeri <span class="text-danger">*</span></label>
+                    <input type="number" step="0.01" asp-for="IndirimDegeri" id="indirimDegeriInput" class="form-control f-input" placeholder="Ã–rn: 20" required />
                 </div>
             </div>
 
-            <div class="row mb-4">
-                <div class="col-md-6">
-                    <label class="f-label">İndirim Türü</label>
-                    <select asp-for="IndirimTipi" class="form-select f-input">
-                        <option value="Yuzde">Yüzde İndirim (%)</option>
-                        <option value="Tutar">Net Tutar İndirimi (₺)</option>
-                    </select>
+            <!-- CANLI Ä°NDÄ°RÄ°M Ã–NÄ°ZLEMESÄ° -->
+            <div class="preview-box mb-4" id="indirimOnizlemeKutusu">
+                <div class="d-flex align-items-center gap-3">
+                    <div style="font-size: 1.8rem; color:#8b0028;"><i class="bi bi-calculator"></i></div>
+                    <div>
+                        <div class="fw-bold text-dark" style="font-size:0.9rem;">Ã–rnek Kampanya Ä°ndirim HesabÄ±</div>
+                        <div class="small text-muted" id="onizlemeMetin">Ã–rnek 500 â‚º deÄŸerinde bir Ã¼rÃ¼n iÃ§in indirim hesaplanÄ±yor...</div>
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    <label class="f-label">İndirim Değeri <span class="text-danger">*</span></label>
-                    <input type="number" step="0.01" asp-for="IndirimDegeri" class="form-control f-input" placeholder="Örn: 15" required />
+                <div class="text-end">
+                    <span class="badge bg-danger fs-6 px-3 py-2 rounded-pill" id="onizlemeRozet">%0 Ä°ndirim</span>
                 </div>
             </div>
 
             <div class="mb-4">
-                <label class="f-label">Kampanya Etiketi / Açıklaması</label>
-                <input type="text" asp-for="KampanyaAciklamasi" class="form-control f-input" placeholder="Örn: İkinci Ürüne %15 İndirim" />
+                <label class="f-label">Kampanya AÃ§Ä±klamasÄ± / Notu</label>
+                <input type="text" asp-for="KampanyaAciklamasi" class="form-control f-input" placeholder="Ã–rn: Sepette ikinci Ã¼rÃ¼ne anÄ±nda %15 indirim fÄ±rsatÄ±!" />
             </div>
 
-            <!-- Kupon Birleştirme Ayarı -->
+            <!-- KUPON BÄ°RLEÅTÄ°RME AYARI -->
             <div class="mb-4">
-                <div class="form-check form-switch p-3 bg-light rounded-3 border">
-                    <input class="form-check-input ms-0 me-2" type="checkbox" asp-for="KuponlarlaBirlesebilirMi" id="kuponCheckEkle" style="width: 2.5em; height: 1.25em;" />
-                    <label class="form-check-label f-label fw-bold mb-0" for="kuponCheckEkle">
-                        Bu kampanya sepet kuponlarıyla birleştirilebilir mi?
-                    </label>
-                    <div class="form-text mt-1 text-muted">Eğer pasif bırakılırsa, bu ürüne kupon indirimi uygulanmaz.</div>
+                <div class="form-check form-switch p-3 bg-light rounded-3 border d-flex align-items-center gap-3">
+                    <input class="form-check-input ms-0 me-2" type="checkbox" asp-for="KuponlarlaBirlesebilirMi" id="kuponCheckEkle" style="width: 2.8em; height: 1.4em; cursor:pointer;" />
+                    <div>
+                        <label class="form-check-label f-label fw-bold mb-0" for="kuponCheckEkle" style="cursor:pointer;">
+                            Bu kampanya sepet indirim kuponlarÄ±yla birleÅŸtirilebilir mi?
+                        </label>
+                        <div class="form-text mt-0 text-muted small">Aktif edilirse mÃ¼ÅŸteri hem kampanya indiriminden hem kupon kodundan aynÄ± anda faydalanabilir.</div>
+                    </div>
                 </div>
             </div>
 
+            <!-- SIRA VE TARÄ°H ARALIÄI -->
             <div class="row mb-4">
-                <div class="col-md-4">
-                    <label class="f-label">Gösterim Sırası</label>
+                <div class="col-md-3">
+                    <label class="f-label">Ã–ncelik SÄ±rasÄ±</label>
                     <input type="number" asp-for="Sira" class="form-control f-input" value="0" required />
                 </div>
                 <div class="col-md-4">
-                    <label class="f-label">Başlangıç Tarihi</label>
-                    <input type="datetime-local" asp-for="BaslangicTarihi" class="form-control f-input" />
+                    <label class="f-label">BaÅŸlangÄ±Ã§ Tarihi</label>
+                    <input type="datetime-local" asp-for="BaslangicTarihi" id="baslangicTarihInput" class="form-control f-input" />
                 </div>
-                <div class="col-md-4">
-                    <label class="f-label">Bitiş Tarihi (Opsiyonel)</label>
-                    <input type="datetime-local" asp-for="BitisTarihi" class="form-control f-input" />
+                <div class="col-md-5">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <label class="f-label mb-0">BitiÅŸ Tarihi (Opsiyonel)</label>
+                        <div class="d-flex gap-1">
+                            <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-2" style="font-size:0.7rem;" onclick="bitisEkle(7)">+7 GÃ¼n</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-2" style="font-size:0.7rem;" onclick="bitisEkle(15)">+15 GÃ¼n</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-2" style="font-size:0.7rem;" onclick="bitisEkle(30)">+30 GÃ¼n</button>
+                        </div>
+                    </div>
+                    <input type="datetime-local" asp-for="BitisTarihi" id="bitisTarihInput" class="form-control f-input" />
                 </div>
             </div>
 
             <div class="button-group">
-                <button type="submit" class="s-submit-btn"><i class="bi bi-magic"></i> Gelişmiş Kampanyayı Başlat</button>
-                <a asp-action="Index" class="s-cancel-link">Vazgeç</a>
+                <button type="submit" class="s-submit-btn">
+                    <i class="bi bi-check2-circle"></i> KampanyayÄ± Kaydet ve BaÅŸlat
+                </button>
+                <a asp-action="Index" class="s-cancel-link">VazgeÃ§</a>
             </div>
         </form>
     </div>
@@ -271,9 +343,16 @@
     <script>
         $(document).ready(function () {
             $('.select2-multiple').select2({
-                placeholder: "Ürün seçmek için tıklayın veya arayın...",
+                placeholder: "ÃœrÃ¼n seÃ§mek iÃ§in tÄ±klayÄ±n veya arayÄ±n...",
                 allowClear: true
             });
+
+            // BaÅŸlangÄ±Ã§ tarihini ÅŸu anki tarih/saate ayarla
+            var now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            if (!$('#baslangicTarihInput').val()) {
+                $('#baslangicTarihInput').val(now.toISOString().slice(0, 16));
+            }
 
             function kontrolEt(val) {
                 if (val === 'KategoriCapraz') {
@@ -282,14 +361,14 @@
                     $('#hedefKapsamAlani').show();
                 } else if (val === 'IkinciUrunIndirimli') {
                     $('#urunSecimAlani').show();
-                    $('#anaUrunLabel').html('Kampanyayı Başlatan (Tetikleyici) Ana Ürün(ler) <span class="text-danger">*</span>');
-                    $('#urunSecimAciklama').html('<i class="bi bi-info-circle"></i> Müşterinin sepete eklemesi gereken <b>birinci/ana ürünü</b> seçin. İkinci ürün indirimi bu ürün alındığında aktif olacaktır.');
+                    $('#anaUrunLabel').html('KampanyayÄ± Tetikleyecek 1. ÃœrÃ¼n(ler) <span class="text-danger">*</span>');
+                    $('#urunSecimAciklama').html('<i class="bi bi-info-circle"></i> MÃ¼ÅŸterinin sepete eklemesi gereken <b>ana Ã¼rÃ¼nÃ¼</b> seÃ§in.');
                     $('#tetikleyiciKategoriAlani').hide();
                     $('#hedefKapsamAlani').show();
                 } else {
                     $('#urunSecimAlani').show();
-                    $('#anaUrunLabel').html('Kampanyaya Dahil Ürün(ler) <span class="text-danger">*</span>');
-                    $('#urunSecimAciklama').html('<i class="bi bi-info-circle"></i> Doğrudan indirimin uygulanacağı ürün veya ürünleri seçin.');
+                    $('#anaUrunLabel').html('Kampanyaya Dahil ÃœrÃ¼n(ler) <span class="text-danger">*</span>');
+                    $('#urunSecimAciklama').html('<i class="bi bi-info-circle"></i> DoÄŸrudan indirimin uygulanacaÄŸÄ± Ã¼rÃ¼n veya Ã¼rÃ¼nleri seÃ§in.');
                     $('#tetikleyiciKategoriAlani').hide();
                     $('#hedefKapsamAlani').hide();
                 }
@@ -301,6 +380,56 @@
             $('#varyasyonSelect').change(function () {
                 kontrolEt($(this).val());
             });
+
+            // CANLI Ä°NDÄ°RÄ°M HESAPLAYICI DÄ°NLEYÄ°CÄ°LERÄ°
+            $('#indirimTipiSelect, #indirimDegeriInput').on('input change', guncelleOnizleme);
+            guncelleOnizleme();
         });
+
+        function guncelleOnizleme() {
+            var tip = $('#indirimTipiSelect').val();
+            var deger = parseFloat($('#indirimDegeriInput').val()) || 0;
+            var ornekFiyat = 500;
+
+            var indirimliFiyat = ornekFiyat;
+            var indirimTutar = 0;
+
+            if (tip === 'Yuzde') {
+                indirimTutar = (ornekFiyat * deger) / 100;
+                indirimliFiyat = Math.max(0, ornekFiyat - indirimTutar);
+                $('#onizlemeRozet').text('%' + deger + ' Ä°ndirim');
+                $('#onizlemeMetin').html('Ã–rnek <b>' + ornekFiyat + ' â‚º</b> tutarÄ±ndaki Ã¼rÃ¼n <b>' + indirimliFiyat.toFixed(2) + ' â‚º</b> fiyatÄ±na dÃ¼ÅŸecek (KazanÃ§: <b>' + indirimTutar.toFixed(2) + ' â‚º</b>).');
+            } else {
+                indirimTutar = deger;
+                indirimliFiyat = Math.max(0, ornekFiyat - deger);
+                $('#onizlemeRozet').text(deger + ' â‚º Net Ä°ndirim');
+                $('#onizlemeMetin').html('Ã–rnek <b>' + ornekFiyat + ' â‚º</b> tutarÄ±ndaki sepetten net <b>' + deger + ' â‚º</b> dÃ¼ÅŸÃ¼lecek (Ã–denecek: <b>' + indirimliFiyat.toFixed(2) + ' â‚º</b>).');
+            }
+        }
+
+        function sablonUygula(ad, varyasyon, tip, deger) {
+            $('#kampanyaAdiInput').val(ad);
+            $('#varyasyonSelect').val(varyasyon).trigger('change');
+            $('#indirimTipiSelect').val(tip);
+            $('#indirimDegeriInput').val(deger);
+            guncelleOnizleme();
+        }
+
+        function tumUrunleriSec() {
+            $('#urunIdsSelect option').prop('selected', true);
+            $('#urunIdsSelect').trigger('change');
+        }
+
+        function secimiTemizle() {
+            $('#urunIdsSelect option').prop('selected', false);
+            $('#urunIdsSelect').trigger('change');
+        }
+
+        function bitisEkle(gun) {
+            var d = new Date();
+            d.setDate(d.getDate() + gun);
+            d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+            $('#bitisTarihInput').val(d.toISOString().slice(0, 16));
+        }
     </script>
 }

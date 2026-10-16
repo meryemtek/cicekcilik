@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace ECommerce.Application.DTOs.Kampanya
 {
@@ -18,10 +18,15 @@ namespace ECommerce.Application.DTOs.Kampanya
 
         // Kategori ve Çapraz Kampanya Destek Alanları
         public Guid? TetikleyiciKategoriId { get; set; }
+        public string? KategoriAdi { get; set; }
+        public string? KategoriSeoUrl { get; set; }
         public Guid? HedefKategoriId { get; set; }
 
         public string IndirimTipi { get; set; } = null!;
         public decimal IndirimDegeri { get; set; }
+        public decimal IndirimliFiyat => IndirimTipi == "Yuzde"
+            ? Math.Max(0, Math.Round(Fiyat - (Fiyat * IndirimDegeri / 100m), 2))
+            : Math.Max(0, Math.Round(Fiyat - IndirimDegeri, 2));
         public string KampanyaVaryasyonu { get; set; } = null!;
         public bool KuponlarlaBirlesebilirMi { get; set; }
         public int Sira { get; set; }

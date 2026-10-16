@@ -14,11 +14,13 @@ namespace ECommerce.Application.Services
     {
         private readonly IDepo<KampanyaUrun> _kampanyaDepo;
         private readonly IDepo<Urun> _urunDepo;
+        private readonly IDepo<Kategori> _kategoriDepo;
 
-        public KampanyaServisi(IDepo<KampanyaUrun> kampanyaDepo, IDepo<Urun> urunDepo)
+        public KampanyaServisi(IDepo<KampanyaUrun> kampanyaDepo, IDepo<Urun> urunDepo, IDepo<Kategori> kategoriDepo)
         {
             _kampanyaDepo = kampanyaDepo;
             _urunDepo = urunDepo;
+            _kategoriDepo = kategoriDepo;
         }
 
         public async Task<List<KampanyaUrunDto>> GetKampanyaUrunlerAsync()
@@ -27,8 +29,9 @@ namespace ECommerce.Application.Services
             if (!kampanyalar.Any()) return new List<KampanyaUrunDto>();
 
             var kampanyaUrunIds = kampanyalar.Where(k => k.UrunId.HasValue).Select(k => k.UrunId.Value).Distinct().ToList();
+            var tumKategoriler = (await _kategoriDepo.TumunuGetirAsync()).ToDictionary(x => x.Id, x => x);
 
-            // Ürünleri sözlük yapısına güvenli bir şekilde aktarıyoruz
+            // ÃœrÃ¼nleri sÃ¶zlÃ¼k yapÄ±sÄ±na gÃ¼venli bir ÅŸekilde aktarÄ±yoruz
             var tumUrunler = new Dictionary<Guid, Urun>();
             if (kampanyaUrunIds.Any())
             {
@@ -51,6 +54,16 @@ namespace ECommerce.Application.Services
                     tumUrunler.TryGetValue(k.UrunId.Value, out urun);
                 }
 
+                Kategori? kategori = null;
+                if (k.KategoriId.HasValue)
+                {
+                    tumKategoriler.TryGetValue(k.KategoriId.Value, out kategori);
+                }
+                else if (urun != null && tumKategoriler.TryGetValue(urun.KategoriId, out var urunKat))
+                {
+                    kategori = urunKat;
+                }
+
                 sonuc.Add(new KampanyaUrunDto
                 {
                     Id = k.Id,
@@ -58,12 +71,14 @@ namespace ECommerce.Application.Services
                     KampanyaAciklamasi = k.KampanyaAciklamasi,
                     KapsamTuru = k.KapsamTuru,
                     UrunId = urun?.Id,
-                    UrunAdi = urun?.Ad ?? (k.KapsamTuru == "Kategori" ? "Kategori Bazlı Kampanya" : "Genel Kampanya"),
+                    UrunAdi = urun?.Ad ?? (k.KapsamTuru == "Kategori" && kategori != null ? $"{kategori.Ad} Kategorisi FÄ±rsatÄ±" : "Genel Kampanya"),
                     UrunKodu = urun?.UrunKodu ?? "",
                     Fiyat = urun?.Fiyat ?? 0,
-                    GorselUrl = urun?.GorselUrl, // Görsel URL eşleştirmesi
+                    GorselUrl = urun?.GorselUrl ?? kategori?.GorselUrl,
                     SeoUrl = urun?.SeoUrl ?? "",
                     TetikleyiciKategoriId = k.KategoriId,
+                    KategoriAdi = kategori?.Ad,
+                    KategoriSeoUrl = kategori?.SeoUrl,
                     HedefKategoriId = null,
                     IndirimTipi = k.IndirimTipi,
                     IndirimDegeri = k.IndirimDegeri,
@@ -87,6 +102,7 @@ namespace ECommerce.Application.Services
             if (!kampanyalar.Any()) return new List<KampanyaUrunDto>();
 
             var kampanyaUrunIds = kampanyalar.Where(k => k.UrunId.HasValue).Select(k => k.UrunId.Value).Distinct().ToList();
+            var tumKategoriler = (await _kategoriDepo.TumunuGetirAsync()).ToDictionary(x => x.Id, x => x);
 
             var tumUrunler = new Dictionary<Guid, Urun>();
             if (kampanyaUrunIds.Any())
@@ -112,6 +128,16 @@ namespace ECommerce.Application.Services
 
                 if (k.UrunId.HasValue && urun == null) continue;
 
+                Kategori? kategori = null;
+                if (k.KategoriId.HasValue)
+                {
+                    tumKategoriler.TryGetValue(k.KategoriId.Value, out kategori);
+                }
+                else if (urun != null && tumKategoriler.TryGetValue(urun.KategoriId, out var urunKat))
+                {
+                    kategori = urunKat;
+                }
+
                 sonuc.Add(new KampanyaUrunDto
                 {
                     Id = k.Id,
@@ -119,12 +145,14 @@ namespace ECommerce.Application.Services
                     KampanyaAciklamasi = k.KampanyaAciklamasi,
                     KapsamTuru = k.KapsamTuru,
                     UrunId = urun?.Id,
-                    UrunAdi = urun?.Ad ?? (k.KapsamTuru == "Kategori" ? "Kategori Bazlı Kampanya" : "Genel Kampanya"),
+                    UrunAdi = urun?.Ad ?? (k.KapsamTuru == "Kategori" && kategori != null ? $"{kategori.Ad} Kategorisi FÄ±rsatÄ±" : "Genel Kampanya"),
                     UrunKodu = urun?.UrunKodu ?? "",
                     Fiyat = urun?.Fiyat ?? 0,
-                    GorselUrl = urun?.GorselUrl, // Görsel URL eşleştirmesi
+                    GorselUrl = urun?.GorselUrl ?? kategori?.GorselUrl,
                     SeoUrl = urun?.SeoUrl ?? "",
                     TetikleyiciKategoriId = k.KategoriId,
+                    KategoriAdi = kategori?.Ad,
+                    KategoriSeoUrl = kategori?.SeoUrl,
                     HedefKategoriId = null,
                     IndirimTipi = k.IndirimTipi,
                     IndirimDegeri = k.IndirimDegeri,
@@ -227,6 +255,18 @@ namespace ECommerce.Application.Services
             if (varlik != null)
             {
                 _kampanyaDepo.Sil(varlik);
+                await _kampanyaDepo.DegisiklikleriKaydetAsync();
+            }
+        }
+
+        public async Task DurumDegistirAsync(Guid id, bool aktifMi)
+        {
+            var varlik = await _kampanyaDepo.IdIleGetirAsync(id);
+            if (varlik != null)
+            {
+                varlik.AktifMi = aktifMi;
+                varlik.GuncellenmeTarihi = DateTime.UtcNow;
+                _kampanyaDepo.Guncelle(varlik);
                 await _kampanyaDepo.DegisiklikleriKaydetAsync();
             }
         }

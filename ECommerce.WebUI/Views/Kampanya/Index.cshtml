@@ -1,100 +1,312 @@
-﻿@model List<ECommerce.Application.DTOs.Kampanya.KampanyaUrunDto>
+@model List<ECommerce.Application.DTOs.Kampanya.KampanyaUrunDto>
 @{
-    ViewData["Title"] = "Tüm Kampanyalarımız";
+    ViewData["Title"] = "Tüm Kampanyalar ve İndirimler";
+    var kampanyalar = Model ?? new List<ECommerce.Application.DTOs.Kampanya.KampanyaUrunDto>();
 }
 
-<section class="kampanyalar-lp-page py-5" style="background-color: #fcfbfc;">
-    <div class="container" style="max-width: 1100px;">
-        <!-- Sayfa Başlığı -->
-        <div class="mb-5 text-center">
-            <span class="d-block text-uppercase fw-bold mb-1" style="font-size: 0.78rem; letter-spacing: 2px; color: var(--site-primary);">Sizin İçin Seçtiklerimiz</span>
-            <h1 class="fw-bold display-6 text-dark mb-2">Kampanyalar ve Fırsatlar</h1>
-            <p class="text-muted small">Alışverişinizi avantaja dönüştürecek en güncel promosyon kurallarını inceleyin.</p>
+<style>
+    .k-page-hero {
+        background: linear-gradient(135deg, #fff7f9 0%, #fff 100%);
+        border-bottom: 1px solid #f2e2e7;
+        padding: 45px 0 35px;
+        text-align: center;
+        margin-bottom: 35px;
+    }
+
+    .k-eyebrow {
+        color: #8b0028;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        margin-bottom: 6px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .k-page-title {
+        font-family: 'Playfair Display', Georgia, serif;
+        font-size: clamp(1.8rem, 3vw, 2.5rem);
+        font-weight: 700;
+        color: #24213d;
+        margin-bottom: 8px;
+    }
+
+    .k-page-subtitle {
+        color: #7a7580;
+        font-size: 0.95rem;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    /* FİLTRELEME ÇUBUĞU */
+    .k-filter-bar {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 35px;
+        flex-wrap: wrap;
+    }
+
+    .k-tab-btn {
+        background: #fff;
+        border: 1px solid #e5dfe5;
+        border-radius: 999px;
+        padding: 8px 22px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #55505a;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+        .k-tab-btn.active, .k-tab-btn:hover {
+            background: #8b0028;
+            border-color: #8b0028;
+            color: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(139, 0, 40, 0.2);
+        }
+
+    /* KAMPANYA KARTLARI */
+    .k-item-card {
+        background: #fff;
+        border: 1px solid #eee5ed;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(35, 28, 40, 0.04);
+        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        display: flex;
+        flex-direction: column;
+    }
+
+        .k-item-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 36px rgba(139, 0, 40, 0.08);
+            border-color: #e5ccd3;
+        }
+
+    .k-card-img-wrap {
+        height: 240px;
+        position: relative;
+        background: #faf8f9;
+        overflow: hidden;
+    }
+
+        .k-card-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.35s ease;
+        }
+
+    .k-item-card:hover .k-card-img-wrap img {
+        transform: scale(1.05);
+    }
+
+    .k-discount-badge {
+        position: absolute;
+        top: 14px;
+        left: 14px;
+        background: linear-gradient(135deg, #8b0028, #a70b3b);
+        color: #fff;
+        font-size: 0.78rem;
+        font-weight: 700;
+        padding: 6px 14px;
+        border-radius: 999px;
+        box-shadow: 0 4px 10px rgba(139, 0, 40, 0.3);
+        z-index: 2;
+    }
+
+    .k-tag-banner {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(36, 33, 61, 0.8);
+        backdrop-filter: blur(4px);
+        color: #fff;
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 6px 12px;
+        text-align: center;
+    }
+
+    .k-card-body {
+        padding: 22px;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        justify-content: space-between;
+    }
+
+    .k-card-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #24213d;
+        margin-bottom: 8px;
+        line-height: 1.35;
+    }
+
+    .k-card-desc {
+        font-size: 0.85rem;
+        color: #726d78;
+        line-height: 1.5;
+        margin-bottom: 16px;
+    }
+
+    .k-price-box {
+        background: #fdf5f7;
+        border: 1px solid #fae8ec;
+        border-radius: 12px;
+        padding: 10px 14px;
+        margin-bottom: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .k-action-btn {
+        background: linear-gradient(135deg, #8b0028, #a70b3b);
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        padding: 11px 20px;
+        font-size: 0.88rem;
+        font-weight: 600;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 14px rgba(139, 0, 40, 0.2);
+    }
+
+        .k-action-btn:hover {
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(139, 0, 40, 0.28);
+        }
+
+    .k-empty-box {
+        background: #fff;
+        border: 1px dashed #ddd5da;
+        border-radius: 20px;
+        padding: 70px 25px;
+        text-align: center;
+    }
+</style>
+
+<!-- HERO BÖLÜMÜ -->
+<div class="k-page-hero">
+    <div class="container">
+        <span class="k-eyebrow"><i class="bi bi-stars"></i> Sizin İçin Seçtiklerimiz</span>
+        <h1 class="k-page-title">Kampanyalar ve Fırsatlar</h1>
+        <p class="k-page-subtitle">Sevdiklerinize en güzel çiçekleri ve hediyeleri avantajlı fiyatlarla ulaştırın.</p>
+    </div>
+</div>
+
+<div class="container mb-5" style="max-width: 1320px;">
+
+    <!-- FİLTRELEME BUTONLARI -->
+    @if (kampanyalar.Any())
+    {
+        <div class="k-filter-bar">
+            <button type="button" class="k-tab-btn active" data-filter="all">Tüm Fırsatlar (@kampanyalar.Count)</button>
+            <button type="button" class="k-tab-btn" data-filter="urun">Ürün İndirimleri</button>
+            <button type="button" class="k-tab-btn" data-filter="kategori">Kategori & Sepet Fırsatları</button>
         </div>
+    }
 
-        <div class="d-flex flex-column gap-3">
-            @foreach (var kampanya in Model)
+    <!-- KAMPANYA GRID -->
+    <div class="row g-4" id="kampanyaListesi">
+        @if (kampanyalar.Any())
+        {
+            foreach (var item in kampanyalar)
             {
-                bool isKategoriVeyaGrup = kampanya.KapsamTuru == "Kategori" || kampanya.KampanyaVaryasyonu == "KategoriCapraz" || kampanya.KampanyaVaryasyonu == "IkinciUrunIndirimli" || !kampanya.UrunId.HasValue;
+                bool isKategori = item.KapsamTuru == "Kategori" || !item.UrunId.HasValue;
+                string hedefUrl = isKategori
+                    ? (!string.IsNullOrEmpty(item.KategoriSeoUrl) ? $"/kategori/{item.KategoriSeoUrl}" : "/urunler")
+                    : $"/urun/{item.SeoUrl}";
+                string turTag = isKategori ? "kategori" : "urun";
 
-                <!-- SABİT YÜKSEKLİKTE KURUMSAL KAMPANYA BANDI -->
-                <div class="card border rounded-4 shadow-sm overflow-hidden bg-white transition-all" style="border-color: #eee5ed !important; height: 270px;">
-                    <div class="row g-0 h-100">
+                <div class="col-lg-4 col-md-6 kampanya-kart-item" data-tur="@turTag">
+                    <div class="k-item-card h-100">
 
-                        <!-- Sol Taraf: Görsel veya Şık İkon Alanı -->
-                        <div class="col-md-4 h-100 position-relative" style="background: #f9f9f9; overflow: hidden;">
-                            @if (isKategoriVeyaGrup)
+                        <!-- GÖRSEL ALANI -->
+                        <div class="k-card-img-wrap">
+                            <span class="k-discount-badge">
+                                @(item.IndirimTipi == "Yuzde" ? $"%{item.IndirimDegeri:N0} İNDİRİM" : $"{item.IndirimDegeri:N0} ₺ İNDİRİM")
+                            </span>
+
+                            @if (!string.IsNullOrEmpty(item.GorselUrl))
                             {
-                                <div class="h-100 w-100 d-flex flex-column align-items-center justify-content-center p-4 text-center" style="background: linear-gradient(135deg, #8b0028 0%, #a70b3b 100%); color: #fff;">
-                                    <i class="bi bi-gift-fill mb-2" style="font-size: 3rem;"></i>
-                                    <span class="badge bg-warning text-dark px-2.5 py-1 rounded-pill fw-bold" style="font-size: 0.68rem;">ÖZEL SEPET FIRSATI</span>
-                                </div>
+                                <img src="@item.GorselUrl" alt="@item.UrunAdi" />
                             }
                             else
                             {
-                                @if (!string.IsNullOrEmpty(kampanya.GorselUrl))
-                                {
-                                    <img src="@kampanya.GorselUrl" alt="@kampanya.UrunAdi" class="position-absolute top-0 start-0 w-100 h-100 object-fit-cover" />
-                                }
-                                else
-                                {
-                                    <img src="/images/no-image.jpg" alt="@kampanya.UrunAdi" class="position-absolute top-0 start-0 w-100 h-100 object-fit-cover" />
-                                }
-                                <div class="position-absolute top-0 start-0 m-2 text-white fw-bold px-2.5 py-1 rounded-2 shadow-sm" style="background-color: #d97706; font-size: 0.7rem; z-index: 2;">
-                                    @kampanya.KampanyaAdi
+                                <div class="w-100 h-100 d-flex align-items-center justify-content-center text-muted">
+                                    <i class="bi bi-gift-fill fs-1" style="color: #8b0028;"></i>
                                 </div>
                             }
+
+                            <div class="k-tag-banner">
+                                <i class="bi bi-tag-fill me-1 text-warning"></i> @item.KampanyaAdi
+                            </div>
                         </div>
 
-                        <!-- Sağ Taraf: Metin ve Aksiyon Alanı -->
-                        <div class="col-md-8 h-100 d-flex flex-column justify-content-between p-4">
+                        <!-- KART İÇERİĞİ -->
+                        <div class="k-card-body">
                             <div>
-                                <!-- Üst Bilgi Satırı (Teknik Kodlar Yerine Şık Etiketler) -->
-                                <div class="d-flex justify-content-between align-items-center mb-1">
-                                    <div class="d-flex align-items-center gap-2">
-                                        <span class="badge px-2.5 py-1 rounded fw-bold" style="background: #fff4f7; color: #8b0028; font-size: 0.7rem;">
-                                            @(kampanya.KampanyaVaryasyonu == "IkinciUrunIndirimli" ? "İkinci Ürün Fırsatı" : "Özel Kampanya")
-                                        </span>
-                                        @if (!isKategoriVeyaGrup && !string.IsNullOrEmpty(kampanya.UrunKodu))
-                                        {
-                                            <span class="text-muted" style="font-size: 0.75rem;">Kod: @kampanya.UrunKodu</span>
-                                        }
-                                    </div>
-                                    <span class="text-danger fw-semibold small" style="font-size: 0.75rem;"><i class="bi bi-truck"></i> Aynı Gün Teslimat</span>
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    <span class="badge px-2.5 py-1 rounded" style="background:#fff4f7; color:#8b0028; font-size:0.72rem;">
+                                        @(item.KampanyaVaryasyonu == "IkinciUrunIndirimli" ? "2. Ürüne Özel Fırsat" : (isKategori ? "Kategori Kampanyası" : "Özel İndirim"))
+                                    </span>
+                                    <span class="text-danger small fw-semibold" style="font-size:0.75rem;">
+                                        <i class="bi bi-truck"></i> Aynı Gün Teslimat
+                                    </span>
                                 </div>
 
-                                <!-- Başlık -->
-                                <h3 class="fw-bold text-dark mb-2 text-truncate" style="font-size: 1.25rem;">
-                                    @(isKategoriVeyaGrup ? kampanya.KampanyaAdi : kampanya.UrunAdi)
-                                </h3>
+                                <h3 class="k-card-title">@item.UrunAdi</h3>
 
-                                <!-- Kampanya Koşulu / Açıklaması (Hedef Kapsam Bilgisi Dahil) -->
-                                <div class="py-2 px-3 rounded-3 mb-3" style="background: #faf6f8; border-left: 3px solid #8b0028;">
-                                    <div class="text-danger fw-bold small" style="font-size: 0.72rem;"><i class="bi bi-stars"></i> Kampanya Koşulu</div>
-                                    <div class="text-dark small text-truncate" style="font-size: 0.85rem;">
-                                        @(!string.IsNullOrEmpty(kampanya.KampanyaAciklamasi) ? kampanya.KampanyaAciklamasi : "Bu fırsatı kaçırmayın!")
-                                    </div>
-                                </div>
+                                <p class="k-card-desc">
+                                    @(string.IsNullOrWhiteSpace(item.KampanyaAciklamasi) ? "Bu özel fırsattan yararlanmak için hemen siparişinizi verin." : item.KampanyaAciklamasi)
+                                </p>
                             </div>
 
-                            <!-- Alt Fiyat ve Buton Satırı -->
-                            <div class="d-flex align-items-center justify-content-between pt-2 border-top">
-                                <div>
-                                    @if (!isKategoriVeyaGrup)
+                            <div>
+                                <!-- FİYAT KUTUSU -->
+                                <div class="k-price-box">
+                                    @if (item.Fiyat > 0)
                                     {
-                                        <div class="text-muted small text-decoration-line-through" style="font-size: 0.75rem;">Orijinal Fiyat</div>
-                                        <div class="fw-bold fs-5 text-dark">@kampanya.Fiyat.ToString("N2") ₺</div>
+                                        <div>
+                                            <div class="text-muted small text-decoration-line-through">@item.Fiyat.ToString("N2") ₺</div>
+                                            <div class="fw-bold fs-4 text-danger">@item.IndirimliFiyat.ToString("N2") ₺</div>
+                                        </div>
+                                        <div class="text-end">
+                                            <span class="badge bg-success-subtle text-success border border-success-subtle small">
+                                                Kazanç: @((item.Fiyat - item.IndirimliFiyat).ToString("N0")) ₺
+                                            </span>
+                                        </div>
                                     }
                                     else
                                     {
-                                        <div class="text-muted small">Çoklu Alım Kampanyası</div>
-                                        <div class="fw-bold text-danger small">Sepette Geçerli Fırsat</div>
+                                        <div>
+                                            <div class="text-muted small">Kampanya Türü</div>
+                                            <div class="fw-bold fs-5 text-danger">Sepette İndirim</div>
+                                        </div>
+                                        <div class="text-end">
+                                            <span class="badge bg-warning-subtle text-dark border border-warning-subtle small">
+                                                Avantajlı Fırsat
+                                            </span>
+                                        </div>
                                     }
                                 </div>
 
-                                <a href="@(isKategoriVeyaGrup ? "/Kategori/Index" : "/urun/" + kampanya.SeoUrl)"
-                                   class="btn btn-gunu-guzellestir text-white fw-bold px-4 py-2 rounded-3 text-uppercase shadow-sm d-inline-flex align-items-center gap-2" style="font-size: 0.82rem;">
-                                    <span>@(isKategoriVeyaGrup ? "Kategoriyi İncele" : "Fırsatı Yakala")</span>
+                                <a href="@hedefUrl" class="k-action-btn">
+                                    <span>@(isKategori ? "Kategoriyi Keşfet" : "Fırsatı Yakala")</span>
                                     <i class="bi bi-arrow-right"></i>
                                 </a>
                             </div>
@@ -103,18 +315,44 @@
                     </div>
                 </div>
             }
-        </div>
+        }
+        else
+        {
+            <div class="col-12">
+                <div class="k-empty-box">
+                    <i class="bi bi-gift fs-1 text-danger mb-3 d-inline-block"></i>
+                    <h3 class="fw-bold text-dark">Şu anda aktif kampanya bulunmamaktadır</h3>
+                    <p class="text-muted small">Yeni kampanyalarımız ve indirim fırsatlarımız yakında burada yer alacaktır.</p>
+                    <a href="/urunler" class="k-action-btn d-inline-flex mt-3" style="width: auto; padding: 12px 28px;">
+                        <span>Tüm Çiçekleri İncele</span>
+                    </a>
+                </div>
+            </div>
+        }
     </div>
-</section>
+</div>
 
-<style>
-    .transition-all {
-        transition: all 0.2s ease;
-    }
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const tabBtns = document.querySelectorAll(".k-tab-btn");
+        const items = document.querySelectorAll(".kampanya-kart-item");
 
-    .card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 10px 25px rgba(35,28,40,0.08) !important;
-        border-color: #d1b5c2 !important;
-    }
-</style>
+        tabBtns.forEach(btn => {
+            btn.addEventListener("click", function () {
+                tabBtns.forEach(b => b.classList.remove("active"));
+                this.classList.add("active");
+
+                const filter = this.getAttribute("data-filter");
+
+                items.forEach(item => {
+                    const tur = item.getAttribute("data-tur");
+                    if (filter === "all" || tur === filter) {
+                        item.style.display = "block";
+                    } else {
+                        item.style.display = "none";
+                    }
+                });
+            });
+        });
+    });
+</script>

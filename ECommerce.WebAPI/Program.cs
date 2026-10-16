@@ -91,7 +91,6 @@ builder.Services.AddScoped<IKategoriServisi, KategoriServisi>();
 builder.Services.AddScoped<IUrunServisi, UrunServisi>();
 builder.Services.AddScoped<IBankaHesabiServisi, BankaHesabiServisi>();
 builder.Services.AddScoped<ISssServisi, SssServisi>();
-builder.Services.AddScoped<IBlogServisi, BlogServisi>();
 builder.Services.AddScoped<IKuponServisi, KuponServisi>();
 builder.Services.AddScoped<IUrunYorumServisi, UrunYorumServisi>();
 builder.Services.AddScoped<IIletisimMesajiServisi, IletisimMesajiServisi>();

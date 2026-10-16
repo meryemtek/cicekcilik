@@ -7,16 +7,10 @@ let galeriOtoGecisZamanlayici = null;
 
 document.addEventListener("DOMContentLoaded", function () {
     galeriyiBaslat();
-    const mahalleListesi = document.getElementById('mahalleSecimi');
-    if (mahalleListesi) {
-        teslimatAdresSeciminiBaslat();
-    } else {
-        fiyatGuncelle();
-    }
-    const saatSelect = document.getElementById('teslimatSaatiSelect');
-    if (saatSelect && saatSelect.value) {
-        saatSecimiDegisti(saatSelect);
-    }
+    doldurIl();
+    saatleriKontrolEt();
+    saatDegisti();
+    fiyatGuncelle();
 });
 
 function galeriyiBaslat() {
@@ -399,8 +393,10 @@ function teslimatAdresSeciminiBaslat() {
    TESLİMAT GÜNÜ & SAAT ARALIĞI
    ======================================================== */
 function tarihTuruSec(el, tur) {
-    document.querySelectorAll('.fl-delivery-date-card').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.date-type-card').forEach(c => c.classList.remove('active'));
     el.classList.add('active');
+    const input = el.querySelector('input');
+    if (input) input.checked = true;
 
     const ozelTarihBox = document.getElementById('ozelTarihBox');
     if (tur === 'TarihSec') {
@@ -420,6 +416,7 @@ function tarihTuruSec(el, tur) {
             document.getElementById('gizliTeslimatGunu').value = tur;
         }
     }
+    saatleriKontrolEt();
 }
 
 function ozelTarihDegisti() {
@@ -429,57 +426,67 @@ function ozelTarihDegisti() {
     }
 }
 
-function saatSecimiDegisti(selectEl) {
-    if (!selectEl) return;
-    const saat = selectEl.value;
-    if (document.getElementById('gizliTeslimatSaati')) {
-        document.getElementById('gizliTeslimatSaati').value = saat;
-    }
-}
-
 function saatleriKontrolEt() {
-    const gunVal = document.getElementById('gizliTeslimatGunu')?.value || 'Bugun';
+    const gunRadyo = document.querySelector('input[name="GorselTeslimatGunu"]:checked');
+    const gunVal = gunRadyo ? gunRadyo.value : (document.getElementById('gizliTeslimatGunu')?.value || 'Bugun');
     const bugunSeciliMi = (gunVal === 'Bugun');
     const simdi = new Date();
     const suAnkiToplamDakika = (simdi.getHours() * 60) + simdi.getMinutes();
 
-    const pills = document.querySelectorAll('.fl-time-pill-btn');
-    pills.forEach(pill => {
-        const baslangic = pill.getAttribute('data-baslangic');
+    document.querySelectorAll('.time-select option').forEach(opt => {
+        if (!opt.value) return;
+        const baslangic = opt.getAttribute('data-baslangic');
         if (!baslangic) return;
         const [saat, dakika] = baslangic.split(':').map(Number);
         const baslangicToplamDakika = (saat * 60) + dakika;
 
         if (bugunSeciliMi && suAnkiToplamDakika > baslangicToplamDakika) {
-            pill.classList.add('disabled');
-            if (pill.classList.contains('active')) {
-                pill.classList.remove('active');
-            }
+            opt.disabled = true;
+            if (!opt.text.includes('(Geçti)')) opt.text += ' (Geçti)';
         } else {
-            pill.classList.remove('disabled');
+            opt.disabled = false;
+            opt.text = opt.text.replace(' (Geçti)', '');
         }
     });
+    saatDegisti();
+}
 
-    const aktifSaat = document.querySelector('.fl-time-pill-btn.active:not(.disabled)');
-    if (!aktifSaat) {
-        const ilkUygun = document.querySelector('.fl-time-pill-btn:not(.disabled)');
-        if (ilkUygun) {
-            saatPillSec(ilkUygun);
-        }
+function saatDegisti() {
+    const isVip = document.getElementById('vipCheckbox')?.checked;
+    const normalSaat = document.getElementById('normalSaatSelect')?.value || '';
+    const vipSaat = document.getElementById('vipSaatSelect')?.value || '';
+    const gizli = document.getElementById('gizliTeslimatSaati');
+    if (gizli) {
+        gizli.value = isVip ? vipSaat : normalSaat;
     }
 }
 
 function vipDurumuDegisti() {
     const checkbox = document.getElementById('vipCheckbox');
+    const normalSaatSelect = document.getElementById('normalSaatSelect');
+    const vipSaatKutusu = document.getElementById('vipSaatKutusu');
     const vipFarkEl = document.getElementById('gizliVipFark');
-    if (!checkbox || !vipFarkEl) return;
 
-    if (checkbox.checked) {
-        vipFarkEl.value = vipFarkEl.getAttribute('data-ucret') || 0;
+    if (checkbox && checkbox.checked) {
+        if (normalSaatSelect) {
+            normalSaatSelect.disabled = true;
+            normalSaatSelect.style.opacity = '0.5';
+        }
+        if (vipSaatKutusu) vipSaatKutusu.style.display = 'block';
+        if (vipFarkEl) vipFarkEl.value = vipFarkEl.getAttribute('data-ucret') || '0';
     } else {
-        vipFarkEl.value = "0";
+        if (normalSaatSelect) {
+            normalSaatSelect.disabled = false;
+            normalSaatSelect.style.opacity = '1';
+        }
+        if (vipSaatKutusu) {
+            vipSaatKutusu.style.display = 'none';
+            const vipSelect = document.getElementById('vipSaatSelect');
+            if (vipSelect) vipSelect.value = '';
+        }
+        if (vipFarkEl) vipFarkEl.value = '0';
     }
-
+    saatDegisti();
     fiyatGuncelle();
 }
 
@@ -563,9 +570,43 @@ function konumBilgileriniKaydet() {
     document.getElementById('gizliMahalle').value = mahalle;
     document.getElementById('gizliMahalleFark').value = mahalleFark;
 
+    const triggerCard = document.getElementById('deliveryTriggerBox');
+    if (triggerCard) {
+        triggerCard.classList.add('is-selected');
+    }
+
+    const pinIcon = document.getElementById('deliveryPinIcon');
+    if (pinIcon) {
+        pinIcon.className = 'bi bi-check-circle-fill';
+    }
+
+    const eyebrow = document.getElementById('deliveryEyebrow');
+    if (eyebrow) {
+        eyebrow.innerText = 'TESLİMAT BÖLGESİ SEÇİLDİ';
+    }
+
     const ozetEl = document.getElementById('secilenAdresOzet');
     if (ozetEl) {
-        ozetEl.innerHTML = `<i class="bi bi-geo-alt-fill text-danger"></i> Elazığ / ${mahalle}`;
+        ozetEl.innerText = `${il} / ${ilce} · ${mahalle}`;
+    }
+
+    const zamanOzet = document.getElementById('secilenZamanOzet');
+    if (zamanOzet) {
+        zamanOzet.innerText = mahalleFark > 0
+            ? `+₺${mahalleFark.toLocaleString('tr-TR')} ek teslimat ücreti`
+            : 'Ücretsiz teslimat bölgesi';
+    }
+
+    const actionText = document.getElementById('deliveryActionText');
+    if (actionText) {
+        actionText.innerText = 'Değiştir';
+    }
+
+    const durumPill = document.getElementById('teslimatDurumPill');
+    if (durumPill) {
+        durumPill.innerText = mahalleFark > 0
+            ? `+₺${mahalleFark.toLocaleString('tr-TR')} Teslimat`
+            : 'Ücretsiz Teslimat';
     }
 
     fiyatGuncelle();
@@ -583,10 +624,19 @@ function konumBilgileriniKaydet() {
 function adetDegistir(deger) {
     let gorselInput = document.getElementById('gorselAdet');
     let gercekInput = document.getElementById('gercekAdetInput');
-    let yeniAdet = parseInt(gorselInput.value) + deger;
+    if (!gorselInput) return;
+
+    let maxStok = parseInt(gorselInput.getAttribute('data-max-stok') || '999');
+    if (isNaN(maxStok) || maxStok <= 0) return;
+
+    let yeniAdet = (parseInt(gorselInput.value) || 1) + deger;
     if (yeniAdet < 1) yeniAdet = 1;
+    if (yeniAdet > maxStok) {
+        yeniAdet = maxStok;
+    }
+
     gorselInput.value = yeniAdet;
-    gercekInput.value = yeniAdet;
+    if (gercekInput) gercekInput.value = yeniAdet;
     fiyatGuncelle();
 }
 
@@ -614,14 +664,16 @@ document.addEventListener("DOMContentLoaded", function () {
         siparisFormu.addEventListener('submit', function (e) {
             if (!document.getElementById('gizliMahalle')?.value) {
                 e.preventDefault();
-                teslimatYeriListesiniGoster(true);
-                document.getElementById('teslimatYeriToggle')?.focus();
-                alert("Sipariş vermek için önce teslimat mahallesi seçin.");
+                alert("Lütfen teslimat adresi için bir mahalle seçiniz.");
+                var modalEl = document.getElementById('teslimatModal');
+                if (modalEl) {
+                    (bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl)).show();
+                }
                 return false;
             }
             if (!document.getElementById('gizliTeslimatSaati')?.value) {
                 e.preventDefault();
-                alert("Lütfen teslimat saati penceresini seçiniz.");
+                alert("Lütfen teslimat saati seçiniz.");
                 return false;
             }
         });
@@ -630,9 +682,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function whatsappSiparis() {
     if (!document.getElementById('gizliMahalle')?.value) {
-        teslimatYeriListesiniGoster(true);
-        document.getElementById('teslimatYeriToggle')?.focus();
-        alert("Sipariş vermek için önce teslimat mahallesi seçin.");
+        alert("Lütfen önce teslimat mahallesi seçiniz.");
+        var modalEl = document.getElementById('teslimatModal');
+        if (modalEl) {
+            (bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl)).show();
+        }
         return;
     }
 

@@ -1,6 +1,10 @@
-﻿@model IEnumerable<ECommerce.Application.DTOs.Kampanya.KampanyaUrunDto>
+@model IEnumerable<ECommerce.Application.DTOs.Kampanya.KampanyaUrunDto>
 @{
     ViewData["Title"] = "Kampanya Yönetimi";
+    var kampanyalar = Model?.ToList() ?? new List<ECommerce.Application.DTOs.Kampanya.KampanyaUrunDto>();
+    var toplamKampanya = kampanyalar.Count;
+    var aktifKampanya = kampanyalar.Count(x => x.AktifMi);
+    var pasifKampanya = toplamKampanya - aktifKampanya;
 }
 
 <style>
@@ -15,7 +19,7 @@
         align-items: flex-end;
         justify-content: space-between;
         gap: 24px;
-        margin-bottom: 28px;
+        margin-bottom: 24px;
     }
 
     .s-eyebrow {
@@ -67,7 +71,125 @@
             box-shadow: 0 12px 28px rgba(139,0,40,.28);
         }
 
-    /* GRID DÜZELTMESİ: 3 Sütunlu esnek yapı */
+    /* İSTATİSTİKLER */
+    .k-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    .k-stat {
+        background: #fff;
+        border: 1px solid #eee9ed;
+        border-radius: 16px;
+        padding: 18px 22px;
+        box-shadow: 0 4px 15px rgba(35,28,40,.03);
+    }
+
+    .k-stat-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+
+    .k-stat-label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #85808a;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .k-stat-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        background: #fff4f7;
+        color: #8b0028;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+    }
+
+    .k-stat-number {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #24213d;
+        line-height: 1;
+        margin-bottom: 4px;
+    }
+
+    .k-stat-desc {
+        font-size: 0.78rem;
+        color: #9a95a0;
+    }
+
+    /* TOOLBAR */
+    .k-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 24px;
+        background: #fff;
+        padding: 12px 16px;
+        border-radius: 14px;
+        border: 1px solid #eee9ed;
+    }
+
+    .k-search {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: #faf8fa;
+        border: 1px solid #e5dfe5;
+        border-radius: 10px;
+        padding: 8px 14px;
+        flex: 1;
+        max-width: 420px;
+    }
+
+        .k-search i {
+            color: #8b0028;
+            font-size: 0.95rem;
+        }
+
+        .k-search input {
+            border: none;
+            background: transparent;
+            outline: none;
+            width: 100%;
+            font-size: 0.88rem;
+            color: #24213d;
+        }
+
+    .k-filter {
+        display: flex;
+        gap: 6px;
+    }
+
+    .k-filter-btn {
+        background: #faf8fa;
+        border: 1px solid #e5dfe5;
+        border-radius: 8px;
+        padding: 7px 16px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #65606a;
+        cursor: pointer;
+        transition: all 0.15s ease;
+    }
+
+        .k-filter-btn.active, .k-filter-btn:hover {
+            background: #8b0028;
+            border-color: #8b0028;
+            color: #fff;
+        }
+
+    /* GRID */
     .s-grid {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -80,10 +202,11 @@
         border-radius: 16px;
         border: 1px solid #eee9ed;
         box-shadow: 0 8px 25px rgba(35,28,40,.04);
-        padding: 24px;
+        padding: 22px;
         transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
         display: flex;
         flex-direction: column;
+        position: relative;
     }
 
         .s-card:hover {
@@ -94,121 +217,63 @@
 
     .s-card-top {
         display: flex;
-        align-items: flex-start;
+        align-items: center;
         justify-content: space-between;
-        margin-bottom: 15px;
+        margin-bottom: 14px;
     }
 
-    /* GÖRSEL TAŞMA DÜZELTMESİ */
     .s-icon {
-        width: 54px;
-        height: 54px;
-        min-width: 54px;
-        min-height: 54px;
+        width: 62px;
+        height: 62px;
         border-radius: 12px;
-        background: linear-gradient(145deg,#fff2f5,#fbe3e9);
+        overflow: hidden;
+        background: #fbf9fb;
         display: flex;
         align-items: center;
         justify-content: center;
-        overflow: hidden;
-        position: relative;
+        border: 1px solid #f0eaee;
+        flex-shrink: 0;
     }
 
         .s-icon img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            display: block;
-        }
-
-        .s-icon i {
-            color: #8b0028;
-            font-size: 1.4rem;
         }
 
     .s-campaign-badge {
-        font-size: 0.75rem;
-        font-weight: 700;
+        display: inline-block;
+        background: #fff4f7;
         color: #8b0028;
-        background: #fce8ed;
+        font-size: 0.72rem;
+        font-weight: 700;
         padding: 4px 10px;
         border-radius: 6px;
-        display: inline-block;
-        margin-bottom: 8px;
-    }
-
-    .s-coupon-badge {
-        font-size: 0.7rem;
-        font-weight: 600;
-        padding: 3px 8px;
-        border-radius: 6px;
-        display: inline-block;
-        margin-bottom: 10px;
-    }
-
-    .coupon-yes {
-        background: #e0f2fe;
-        color: #0369a1;
-    }
-
-    .coupon-no {
-        background: #fee2e2;
-        color: #991b1b;
+        margin-bottom: 6px;
     }
 
     .s-card-title {
-        font-size: 1.15rem;
+        font-size: 1.1rem;
         font-weight: 700;
         color: #24213d;
-        margin: 0 0 5px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        margin: 4px 0 6px;
+        line-height: 1.3;
     }
 
-    .s-card-code {
-        font-size: .8rem;
-        font-weight: 600;
-        color: #9a959e;
-        margin-bottom: 10px;
-    }
-
-    .s-discount-info {
-        font-size: 0.9rem;
-        font-weight: 700;
-        color: #d97706;
-        background: #fef3c7;
-        padding: 4px 8px;
-        border-radius: 6px;
-        display: inline-block;
-        margin-bottom: 12px;
-    }
-
-    .s-card-url {
-        font-size: .85rem;
-        font-weight: 600;
-        color: #287c5d;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-    }
-
-    .s-card-date {
-        font-size: 0.75rem;
+    .s-card-desc {
+        font-size: 0.8rem;
         color: #85808a;
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        margin-top: 8px;
+        margin-bottom: 12px;
+        line-height: 1.4;
     }
 
     .s-status {
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        padding: 5px 10px;
-        border-radius: 8px;
-        font-size: .75rem;
+        padding: 4px 9px;
+        border-radius: 7px;
+        font-size: .72rem;
         font-weight: 700;
         white-space: nowrap;
     }
@@ -226,7 +291,7 @@
     .s-card-footer {
         display: flex;
         gap: 10px;
-        padding-top: 15px;
+        padding-top: 14px;
         margin-top: auto;
         border-top: 1px solid #f0edef;
     }
@@ -280,16 +345,12 @@
         grid-column: 1/-1;
     }
 
-        .s-empty > i {
-            font-size: 2.5rem;
-            color: #9a1640;
-            margin-bottom: 15px;
-            display: inline-block;
-        }
-
     @@media(max-width:1100px) {
         .s-grid {
             grid-template-columns: repeat(2, minmax(0,1fr));
+        }
+        .k-stats {
+            grid-template-columns: 1fr;
         }
     }
 
@@ -302,6 +363,15 @@
             flex-direction: column;
             align-items: flex-start;
         }
+
+        .k-toolbar {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .k-search {
+            max-width: 100%;
+        }
     }
 </style>
 
@@ -309,27 +379,83 @@
     <div class="s-hero">
         <div class="s-hero-content">
             <div class="s-eyebrow"><i class="bi bi-tags-fill"></i> Kampanya Yönetimi</div>
-            <h1 class="s-title">Aktif Kampanyalar ve Fırsatlar</h1>
-            <p class="s-subtitle">Anasayfa vitrininde sergilenen gelişmiş indirim ve promosyon kurallarını yönetin.</p>
+            <h1 class="s-title">Kampanya & Fırsat Yönetimi</h1>
+            <p class="s-subtitle">Müşterilerinize sunduğunuz indirim, promosyon ve sepet kurallarını kolayca yönetin.</p>
         </div>
-        <a asp-action="Ekle" class="s-add-btn"><i class="bi bi-plus-lg"></i><span>Yeni Kampanya Ekle</span></a>
+        <a asp-action="Ekle" class="s-add-btn"><i class="bi bi-plus-lg"></i><span>Yeni Kampanya Oluştur</span></a>
     </div>
 
     @if (TempData["BasariliMesaj"] != null)
     {
-        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert" style="border-radius:12px;"><i class="bi bi-check-circle me-2"></i>@TempData["BasariliMesaj"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert" style="border-radius:12px;">
+            <i class="bi bi-check-circle me-2"></i>@TempData["BasariliMesaj"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
     }
     @if (TempData["HataMesaji"] != null)
     {
-        <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert" style="border-radius:12px;"><i class="bi bi-exclamation-circle me-2"></i>@TempData["HataMesaji"]<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert" style="border-radius:12px;">
+            <i class="bi bi-exclamation-circle me-2"></i>@TempData["HataMesaji"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
     }
 
-    <div class="s-grid">
-        @if (Model != null && Model.Any())
+    <!-- İSTATİSTİK KARTLARI -->
+    <div class="k-stats">
+        <div class="k-stat">
+            <div class="k-stat-top">
+                <span class="k-stat-label">Toplam Kampanya</span>
+                <div class="k-stat-icon"><i class="bi bi-tags"></i></div>
+            </div>
+            <div class="k-stat-number">@toplamKampanya</div>
+            <div class="k-stat-desc">Sistemde tanımlı toplam kampanya</div>
+        </div>
+        <div class="k-stat">
+            <div class="k-stat-top">
+                <span class="k-stat-label">Yayında Olanlar</span>
+                <div class="k-stat-icon" style="background:#edf9f4; color:#287c5d;"><i class="bi bi-check2-circle"></i></div>
+            </div>
+            <div class="k-stat-number" style="color:#287c5d;">@aktifKampanya</div>
+            <div class="k-stat-desc">Mağazada ve sepette aktif</div>
+        </div>
+        <div class="k-stat">
+            <div class="k-stat-top">
+                <span class="k-stat-label">Gizli / Pasif</span>
+                <div class="k-stat-icon" style="background:#f2f1f3; color:#716c75;"><i class="bi bi-eye-slash"></i></div>
+            </div>
+            <div class="k-stat-number" style="color:#716c75;">@pasifKampanya</div>
+            <div class="k-stat-desc">Yayında olmayan veya süresi dolmuş</div>
+        </div>
+    </div>
+
+    <!-- TOOLBAR (ARAMA VE FİLTRE) -->
+    <div class="k-toolbar">
+        <div class="k-search">
+            <i class="bi bi-search"></i>
+            <input type="text" id="kampanyaSearch" placeholder="Kampanya veya ürün adı ara..." />
+        </div>
+        <div class="k-filter">
+            <button type="button" class="k-filter-btn active" data-filter="all">Tümü (@toplamKampanya)</button>
+            <button type="button" class="k-filter-btn" data-filter="active">Yayında (@aktifKampanya)</button>
+            <button type="button" class="k-filter-btn" data-filter="passive">Gizli (@pasifKampanya)</button>
+        </div>
+    </div>
+
+    <!-- KAMPANYA GRID -->
+    <div class="s-grid" id="kampanyaGrid">
+        @if (kampanyalar.Any())
         {
-            foreach (var item in Model)
+            foreach (var item in kampanyalar)
             {
-                <div class="s-card" style="opacity: @(item.AktifMi ? "1" : "0.6");">
+                bool suresiDoldu = item.BitisTarihi.HasValue && item.BitisTarihi.Value < DateTime.Now;
+
+                <div class="s-card kampanya-kart"
+                     data-name="@item.KampanyaAdi.ToLowerInvariant()"
+                     data-product="@item.UrunAdi.ToLowerInvariant()"
+                     data-category="@(item.KategoriAdi?.ToLowerInvariant() ?? "")"
+                     data-status="@(item.AktifMi ? "active" : "passive")"
+                     style="opacity: @(item.AktifMi ? "1" : "0.65");">
+
                     <div class="s-card-top">
                         <div class="s-icon">
                             @if (!string.IsNullOrEmpty(item.GorselUrl))
@@ -338,92 +464,186 @@
                             }
                             else
                             {
-                                <i class="bi bi-tags"></i>
+                                <i class="bi bi-gift-fill fs-3" style="color:#8b0028;"></i>
                             }
                         </div>
-                        @if (item.AktifMi)
-                        {
-                            <span class="s-status status-active"><i class="bi bi-check2-circle"></i> Yayında</span>
-                        }
-                        else
-                        {
-                            <span class="s-status status-passive"><i class="bi bi-eye-slash"></i> Gizli</span>
-                        }
-                    </div>
-
-                    <!-- Kampanya Adı ve Varyasyonu -->
-                    <div>
-                        <span class="s-campaign-badge"><i class="bi bi-bookmark-star"></i> @item.KampanyaAdi (@item.KampanyaVaryasyonu)</span>
-
-                        <!-- Kupon Uyumluluk Rozeti -->
-                        <div>
-                            @if (item.KuponlarlaBirlesebilirMi)
-                            {
-                                <span class="s-coupon-badge coupon-yes"><i class="bi bi-ticket-perforated"></i> Kuponla Birleşebilir</span>
-                            }
-                            else
-                            {
-                                <span class="s-coupon-badge coupon-no"><i class="bi bi-ticket-detailed-fill"></i> Kuponla Birleşemez</span>
-                            }
+                        <div class="d-flex align-items-center gap-2">
+                            <input class="form-check-input hizli-kampanya-switch"
+                                   type="checkbox"
+                                   role="switch"
+                                   data-id="@item.Id"
+                                   @(item.AktifMi ? "checked" : "")
+                                   style="cursor: pointer; width: 38px; height: 19px; accent-color: #8b0028;"
+                                   title="Hızlı Aktif/Pasif Yap" />
+                            <span class="s-status durum-rozet @(item.AktifMi ? "status-active" : "status-passive")">
+                                @(item.AktifMi ? "Yayında" : "Gizli")
+                            </span>
                         </div>
                     </div>
 
-                    <h3 class="s-card-title" title="@item.UrunAdi">@item.UrunAdi</h3>
-
-                    <div class="s-card-code">
-                        Sıra: @item.Sira
-                        @if (!string.IsNullOrEmpty(item.UrunKodu))
+                    <div>
+                        <span class="s-campaign-badge"><i class="bi bi-bookmark-star me-1"></i>@item.KampanyaAdi</span>
+                        @if (item.KuponlarlaBirlesebilirMi)
                         {
-                            <text>&nbsp;|&nbsp; Kod: @item.UrunKodu</text>
+                            <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill small ms-1" style="font-size:0.68rem;">
+                                <i class="bi bi-ticket-perforated"></i> Kuponla Birleşir
+                            </span>
                         }
                     </div>
 
-                    <!-- İndirim Oranı / Tutar Bilgisi -->
-                    <div>
-                        <span class="s-discount-info">
-                            <i class="bi bi-tag-fill me-1"></i>
-                            @if (item.IndirimTipi == "Yuzde")
-                            {
-                                <text>%@item.IndirimDegeri İndirim</text>
-                            }
-                            else
-                            {
-                                <text>@item.IndirimDegeri.ToString("N2") ₺ Net İndirim</text>
-                            }
-                        </span>
-                    </div>
+                    <h3 class="s-card-title text-truncate" title="@item.UrunAdi">@item.UrunAdi</h3>
 
+                    @if (!string.IsNullOrWhiteSpace(item.KampanyaAciklamasi))
+                    {
+                        <div class="s-card-desc text-truncate" title="@item.KampanyaAciklamasi">
+                            @item.KampanyaAciklamasi
+                        </div>
+                    }
+
+                    <!-- FİYAT VE İNDİRİM BİLGİSİ -->
                     @if (item.Fiyat > 0)
                     {
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <div class="s-card-url"><span class="text-muted text-decoration-line-through">@item.Fiyat.ToString("N2") ₺</span></div>
+                        <div class="d-flex align-items-baseline gap-2 mb-3 p-2 rounded-3" style="background: #fdf5f7; border: 1px solid #fae8ec;">
+                            <span class="text-muted text-decoration-line-through small">@item.Fiyat.ToString("N2") ₺</span>
+                            <span class="fw-bold fs-5 text-danger">@item.IndirimliFiyat.ToString("N2") ₺</span>
+                            <span class="badge bg-danger ms-auto fw-bold" style="font-size: 0.75rem;">
+                                @(item.IndirimTipi == "Yuzde" ? $"%{item.IndirimDegeri:N0} İndirim" : $"{item.IndirimDegeri:N0} ₺ İndirim")
+                            </span>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="p-2 rounded-3 mb-3 text-center" style="background: #fdf5f7; border: 1px solid #fae8ec;">
+                            <span class="badge bg-danger fw-bold" style="font-size: 0.8rem;">
+                                @(item.IndirimTipi == "Yuzde" ? $"%{item.IndirimDegeri:N0} Sepet İndirimi" : $"{item.IndirimDegeri:N0} ₺ Sepet İndirimi")
+                            </span>
                         </div>
                     }
 
-                    @if (item.BitisTarihi.HasValue)
-                    {
-                        <div class="s-card-date"><i class="bi bi-clock-history"></i> Bitiş: @item.BitisTarihi.Value.ToString("dd.MM.yyyy HH:mm")</div>
-                    }
+                    <!-- TARİH BİLGİSİ -->
+                    <div class="d-flex align-items-center justify-content-between small text-muted mb-2">
+                        <span><i class="bi bi-calendar-check me-1"></i> Başlangıç: @item.BaslangicTarihi.ToString("dd.MM.yyyy")</span>
+                        @if (item.BitisTarihi.HasValue)
+                        {
+                            if (suresiDoldu)
+                            {
+                                <span class="badge bg-danger-subtle text-danger">Süresi Doldu</span>
+                            }
+                            else
+                            {
+                                var kalanGun = (item.BitisTarihi.Value - DateTime.Now).Days;
+                                <span class="badge bg-warning-subtle text-dark">
+                                    <i class="bi bi-hourglass-split"></i> @(kalanGun > 0 ? $"{kalanGun} gün kaldı" : "Bugün son")
+                                </span>
+                            }
+                        }
+                    </div>
 
                     <div class="s-card-footer">
-                        <a asp-action="Guncelle" asp-route-id="@item.Id" class="s-btn s-btn-edit"><i class="bi bi-pencil"></i> Düzenle</a>
+                        <a asp-action="Guncelle" asp-route-id="@item.Id" class="s-btn s-btn-edit">
+                            <i class="bi bi-pencil"></i> Düzenle
+                        </a>
                         <form asp-action="Sil" asp-route-id="@item.Id" method="post" onsubmit="return confirm('Bu kampanyayı kaldırmak istediğinize emin misiniz?');" style="margin:0;">
-                            <button type="submit" class="s-btn s-btn-delete" title="Sil"><i class="bi bi-trash3"></i></button>
+                            <button type="submit" class="s-btn s-btn-delete" title="Kampanyayı Sil"><i class="bi bi-trash3"></i></button>
                         </form>
                     </div>
                 </div>
             }
         }
         else
-            {
-        <div class="s-empty">
-            <i class="bi bi-box2-heart"></i>
-            <h3>Henüz aktif kampanya yok</h3>
-            <p>Müşterilerinize cazip indirimler sunmak için ilk gelişmiş kampanyanızı hemen oluşturun.</p>
-            <div style="display: flex; justify-content: center; margin-top: 20px;">
-                <a asp-action="Ekle" class="s-add-btn" style="display: inline-flex !important; width: auto !important; padding: 13px 24px;"><i class="bi bi-plus-lg"></i><span>İlk Kampanyayı Ekle</span></a>
+        {
+            <div class="s-empty">
+                <i class="bi bi-tags fs-1 text-danger mb-3 d-inline-block"></i>
+                <h3>Henüz tanımlı bir kampanya yok</h3>
+                <p class="text-muted">Müşterilerinize cazip indirimler sunmak için ilk kampanyayı hemen oluşturun.</p>
+                <div class="d-flex justify-content-center mt-3">
+                    <a asp-action="Ekle" class="s-add-btn"><i class="bi bi-plus-lg"></i><span>İlk Kampanyayı Ekle</span></a>
+                </div>
             </div>
-        </div>
         }
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // CANLI ARAMA
+            const searchInput = document.getElementById("kampanyaSearch");
+            const cards = document.querySelectorAll(".kampanya-kart");
+
+            if (searchInput) {
+                searchInput.addEventListener("input", function () {
+                    const q = this.value.toLowerCase().trim();
+                    filterCards();
+                });
+            }
+
+            // FİLTRELEME BUTONLARI (Tümü, Yayında, Gizli)
+            const filterBtns = document.querySelectorAll(".k-filter-btn");
+            let activeFilter = "all";
+
+            filterBtns.forEach(btn => {
+                btn.addEventListener("click", function () {
+                    filterBtns.forEach(b => b.classList.remove("active"));
+                    this.classList.add("active");
+                    activeFilter = this.getAttribute("data-filter");
+                    filterCards();
+                });
+            });
+
+            function filterCards() {
+                const q = searchInput ? searchInput.value.toLowerCase().trim() : "";
+                cards.forEach(card => {
+                    const name = card.getAttribute("data-name") || "";
+                    const prod = card.getAttribute("data-product") || "";
+                    const cat = card.getAttribute("data-category") || "";
+                    const status = card.getAttribute("data-status") || "";
+
+                    const matchesQuery = !q || name.includes(q) || prod.includes(q) || cat.includes(q);
+                    const matchesFilter = (activeFilter === "all") || (status === activeFilter);
+
+                    if (matchesQuery && matchesFilter) {
+                        card.style.display = "flex";
+                    } else {
+                        card.style.display = "none";
+                    }
+                });
+            }
+
+            // HIZLI DURUM SWITCH'İ (AJAX)
+            document.querySelectorAll(".hizli-kampanya-switch").forEach(sw => {
+                sw.addEventListener("change", function () {
+                    const id = this.getAttribute("data-id");
+                    const aktifMi = this.checked;
+                    const card = this.closest(".s-card");
+                    const rozet = card.querySelector(".durum-rozet");
+
+                    fetch(`/Admin/KampanyaYonetimi/DurumDegistir?id=${id}&aktifMi=${aktifMi}`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        }
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data && data.success) {
+                            card.setAttribute("data-status", aktifMi ? "active" : "passive");
+                            card.style.opacity = aktifMi ? "1" : "0.65";
+                            if (rozet) {
+                                rozet.textContent = aktifMi ? "Yayında" : "Gizli";
+                                rozet.className = `s-status durum-rozet ${aktifMi ? "status-active" : "status-passive"}`;
+                            }
+                        } else {
+                            alert("Durum güncellenirken bir hata oluştu.");
+                            this.checked = !aktifMi; // Geri al
+                        }
+                    })
+                    .catch(() => {
+                        alert("Sunucuya bağlanırken bir hata oluştu.");
+                        this.checked = !aktifMi;
+                    });
+                });
+            });
+        });
+    </script>
+}

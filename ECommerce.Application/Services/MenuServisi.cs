@@ -1,4 +1,4 @@
-﻿using ECommerce.Application.DTOs.Menu;
+using ECommerce.Application.DTOs.Menu;
 using ECommerce.Application.Interfaces;
 using ECommerce.Application.Repositories;
 using ECommerce.Domain.Entities;
@@ -92,6 +92,18 @@ namespace ECommerce.Application.Services
                 }
 
                 _grupDeposu.Sil(grup);
+                await _grupDeposu.DegisiklikleriKaydetAsync();
+            }
+        }
+
+        public async Task GrupDurumDegistirAsync(Guid id, bool aktifMi)
+        {
+            var grup = await _grupDeposu.IdIleGetirAsync(id);
+            if (grup != null)
+            {
+                grup.AktifMi = aktifMi;
+                grup.GuncellenmeTarihi = DateTime.UtcNow;
+                _grupDeposu.Guncelle(grup);
                 await _grupDeposu.DegisiklikleriKaydetAsync();
             }
         }

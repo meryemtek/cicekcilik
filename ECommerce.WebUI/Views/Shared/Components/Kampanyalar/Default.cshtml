@@ -1,31 +1,121 @@
-﻿@model List<ECommerce.Application.DTOs.Kampanya.KampanyaUrunDto>
+@model List<ECommerce.Application.DTOs.Kampanya.KampanyaUrunDto>
 
 @if (Model != null && Model.Any())
 {
-    <section class="kampanya-kancasi-section py-4">
-        <div class="container" style="max-width: 1400px;">
-            <div class="p-4 p-md-5 rounded-4 text-white shadow-sm position-relative overflow-hidden d-flex flex-column flex-md-row align-items-center justify-content-between gap-4" style="background: linear-gradient(135deg, #8b0028 0%, #a70b3b 100%);">
+    <section class="kampanyalar-vitrin-section py-5" style="background: linear-gradient(180deg, #fcf9f8 0%, #fff 100%);">
+        <div class="container" style="max-width: 1320px;">
 
-                <!-- Sol Taraf: İkon ve Başlık -->
-                <div class="d-flex align-items-center gap-3 text-center text-md-start flex-column flex-md-row">
-                    <div style="font-size: 3rem; background: rgba(255,255,255,0.15); width: 80px; height: 80px; border-radius: 20px; display: flex; align-items: center; justify-content: center;">
-                        <i class="bi bi-gift-fill text-warning"></i>
-                    </div>
-                    <div>
-                        <span class="badge bg-warning text-dark mb-1 px-2 py-1 fw-bold" style="font-size: 0.7rem;">SEPETE ÖZEL FIRSATLAR</span>
-                        <h3 class="fw-bold mb-1" style="font-size: 1.6rem;">Kaçırılmayacak Kampanyalar Sizi Bekliyor!</h3>
-                        <p class="mb-0 text-white-50 small">İkinci ürüne indirimler, kategori fırsatları ve sepette ek avantajları hemen keşfedin.</p>
-                    </div>
-                </div>
-
-                <!-- Sağ Taraf: Tüm Kampanyalar Sayfasına Yönlendirme Butonu -->
+            <!-- BAŞLIK VE TÜMÜNÜ GÖR LİNKİ -->
+            <div class="d-flex align-items-end justify-content-between mb-4 flex-wrap gap-3">
                 <div>
-                    <a href="/kampanyalar" class="btn btn-light text-dark fw-bold px-4 py-3 rounded-3 text-uppercase shadow-sm d-inline-flex align-items-center gap-2" style="font-size: 0.9rem; transition: transform 0.2s;">
-                        <i class="bi bi-stars text-danger"></i> Tüm Kampanyaları İncele
-                    </a>
+                    <span class="d-inline-flex align-items-center gap-2 text-uppercase fw-bold mb-1" style="font-size: 0.75rem; letter-spacing: 2px; color: #8b0028;">
+                        <i class="bi bi-stars"></i> Özel Fırsatlar & İndirimler
+                    </span>
+                    <h2 class="fw-bold text-dark mb-0" style="font-family: 'Playfair Display', Georgia, serif; font-size: clamp(1.6rem, 2.5vw, 2.2rem);">
+                        Günün Öne Çıkan Kampanyaları
+                    </h2>
                 </div>
-
+                <a href="/kampanyalar" class="btn btn-outline-danger rounded-pill px-4 py-2 fw-semibold d-inline-flex align-items-center gap-2" style="font-size: 0.85rem; border-color: #f2cdd6; color: #8b0028;">
+                    <span>Tüm Kampanyaları Gör (@Model.Count)</span>
+                    <i class="bi bi-arrow-right"></i>
+                </a>
             </div>
+
+            <!-- KAMPANYA KARTLARI (GRID) -->
+            <div class="row g-4">
+                @foreach (var item in Model.Take(3))
+                {
+                    bool isKategori = item.KapsamTuru == "Kategori" || !item.UrunId.HasValue;
+                    string hedefUrl = isKategori
+                        ? (!string.IsNullOrEmpty(item.KategoriSeoUrl) ? $"/kategori/{item.KategoriSeoUrl}" : "/urunler")
+                        : $"/urun/{item.SeoUrl}";
+
+                    <div class="col-lg-4 col-md-6">
+                        <div class="card h-100 border-0 rounded-4 shadow-sm overflow-hidden kampanya-home-card" style="background: #fff; transition: all 0.25s ease; border: 1px solid #f2ebee !important;">
+
+                            <!-- GÖRSEL VE İNDİRİM ROZETİ -->
+                            <div class="position-relative" style="height: 220px; background: #faf8f9; overflow: hidden;">
+                                @if (!string.IsNullOrEmpty(item.GorselUrl))
+                                {
+                                    <img src="@item.GorselUrl" alt="@item.UrunAdi" class="w-100 h-100 object-fit-cover kampanya-img" />
+                                }
+                                else
+                                {
+                                    <div class="w-100 h-100 d-flex align-items-center justify-content-center text-muted">
+                                        <i class="bi bi-gift-fill fs-1" style="color: #8b0028;"></i>
+                                    </div>
+                                }
+
+                                <!-- İNDİRİM ROZETİ -->
+                                <div class="position-absolute top-0 start-0 m-3">
+                                    <span class="badge px-3 py-2 rounded-pill fw-bold shadow-sm" style="background: linear-gradient(135deg, #8b0028, #a70b3b); font-size: 0.78rem;">
+                                        @(item.IndirimTipi == "Yuzde" ? $"%{item.IndirimDegeri:N0} İNDİRİM" : $"{item.IndirimDegeri:N0} ₺ İNDİRİM")
+                                    </span>
+                                </div>
+
+                                <div class="position-absolute bottom-0 start-0 end-0 p-2 text-white text-center small fw-semibold" style="background: rgba(0,0,0,0.45); backdrop-filter: blur(4px); font-size: 0.75rem;">
+                                    <i class="bi bi-tag-fill me-1 text-warning"></i> @item.KampanyaAdi
+                                </div>
+                            </div>
+
+                            <!-- İÇERİK ALANI -->
+                            <div class="card-body p-4 d-flex flex-column justify-content-between">
+                                <div>
+                                    <h4 class="card-title fw-bold text-dark mb-2 text-truncate" style="font-size: 1.15rem;" title="@item.UrunAdi">
+                                        @item.UrunAdi
+                                    </h4>
+
+                                    <p class="card-text text-muted small mb-3 text-truncate" title="@(item.KampanyaAciklamasi ?? "Sepette anında indirim fırsatından hemen yararlanın.")">
+                                        @(string.IsNullOrWhiteSpace(item.KampanyaAciklamasi) ? "Sepette geçerli özel fırsatı kaçırmayın." : item.KampanyaAciklamasi)
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <!-- FİYATLAR -->
+                                    <div class="d-flex align-items-baseline justify-content-between mb-3 pt-3 border-top">
+                                        @if (item.Fiyat > 0)
+                                        {
+                                            <div>
+                                                <div class="text-muted small text-decoration-line-through">@item.Fiyat.ToString("N0") ₺</div>
+                                                <div class="fw-bold fs-4 text-danger">@item.IndirimliFiyat.ToString("N0") ₺</div>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div>
+                                                <div class="text-muted small">Özel Avantaj</div>
+                                                <div class="fw-bold fs-5 text-danger">Sepette İndirim</div>
+                                            </div>
+                                        }
+
+                                        <a href="@hedefUrl" class="btn btn-danger rounded-pill px-3 py-2 fw-semibold d-inline-flex align-items-center gap-1 shadow-sm" style="background:#8b0028; border-color:#8b0028; font-size: 0.82rem;">
+                                            <span>Fırsatı Yakala</span>
+                                            <i class="bi bi-arrow-right"></i>
+                                        </a>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
         </div>
     </section>
+
+    <style>
+        .kampanya-home-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 16px 32px rgba(139, 0, 40, 0.08) !important;
+            border-color: #e5ccd3 !important;
+        }
+        .kampanya-home-card:hover .kampanya-img {
+            transform: scale(1.05);
+            transition: transform 0.3s ease;
+        }
+        .kampanya-img {
+            transition: transform 0.3s ease;
+        }
+    </style>
 }

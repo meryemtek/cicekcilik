@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text;
@@ -86,6 +86,19 @@ namespace ECommerce.WebUI.Controllers
                 return !string.IsNullOrEmpty(referer) ? Redirect(referer) : RedirectToAction("Index", "Home");
             }
 
+            if (!urun.AktifMi || urun.StokMiktari <= 0)
+            {
+                TempData["HataMesaji"] = "Bu ürünün stoğu tükenmiştir veya ürün satışa kapalıdır.";
+                return !string.IsNullOrEmpty(referer) ? Redirect(referer) : RedirectToAction("Index", "Home");
+            }
+
+            int talepEdilenMiktar = dto.Adet < 1 ? 1 : dto.Adet;
+            if (talepEdilenMiktar > urun.StokMiktari)
+            {
+                TempData["HataMesaji"] = $"Yetersiz stok! Bu üründen en fazla {urun.StokMiktari} adet sipariş verebilirsiniz.";
+                return !string.IsNullOrEmpty(referer) ? Redirect(referer) : RedirectToAction("Index", "Home");
+            }
+
             decimal birimFiyat = urun.Fiyat;
             string varyantAdi = "Standart Boy / Model";
             Guid? varyantId = dto.VaryantId;
@@ -95,6 +108,17 @@ namespace ECommerce.WebUI.Controllers
                 var secilenVaryant = urun.Varyantlar.FirstOrDefault(v => v.Id == dto.VaryantId.Value);
                 if (secilenVaryant != null)
                 {
+                    if (!secilenVaryant.AktifMi || secilenVaryant.StokMiktari <= 0)
+                    {
+                        TempData["HataMesaji"] = $"Seçtiğiniz '{secilenVaryant.VaryantAdi}' seçeneği stokta tükenmiştir.";
+                        return !string.IsNullOrEmpty(referer) ? Redirect(referer) : RedirectToAction("Index", "Home");
+                    }
+                    if (talepEdilenMiktar > secilenVaryant.StokMiktari)
+                    {
+                        TempData["HataMesaji"] = $"Seçtiğiniz '{secilenVaryant.VaryantAdi}' seçeneğinden en fazla {secilenVaryant.StokMiktari} adet sipariş verebilirsiniz.";
+                        return !string.IsNullOrEmpty(referer) ? Redirect(referer) : RedirectToAction("Index", "Home");
+                    }
+
                     birimFiyat += secilenVaryant.FiyatFarki;
                     varyantAdi = secilenVaryant.VaryantAdi;
                 }

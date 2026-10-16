@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Headers;
 using System.Text.Json;
@@ -138,6 +138,21 @@ namespace ECommerce.WebUI.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // GRUP DURUM DEĞİŞTİR (AJAX)
+        [HttpPost]
+        public async Task<IActionResult> DurumDegistir(Guid id, bool aktifMi)
+        {
+            var client = CreateClientWithToken();
+            var response = await client.PostAsync($"admin/menuler/gruplar/durum-degistir/{id}?aktifMi={aktifMi}", null);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return Json(new { success = true, message = "Menü grubu durumu güncellendi." });
+            }
+
+            return Json(new { success = false, message = "Durum güncellenirken bir hata oluştu." });
+        }
+
         // 2. AŞAMA: SEÇİLEN GRUBUN İÇİNE GİRİP ÖĞELERİ (LİNKLERİ) YÖNETME
         [HttpGet]
         public async Task<IActionResult> Detay(Guid grupId)
@@ -258,6 +273,34 @@ namespace ECommerce.WebUI.Areas.Admin.Controllers
             }
 
             return RedirectToAction(nameof(Detay), new { grupId = dto.MenuGrupId });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> OgeGetirAjax(Guid id)
+        {
+            var client = CreateClientWithToken();
+            var response = await client.GetAsync($"admin/menuler/ogeler/detay/{id}");
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                return Content(content, "application/json");
+            }
+            return NotFound();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> OgeGuncelleAjax([FromBody] MenuItemGuncelleDto dto)
+        {
+            var client = CreateClientWithToken();
+            var jsonOptions = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+            var jsonContent = new StringContent(JsonSerializer.Serialize(dto, jsonOptions), Encoding.UTF8, "application/json");
+
+            var response = await client.PutAsync("admin/menuler/ogeler", jsonContent);
+            if (response.IsSuccessStatusCode)
+            {
+                return Json(new { success = true, message = "Menü öğesi başarıyla güncellendi." });
+            }
+            return Json(new { success = false, message = "Öğe güncellenirken bir hata oluştu." });
         }
 
         // MENÜ ÖĞESİNİ SİLME

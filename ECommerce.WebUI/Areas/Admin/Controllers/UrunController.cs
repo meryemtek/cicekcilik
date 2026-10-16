@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Net.Http.Headers;
@@ -91,18 +91,39 @@ namespace ECommerce.WebUI.Areas.Admin.Controllers
         }
         private async Task KategorileriViewBageYukleAsync()
         {
-            var client = CreateClientWithToken();
-            var response = await client.GetAsync("kategoriler");
-
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var content = await response.Content.ReadAsStringAsync();
-                var kategoriler = JsonSerializer.Deserialize<List<KategoriListeDto>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                var client = CreateClientWithToken();
+                var response = await client.GetAsync("kategoriler");
 
-                if (kategoriler != null && kategoriler.Any())
+                if (response.IsSuccessStatusCode)
                 {
-                    // 1. Önce ana kategorileri (UstKategoriId == null olanları) alfabetik sırala
-                    // 2. Ardından her ana kategorinin kendi alt kategorilerini hemen onun altına alfabetik olarak ekle
+                    var content = await response.Content.ReadAsStringAsync();
+                    var kategoriler = JsonSerializer.Deserialize<List<KategoriListeDto>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<KategoriListeDto>();
+
+                    // Ana Kategoriler (UstKategoriId == null - Header menü başlıkları)
+                    var anaKategoriler = kategoriler
+                        .Where(k => k.UstKategoriId == null)
+                        .OrderBy(k => k.Ad)
+                        .Select(k => new SelectListItem
+                        {
+                            Value = k.Id.ToString(),
+                            Text = k.Ad
+                        }).ToList();
+
+                    ViewBag.AnaKategoriler = anaKategoriler;
+
+                    // JS ile dinamik alt kategori eşleştirmesi için hafif JSON
+                    var jsonListe = kategoriler.Select(k => new
+                    {
+                        id = k.Id.ToString(),
+                        ad = k.Ad,
+                        ustKategoriId = k.UstKategoriId?.ToString()
+                    }).ToList();
+
+                    ViewBag.TumKategorilerJson = JsonSerializer.Serialize(jsonListe);
+
+                    // Geriye dönük uyumluluk için hiyerarşik liste
                     var hiyerarsikListe = kategoriler
                         .Where(k => k.UstKategoriId == null)
                         .OrderBy(k => k.Ad)
@@ -114,22 +135,37 @@ namespace ECommerce.WebUI.Areas.Admin.Controllers
                         .Select(k => new SelectListItem
                         {
                             Value = k.Id.ToString(),
-                            // Eğer alt kategori ise başına "- " koyuyoruz ki Select2 bunu Javascript ile yakalayıp CSS basabilsin.
                             Text = k.UstKategoriId == null ? k.Ad : $"- {k.Ad}"
                         }).ToList();
 
-                    // Model listesi yerine SelectListItem listesi verdiğimiz için DataValueField "Value", DataTextField "Text" oldu.
                     ViewBag.Kategoriler = new SelectList(hiyerarsikListe, "Value", "Text");
                 }
                 else
                 {
+                    ViewBag.AnaKategoriler = new List<SelectListItem>();
+                    ViewBag.TumKategorilerJson = "[]";
                     ViewBag.Kategoriler = new SelectList(new List<SelectListItem>(), "Value", "Text");
                 }
             }
-            else
+            catch (Exception)
             {
+                ViewBag.AnaKategoriler = new List<SelectListItem>();
+                ViewBag.TumKategorilerJson = "[]";
                 ViewBag.Kategoriler = new SelectList(new List<SelectListItem>(), "Value", "Text");
             }
+        }
+
+        [HttpGet("admin/kategoriler-json")]
+        public async Task<IActionResult> KategorilerJson()
+        {
+            var client = CreateClientWithToken();
+            var response = await client.GetAsync("kategoriler");
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                return Content(content, "application/json");
+            }
+            return BadRequest();
         }
 
         [HttpGet]
@@ -167,20 +203,54 @@ namespace ECommerce.WebUI.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Ekle(UrunEkleDto model, IFormFile? gorselDosyasi)
+        public async Task<IActionResult> Ekle(UrunEkleDto model, List<IFormFile>? gorselDosyalari, IFormFile? gorselDosyasi)
         {
             ModelState.Remove("GorselUrl");
+
+            var secilenDosyalar = (gorselDosyalari ?? new List<IFormFile>())
+                .Where(f => f != null && f.Length > 0)
+                .ToList();
+
+            if (secilenDosyalar.Count == 0 && gorselDosyasi != null && gorselDosyasi.Length > 0)
+            {
+                secilenDosyalar.Add(gorselDosyasi);
+            }
+
+            if (secilenDosyalar.Count == 0)
+            {
+                ModelState.AddModelError(string.Empty, "Ürün için en az 1 adet fotoğraf seçmelisiniz.");
+                await KategorileriViewBageYukleAsync();
+                return View(model);
+            }
+
+            if (secilenDosyalar.Count > 5)
+            {
+                ModelState.AddModelError(string.Empty, "Ürün için en fazla 5 adet fotoğraf yükleyebilirsiniz.");
+                await KategorileriViewBageYukleAsync();
+                return View(model);
+            }
+
+            model.EkGorseller = new List<string>();
+            for (int i = 0; i < secilenDosyalar.Count; i++)
+            {
+                var yuklenenYol = await ApiyeGorselYukleAsync(secilenDosyalar[i], "urunler");
+                if (!string.IsNullOrWhiteSpace(yuklenenYol))
+                {
+                    if (i == 0)
+                    {
+                        model.GorselUrl = yuklenenYol;
+                    }
+                    else
+                    {
+                        model.EkGorseller.Add(yuklenenYol);
+                    }
+                }
+            }
 
             if (!ModelState.IsValid)
             {
                 await KategorileriViewBageYukleAsync();
                 return View(model);
-            }
-
-            if (gorselDosyasi != null)
-            {
-                // GÜNCELLENDİ: Artık doğrudan API'ye upload işlemi yapılıyor
-                model.GorselUrl = await ApiyeGorselYukleAsync(gorselDosyasi, "urunler");
             }
 
             var client = CreateClientWithToken();
@@ -211,6 +281,13 @@ namespace ECommerce.WebUI.Areas.Admin.Controllers
                 if (urun != null)
                 {
                     urun.GorselUrl = GetFullImageUrl(urun.GorselUrl);
+                    if (urun.EkGorseller != null)
+                    {
+                        for (int i = 0; i < urun.EkGorseller.Count; i++)
+                        {
+                            urun.EkGorseller[i] = GetFullImageUrl(urun.EkGorseller[i]);
+                        }
+                    }
                     await KategorileriViewBageYukleAsync();
                     return View(urun);
                 }
@@ -221,34 +298,67 @@ namespace ECommerce.WebUI.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Guncelle(UrunGuncelleDto model, IFormFile? gorselDosyasi)
+        public async Task<IActionResult> Guncelle(UrunGuncelleDto model, List<IFormFile>? gorselDosyalari, IFormFile? gorselDosyasi)
         {
             ModelState.Remove("GorselUrl");
 
-            // EĞER YENİ BİR GÖRSEL SEÇİLMEDİYSE
-            if (gorselDosyasi == null || gorselDosyasi.Length == 0)
+            var secilenDosyalar = (gorselDosyalari ?? new List<IFormFile>())
+                .Where(f => f != null && f.Length > 0)
+                .ToList();
+
+            if (secilenDosyalar.Count == 0 && gorselDosyasi != null && gorselDosyasi.Length > 0)
             {
-                // Veritabanındaki/istemciden gelen mevcut görsel yolunu kaybetmemek için 
-                // Eğer hidden input boş geldiyse, API'den o anki eski ürünü çekip görselini koruyabiliriz:
-                if (string.IsNullOrWhiteSpace(model.GorselUrl))
+                secilenDosyalar.Add(gorselDosyasi);
+            }
+
+            var clientCheck = CreateClientWithToken();
+            var resCheck = await clientCheck.GetAsync($"admin/urunler/{model.Id}");
+            UrunGuncelleDto? eskiUrun = null;
+            if (resCheck.IsSuccessStatusCode)
+            {
+                var contentCheck = await resCheck.Content.ReadAsStringAsync();
+                eskiUrun = JsonSerializer.Deserialize<UrunGuncelleDto>(contentCheck, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            }
+
+            if (secilenDosyalar.Count > 0)
+            {
+                if (secilenDosyalar.Count > 5)
                 {
-                    var clientCheck = CreateClientWithToken();
-                    var resCheck = await clientCheck.GetAsync($"admin/urunler/{model.Id}");
-                    if (resCheck.IsSuccessStatusCode)
+                    ModelState.AddModelError(string.Empty, "Ürün için en fazla 5 adet fotoğraf yükleyebilirsiniz.");
+                    await KategorileriViewBageYukleAsync();
+                    return View(model);
+                }
+
+                model.EkGorseller = new List<string>();
+                for (int i = 0; i < secilenDosyalar.Count; i++)
+                {
+                    var yuklenenYol = await ApiyeGorselYukleAsync(secilenDosyalar[i], "urunler");
+                    if (!string.IsNullOrWhiteSpace(yuklenenYol))
                     {
-                        var contentCheck = await resCheck.Content.ReadAsStringAsync();
-                        var eskiUrun = JsonSerializer.Deserialize<UrunGuncelleDto>(contentCheck, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-                        if (eskiUrun != null)
+                        if (i == 0)
                         {
-                            model.GorselUrl = eskiUrun.GorselUrl; // Eski görsel yolunu koruyoruz!
+                            model.GorselUrl = yuklenenYol;
+                        }
+                        else
+                        {
+                            model.EkGorseller.Add(yuklenenYol);
                         }
                     }
                 }
             }
             else
             {
-                // Yeni görsel yüklenmişse API'ye yükletip yeni yolu atıyoruz
-                model.GorselUrl = await ApiyeGorselYukleAsync(gorselDosyasi, "urunler");
+                if (eskiUrun != null)
+                {
+                    if (string.IsNullOrWhiteSpace(model.GorselUrl))
+                    {
+                        model.GorselUrl = eskiUrun.GorselUrl;
+                    }
+                    if (model.EkGorseller == null || !model.EkGorseller.Any())
+                    {
+                        model.EkGorseller = eskiUrun.EkGorseller ?? new List<string>();
+                    }
+                }
             }
 
             if (!ModelState.IsValid)
@@ -341,41 +451,6 @@ namespace ECommerce.WebUI.Areas.Admin.Controllers
             return BadRequest(new { Mesaj = "AI servisi yanıt vermedi." });
         }
 
-        [HttpGet]
-        public IActionResult XmlImport()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> XmlImport(IFormFile xmlDosyasi)
-        {
-            if (xmlDosyasi == null || xmlDosyasi.Length == 0)
-            {
-                TempData["HataMesaji"] = "Lütfen içe aktarmak için geçerli bir XML dosyası seçin.";
-                return View();
-            }
-
-            var client = CreateClientWithToken();
-
-            using var content = new MultipartFormDataContent();
-            using var fileStream = xmlDosyasi.OpenReadStream();
-            using var streamContent = new StreamContent(fileStream);
-
-            streamContent.Headers.ContentType = new MediaTypeHeaderValue("application/xml");
-            content.Add(streamContent, "xmlDosyasi", xmlDosyasi.FileName);
-
-            var response = await client.PostAsync("admin/xml-import/yukle", content);
-
-            if (response.IsSuccessStatusCode)
-            {
-                TempData["BasariliMesaj"] = "XML dosyasındaki tüm ürünler başarıyla sisteme aktarıldı.";
-                return RedirectToAction(nameof(Index));
-            }
-
-            TempData["HataMesaji"] = "XML dosyası işlenirken arka planda bir hata oluştu.";
-            return View();
-        }
 
         [HttpPost]
         public async Task<IActionResult> HizliDurumDegistir(Guid id, bool aktifMi)

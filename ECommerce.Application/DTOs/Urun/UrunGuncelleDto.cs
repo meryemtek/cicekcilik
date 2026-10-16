@@ -1,4 +1,4 @@
-﻿namespace ECommerce.Application.DTOs.Urun;
+namespace ECommerce.Application.DTOs.Urun;
 
 public class UrunGuncelleDto
 {
@@ -11,7 +11,9 @@ public class UrunGuncelleDto
     public decimal Fiyat { get; set; }
     public int StokMiktari { get; set; }
     public string GorselUrl { get; set; } = string.Empty;
+    public List<string> EkGorseller { get; set; } = new();
     public Guid KategoriId { get; set; }
+    public List<Guid> AltKategoriIdleri { get; set; } = new();
     public bool AktifMi { get; set; }
     public string? Etiket { get; set; }
 }

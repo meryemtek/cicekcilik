@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ECommerce.Application.DTOs.Urun;
 using ECommerce.Application.Interfaces;
@@ -38,12 +38,8 @@ namespace ECommerce.WebAPI.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> KategoriyeGoreGetir(Guid kategoriId)
         {
-            var urunler = await _urunServisi.TumUrunleriGetirAsync();
-
-            // Eğer ürün listesi DTO veya Entity ise KategoriId üzerinden filtreleme yapıyoruz
-            var filtrelenmis = urunler.Where(x => x.KategoriId == kategoriId).ToList();
-
-            return Ok(filtrelenmis);
+            var urunler = await _urunServisi.KategoriIdyeGoreGetirAsync(kategoriId);
+            return Ok(urunler);
         }
 
         [HttpGet("id-ile/{id:guid}")]
@@ -61,7 +57,7 @@ namespace ECommerce.WebAPI.Controllers
         public async Task<IActionResult> TumunuGetir()
         {
             var urunler = await _urunServisi.TumUrunleriGetirAsync();
-            var aktifUrunler = urunler.Where(x => x.AktifMi).ToList();
+            var aktifUrunler = urunler.Where(x => x.AktifMi && x.StokMiktari > 0).ToList();
             return Ok(aktifUrunler);
         }
     }

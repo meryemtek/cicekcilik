@@ -5,7 +5,7 @@
     var toplamKategori = kategoriler.Count;
     var aktifKategori = kategoriler.Count(x => x.AktifMi);
     var pasifKategori = kategoriler.Count(x => !x.AktifMi);
-    var anaKategoriler = kategoriler.Where(x => string.IsNullOrEmpty(x.UstKategoriAdi)).ToList();
+    var anaKategoriler = kategoriler.Where(x => x.UstKategoriId == null).ToList();
 }
 
 <style>
@@ -537,7 +537,7 @@
                         </tr>
 
                         <!-- ALT KATEGORİLER -->
-                        var altKategoriler = kategoriler.Where(x => x.UstKategoriAdi == ana.Ad).OrderBy(x => x.Ad).ToList();
+                        var altKategoriler = kategoriler.Where(x => x.UstKategoriId == ana.Id).OrderBy(x => x.Ad).ToList();
                         foreach (var alt in altKategoriler)
                         {
                             var altArchived = !alt.AktifMi;

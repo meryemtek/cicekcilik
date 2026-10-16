@@ -4,6 +4,8 @@
     string stokSormaMesaji = Uri.EscapeDataString($"Merhaba, {Model.UrunKodu} kodlu {Model.Ad} çiçeği için stok ve teslimat durumu öğrenebilir miyim?");
 
     var teslimatSaatleriListesi = ViewBag.TeslimatSaatleri as List<ECommerce.Application.DTOs.TeslimatSaati.TeslimatSaatiDto> ?? new List<ECommerce.Application.DTOs.TeslimatSaati.TeslimatSaatiDto>();
+    var kartNotlariListesi = ViewBag.KartNotlari as List<ECommerce.Application.DTOs.KartNotuSablonu.KartNotuSablonuListeDto> ?? new List<ECommerce.Application.DTOs.KartNotuSablonu.KartNotuSablonuListeDto>();
+    var gruplanmisNotlar = kartNotlariListesi.GroupBy(x => x.Kategori).ToList();
     decimal vipUcret = ViewBag.VipUcreti != null ? Convert.ToDecimal(ViewBag.VipUcreti) : 0m;
     bool varyantVar = Model.Varyantlar != null && Model.Varyantlar.Any();
     int adimSayac = 1;
@@ -13,14 +15,11 @@
     <div class="fl-order-card">
         <!-- KOLEKSİYON VE PUAN SATIRI -->
         <div class="fl-header-meta">
-            <span class="fl-collection-tag">
-                HAUTE BOTANIQUE • @(string.IsNullOrWhiteSpace(Model.KategoriAdi) ? "ÖZEL KOLEKSİYON" : Model.KategoriAdi.ToUpper())
-            </span>
+            @if (!string.IsNullOrWhiteSpace(Model.KategoriAdi))
+            {
+                <span class="fl-collection-tag">@Model.KategoriAdi.ToUpper()</span>
+            }
             <div class="d-flex align-items-center gap-2">
-                <span class="fl-rating-badge">
-                    4.9 <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                    <span>(@(Model.ToplamYorumSayisi > 0 ? Model.ToplamYorumSayisi : 128))</span>
-                </span>
                 <button type="button" class="btn-favori btn btn-light rounded-circle border-0 d-flex align-items-center justify-content-center shadow-none"
                         style="width: 36px; height: 36px; background: #FAF8F5;"
                         data-urun-id="@Model.Id"
@@ -52,11 +51,22 @@
         </p>
 
         <!-- FİYAT ALANI -->
-        <div class="fl-price-row">
+        <div class="fl-price-row d-flex align-items-center justify-content-between">
             <span class="fl-big-price">
                 ₺<span id="urunFiyatDisplay" data-base-price="@Model.Fiyat.ToString(System.Globalization.CultureInfo.InvariantCulture)">@Model.Fiyat.ToString("N0")</span>
             </span>
-            
+            @if (Model.StokMiktari <= 0 || !Model.AktifMi)
+            {
+                <span class="badge bg-danger fs-6 px-3 py-2 rounded-pill shadow-sm">
+                    <i class="bi bi-x-circle-fill me-1"></i> Tükendi / Stokta Yok
+                </span>
+            }
+            else if (Model.StokMiktari <= 5)
+            {
+                <span class="badge bg-warning text-dark fs-6 px-3 py-2 rounded-pill shadow-sm">
+                    <i class="bi bi-fire me-1"></i> Son @Model.StokMiktari Ürün!
+                </span>
+            }
         </div>
 
         <form asp-controller="Sepet" asp-action="Ekle" method="post" id="siparisFormu">
@@ -96,83 +106,121 @@
                 </div>
             }
 
-            <!-- TESLİMAT YERİ, TARİHİ VE SAATİ -->
+            <!-- GÖNDERİM ADRESİ VE TESLİMAT ZAMANI -->
             <div class="fl-section-wrap">
-                <!-- Teslimat adresi: il, ilçe ve mahalle -->
-                <div class="fl-delivery-location-wrap mb-3">
-                    <button type="button" id="teslimatYeriToggle" class="fl-delivery-location-toggle" aria-expanded="false" aria-controls="mahalleSecimi">
-                        <span class="fl-delivery-location-copy">
-                            <span class="fl-delivery-location-title">Teslimat yeri</span>
-                            <span id="secilenTeslimatYeri" class="fl-delivery-location-summary" aria-live="polite">Mahalle seçin</span>
-                        </span>
-                        <i class="bi bi-chevron-down fl-delivery-location-chevron" aria-hidden="true"></i>
-                    </button>
-                    <div id="mahalleSecimi" class="fl-neighborhood-list" role="radiogroup" aria-label="Teslimat yeri" hidden>
-                        <p class="fl-neighborhood-empty">Teslimat bölgeleri yükleniyor…</p>
+                <div class="fl-section-header">
+                    <h6 class="fl-section-title">
+                        <i class="bi bi-geo-alt-fill me-1 text-danger"></i>@(adimSayac++). TESLİMAT BÖLGESİ VE ZAMANI
+                    </h6>
+                    <span class="fl-free-pill" id="teslimatDurumPill">Elazığ İçi Teslimat</span>
+                </div>
+
+                <!-- GÖNDERİM ADRESİ SEÇİM KARTI -->
+                <div class="fl-delivery-trigger-card mb-3" id="deliveryTriggerBox" data-bs-toggle="modal" data-bs-target="#teslimatModal">
+                    <div class="fl-delivery-trigger-left">
+                        <div class="fl-delivery-icon-badge" id="deliveryIconBadge">
+                            <i class="bi bi-geo-alt-fill" id="deliveryPinIcon"></i>
+                        </div>
+                        <div class="fl-delivery-info-text">
+                            <div class="fl-delivery-main-text" id="secilenAdresOzet">Gönderim Adresini Seçiniz</div>
+                            <div class="fl-delivery-sub-text" id="secilenZamanOzet">Elazığ ilçe ve mahalle seçmek için tıklayın</div>
+                        </div>
+                    </div>
+                    <div class="fl-delivery-action-pill" id="deliveryActionPill">
+                        <span id="deliveryActionText">Adres Seç</span>
+                        <i class="bi bi-chevron-right"></i>
                     </div>
                 </div>
 
-                <!-- 2. Başlık: Teslimat Tarihi ve Saati -->
-                <h6 class="fl-delivery-date-title">Teslimat Tarihi ve Saati</h6>
-
-                <!-- 3. 3'lü Buton Kutuları (Bugün / Yarın / Tarih Seç) -->
-                <div class="fl-delivery-date-grid">
-                    <div class="fl-delivery-date-card active" onclick="tarihTuruSec(this, 'Bugun')">
-                        <i class="bi bi-truck fl-delivery-icon"></i>
-                        <span class="fl-delivery-label">Bugün</span>
-                    </div>
-                    <div class="fl-delivery-date-card" onclick="tarihTuruSec(this, 'Yarin')">
-                        <i class="bi bi-calendar-check fl-delivery-icon"></i>
-                        <span class="fl-delivery-label">Yarın</span>
-                    </div>
-                    <div class="fl-delivery-date-card" onclick="tarihTuruSec(this, 'TarihSec')">
-                        <i class="bi bi-calendar3 fl-delivery-icon"></i>
-                        <span class="fl-delivery-label">Tarih Seç</span>
-                    </div>
-                </div>
-
-                <div id="ozelTarihBox" class="mb-3" style="display: none;">
-                    <input type="date" id="ozelTarihInput" class="form-control rounded-3 mt-2" onchange="ozelTarihDegisti()" />
-                </div>
-
-                <!-- 4. Teslimat Saati Dropdown (Solunda saat ikonu olan) -->
-                <div class="fl-delivery-time-select-wrap">
-                    <div class="fl-select-with-icon">
-                        <span class="fl-select-icon-box"><i class="bi bi-clock"></i></span>
-                        <select id="teslimatSaatiSelect" class="fl-time-select" onchange="saatSecimiDegisti(this)">
-                            <option value="" disabled>Teslimat saati seçin</option>
-                            @if (teslimatSaatleriListesi != null && teslimatSaatleriListesi.Any())
-                            {
-                                int sIdx = 0;
-                                foreach (var s in teslimatSaatleriListesi)
-                                {
-                                    bool isSelected = sIdx == 0;
-                                    string saatMetni = $"{s.BaslangicSaati} - {s.BitisSaati}";
-                                    <option value="@saatMetni" selected="@(isSelected ? "selected" : null)">
-                                        @saatMetni @(!string.IsNullOrEmpty(s.Aciklama) ? $"({s.Aciklama})" : "")
-                                    </option>
-                                    sIdx++;
-                                }
-                            }
-                            else
-                            {
-                                <option value="09:00 - 13:00">09:00 - 13:00 (Sabah)</option>
-                                <option value="13:00 - 17:00" selected>13:00 - 17:00 (Öğle - En Popüler)</option>
-                                <option value="17:00 - 21:00">17:00 - 21:00 (Akşam)</option>
-                            }
-                        </select>
-                    </div>
-                </div>
-
-                <!-- VIP Teslimat Opsiyonu -->
-                <div class="fl-vip-row mt-3">
-                    <div class="form-check m-0 d-flex align-items-center gap-2">
-                        <input class="form-check-input mt-0" type="checkbox" name="VipTeslimatAktifMi" value="true" id="vipCheckbox" onchange="vipDurumuDegisti()" />
-                        <label class="form-check-label small fw-bold text-dark cursor-pointer" for="vipCheckbox">
-                            <span class="badge bg-warning text-dark px-2 py-1 me-1">VIP</span> Özel Saatli VIP Teslimat Garantisi
+                <!-- TARİH VE SAAT SEÇİM ALANI -->
+                <div class="fl-delivery-datetime-sub">
+                    <div class="date-type-grid">
+                        <label class="date-type-card active" onclick="tarihTuruSec(this, 'Bugun')">
+                            <input type="radio" name="GorselTeslimatGunu" value="Bugun" checked />
+                            <i class="bi bi-truck d-block fs-5 mb-1"></i> Bugün
+                        </label>
+                        <label class="date-type-card" onclick="tarihTuruSec(this, 'Yarin')">
+                            <input type="radio" name="GorselTeslimatGunu" value="Yarin" />
+                            <i class="bi bi-calendar-check d-block fs-5 mb-1"></i> Yarın
+                        </label>
+                        <label class="date-type-card" onclick="tarihTuruSec(this, 'TarihSec')">
+                            <input type="radio" name="GorselTeslimatGunu" value="TarihSec" />
+                            <i class="bi bi-calendar-plus d-block fs-5 mb-1"></i> Tarih Seç
                         </label>
                     </div>
-                    <span class="fw-bold small text-dark">+₺@vipUcret.ToString("N0")</span>
+
+                    <div id="ozelTarihBox" class="mb-3" style="display: none;">
+                        <input type="date" id="ozelTarihInput" class="fl-custom-input mb-0" onchange="ozelTarihDegisti()" />
+                    </div>
+
+                    <div id="normalSaatKutusu" class="mb-3">
+                        <div class="input-group fl-time-group">
+                            <span class="input-group-text fl-time-addon"><i class="bi bi-clock"></i></span>
+                            <select id="normalSaatSelect" class="form-select fw-semibold time-select fl-time-select-input" onchange="saatDegisti()">
+                                <option value="">Normal teslimat saati seçin</option>
+                                @if (teslimatSaatleriListesi != null && teslimatSaatleriListesi.Any(x => x.TeslimatGrubu == ECommerce.Domain.Enums.TeslimatGrubu.Normal))
+                                {
+                                    foreach (var saat in teslimatSaatleriListesi.Where(x => x.TeslimatGrubu == ECommerce.Domain.Enums.TeslimatGrubu.Normal))
+                                    {
+                                        string text = string.IsNullOrEmpty(saat.Aciklama) ? $"{saat.BaslangicSaati} - {saat.BitisSaati}" : $"{saat.Aciklama} ({saat.BaslangicSaati} - {saat.BitisSaati})";
+                                        <option value="@saat.BaslangicSaati - @saat.BitisSaati" data-baslangic="@saat.BaslangicSaati">@text</option>
+                                    }
+                                }
+                                else if (teslimatSaatleriListesi != null && teslimatSaatleriListesi.Any())
+                                {
+                                    foreach (var saat in teslimatSaatleriListesi)
+                                    {
+                                        string text = string.IsNullOrEmpty(saat.Aciklama) ? $"{saat.BaslangicSaati} - {saat.BitisSaati}" : $"{saat.Aciklama} ({saat.BaslangicSaati} - {saat.BitisSaati})";
+                                        <option value="@saat.BaslangicSaati - @saat.BitisSaati" data-baslangic="@saat.BaslangicSaati">@text</option>
+                                    }
+                                }
+                                else
+                                {
+                                    <option value="09:00 - 13:00">09:00 - 13:00 (Sabah)</option>
+                                    <option value="13:00 - 17:00">13:00 - 17:00 (Öğle - En Popüler)</option>
+                                    <option value="17:00 - 21:00">17:00 - 21:00 (Akşam)</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- VIP TESLİMAT KUTUSU -->
+                    <div class="vip-delivery-box" id="vipDeliveryContainer">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="fl-vip-badge"><i class="bi bi-stars me-1"></i>VIP</span>
+                                <strong class="fl-vip-title">Özel Saatli VIP Teslimat</strong>
+                            </div>
+                            <span class="fl-vip-price">+₺@vipUcret.ToString("N0")</span>
+                        </div>
+                        <p class="fl-vip-desc mb-2">
+                            Özel kurye ile seçtiğiniz dakika aralığında tam zamanında teslimat garantisi.
+                        </p>
+
+                        <div class="form-check mb-0">
+                            <input class="form-check-input" type="checkbox" name="VipTeslimatAktifMi" value="true" id="vipCheckbox" onchange="vipDurumuDegisti()" />
+                            <label class="form-check-label fw-bold small text-dark" for="vipCheckbox" style="cursor:pointer;">
+                                VIP Teslimat İstiyorum
+                            </label>
+                        </div>
+
+                        <div id="vipSaatKutusu" style="display: none;">
+                            <div class="input-group fl-time-group mt-3">
+                                <span class="input-group-text fl-time-addon"><i class="bi bi-clock-history"></i></span>
+                                <select id="vipSaatSelect" class="form-select fw-semibold time-select fl-time-select-input" onchange="saatDegisti()">
+                                    <option value="">VIP teslimat saati seçin</option>
+                                    @if (teslimatSaatleriListesi != null && teslimatSaatleriListesi.Any(x => x.TeslimatGrubu == ECommerce.Domain.Enums.TeslimatGrubu.Vip))
+                                    {
+                                        foreach (var saat in teslimatSaatleriListesi.Where(x => x.TeslimatGrubu == ECommerce.Domain.Enums.TeslimatGrubu.Vip))
+                                        {
+                                            string text = string.IsNullOrEmpty(saat.Aciklama) ? $"{saat.BaslangicSaati} - {saat.BitisSaati}" : $"{saat.Aciklama} ({saat.BaslangicSaati} - {saat.BitisSaati})";
+                                            <option value="@saat.BaslangicSaati - @saat.BitisSaati" data-baslangic="@saat.BaslangicSaati">@text</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -185,27 +233,67 @@
                     <span class="fl-free-pill">Ücretsiz Dokunuş</span>
                 </div>
 
-                <!-- Şablon Butonları -->
-                <div class="fl-card-templates">
-                    <span class="fl-template-chip" onclick="sablonDoldur('Doğum Günü', 'Yeni yaşında tüm hayallerinin gerçek olması, ömrünün bu çiçekler gibi renkli ve neşeli geçmesi dileğiyle... Doğum günün kutlu olsun!')">
-                        🎂 Doğum Günü
-                    </span>
-                    <span class="fl-template-chip" onclick="sablonDoldur('Yıldönümü', 'Seninle geçen her gün bir bahar sabahı gibi taze ve güzel. Yıldönümümüz kutlu olsun sevgilim, nice mutlu yıllara!')">
-                        💍 Yıldönümü
-                    </span>
-                    <span class="fl-template-chip" onclick="sablonDoldur('İçimden Geldi', 'Gününün sıradan bir anında yüzünde küçük bir tebessüm olmak istedim. Seni çok seviyorum...')">
-                        🌸 İçimden Geldi
-                    </span>
-                    <span class="fl-template-chip" onclick="sablonDoldur('Teşekkür Ederim', 'Hayatıma kattığın tüm güzellikler ve desteğin için sonsuz teşekkürler. İyi ki varsın!')">
-                        🕊️ Teşekkür Ederim
-                    </span>
+                <!-- Şablon Kategori Butonları (Admin'den Gelen Dinamik Not Kategorileri) -->
+                <div class="fl-card-templates" id="kartNotuKategoriler">
+                    @if (gruplanmisNotlar.Any())
+                    {
+                        foreach (var grup in gruplanmisNotlar)
+                        {
+                            string katAdi = grup.Key;
+                            string ikon = katAdi.ToLower() switch
+                            {
+                                var k when k.Contains("doğum") || k.Contains("dogum") => "🎂",
+                                var k when k.Contains("yıl") || k.Contains("yil") => "💍",
+                                var k when k.Contains("aşk") || k.Contains("ask") || k.Contains("sevgi") => "💖",
+                                var k when k.Contains("teşekkür") || k.Contains("tesekkur") => "🕊️",
+                                var k when k.Contains("tebrik") || k.Contains("başarı") || k.Contains("basari") => "🎓",
+                                var k when k.Contains("özür") || k.Contains("ozur") => "🌸",
+                                var k when k.Contains("geçmiş") || k.Contains("gecmis") => "💐",
+                                var k when k.Contains("bebek") => "👶",
+                                _ => "💌"
+                            };
+
+                            <span class="fl-template-chip" data-kategori="@katAdi" onclick="kategoriNotuSec('@Html.Raw(katAdi.Replace("'", "\\'"))', this)">
+                                @ikon @katAdi
+                            </span>
+                        }
+                    }
+                    else
+                    {
+                        <!-- Admin henüz kart notu eklemediyse varsayılan şablonlar -->
+                        <span class="fl-template-chip" onclick="sablonDoldur('Doğum Günü', 'Yeni yaşında tüm hayallerinin gerçek olması, ömrünün bu çiçekler gibi renkli ve neşeli geçmesi dileğiyle... Doğum günün kutlu olsun!')">
+                            🎂 Doğum Günü
+                        </span>
+                        <span class="fl-template-chip" onclick="sablonDoldur('Yıldönümü', 'Seninle geçen her gün bir bahar sabahı gibi taze ve güzel. Yıldönümümüz kutlu olsun sevgilim, nice mutlu yıllara!')">
+                            💍 Yıldönümü
+                        </span>
+                        <span class="fl-template-chip" onclick="sablonDoldur('İçimden Geldi', 'Gününün sıradan bir anında yüzünde küçük bir tebessüm olmak istedim. Seni çok seviyorum...')">
+                            🌸 İçimden Geldi
+                        </span>
+                        <span class="fl-template-chip" onclick="sablonDoldur('Teşekkür Ederim', 'Hayatıma kattığın tüm güzellikler ve desteğin için sonsuz teşekkürler. İyi ki varsın!')">
+                            🕊️ Teşekkür Ederim
+                        </span>
+                    }
                 </div>
 
                 <!-- Alıcı İsmi Input -->
                 <input type="text" name="AliciAdi" id="aliciAdiInput" class="fl-custom-input" placeholder="Alıcı İsmi (Örn: Sevgili Zeynep)" />
 
-                <!-- Mesaj Textarea -->
-                <textarea name="KartNotu" id="kartNotuInput" class="fl-custom-textarea" placeholder="Özel mesajınızı yazın... İtalyan pamuk kağıda özel mürekkep ve balmumu mühürle aktarılacaktır."></textarea>
+                <!-- Mesaj Textarea ve Aşağı/Yukarı Not Değiştirme Butonları -->
+                <div class="fl-card-note-box position-relative">
+                    <textarea name="KartNotu" id="kartNotuInput" class="fl-custom-textarea" placeholder="Özel mesajınızı yazın... İtalyan pamuk kağıda özel mürekkep ve balmumu mühürle aktarılacaktır."></textarea>
+                    
+                    <!-- Aşağı / Yukarı Tuşları İle Not Değiştirme -->
+                    <div id="notDegistirmeKontrolleri" class="fl-note-stepper" style="display: none;">
+                        <button type="button" class="fl-note-step-btn" onclick="notAdimla(-1)" title="Önceki hazır not">
+                            <i class="bi bi-chevron-up"></i>
+                        </button>
+                        <span class="fl-note-counter" id="notSayacText" title="Seçenek">1/1</span>
+                        <button type="button" class="fl-note-step-btn" onclick="notAdimla(1)" title="Sonraki hazır not">
+                            <i class="bi bi-chevron-down"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <!-- GİZLİ INPUTLAR -->
@@ -228,20 +316,297 @@
             <div class="fl-action-buttons-wrap">
                 <div class="fl-quantity-order-row">
                     <div class="fl-qty-stepper">
-                        <button type="button" class="fl-qty-btn" onclick="adetDegistir(-1)">-</button>
-                        <input type="text" id="gorselAdet" class="fl-qty-input" value="1" readonly />
-                        <button type="button" class="fl-qty-btn" onclick="adetDegistir(1)">+</button>
+                        <button type="button" class="fl-qty-btn" onclick="adetDegistir(-1)" @(Model.StokMiktari <= 0 || !Model.AktifMi ? "disabled" : "")>-</button>
+                        <input type="text" id="gorselAdet" class="fl-qty-input" value="@(Model.StokMiktari <= 0 || !Model.AktifMi ? "0" : "1")" data-max-stok="@Model.StokMiktari" readonly />
+                        <button type="button" class="fl-qty-btn" onclick="adetDegistir(1)" @(Model.StokMiktari <= 0 || !Model.AktifMi ? "disabled" : "")>+</button>
                     </div>
 
-                    <button type="submit" class="fl-submit-btn" id="siparisVerBtn" disabled title="Sipariş vermek için teslimat mahallesi seçin">
-                        <i class="bi bi-bag-check-fill"></i> Sipariş Ver
-                    </button>
+                    @if (Model.StokMiktari <= 0 || !Model.AktifMi)
+                    {
+                        <button type="button" class="fl-submit-btn" style="background: #9e9e9e; cursor: not-allowed; opacity: 0.85;" disabled title="Ürün Tükendi">
+                            <i class="bi bi-x-circle-fill"></i> Tükendi
+                        </button>
+                    }
+                    else
+                    {
+                        <button type="submit" class="fl-submit-btn" id="siparisVerBtn" title="Sipariş Ver">
+                            <i class="bi bi-bag-check-fill"></i> Sipariş Ver
+                        </button>
+                    }
                 </div>
 
-                <a href="javascript:void(0)" id="whatsappSiparisBtn" aria-disabled="true" onclick="whatsappSiparis()" class="fl-whatsapp-btn is-disabled">
+                <a href="javascript:void(0)" id="whatsappSiparisBtn" onclick="whatsappSiparis()" class="fl-whatsapp-btn">
                     <i class="bi bi-whatsapp"></i> WhatsApp ile Hızlı Sipariş
                 </a>
             </div>
         </form>
     </div>
 </div>
+
+<style>
+    .fl-order-card,
+    .fl-order-card *:not(i) {
+        font-family: 'Outfit', sans-serif;
+    }
+
+    .fl-delivery-trigger-card {
+        background: #FAF8F5;
+        border: 1.5px solid #EAE5DC;
+        border-radius: 12px;
+        padding: 12px 16px;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 12px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .fl-delivery-trigger-card:hover {
+        background: #FFFFFF;
+        border-color: #A84B66;
+        box-shadow: 0 4px 16px rgba(168, 75, 102, 0.08);
+    }
+
+    .fl-delivery-trigger-card.is-selected {
+        background: #FFFFFF;
+        border-color: #0D382B;
+        box-shadow: 0 4px 14px rgba(13, 56, 43, 0.07);
+    }
+
+    .fl-delivery-trigger-left {
+        display: flex !important;
+        align-items: center !important;
+        gap: 12px;
+        min-width: 0;
+    }
+
+    .fl-delivery-icon-badge {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: #FFF2F4;
+        border: 1px solid #F8D3DA;
+        color: #A84B66;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+        transition: all 0.2s ease;
+    }
+
+    .fl-delivery-trigger-card.is-selected .fl-delivery-icon-badge {
+        background: #EBF4F0;
+        border-color: #C5DFD4;
+        color: #0D382B;
+    }
+
+    .fl-delivery-info-text {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .fl-delivery-main-text {
+        font-family: 'Outfit', sans-serif !important;
+        font-size: 0.92rem;
+        font-weight: 700;
+        color: #1A2820;
+        line-height: 1.25;
+        margin: 0;
+    }
+
+    .fl-delivery-sub-text {
+        font-family: 'Outfit', sans-serif !important;
+        font-size: 0.78rem;
+        font-weight: 500;
+        color: #6C7770;
+        line-height: 1.25;
+        margin-top: 2px;
+    }
+
+    .fl-delivery-action-pill {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 5px;
+        background: #FFFFFF;
+        border: 1px solid #E2DDD5;
+        border-radius: 20px;
+        padding: 6px 13px;
+        font-family: 'Outfit', sans-serif !important;
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: #1A2820;
+        flex-shrink: 0;
+        transition: all 0.2s ease;
+    }
+
+    .fl-delivery-trigger-card:hover .fl-delivery-action-pill {
+        border-color: #A84B66;
+        color: #A84B66;
+        background: #FFF2F4;
+    }
+
+    .fl-delivery-trigger-card.is-selected .fl-delivery-action-pill {
+        background: #F4F8F6;
+        border-color: #CFE3DA;
+        color: #0D382B;
+    }
+
+    .fl-time-group {
+        border: 1.5px solid #EAE5DC;
+        border-radius: 12px;
+        overflow: hidden;
+        background: #FAF8F5;
+    }
+
+    .fl-time-group:focus-within {
+        border-color: #0D382B;
+        background: #FFFFFF;
+    }
+
+    .fl-time-addon {
+        background: transparent !important;
+        border: 0 !important;
+        color: #6C7770 !important;
+        padding-left: 14px;
+        padding-right: 4px;
+    }
+
+    .fl-time-select-input {
+        background-color: transparent !important;
+        border: 0 !important;
+        font-family: 'Outfit', sans-serif !important;
+        font-size: 0.88rem !important;
+        font-weight: 600 !important;
+        color: #1A2820 !important;
+        padding: 11px 32px 11px 8px !important;
+        box-shadow: none !important;
+    }
+
+    .fl-card-note-box {
+        position: relative;
+        width: 100%;
+    }
+    .fl-card-note-box .fl-custom-textarea {
+        padding-right: 48px !important;
+        min-height: 105px;
+    }
+    .fl-note-stepper {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: #ffffff;
+        border: 1px solid #f2cdd6;
+        border-radius: 9px;
+        padding: 3px;
+        box-shadow: 0 4px 12px rgba(139, 0, 40, 0.08);
+        z-index: 2;
+        user-select: none;
+    }
+    .fl-note-counter {
+        font-size: 0.65rem;
+        font-weight: 700;
+        color: #8b0028;
+        padding: 2px 3px;
+        line-height: 1;
+        letter-spacing: -0.2px;
+    }
+    .fl-note-step-btn {
+        width: 26px;
+        height: 22px;
+        border: 0;
+        background: #fff5f7;
+        color: #8b0028;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.72rem;
+        cursor: pointer;
+        transition: all 0.15s ease;
+    }
+    .fl-note-step-btn:hover {
+        background: #8b0028;
+        color: #ffffff;
+    }
+    .fl-note-step-btn:active {
+        transform: scale(0.92);
+    }
+</style>
+
+<script>
+    const tumKartNotlari = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+        kartNotlariListesi.Select(x => new {
+            id = x.Id.ToString(),
+            kategori = x.Kategori,
+            mesaj = x.MesajIcerigi
+        })
+    ));
+
+    let aktifKategoriNotlari = [];
+    let aktifNotIndex = 0;
+
+    function kategoriNotuSec(kategoriAdi, element) {
+        document.querySelectorAll('#kartNotuKategoriler .fl-template-chip').forEach(c => c.classList.remove('active'));
+        if (element) {
+            element.classList.add('active');
+        } else {
+            const el = document.querySelector(`#kartNotuKategoriler .fl-template-chip[data-kategori="${kategoriAdi}"]`);
+            if (el) el.classList.add('active');
+        }
+
+        aktifKategoriNotlari = tumKartNotlari.filter(n => (n.kategori || '').toLowerCase() === (kategoriAdi || '').toLowerCase());
+        aktifNotIndex = 0;
+
+        const txt = document.getElementById('kartNotuInput');
+        const stepper = document.getElementById('notDegistirmeKontrolleri');
+        const counter = document.getElementById('notSayacText');
+
+        if (!aktifKategoriNotlari || aktifKategoriNotlari.length === 0) {
+            if (stepper) stepper.style.display = 'none';
+            return;
+        }
+
+        if (txt) {
+            txt.value = aktifKategoriNotlari[0].mesaj;
+            txt.focus();
+        }
+
+        if (stepper) {
+            if (aktifKategoriNotlari.length > 1) {
+                stepper.style.display = 'flex';
+                if (counter) counter.textContent = `1/${aktifKategoriNotlari.length}`;
+            } else {
+                stepper.style.display = 'none';
+            }
+        }
+    }
+
+    function notAdimla(yon) {
+        if (!aktifKategoriNotlari || aktifKategoriNotlari.length <= 1) return;
+
+        aktifNotIndex += yon;
+        if (aktifNotIndex >= aktifKategoriNotlari.length) {
+            aktifNotIndex = 0; // Döngüsel başa dön
+        } else if (aktifNotIndex < 0) {
+            aktifNotIndex = aktifKategoriNotlari.length - 1; // Sona git
+        }
+
+        const txt = document.getElementById('kartNotuInput');
+        const counter = document.getElementById('notSayacText');
+
+        if (txt) {
+            txt.value = aktifKategoriNotlari[aktifNotIndex].mesaj;
+            txt.focus();
+        }
+
+        if (counter) {
+            counter.textContent = `${aktifNotIndex + 1}/${aktifKategoriNotlari.length}`;
+        }
+    }
+</script>

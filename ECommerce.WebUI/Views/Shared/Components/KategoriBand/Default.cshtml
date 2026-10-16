@@ -1,58 +1,34 @@
-@using ECommerce.Application.DTOs.Kategori
-@model List<KategoriListeDto>
+@using ECommerce.Application.DTOs.AnasayfaKategori
+@model List<AnasayfaKategoriDto>
 
 @{
-    var kategoriler = Model?.Where(x => x.AktifMi).ToList() ?? new List<KategoriListeDto>();
-
-    var varsayilanKategoriler = new[]
-    {
-        new { Ad = "Doğum Günü", Seo = "dogum-gunu", Gorsel = "https://images.unsplash.com/photo-1582794543139-8ac9cb0f7b11?auto=format&fit=crop&w=300&q=80" },
-        new { Ad = "Çok Satanlar", Seo = "cok-satanlar", Gorsel = "https://images.unsplash.com/photo-1563241527-3004b7be0ffd?auto=format&fit=crop&w=300&q=80" },
-        new { Ad = "Gül Buketleri", Seo = "gul-buketleri", Gorsel = "https://images.unsplash.com/photo-1561181286-d3fee7d55364?auto=format&fit=crop&w=300&q=80" },
-        new { Ad = "Kutuda Çiçekler", Seo = "kutuda-cicekler", Gorsel = "https://images.unsplash.com/photo-1526047932273-341f2a7631f9?auto=format&fit=crop&w=300&q=80" },
-        new { Ad = "Hediye Setleri", Seo = "hediye-setleri", Gorsel = "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=300&q=80" },
-        new { Ad = "Trend Çiçekler", Seo = "trend-cicekler", Gorsel = "https://images.unsplash.com/photo-1527061011665-3652c757a4d4?auto=format&fit=crop&w=300&q=80" },
-        new { Ad = "Yıl Dönümü", Seo = "yil-donumu", Gorsel = "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=300&q=80" },
-        new { Ad = "Saksı Bitkileri", Seo = "saksi-bitkileri", Gorsel = "https://images.unsplash.com/photo-1485955900006-10f4d324d411?auto=format&fit=crop&w=300&q=80" },
-        new { Ad = "Özür Çiçekleri", Seo = "ozur-cicekleri", Gorsel = "https://images.unsplash.com/photo-1508610048659-a06b669e3321?auto=format&fit=crop&w=300&q=80" }
-    };
+    var kategoriler = Model?.Where(x => x.AktifMi).OrderBy(x => x.SiraNo).ToList() ?? new List<AnasayfaKategoriDto>();
 }
 
 <!-- =========================================================
      SERBEST & ÇİZGİSİZ ÇİÇEK KATEGORİLERİ AKIŞI
 ========================================================= -->
-<div class="cat-showcase-wrapper" aria-label="Çiçek Kategorileri">
-    @if (kategoriler.Any())
-    {
-        int index = 0;
-        foreach (var kat in kategoriler)
+@if (kategoriler.Any())
+{
+    <div class="cat-showcase-wrapper" aria-label="Çiçek Kategorileri">
+        @foreach (var kat in kategoriler)
         {
-            string gorsel = !string.IsNullOrWhiteSpace(kat.GorselUrl) 
-                ? kat.GorselUrl 
-                : varsayilanKategoriler[index % varsayilanKategoriler.Length].Gorsel;
-
-            <a href="/kategori/@kat.SeoUrl" class="cat-showcase-item" title="@kat.Ad">
+            <a href="/kategori/@kat.SeoUrl" class="cat-showcase-item" title="@kat.KategoriAdi">
                 <div class="cat-card-squircle">
-                    <img src="@gorsel" alt="@kat.Ad" loading="lazy" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1563241527-3004b7be0ffd?auto=format&fit=crop&w=300&q=80';" />
+                    @if (!string.IsNullOrWhiteSpace(kat.GorselUrl))
+                    {
+                        <img src="@kat.GorselUrl" alt="@kat.KategoriAdi" loading="lazy" />
+                    }
+                    else
+                    {
+                        <i class="bi bi-flower2" aria-hidden="true"></i>
+                    }
                 </div>
-                <span class="cat-card-title">@kat.Ad</span>
-            </a>
-            index++;
-        }
-    }
-    else
-    {
-        foreach (var v in varsayilanKategoriler)
-        {
-            <a href="/Urun?kategori=@v.Seo" class="cat-showcase-item" title="@v.Ad">
-                <div class="cat-card-squircle">
-                    <img src="@v.Gorsel" alt="@v.Ad" loading="lazy" />
-                </div>
-                <span class="cat-card-title">@v.Ad</span>
+                <span class="cat-card-title">@kat.KategoriAdi</span>
             </a>
         }
-    }
-</div>
+    </div>
+}
 
 <style>
     /* =========================================================
@@ -138,6 +114,11 @@
         object-fit: cover;
         border-radius: 16px;
         transition: transform 0.35s ease;
+    }
+
+    .cat-card-squircle > i {
+        color: #629075;
+        font-size: 2rem;
     }
 
     .cat-showcase-item:hover .cat-card-squircle img {

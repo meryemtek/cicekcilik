@@ -1,4 +1,4 @@
-﻿using ECommerce.Application.DTOs.Kampanya;
+using ECommerce.Application.DTOs.Kampanya;
 using ECommerce.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization; // ÖNEMLİ: Yetkilendirme için
 using Microsoft.AspNetCore.Mvc;
@@ -54,6 +54,14 @@ namespace ECommerce.WebAPI.Controllers
         {
             await _kampanyaServisi.RemoveUrunFromKampanyaAsync(id);
             return Ok(new { message = "Kampanya sistemden kaldırıldı." });
+        }
+
+        [HttpPatch("durum-degistir/{id}")]
+        [HttpPost("durum-degistir/{id}")]
+        public async Task<IActionResult> DurumDegistir(Guid id, [FromBody] bool aktifMi)
+        {
+            await _kampanyaServisi.DurumDegistirAsync(id, aktifMi);
+            return Ok(new { message = "Kampanya durumu başarıyla güncellendi." });
         }
     }
 }

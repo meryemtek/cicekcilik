@@ -1,4 +1,4 @@
-﻿using ECommerce.Domain.Entities;
+using ECommerce.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +21,6 @@ public class UygulamaDbContext : IdentityDbContext<UygulamaKullanicisi, Identity
     public DbSet<SikSorulanSoru> SikSorulanSorular { get; set; } = null!;
     public DbSet<BankaHesabi> BankaHesaplari { get; set; } = null!;
     public DbSet<IletisimMesaji> IletisimMesajlari { get; set; } = null!;
-    public DbSet<BlogYazisi> BlogYazilari { get; set; } = null!;
     public DbSet<Slider> Sliderlar { get; set; } = null!;
     public DbSet<SiteAyari> SiteAyarlari { get; set; } = null!;
     public DbSet<Kupon> Kuponlar { get; set; } = null!;
@@ -44,6 +43,9 @@ public class UygulamaDbContext : IdentityDbContext<UygulamaKullanicisi, Identity
     // --- YENİ MENÜ SİSTEMİ TABLOLARI ---
     public DbSet<MenuGrup> MenuGruplari { get; set; } = null!;
     public DbSet<MenuItem> MenuItems { get; set; } = null!;
+
+    // --- ÇOKLU KATEGORİ İLİŞKİSİ ---
+    public DbSet<UrunKategori> UrunKategorileri { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -93,6 +95,22 @@ public class UygulamaDbContext : IdentityDbContext<UygulamaKullanicisi, Identity
         {
             entity.HasKey(e => e.Id);
             entity.Property(e => e.EkTeslimatUcreti).HasPrecision(18, 2);
+        });
+
+        builder.Entity<UrunKategori>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => new { e.UrunId, e.KategoriId }).IsUnique();
+
+            entity.HasOne(e => e.Urun)
+                  .WithMany(u => u.UrunKategorileri)
+                  .HasForeignKey(e => e.UrunId)
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Kategori)
+                  .WithMany(k => k.UrunKategorileri)
+                  .HasForeignKey(e => e.KategoriId)
+                  .OnDelete(DeleteBehavior.Cascade);
         });
 
         builder.Entity<Kategori>(entity =>
