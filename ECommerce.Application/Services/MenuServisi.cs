@@ -28,6 +28,7 @@ namespace ECommerce.Application.Services
                 {
                     Id = g.Id,
                     Baslik = g.Baslik,
+                    Aciklama = g.Aciklama,
                     Konum = g.Konum,
                     AktifMi = g.AktifMi,
                     SistemMi = g.SistemMi, // DTO - Entity mapping eklendi
@@ -35,6 +36,20 @@ namespace ECommerce.Application.Services
                 });
             }
             return sonuc;
+        }
+
+        public async Task<IReadOnlyList<MenuGrupListeDto>> FooterBolumleriniGetirAsync()
+        {
+            var gruplar = await _grupDeposu.GetirAsync(g => g.Konum.StartsWith("Footer"));
+            return gruplar.Select(g => new MenuGrupListeDto
+            {
+                Id = g.Id,
+                Baslik = g.Baslik,
+                Aciklama = g.Aciklama,
+                Konum = g.Konum,
+                AktifMi = g.AktifMi,
+                SistemMi = g.SistemMi
+            }).ToList();
         }
 
         public async Task<MenuGrupGuncelleDto?> GrupIdIleGetirAsync(Guid id)
@@ -46,6 +61,7 @@ namespace ECommerce.Application.Services
             {
                 Id = grup.Id,
                 Baslik = grup.Baslik,
+                Aciklama = grup.Aciklama,
                 Konum = grup.Konum,
                 AktifMi = grup.AktifMi,
                 SistemMi = grup.SistemMi
@@ -57,6 +73,7 @@ namespace ECommerce.Application.Services
             var grup = new MenuGrup
             {
                 Baslik = dto.Baslik,
+                Aciklama = dto.Aciklama,
                 Konum = dto.Konum,
                 AktifMi = dto.AktifMi,
                 SistemMi = false // Manuel eklenenler sistem grubu olamaz
@@ -72,6 +89,7 @@ namespace ECommerce.Application.Services
             if (grup != null)
             {
                 grup.Baslik = dto.Baslik;
+                grup.Aciklama = dto.Aciklama;
                 grup.Konum = dto.Konum;
                 grup.AktifMi = dto.AktifMi;
                 grup.GuncellenmeTarihi = DateTime.UtcNow;

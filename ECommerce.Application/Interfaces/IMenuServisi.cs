@@ -6,6 +6,7 @@ namespace ECommerce.Application.Interfaces
     {
         // Grup İşlemleri
         Task<IReadOnlyList<MenuGrupListeDto>> TumGruplariGetirAsync();
+        Task<IReadOnlyList<MenuGrupListeDto>> FooterBolumleriniGetirAsync();
         Task<MenuGrupGuncelleDto?> GrupIdIleGetirAsync(Guid id);
         Task<Guid> GrupEkleAsync(MenuGrupEkleDto dto);
         Task GrupGuncelleAsync(MenuGrupGuncelleDto dto);

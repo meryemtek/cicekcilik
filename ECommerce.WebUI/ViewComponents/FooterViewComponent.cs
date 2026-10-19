@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using System.Net.Http.Json;
 using System.Text.Json;
 using ECommerce.WebUI.Models;
 
@@ -17,6 +18,15 @@ public class FooterViewComponent : ViewComponent
     {
         var client = _httpClientFactory.CreateClient("ApiClient");
         var model = new FooterViewModel();
+
+        try
+        {
+            model.FooterBolumleri = await client.GetFromJsonAsync<List<ECommerce.Application.DTOs.Menu.MenuGrupListeDto>>("admin/menuler/footer-bolumleri") ?? new();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine("Footer bölümleri çekilemedi: " + ex.Message);
+        }
 
         try
         {

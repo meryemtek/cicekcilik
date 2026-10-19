@@ -21,4 +21,12 @@ public class SiparisDeposu : Depo<Siparis>, ISiparisDeposu
                 .ThenInclude(k => k.Urun)
             .FirstOrDefaultAsync(s => s.Id == id);
     }
+
+    public async Task<Siparis?> SiparisNumarasiylaDetayGetirAsync(string siparisNumarasi)
+    {
+        return await _uygulamaDbContext.Siparisler
+            .Include(s => s.SiparisKalemleri)
+                .ThenInclude(k => k.Urun)
+            .FirstOrDefaultAsync(s => s.SiparisNumarasi == siparisNumarasi);
+    }
 }

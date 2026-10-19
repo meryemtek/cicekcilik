@@ -12,4 +12,5 @@ public class FooterViewModel
     public string? FacebookUrl { get; set; } = "";
     public string? TwitterUrl { get; set; } = "";
     public List<ECommerce.Application.DTOs.Sayfa.SayfaListeDto> Sayfalar { get; set; } = new();
+    public List<ECommerce.Application.DTOs.Menu.MenuGrupListeDto> FooterBolumleri { get; set; } = new();
 }

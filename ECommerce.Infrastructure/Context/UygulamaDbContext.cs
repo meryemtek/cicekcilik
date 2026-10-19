@@ -181,8 +181,9 @@ public class UygulamaDbContext : IdentityDbContext<UygulamaKullanicisi, Identity
                 {
                     Id = Guid.Parse("11111111-1111-1111-1111-111111111111"),
                     Baslik = "Footer Kurumsal Menü",
+                    Aciklama = "Şirketiniz ve hizmetleriniz hakkında kısa bir açıklama yazın.",
                     Konum = "FooterKurumsal",
-                    AktifMi = false,
+                    AktifMi = true,
                     SistemMi = true,
                     OlusturulmaTarihi = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 },
@@ -190,8 +191,9 @@ public class UygulamaDbContext : IdentityDbContext<UygulamaKullanicisi, Identity
                 {
                     Id = Guid.Parse("22222222-2222-2222-2222-222222222222"),
                     Baslik = "Footer Hızlı Erişim Menü",
+                    Aciklama = "Müşterilerinizin bilmesini istediğiniz kısa bir not yazın.",
                     Konum = "Footer",
-                    AktifMi = false,
+                    AktifMi = true,
                     SistemMi = true,
                     OlusturulmaTarihi = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)
                 }

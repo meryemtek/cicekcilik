@@ -206,7 +206,20 @@ namespace ECommerce.WebUI.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            TempData["HataMesaji"] = "Ürün sepete eklenirken hata oluştu.";
+            var errorContent = await response.Content.ReadAsStringAsync();
+            var errorMessage = "Ürün sepete eklenirken hata oluştu.";
+            try
+            {
+                using var errorDoc = JsonDocument.Parse(errorContent);
+                if (errorDoc.RootElement.TryGetProperty("mesaj", out var messageProperty)
+                    && !string.IsNullOrWhiteSpace(messageProperty.GetString()))
+                {
+                    errorMessage = messageProperty.GetString()!;
+                }
+            }
+            catch { }
+
+            TempData["HataMesaji"] = errorMessage;
             return !string.IsNullOrEmpty(referer) ? Redirect(referer) : RedirectToAction("Index", "Home");
         }
 

@@ -5,6 +5,7 @@ namespace ECommerce.Domain.Entities;
 public class Siparis : TemelVarlik
 {
     public string SiparisNumarasi { get; set; } = string.Empty;
+    public string? SepetId { get; set; }
     public DateTime SiparisTarihi { get; set; } = DateTime.UtcNow;
 
     // Finansal Alanlar

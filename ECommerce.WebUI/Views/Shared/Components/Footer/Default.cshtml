@@ -117,31 +117,16 @@
                 </div>
 
                 <!-- 2. SÜTUN: Kurumsal Linkler -->
-                <div class="col-lg-2 col-md-6 col-6">
-                    <h5 class="footer-column-title">KURUMSAL</h5>
-                    <ul class="footer-links-list">
-                        <li><a href="/Hakkimizda"><i class="bi bi-chevron-right"></i> Hakkımızda</a></li>
-                        <li><a href="/Iletisim"><i class="bi bi-chevron-right"></i> İletişim & Konum</a></li>
-                        <li><a href="/BankaHesaplari"><i class="bi bi-chevron-right"></i> Banka Hesapları</a></li>
-                        <li><a href="/SayfaSite/Detay/mesafeli-satis-sozlesmesi"><i class="bi bi-chevron-right"></i> Mesafeli Satış Sözleşmesi</a></li>
-                        <li><a href="/SayfaSite/Detay/iptal-ve-iade"><i class="bi bi-chevron-right"></i> İptal ve İade Şartları</a></li>
-                        <li><a href="/SayfaSite/Detay/gizlilik-ve-guvenlik"><i class="bi bi-chevron-right"></i> Gizlilik & Güvenlik</a></li>
-                    </ul>
-                </div>
-
-                <!-- 3. SÜTUN: Popüler Kategoriler -->
-                <div class="col-lg-3 col-md-6 col-6">
-                    <h5 class="footer-column-title">HIZLI ERİŞİM</h5>
-                    <ul class="footer-links-list">
-                        <li><a href="/Urun"><i class="bi bi-chevron-right"></i> Tüm Çiçekler</a></li>
-                        <li><a href="/Urun?kategori=guller"><i class="bi bi-chevron-right"></i> Güller & Buketler</a></li>
-                        <li><a href="/Urun?kategori=kutuda-cicekler"><i class="bi bi-chevron-right"></i> Kutuda Çiçek Aranjmanları</a></li>
-                        <li><a href="/Urun?kategori=saksi-cicekleri"><i class="bi bi-chevron-right"></i> Saksı & İç Mekan Bitkileri</a></li>
-                        <li><a href="/Urun?kategori=dogum-gunu"><i class="bi bi-chevron-right"></i> Doğum Günü Çiçekleri</a></li>
-                        <li><a href="/Urun?kategori=vip"><i class="bi bi-chevron-right"></i> VIP Tasarım Çiçekler</a></li>
-                        <li><a href="/Urun?kategori=celenk"><i class="bi bi-chevron-right"></i> Çelenk & Ferforje</a></li>
-                    </ul>
-                </div>
+                @foreach (var bolum in Model.FooterBolumleri.Where(x => x.AktifMi).OrderBy(x => x.Konum == "FooterKurumsal" ? 0 : 1))
+                {
+                    <div class="col-lg-2 col-md-6 col-6">
+                        <h5 class="footer-column-title">@bolum.Baslik</h5>
+                        @if (!string.IsNullOrWhiteSpace(bolum.Aciklama))
+                        {
+                            <p class="footer-text footer-section-description">@bolum.Aciklama</p>
+                        }
+                    </div>
+                }
 
                 <!-- 4. SÜTUN: WhatsApp Destek & Çalışma Saatleri -->
                 <div class="col-lg-3 col-md-6">
@@ -231,11 +216,11 @@
 
                 <div class="col-md-4 text-center text-md-end">
                     <div class="footer-bottom-links">
-                        <a href="/SayfaSite/Detay/gizlilik-ve-guvenlik">Gizlilik</a>
+                        <a href="/sayfa/gizlilik-ve-guvenlik">Gizlilik</a>
                         <span class="dot">•</span>
-                        <a href="/SayfaSite/Detay/mesafeli-satis-sozlesmesi">Mesafeli Satış</a>
+                        <a href="/sayfa/mesafeli-satis-sozlesmesi">Mesafeli Satış</a>
                         <span class="dot">•</span>
-                        <a href="/SayfaSite/Detay/iptal-ve-iade">İptal & İade</a>
+                        <a href="/sayfa/iptal-ve-iade">İptal & İade</a>
                     </div>
                 </div>
             </div>

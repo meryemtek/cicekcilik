@@ -67,5 +67,19 @@ namespace ECommerce.WebAPI.Controllers
                 return BadRequest(new { mesaj = ex.Message });
             }
         }
+
+        [HttpPost("{id:guid}/odeme-baslatma-iptal")]
+        public async Task<IActionResult> OdemeBaslatmaIptaliniIsle(Guid id)
+        {
+            try
+            {
+                await _siparisServisi.OdemeBaslatmaIptaliniIsleAsync(id);
+                return Ok(new { mesaj = "Ödeme başlatma işlemi iptal edildi." });
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound(new { mesaj = "Sipariş bulunamadı." });
+            }
+        }
     }
 }

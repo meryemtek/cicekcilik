@@ -803,6 +803,9 @@ namespace ECommerce.Infrastructure.Migrations
                     b.Property<DateTime>("OlusturulmaTarihi")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("SepetId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("SiparisNumarasi")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -1301,6 +1304,9 @@ namespace ECommerce.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Aciklama")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("AktifMi")
                         .HasColumnType("bit");
 
@@ -1333,7 +1339,8 @@ namespace ECommerce.Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("11111111-1111-1111-1111-111111111111"),
-                            AktifMi = false,
+                            Aciklama = "Şirketiniz ve hizmetleriniz hakkında kısa bir açıklama yazın.",
+                            AktifMi = true,
                             Baslik = "Footer Kurumsal Menü",
                             Konum = "FooterKurumsal",
                             OlusturulmaTarihi = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
@@ -1342,7 +1349,8 @@ namespace ECommerce.Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("22222222-2222-2222-2222-222222222222"),
-                            AktifMi = false,
+                            Aciklama = "Müşterilerinizin bilmesini istediğiniz kısa bir not yazın.",
+                            AktifMi = true,
                             Baslik = "Footer Hızlı Erişim Menü",
                             Konum = "Footer",
                             OlusturulmaTarihi = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),

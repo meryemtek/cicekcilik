@@ -13,7 +13,8 @@ public class Sepet
 
     // Ödeme ve Sepet sayfalarının kullandığı Toplam Tutar Hesabı
     public decimal ToplamTutar =>
-        Kalemler.Sum(k => (k.BirimFiyat * k.Miktar) + k.TeslimatUcreti + k.VipUcreti) - IndirimTutari;
+        Kalemler.Sum(k => (k.BirimFiyat * k.Miktar) + k.TeslimatUcreti + k.VipUcreti)
+        - IndirimTutari - KampanyaIndirimTutari;
 
     public Sepet()
     {

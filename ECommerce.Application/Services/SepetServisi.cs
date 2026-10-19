@@ -11,14 +11,27 @@ public class SepetServisi : ISepetServisi
     private readonly IKuponServisi _kuponServisi;
     private readonly IKampanyaServisi _kampanyaServisi;
     private readonly IDepo<Urun> _urunDepo;
+    private readonly IDepo<UrunVaryant> _varyantDepo;
+    private readonly IDepo<SemtTeslimatBolgesi> _teslimatBolgesiDepo;
+    private readonly ISiteAyariServisi _siteAyariServisi;
     private const int SepetGecerlilikGunSayisi = 7;
 
-    public SepetServisi(IDistributedCache onbellek, IKuponServisi kuponServisi, IKampanyaServisi kampanyaServisi, IDepo<Urun> urunDepo)
+    public SepetServisi(
+        IDistributedCache onbellek,
+        IKuponServisi kuponServisi,
+        IKampanyaServisi kampanyaServisi,
+        IDepo<Urun> urunDepo,
+        IDepo<UrunVaryant> varyantDepo,
+        IDepo<SemtTeslimatBolgesi> teslimatBolgesiDepo,
+        ISiteAyariServisi siteAyariServisi)
     {
         _onbellek = onbellek;
         _kuponServisi = kuponServisi;
         _kampanyaServisi = kampanyaServisi;
         _urunDepo = urunDepo;
+        _varyantDepo = varyantDepo;
+        _teslimatBolgesiDepo = teslimatBolgesiDepo;
+        _siteAyariServisi = siteAyariServisi;
     }
 
     public async Task<Sepet> SepetGetirAsync(string sepetId)
@@ -92,6 +105,7 @@ public class SepetServisi : ISepetServisi
 
     public async Task<Sepet> SepeteUrunEkleAsync(string sepetId, SepetKalemi kalem)
     {
+        await KalemiGuncelBilgilerleFiyatlandirAsync(kalem);
         var sepet = await SepetGetirAsync(sepetId);
 
         var mevcutKalem = sepet.Kalemler.FirstOrDefault(x =>
@@ -115,6 +129,70 @@ public class SepetServisi : ISepetServisi
 
         await SepetiKaydetAsync(sepet);
         return sepet;
+    }
+
+    public async Task<Sepet> SepetFiyatlariniGuncelleAsync(string sepetId)
+    {
+        var sepet = await SepetGetirAsync(sepetId);
+        foreach (var kalem in sepet.Kalemler)
+        {
+            await KalemiGuncelBilgilerleFiyatlandirAsync(kalem);
+        }
+
+        await KampanyalariSepeteUygulaAsync(sepet);
+        if (!string.IsNullOrWhiteSpace(sepet.IndirimKodu))
+        {
+            await KuponuSepeteUygulaAsync(sepet, sepet.IndirimKodu);
+        }
+
+        await SepetiKaydetAsync(sepet);
+        return sepet;
+    }
+
+    private async Task KalemiGuncelBilgilerleFiyatlandirAsync(SepetKalemi kalem)
+    {
+        if (kalem.Miktar < 1)
+        {
+            throw new InvalidOperationException("Ürün miktarı en az 1 olmalıdır.");
+        }
+
+        var urun = await _urunDepo.IdIleGetirAsync(kalem.UrunId);
+        if (urun == null || !urun.AktifMi || urun.StokMiktari < kalem.Miktar)
+        {
+            throw new InvalidOperationException("Ürün bulunamadı, satışa kapalı veya stok miktarı yetersiz.");
+        }
+
+        kalem.UrunAdi = urun.Ad;
+        kalem.BirimFiyat = urun.Fiyat;
+        kalem.VaryantAdi = "Standart Boy / Model";
+
+        if (kalem.VaryantId.HasValue && kalem.VaryantId.Value != Guid.Empty)
+        {
+            var varyant = await _varyantDepo.IdIleGetirAsync(kalem.VaryantId.Value);
+            if (varyant == null || varyant.UrunId != urun.Id || !varyant.AktifMi || varyant.StokMiktari < kalem.Miktar)
+            {
+                throw new InvalidOperationException("Seçilen ürün varyantı bulunamadı veya stok miktarı yetersiz.");
+            }
+
+            kalem.BirimFiyat += varyant.FiyatFarki;
+            kalem.VaryantAdi = varyant.VaryantAdi;
+        }
+
+        var bolgeler = await _teslimatBolgesiDepo.TumunuGetirAsync();
+        var bolge = bolgeler.FirstOrDefault(x => x.AktifMi
+            && !string.IsNullOrWhiteSpace(x.MahalleAdi)
+            && x.MahalleAdi.Equals(kalem.Mahalle, StringComparison.OrdinalIgnoreCase)
+            && (string.IsNullOrWhiteSpace(x.IlAdi) || x.IlAdi.Equals(kalem.Il, StringComparison.OrdinalIgnoreCase))
+            && (string.IsNullOrWhiteSpace(x.IlceAdi) || x.IlceAdi.Equals(kalem.Ilce, StringComparison.OrdinalIgnoreCase)));
+
+        if (bolge == null)
+        {
+            throw new InvalidOperationException("Seçilen teslimat bölgesi aktif değil veya bulunamadı.");
+        }
+
+        kalem.TeslimatUcreti = bolge.EkTeslimatUcreti;
+        var siteAyarlari = await _siteAyariServisi.AyarlariGetirAsync();
+        kalem.VipUcreti = kalem.VipTeslimatAktifMi ? siteAyarlari.VipTeslimatUcreti : 0;
     }
 
     public async Task<Sepet> SepettenUrunCikarAsync(string sepetId, Guid kalemId)
@@ -243,6 +321,13 @@ public class SepetServisi : ISepetServisi
     public async Task<Sepet> KuponUygulaAsync(string sepetId, string kuponKodu)
     {
         var sepet = await SepetGetirAsync(sepetId);
+        await KuponuSepeteUygulaAsync(sepet, kuponKodu);
+        await SepetiKaydetAsync(sepet);
+        return sepet;
+    }
+
+    private async Task KuponuSepeteUygulaAsync(Sepet sepet, string kuponKodu)
+    {
         if (string.IsNullOrWhiteSpace(kuponKodu))
             throw new Exception("Lütfen geçerli bir indirim kodu giriniz.");
 
@@ -294,9 +379,6 @@ public class SepetServisi : ISepetServisi
         {
             sepet.IndirimTutari = araToplam;
         }
-
-        await SepetiKaydetAsync(sepet);
-        return sepet;
     }
 
     public async Task<Sepet> KuponKaldirAsync(string sepetId)

@@ -125,7 +125,7 @@ public class SiparisServisi : ISiparisServisi
 
     public async Task<Guid> SiparisOlusturAsync(SiparisOlusturDto dto)
     {
-        var sepet = await _sepetServisi.SepetGetirAsync(dto.SepetId);
+        var sepet = await _sepetServisi.SepetFiyatlariniGuncelleAsync(dto.SepetId);
         if (sepet == null || !sepet.Kalemler.Any())
             throw new InvalidOperationException("Sepetiniz boş.");
 
@@ -166,11 +166,12 @@ public class SiparisServisi : ISiparisServisi
         decimal genelToplam = araToplam + teslimatToplam + vipToplam - kampanyaIndirimi - kuponIndirimi;
         if (genelToplam < 0) genelToplam = 0;
 
-        var siparisNo = "SP-" + DateTime.Now.ToString("yyyyMMdd") + "-" + new Random().Next(1000, 9999);
+        var siparisNo = "SP-" + DateTime.UtcNow.ToString("yyyyMMddHHmmss") + "-" + Guid.NewGuid().ToString("N")[..8];
 
         var yeniSiparis = new Siparis
         {
             SiparisNumarasi = siparisNo,
+            SepetId = dto.SepetId,
             AraToplam = araToplam,
             TeslimatToplamUcreti = teslimatToplam,
             VipToplamUcreti = vipToplam,
@@ -219,49 +220,133 @@ public class SiparisServisi : ISiparisServisi
         };
 
         await _siparisDeposu.EkleAsync(yeniSiparis);
+        await SiparisStogunuGuncelleAsync(yeniSiparis, -1);
         await _siparisDeposu.DegisiklikleriKaydetAsync();
 
-        // 2. Stok Düşürme ve Stok 0 Olunca Pasife Çekme İşlemi
-        foreach (var k in sepet.Kalemler)
+        if (!KrediKartiIleOdemeMi(yeniSiparis))
         {
-            var urun = await _urunDeposu.IdIleGetirAsync(k.UrunId);
+            await _sepetServisi.SepetiTemizleAsync(dto.SepetId);
+        }
+
+        await _smsServisi.SmsGonderAsync(dto.MusteriTelefon, $"Sayin {dto.MusteriAd} {dto.MusteriSoyad}, {yeniSiparis.SiparisNumarasi} numarali siparisiniz basariyla alinmistir.");
+        await _hiCariServisi.CariVeStokIsleAsync(yeniSiparis.Id);
+
+        return yeniSiparis.Id;
+    }
+
+    public async Task<bool> PaytrSonucunuIsleAsync(string siparisNumarasi, string durum, long toplamTutar)
+    {
+        var siparis = await _siparisDeposu.SiparisNumarasiylaDetayGetirAsync(siparisNumarasi);
+        if (siparis == null || !KrediKartiIleOdemeMi(siparis))
+        {
+            return false;
+        }
+
+        if (siparis.Durum == SiparisDurumu.Islemde || siparis.Durum == SiparisDurumu.IptalEdildi)
+        {
+            return true;
+        }
+
+        if (siparis.Durum != SiparisDurumu.Beklemede)
+        {
+            return false;
+        }
+
+        if (durum.Equals("success", StringComparison.OrdinalIgnoreCase))
+        {
+            var beklenenTutar = decimal.ToInt64(decimal.Round(siparis.ToplamTutar * 100m, 0, MidpointRounding.AwayFromZero));
+            if (toplamTutar < beklenenTutar)
+            {
+                return false;
+            }
+
+            siparis.Durum = SiparisDurumu.Islemde;
+            siparis.GuncellenmeTarihi = DateTime.UtcNow;
+            _siparisDeposu.Guncelle(siparis);
+            await _siparisDeposu.DegisiklikleriKaydetAsync();
+
+            if (!string.IsNullOrWhiteSpace(siparis.SepetId))
+            {
+                await _sepetServisi.SepetiTemizleAsync(siparis.SepetId);
+            }
+
+            return true;
+        }
+
+        if (!durum.Equals("failed", StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        await SiparisStogunuGuncelleAsync(siparis, 1);
+        siparis.Durum = SiparisDurumu.IptalEdildi;
+        siparis.GuncellenmeTarihi = DateTime.UtcNow;
+        _siparisDeposu.Guncelle(siparis);
+        await _siparisDeposu.DegisiklikleriKaydetAsync();
+        return true;
+    }
+
+    public async Task OdemeBaslatmaIptaliniIsleAsync(Guid siparisId)
+    {
+        var siparis = await _siparisDeposu.SiparisDetayiGetirAsync(siparisId)
+            ?? throw new KeyNotFoundException("Sipariş bulunamadı.");
+
+        if (!KrediKartiIleOdemeMi(siparis) || siparis.Durum != SiparisDurumu.Beklemede)
+        {
+            return;
+        }
+
+        await SiparisStogunuGuncelleAsync(siparis, 1);
+        siparis.Durum = SiparisDurumu.IptalEdildi;
+        siparis.GuncellenmeTarihi = DateTime.UtcNow;
+        _siparisDeposu.Guncelle(siparis);
+        await _siparisDeposu.DegisiklikleriKaydetAsync();
+    }
+
+    private static bool KrediKartiIleOdemeMi(Siparis siparis)
+    {
+        return string.Equals(siparis.OdemeYontemi, "KrediKarti", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private async Task SiparisStogunuGuncelleAsync(Siparis siparis, int carpan)
+    {
+        foreach (var kalem in siparis.SiparisKalemleri)
+        {
+            var urun = await _urunDeposu.IdIleGetirAsync(kalem.UrunId);
             if (urun != null)
             {
-                urun.StokMiktari -= k.Miktar;
-                if (urun.StokMiktari <= 0)
+                urun.StokMiktari = Math.Max(0, urun.StokMiktari + carpan * kalem.Miktar);
+                if (carpan < 0 && urun.StokMiktari == 0)
                 {
-                    urun.StokMiktari = 0;
-                    urun.AktifMi = false; // Stok 0 olunca ürün pasif duruma geçer
+                    urun.AktifMi = false;
+                }
+                else if (carpan > 0 && urun.StokMiktari > 0)
+                {
+                    urun.AktifMi = true;
                 }
                 urun.GuncellenmeTarihi = DateTime.UtcNow;
                 _urunDeposu.Guncelle(urun);
             }
 
-            if (k.VaryantId.HasValue && k.VaryantId.Value != Guid.Empty)
+            if (kalem.VaryantId.HasValue && kalem.VaryantId.Value != Guid.Empty)
             {
-                var varyant = await _varyantDeposu.IdIleGetirAsync(k.VaryantId.Value);
+                var varyant = await _varyantDeposu.IdIleGetirAsync(kalem.VaryantId.Value);
                 if (varyant != null)
                 {
-                    varyant.StokMiktari -= k.Miktar;
-                    if (varyant.StokMiktari <= 0)
+                    varyant.StokMiktari = Math.Max(0, varyant.StokMiktari + carpan * kalem.Miktar);
+                    if (carpan < 0 && varyant.StokMiktari == 0)
                     {
-                        varyant.StokMiktari = 0;
                         varyant.AktifMi = false;
+                    }
+                    else if (carpan > 0 && varyant.StokMiktari > 0)
+                    {
+                        varyant.AktifMi = true;
                     }
                     varyant.GuncellenmeTarihi = DateTime.UtcNow;
                     _varyantDeposu.Guncelle(varyant);
                 }
             }
         }
-
-        await _urunDeposu.DegisiklikleriKaydetAsync();
-        await _varyantDeposu.DegisiklikleriKaydetAsync();
-
-        await _sepetServisi.SepetiTemizleAsync(dto.SepetId);
-        await _smsServisi.SmsGonderAsync(dto.MusteriTelefon, $"Sayin {dto.MusteriAd} {dto.MusteriSoyad}, {yeniSiparis.SiparisNumarasi} numarali siparisiniz basariyla alinmistir.");
-        await _hiCariServisi.CariVeStokIsleAsync(yeniSiparis.Id);
-
-        return yeniSiparis.Id;
     }
 
     public async Task<SiparisDurumGuncelleSonucDto> DurumGuncelleAsync(SiparisDurumGuncelleDto dto)

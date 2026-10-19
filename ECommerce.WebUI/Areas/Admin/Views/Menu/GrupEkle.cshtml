@@ -1,6 +1,6 @@
 ﻿@model ECommerce.Application.DTOs.Menu.MenuGrupEkleDto
 @{
-    ViewData["Title"] = "Yeni Menü Grubu Ekle";
+    ViewData["Title"] = "Yeni Bölüm Ekle";
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 }
 
@@ -107,9 +107,9 @@
 <div class="t-page">
     <div class="t-hero">
         <div class="t-hero-content">
-            <div class="t-eyebrow"><i class="bi bi-diagram-3"></i> Site Navigasyonu</div>
-            <h1 class="t-title">Yeni Menü Grubu</h1>
-            <p class="t-subtitle">Header veya Footer gibi alanlar için yeni bir menü kutusu tanımlayın.</p>
+            <div class="t-eyebrow"><i class="bi bi-layout-text-sidebar-reverse"></i> Alt Bölümler</div>
+            <h1 class="t-title">Yeni Bölüm</h1>
+            <p class="t-subtitle">Sitede görünecek başlığı ve altındaki kısa açıklamayı yazın.</p>
         </div>
         <a asp-action="Index" class="t-btn-secondary"><i class="bi bi-arrow-left"></i> Geri Dön</a>
     </div>
@@ -118,24 +118,28 @@
         <form asp-action="GrupEkle" method="post">
             <div class="row g-3">
                 <div class="col-md-6 mb-3">
-                    <label class="form-label">Menü Grubu Adı</label>
-                    <input type="text" asp-for="Baslik" class="form-control" placeholder="Örn: Üst Ana Menü" required />
+                    <label class="form-label">Bölüm başlığı</label>
+                    <input type="text" asp-for="Baslik" class="form-control" placeholder="Örn: Kurumsal" required />
                 </div>
 
                 <div class="col-md-6 mb-3">
-                    <label class="form-label">Konum</label>
+                    <label class="form-label">Sitedeki yeri</label>
                     <select asp-for="Konum" class="form-select">
-                        <option value="Header">Header (Üst Alan)</option>
-                        <option value="Footer">Footer Hızlı Erişim (Alt Alan)</option>
-                        <option value="FooterKurumsal">Footer Kurumsal Alanı</option>
-                        <option value="Sidebar">Sidebar (Yan Menü)</option>
+                        <option value="FooterKurumsal">Alt bölüm - Kurumsal</option>
+                        <option value="Footer">Alt bölüm - Diğer</option>
                     </select>
+                </div>
+
+                <div class="col-12 mb-3">
+                    <label class="form-label">Açıklama</label>
+                    <textarea asp-for="Aciklama" class="form-control" rows="4" placeholder="Müşterilerinizin bu bölümde okumasını istediğiniz kısa açıklama"></textarea>
+                    <div class="form-text">İsterseniz boş bırakabilirsiniz.</div>
                 </div>
 
                 <div class="col-12 mt-2 mb-4">
                     <div class="form-check form-switch p-3 rounded-3" style="background: #faf9fa; border: 1px solid #eee9ed;">
                         <input class="form-check-input ms-0 mt-1" type="checkbox" asp-for="AktifMi" id="aktifSwitch" checked style="width: 45px; height: 22px; cursor: pointer;">
-                        <label class="form-check-label fw-bold ms-5" for="aktifSwitch" style="position:relative; top:2px;">Aktif Mi?</label>
+                        <label class="form-check-label fw-bold ms-5" for="aktifSwitch" style="position:relative; top:2px;">Sitede göster</label>
                     </div>
                 </div>
             </div>
@@ -143,7 +147,7 @@
             <div class="d-flex justify-content-end gap-2">
                 <a asp-action="Index" class="t-btn-secondary">İptal</a>
                 <button type="submit" class="t-btn-primary">
-                    <i class="bi bi-check-lg"></i> Grubu Kaydet
+                    <i class="bi bi-check-lg"></i> Kaydet
                 </button>
             </div>
         </form>

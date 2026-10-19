@@ -11,6 +11,7 @@ public interface ISepetServisi
 {
     Task<Sepet> SepetGetirAsync(string sepetId);
     Task<Sepet> SepeteUrunEkleAsync(string sepetId, SepetKalemi kalem);
+    Task<Sepet> SepetFiyatlariniGuncelleAsync(string sepetId);
     Task<Sepet> SepettenUrunCikarAsync(string sepetId, Guid urunId);
     Task<Sepet> UrunMiktariGuncelleAsync(string sepetId, Guid urunId, int miktar);
     Task<Sepet> SepetUrunleriniBirlestirAsync(string sepetId);

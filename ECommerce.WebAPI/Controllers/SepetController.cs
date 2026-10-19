@@ -27,8 +27,15 @@ public class SepetController : ControllerBase
     [HttpPost("{sepetId}/ekle")]
     public async Task<IActionResult> UrunEkle(string sepetId, [FromBody] SepetKalemi kalem)
     {
-        var sepet = await _sepetServisi.SepeteUrunEkleAsync(sepetId, kalem);
-        return Ok(new { Mesaj = "Ürün başarıyla sepete eklendi.", Sepet = sepet });
+        try
+        {
+            var sepet = await _sepetServisi.SepeteUrunEkleAsync(sepetId, kalem);
+            return Ok(new { Mesaj = "Ürün başarıyla sepete eklendi.", Sepet = sepet });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { Mesaj = ex.Message });
+        }
     }
 
     [HttpDelete("{sepetId}/cikar/{urunId:guid}")]

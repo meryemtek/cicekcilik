@@ -28,6 +28,14 @@ namespace ECommerce.WebAPI.Controllers.Admin
             return Ok(menuler);
         }
 
+        [AllowAnonymous]
+        [HttpGet("footer-bolumleri")]
+        public async Task<IActionResult> FooterBolumleriniGetir()
+        {
+            var bolumler = await _menuServisi.FooterBolumleriniGetirAsync();
+            return Ok(bolumler);
+        }
+
         [HttpGet("gruplar")]
         public async Task<IActionResult> GruplariGetir()
         {

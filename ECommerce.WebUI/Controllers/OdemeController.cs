@@ -254,9 +254,14 @@ namespace ECommerce.WebUI.Controllers
                             }
 
                             TempData["HataMesaji"] = payment?.HataMesaji ?? "Ödeme ekranı başlatılamadı.";
+                            await SiparisOdemeBaslatmasiniIptalEtAsync(client, siparisId);
                             return RedirectToAction(nameof(Index));
                         }
                     }
+
+                    await SiparisOdemeBaslatmasiniIptalEtAsync(client, siparisId);
+                    TempData["HataMesaji"] = "Sipariş bilgileri alınamadığı için ödeme başlatılamadı. Sepetiniz korunmuştur.";
+                    return RedirectToAction(nameof(Index));
                 }
 
                 return RedirectToAction("Basarili", new { id = siparisId });
@@ -278,6 +283,32 @@ namespace ECommerce.WebUI.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
+        [IgnoreAntiforgeryToken]
+        public async Task<IActionResult> Bildirim(
+            [FromForm(Name = "merchant_oid")] string merchantOid,
+            [FromForm(Name = "status")] string status,
+            [FromForm(Name = "total_amount")] string totalAmount,
+            [FromForm(Name = "hash")] string hash)
+        {
+            var form = new Dictionary<string, string>
+            {
+                ["merchant_oid"] = merchantOid ?? string.Empty,
+                ["status"] = status ?? string.Empty,
+                ["total_amount"] = totalAmount ?? string.Empty,
+                ["hash"] = hash ?? string.Empty
+            };
+
+            using var response = await CreateApiClient().PostAsync("odeme/bildirim", new FormUrlEncodedContent(form));
+            var content = await response.Content.ReadAsStringAsync();
+            return new ContentResult
+            {
+                Content = content,
+                ContentType = "text/plain; charset=utf-8",
+                StatusCode = (int)response.StatusCode
+            };
+        }
+
         [HttpGet]
         public async Task<IActionResult> Demo(Guid id)
         {
@@ -288,9 +319,16 @@ namespace ECommerce.WebUI.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult DemoTamamla(Guid id)
+        public async Task<IActionResult> DemoTamamla(Guid id)
         {
+            var sepetId = GetOrCreateSepetId();
+            await CreateApiClient().DeleteAsync($"sepet/{sepetId}/temizle");
             return RedirectToAction(nameof(Basarili), new { id });
+        }
+
+        private static async Task SiparisOdemeBaslatmasiniIptalEtAsync(HttpClient client, Guid siparisId)
+        {
+            await client.PostAsync($"siparis/{siparisId}/odeme-baslatma-iptal", null);
         }
 
         [HttpGet]

@@ -55,7 +55,7 @@ namespace ECommerce.WebUI.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult GrupEkle()
         {
-            return View(new MenuGrupEkleDto { Konum = "Header" });
+            return View(new MenuGrupEkleDto { Konum = "FooterKurumsal" });
         }
 
         // YENİ GRUP EKLEME (POST)

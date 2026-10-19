@@ -298,20 +298,7 @@ function teslimatBolgeleriniGetir() {
         ? teslimatBolgeleri.filter(bolge => bolge && bolge.aktifMi !== false && bolge.mahalleAdi)
         : [];
 
-    if (kayitliBolgeler.length > 0) return kayitliBolgeler;
-
-    return [
-        { ilAdi: 'Elazığ', ilceAdi: 'Merkez', mahalleAdi: 'Doğukent', ekTeslimatUcreti: 100 },
-        { ilAdi: 'Elazığ', ilceAdi: 'Merkez', mahalleAdi: 'Ataşehir', ekTeslimatUcreti: 0 },
-        { ilAdi: 'Elazığ', ilceAdi: 'Merkez', mahalleAdi: 'Çaydaçıra', ekTeslimatUcreti: 0 },
-        { ilAdi: 'Elazığ', ilceAdi: 'Merkez', mahalleAdi: 'Sürsürü', ekTeslimatUcreti: 0 },
-        { ilAdi: 'Elazığ', ilceAdi: 'Merkez', mahalleAdi: 'Abdullahpaşa', ekTeslimatUcreti: 0 },
-        { ilAdi: 'Elazığ', ilceAdi: 'Merkez', mahalleAdi: 'Cumhuriyet', ekTeslimatUcreti: 0 },
-        { ilAdi: 'Elazığ', ilceAdi: 'Merkez', mahalleAdi: 'Bahçelievler', ekTeslimatUcreti: 0 },
-        { ilAdi: 'Elazığ', ilceAdi: 'Merkez', mahalleAdi: 'Fırat', ekTeslimatUcreti: 0 },
-        { ilAdi: 'Elazığ', ilceAdi: 'Merkez', mahalleAdi: 'Rızaiye', ekTeslimatUcreti: 0 },
-        { ilAdi: 'Elazığ', ilceAdi: 'Merkez', mahalleAdi: 'İzzetpaşa', ekTeslimatUcreti: 0 }
-    ];
+    return kayitliBolgeler;
 }
 
 function teslimatAdresSeciminiBaslat() {
@@ -502,12 +489,6 @@ function sablonDoldur(kategori, metin) {
 /* ========================================================
    TESLİMAT KONUMU MODALI VE ELAZIĞ İLÇE/MAHALLE İŞLEMLERİ
    ======================================================== */
-const varsayilanElazigMahalleleri = [
-    "Ataşehir", "Çaydaçıra", "Sürsürü", "Abdullahpaşa",
-    "Cumhuriyet", "Doğukent", "Bahçelievler", "Üniversite",
-    "İzzetpaşa", "Fırat", "Rızaiye", "Yenimahalle", "Hankendi"
-];
-
 function doldurIl() {
     const ilSelect = document.getElementById('modalIl');
     if (!ilSelect) return;
@@ -540,10 +521,6 @@ function ilceDegisti() {
         elazigMahalleler.forEach(m => {
             const ucretText = m.ekTeslimatUcreti > 0 ? ` (+₺${m.ekTeslimatUcreti.toLocaleString('tr-TR', { minimumFractionDigits: 0, maximumFractionDigits: 0 })})` : ' (Ücretsiz Teslimat)';
             mahalleSelect.innerHTML += `<option value="${m.mahalleAdi}" data-fark="${m.ekTeslimatUcreti}">${m.mahalleAdi}${ucretText}</option>`;
-        });
-    } else {
-        varsayilanElazigMahalleleri.forEach(m => {
-            mahalleSelect.innerHTML += `<option value="${m}" data-fark="0">${m} (Ücretsiz Teslimat)</option>`;
         });
     }
 }
