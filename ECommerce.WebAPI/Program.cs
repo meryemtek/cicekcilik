@@ -29,6 +29,8 @@ if (string.IsNullOrWhiteSpace(baglantiDizesi))
     throw new InvalidOperationException("Neon PostgreSQL bağlantısını User Secrets veya ConnectionStrings__VarsayilanBaglanti ortam değişkeniyle tanımlayın.");
 }
 
+baglantiDizesi = PostgreSqlConnectionStringNormalizer.Normalize(baglantiDizesi);
+
 builder.Services.AddDbContext<UygulamaDbContext>(options =>
     options.UseNpgsql(baglantiDizesi));
 

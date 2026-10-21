@@ -35,6 +35,8 @@ public class UygulamaDbContextFactory : IDesignTimeDbContextFactory<UygulamaDbCo
             throw new InvalidOperationException("PostgreSQL connection string is missing. Configure User Secrets or ConnectionStrings__VarsayilanBaglanti.");
         }
 
+        connectionString = PostgreSqlConnectionStringNormalizer.Normalize(connectionString);
+
         builder.UseNpgsql(connectionString);
 
         return new UygulamaDbContext(builder.Options);
