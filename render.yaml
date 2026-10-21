@@ -29,7 +29,10 @@ services:
       - key: JwtSettings__ExpireDays
         value: "7"
       - key: ClientSettings__BaseUrl
-        sync: false
+        fromService:
+          type: web
+          name: cicekcilik-web
+          envVarKey: RENDER_EXTERNAL_URL
 
   - type: web
     name: cicekcilik-web
@@ -41,6 +44,9 @@ services:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
       - key: ApiSettings__ApiBaseUrl
-        sync: false
+        fromService:
+          type: web
+          name: cicekcilik-api
+          envVarKey: RENDER_EXTERNAL_URL
       - key: ASPNETCORE_URLS
         value: http://0.0.0.0:10000
