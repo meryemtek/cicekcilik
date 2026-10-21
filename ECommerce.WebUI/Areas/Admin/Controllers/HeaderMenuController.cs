@@ -90,15 +90,75 @@ namespace ECommerce.WebUI.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AltMenuEkle(Guid anaMenuId, string altMenuAdi)
+        public async Task<IActionResult> AltMenuEkle(string anaMenuSeoUrl, string altMenuAdi)
         {
-            if (anaMenuId == Guid.Empty || string.IsNullOrWhiteSpace(altMenuAdi))
+            var anaMenu = SabitAnaMenuler.FirstOrDefault(x => x.SeoUrl == anaMenuSeoUrl);
+            if (string.IsNullOrEmpty(anaMenu.SeoUrl) || string.IsNullOrWhiteSpace(altMenuAdi))
             {
                 TempData["HataMesaji"] = "Lütfen ana menüyü seçin ve alt menü başlığını girin.";
                 return RedirectToAction(nameof(Index));
             }
 
             var client = CreateClientWithToken();
+            var kategoriResponse = await client.GetAsync("kategoriler");
+            if (!kategoriResponse.IsSuccessStatusCode)
+            {
+                TempData["HataMesaji"] = "Kategoriler alınamadı. Lütfen tekrar deneyin.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var kategoriIcerigi = await kategoriResponse.Content.ReadAsStringAsync();
+            var kategoriler = JsonSerializer.Deserialize<List<KategoriListeDto>>(
+                kategoriIcerigi,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new();
+
+            var anaKategori = kategoriler.FirstOrDefault(x =>
+                x.UstKategoriId == null && (
+                    x.SeoUrl == anaMenu.SeoUrl ||
+                    (anaMenu.SeoUrl == "cicekler" && x.SeoUrl == "cicek") ||
+                    (anaMenu.SeoUrl == "saksi-cicekleri" && x.SeoUrl == "saksida-cicekler") ||
+                    x.Ad.Replace(" ", "").Equals(anaMenu.Baslik.Replace(" ", ""), StringComparison.OrdinalIgnoreCase)));
+
+            if (anaKategori == null)
+            {
+                var anaKategoriDto = new KategoriEkleDto
+                {
+                    Ad = anaMenu.Baslik,
+                    SeoUrl = anaMenu.SeoUrl,
+                    Aciklama = string.Empty,
+                    GorselUrl = string.Empty,
+                    AktifMi = true
+                };
+
+                var anaKategoriJson = new StringContent(
+                    JsonSerializer.Serialize(anaKategoriDto),
+                    Encoding.UTF8,
+                    "application/json");
+                var anaKategoriResponse = await client.PostAsync("kategoriler", anaKategoriJson);
+
+                if (!anaKategoriResponse.IsSuccessStatusCode)
+                {
+                    TempData["HataMesaji"] = "Ana menü kategorisi oluşturulamadı. Lütfen Kategoriler bölümünü kontrol edin.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                var yeniAnaKategori = await anaKategoriResponse.Content.ReadFromJsonAsync<JsonElement>();
+                if (!yeniAnaKategori.TryGetProperty("id", out var anaKategoriIdElement) ||
+                    !anaKategoriIdElement.TryGetGuid(out var anaKategoriId))
+                {
+                    TempData["HataMesaji"] = "Ana menü oluşturuldu ancak kimliği alınamadı. Sayfayı yenileyip tekrar deneyin.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                anaKategori = new KategoriListeDto
+                {
+                    Id = anaKategoriId,
+                    Ad = anaMenu.Baslik,
+                    SeoUrl = anaMenu.SeoUrl,
+                    AktifMi = true
+                };
+            }
+
             var seoUrl = ToSeoUrl(altMenuAdi.Trim());
 
             var dto = new KategoriEkleDto
@@ -108,7 +168,7 @@ namespace ECommerce.WebUI.Areas.Admin.Controllers
                 Aciklama = string.Empty,
                 GorselUrl = string.Empty,
                 AktifMi = true,
-                UstKategoriId = anaMenuId
+                UstKategoriId = anaKategori.Id
             };
 
             var jsonContent = new StringContent(JsonSerializer.Serialize(dto), Encoding.UTF8, "application/json");

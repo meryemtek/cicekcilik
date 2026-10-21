@@ -389,12 +389,12 @@
             @Html.AntiForgeryToken()
 
             <div class="hm-field">
-                <label for="anaMenuId">Hangi Ana Menüye Eklensin? <span>*</span></label>
-                <select name="anaMenuId" id="anaMenuSelect" class="hm-select" required>
+                <label for="anaMenuSeoUrl">Hangi Ana Menüye Eklensin? <span>*</span></label>
+                <select name="anaMenuSeoUrl" id="anaMenuSelect" class="hm-select" required>
                     <option value="">-- Ana Menü Seçin --</option>
                     @foreach (var ana in Model.AnaMenuler)
                     {
-                        <option value="@ana.Id">@ana.Baslik</option>
+                        <option value="@ana.SeoUrl">@ana.Baslik</option>
                     }
                 </select>
             </div>
