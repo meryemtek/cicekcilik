@@ -2,6 +2,7 @@ services:
   - type: web
     name: cicekcilik-api
     runtime: docker
+    region: frankfurt
     dockerfilePath: ./ECommerce.WebAPI/Dockerfile
     dockerContext: .
     healthCheckPath: /health
@@ -37,6 +38,7 @@ services:
   - type: web
     name: cicekcilik-web
     runtime: docker
+    region: frankfurt
     dockerfilePath: ./ECommerce.WebUI/Dockerfile
     dockerContext: .
     healthCheckPath: /health
