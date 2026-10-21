@@ -394,7 +394,7 @@ public class SiparisServisi : ISiparisServisi
             var siparisNo = WebUtility.HtmlEncode(siparis.SiparisNumarasi);
             var html = $"""
                 <div style="font-family:Arial,sans-serif;max-width:620px;margin:0 auto;color:#26352d;line-height:1.6">
-                    <div style="padding:24px 0;border-bottom:1px solid #e8eee9;color:#0d382b;font-size:22px;font-weight:700">Lidya Çiçekçilik</div>
+                    <div style="padding:24px 0;border-bottom:1px solid #e8eee9;color:#0d382b;font-size:22px;font-weight:700">ABC Çiçekçilik</div>
                     <div style="padding:28px 0">
                         <p style="margin:0 0 12px;font-size:16px">Merhaba {adSoyad},</p>
                         <h1 style="margin:0 0 14px;color:#0d382b;font-size:24px">{emailBilgisi.Value.Baslik}</h1>
@@ -409,7 +409,7 @@ public class SiparisServisi : ISiparisServisi
 
             emailKabulEdildi = await _emailServisi.EpostaGonderAsync(
                 siparis.MusteriEmail,
-                $"Lidya Çiçekçilik - {emailBilgisi.Value.Baslik} ({siparis.SiparisNumarasi})",
+                $"ABC Çiçekçilik - {emailBilgisi.Value.Baslik} ({siparis.SiparisNumarasi})",
                 html);
         }
 

@@ -24,8 +24,9 @@ public static class SeedDataExtensions
         {
             var ilkAyar = new SiteAyari
             {
-                FirmaAdi = "Lidya Çiçekçilik",
-                Email = "info@lidyacicekcilik.com",
+                FirmaAdi = "ABC Çiçekçilik",
+                Email = string.Empty,
+                LogoUrl = "/images/abc-cicekcilik.svg",
                 Telefon1 = "0850 000 00 00",
                 Adres = "İstanbul, Türkiye",
                 TemaRengiHex = "#2e8b57",
@@ -39,6 +40,23 @@ public static class SeedDataExtensions
 
             await siteAyariDeposu.EkleAsync(ilkAyar);
             await siteAyariDeposu.DegisiklikleriKaydetAsync();
+        }
+        else
+        {
+            var eskiMarkaAyar = mevcutAyarlar.FirstOrDefault(x =>
+                x.FirmaAdi.Contains("Lidya", System.StringComparison.OrdinalIgnoreCase));
+
+            if (eskiMarkaAyar != null)
+            {
+                eskiMarkaAyar.FirmaAdi = "ABC Çiçekçilik";
+                eskiMarkaAyar.LogoUrl = "/images/abc-cicekcilik.svg";
+
+                if (eskiMarkaAyar.Email.Contains("lidya", System.StringComparison.OrdinalIgnoreCase))
+                    eskiMarkaAyar.Email = string.Empty;
+
+                siteAyariDeposu.Guncelle(eskiMarkaAyar);
+                await siteAyariDeposu.DegisiklikleriKaydetAsync();
+            }
         }
 
         // 2. Varsayılan Admin Kullanıcısı Seed İşlemi

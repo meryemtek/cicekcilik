@@ -155,13 +155,13 @@ public class AuthController : ControllerBase
         <div style=""font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #fcf9f8; padding: 40px 20px; color: #1b1b1c;"">
             <div style=""max-width: 580px; margin: 0 auto; background: #ffffff; border-radius: 20px; border: 1px solid #ffd9de; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05);"">
                 <div style=""background: #1a3a2f; padding: 30px 25px; text-align: center; color: #ffffff;"">
-                    <h2 style=""margin: 0; font-size: 24px; font-family: Georgia, serif; letter-spacing: 1px;"">Lidya Çiçekçilik</h2>
+                    <h2 style=""margin: 0; font-size: 24px; font-family: Georgia, serif; letter-spacing: 1px;"">ABC Çiçekçilik</h2>
                     <p style=""margin: 6px 0 0; font-size: 13px; color: #c7ebda; text-transform: uppercase; letter-spacing: 2px;"">Şifre Sıfırlama Talebi</p>
                 </div>
                 <div style=""padding: 35px 30px; line-height: 1.6;"">
                     <p style=""font-size: 16px; margin-top: 0;"">Merhaba <strong>{adSoyad}</strong>,</p>
                     <p style=""font-size: 14px; color: #414845;"">
-                        Lidya Çiçekçilik hesabınız için bir şifre sıfırlama talebinde bulundunuz. Yeni şifrenizi belirlemek için aşağıdaki butona tıklayabilirsiniz:
+                        ABC Çiçekçilik hesabınız için bir şifre sıfırlama talebinde bulundunuz. Yeni şifrenizi belirlemek için aşağıdaki butona tıklayabilirsiniz:
                     </p>
                     <div style=""text-align: center; margin: 35px 0;"">
                         <a href=""{resetLink}"" style=""background-color: #1a3a2f; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 50px; font-weight: bold; font-size: 14px; letter-spacing: 1px; display: inline-block; box-shadow: 0 4px 12px rgba(26,58,47,0.25);"">
@@ -177,12 +177,12 @@ public class AuthController : ControllerBase
                     </p>
                 </div>
                 <div style=""background: #f6f3f2; padding: 15px; text-align: center; font-size: 12px; color: #727974;"">
-                    © 2026 Lidya Çiçekçilik | Elazığ Çiçek Siparişi
+                    © 2026 ABC Çiçekçilik
                 </div>
             </div>
         </div>";
 
-        await _emailServisi.EpostaGonderAsync(kullanici.Email, "Lidya Çiçekçilik - Şifre Sıfırlama Bağlantısı", emailHtml);
+        await _emailServisi.EpostaGonderAsync(kullanici.Email, "ABC Çiçekçilik - Şifre Sıfırlama Bağlantısı", emailHtml);
 
         return Ok(new { mesaj = "Şifre sıfırlama bağlantısı e-posta adresinize başarıyla gönderildi. Lütfen gelen kutunuzu (ve gerekiyorsa spam klasörünü) kontrol ediniz." });
     }

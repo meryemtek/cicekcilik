@@ -7,9 +7,9 @@
     var temizTel = waNumara.Replace(" ", "").Replace("-", "").Replace("(", "").Replace(")", "").Replace("+", "");
     if (!temizTel.StartsWith("90")) temizTel = "90" + temizTel;
 
-    string firma = string.IsNullOrWhiteSpace(Model.FirmaAdi) || Model.FirmaAdi == "Çiçekçilik" ? "Lidya Çiçekçilik" : Model.FirmaAdi;
+    string firma = string.IsNullOrWhiteSpace(Model.FirmaAdi) || Model.FirmaAdi == "Çiçekçilik" ? "ABC Çiçekçilik" : Model.FirmaAdi;
     string telefonGoster = !string.IsNullOrWhiteSpace(Model.Telefon1) ? Model.Telefon1 : "0850 308 00 00";
-    string emailGoster = !string.IsNullOrWhiteSpace(Model.Email) ? Model.Email : "info@lidyacicekcilik.com";
+    string emailGoster = Model.Email;
     string adresGoster = !string.IsNullOrWhiteSpace(Model.Adres) ? Model.Adres : "Çiçekçiler Caddesi, No: 18 Merkez";
 }
 
@@ -109,10 +109,13 @@
                             <i class="bi bi-telephone-fill contact-icon"></i>
                             <a href="tel:@telefonGoster" class="contact-link">@telefonGoster</a>
                         </div>
-                        <div class="contact-row">
-                            <i class="bi bi-envelope-fill contact-icon"></i>
-                            <a href="mailto:@emailGoster" class="contact-link">@emailGoster</a>
-                        </div>
+                        @if (!string.IsNullOrWhiteSpace(emailGoster))
+                        {
+                            <div class="contact-row">
+                                <i class="bi bi-envelope-fill contact-icon"></i>
+                                <a href="mailto:@emailGoster" class="contact-link">@emailGoster</a>
+                            </div>
+                        }
                     </div>
                 </div>
 

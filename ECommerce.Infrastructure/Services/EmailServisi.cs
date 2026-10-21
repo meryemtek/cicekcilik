@@ -27,8 +27,8 @@ public class EmailServisi : IEmailServisi
             // Google uygulama şifreleri kopyalanırken araya boşluk girebilir.
             // SMTP kimlik doğrulamasında bu boşluklar geçerli olmadığı için temizlenir.
             var sifre = _configuration["SmtpSettings:Sifre"]?.Replace(" ", string.Empty).Trim();
-            var gonderenEmail = _configuration["SmtpSettings:GonderenEmail"] ?? "bilgi@lidyacicekcilik.com";
-            var gonderenBaslik = _configuration["SmtpSettings:GonderenBaslik"] ?? "Lidya Çiçekçilik";
+            var gonderenEmail = _configuration["SmtpSettings:GonderenEmail"] ?? "no-reply@example.com";
+            var gonderenBaslik = _configuration["SmtpSettings:GonderenBaslik"] ?? "ABC Çiçekçilik";
             var sslStr = _configuration["SmtpSettings:EnableSsl"];
 
             int.TryParse(portStr, out int port);
