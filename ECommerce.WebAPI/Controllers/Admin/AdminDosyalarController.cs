@@ -13,10 +13,12 @@ namespace ECommerce.WebAPI.Controllers.Admin;
 public class AdminDosyalarController : ControllerBase
 {
     private readonly IDosyaServisi _dosyaServisi;
+    private readonly IConfiguration _configuration;
 
-    public AdminDosyalarController(IDosyaServisi dosyaServisi)
+    public AdminDosyalarController(IDosyaServisi dosyaServisi, IConfiguration configuration)
     {
         _dosyaServisi = dosyaServisi;
+        _configuration = configuration;
     }
 
     [HttpPost("gorsel-yukle")]
@@ -26,6 +28,12 @@ public class AdminDosyalarController : ControllerBase
         {
             // altKlasor parametresi ile "urunler", "slider", "kurye-onay" gibi klasör ayrımı yapabiliriz
             var gorselUrl = await _dosyaServisi.GorselYukleAsync(dosya, altKlasor);
+            if (gorselUrl.StartsWith('/'))
+            {
+                var apiAdresi = _configuration["RENDER_EXTERNAL_URL"]
+                    ?? $"{Request.Scheme}://{Request.Host}";
+                gorselUrl = $"{apiAdresi.TrimEnd('/')}{gorselUrl}";
+            }
 
             return Ok(new
             {
