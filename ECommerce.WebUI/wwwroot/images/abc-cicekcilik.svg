@@ -1,18 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 100" role="img" aria-labelledby="title">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 120" role="img" aria-labelledby="title desc">
   <title id="title">ABC Çiçekçilik</title>
-  <g transform="translate(12 12)">
-    <circle cx="38" cy="38" r="34" fill="#f8f2e9" stroke="#245743" stroke-width="2"/>
-    <g fill="#d9828b" stroke="#245743" stroke-width="1.5">
-      <ellipse cx="38" cy="20" rx="7" ry="12"/>
-      <ellipse cx="38" cy="56" rx="7" ry="12"/>
-      <ellipse cx="20" cy="38" rx="12" ry="7"/>
-      <ellipse cx="56" cy="38" rx="12" ry="7"/>
-      <ellipse cx="25.3" cy="25.3" rx="7" ry="12" transform="rotate(-45 25.3 25.3)"/>
-      <ellipse cx="50.7" cy="50.7" rx="7" ry="12" transform="rotate(-45 50.7 50.7)"/>
+  <desc id="desc">Yapraklarla çevrili pembe bir çiçek ve ABC Çiçekçilik yazısı</desc>
+  <g transform="translate(10 10)">
+    <circle cx="50" cy="50" r="47" fill="#fffaf6" stroke="#245743" stroke-width="2"/>
+    <path d="M24 72c10-12 16-24 25-44m1 44c3-15 9-27 25-39" fill="none" stroke="#397653" stroke-linecap="round" stroke-width="3"/>
+    <path d="M34 56c-11 1-17-5-18-15 10-1 17 4 18 15Zm10-17c-10-4-12-12-8-21 9 4 13 11 8 21Zm10 29c10-8 19-6 25 2-8 8-17 9-25-2Zm-2-18c2-11 10-15 20-12-2 10-9 16-20 12Z" fill="#8eb89a" stroke="#245743" stroke-linejoin="round" stroke-width="1.5"/>
+    <g fill="#d9828b" stroke="#245743" stroke-width="1.4">
+      <ellipse cx="50" cy="25" rx="7" ry="12"/><ellipse cx="50" cy="49" rx="7" ry="12"/>
+      <ellipse cx="38" cy="37" rx="12" ry="7"/><ellipse cx="62" cy="37" rx="12" ry="7"/>
+      <ellipse cx="41.5" cy="28.5" rx="7" ry="11" transform="rotate(-45 41.5 28.5)"/>
+      <ellipse cx="58.5" cy="45.5" rx="7" ry="11" transform="rotate(-45 58.5 45.5)"/>
     </g>
-    <circle cx="38" cy="38" r="7" fill="#d6aa57" stroke="#245743" stroke-width="1.5"/>
-    <path d="M38 60c-2 10-8 15-16 18m16-12c5 7 11 10 19 10" fill="none" stroke="#397653" stroke-linecap="round" stroke-width="2.5"/>
+    <circle cx="50" cy="37" r="5.5" fill="#e4bd66" stroke="#245743" stroke-width="1.5"/>
   </g>
-  <text x="103" y="59" fill="#245743" font-family="Georgia,serif" font-size="43" font-weight="700" letter-spacing="3">ABC</text>
-  <text x="106" y="81" fill="#6a7067" font-family="Arial,sans-serif" font-size="12" font-weight="600" letter-spacing="4">ÇİÇEKÇİLİK</text>
+  <text x="122" y="65" fill="#245743" font-family="Georgia, 'Times New Roman', serif" font-size="54" font-weight="700" letter-spacing="2">ABC</text>
+  <path d="M124 78h174" stroke="#d9828b" stroke-width="1.5"/>
+  <text x="125" y="99" fill="#6a7067" font-family="Arial, sans-serif" font-size="15" font-weight="700" letter-spacing="4.2">ÇİÇEKÇİLİK</text>
 </svg>

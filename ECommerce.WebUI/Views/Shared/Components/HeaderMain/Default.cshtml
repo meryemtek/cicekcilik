@@ -10,11 +10,11 @@
                     <a href="/" class="d-block text-decoration-none">
                         @if (!string.IsNullOrEmpty(Model?.LogoUrl))
                         {
-                            <img src="@Model.LogoUrl" alt="@Model.FirmaAdi" class="header-logo img-fluid" onerror="this.onerror=null;this.src='/images/abc-cicekcilik.svg';" />
+                            <img src="@Model.LogoUrl" alt="@Model.FirmaAdi" class="header-logo img-fluid" onerror="this.onerror=null;this.src='/images/abc-cicekcilik.svg?v=20261021';" />
                         }
                         else
                         {
-                            <img src="~/images/abc-cicekcilik.svg" alt="ABC Çiçekçilik" class="header-logo img-fluid" />
+                            <img src="~/images/abc-cicekcilik.svg" alt="ABC Çiçekçilik" class="header-logo img-fluid" asp-append-version="true" />
                         }
                     </a>
                 </div>
