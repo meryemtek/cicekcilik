@@ -3,6 +3,7 @@ services:
     name: cicekcilik-api
     runtime: docker
     region: frankfurt
+    plan: free
     dockerfilePath: ./ECommerce.WebAPI/Dockerfile
     dockerContext: .
     healthCheckPath: /health
@@ -39,6 +40,7 @@ services:
     name: cicekcilik-web
     runtime: docker
     region: frankfurt
+    plan: free
     dockerfilePath: ./ECommerce.WebUI/Dockerfile
     dockerContext: .
     healthCheckPath: /health
