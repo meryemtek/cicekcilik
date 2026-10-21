@@ -1,0 +1,8 @@
+**/bin/
+**/obj/
+**/.vs/
+**/scratch/
+**/wwwroot/uploads/
+**/wwwroot/images/urunler/
+**/wwwroot/images/kategoriler/
+.git/

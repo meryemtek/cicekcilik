@@ -83,7 +83,7 @@ namespace ECommerce.Application.Services
             }
 
             // Tarih dönüşüm güvenliği
-            DateTime gecerliTarih = DateTime.Now;
+            DateTime gecerliTarih = DateTime.UtcNow;
             if (!string.IsNullOrEmpty(dto.OdemeTarihi) && DateTime.TryParse(dto.OdemeTarihi, out var parsedDate))
             {
                 gecerliTarih = parsedDate;

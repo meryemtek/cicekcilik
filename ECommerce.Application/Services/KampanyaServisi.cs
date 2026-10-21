@@ -95,7 +95,7 @@ namespace ECommerce.Application.Services
 
         public async Task<List<KampanyaUrunDto>> GetAktifKampanyaUrunlerAsync()
         {
-            var simdi = DateTime.Now;
+            var simdi = DateTime.UtcNow;
             var kampanyalar = (await _kampanyaDepo.GetirAsync(k => k.AktifMi && k.BaslangicTarihi <= simdi && (k.BitisTarihi == null || k.BitisTarihi > simdi)))
                                                  .OrderBy(k => k.Sira).ToList();
 

@@ -145,8 +145,9 @@ public class AuthController : ControllerBase
         var rawToken = await _userManager.GeneratePasswordResetTokenAsync(kullanici);
         var encodedToken = WebUtility.UrlEncode(rawToken);
 
-        var webUiUrl = _configuration["ClientSettings:BaseUrl"] ?? "http://localhost:5037";
-        var resetLink = $"{webUiUrl.TrimEnd('/')}/Hesap/SifreSifirla?email={Uri.EscapeDataString(kullanici.Email)}&token={encodedToken}";
+        var webUiUrl = _configuration["ClientSettings:BaseUrl"]
+            ?? throw new InvalidOperationException("Şifre sıfırlama bağlantıları için ClientSettings:BaseUrl ayarlanmalıdır.");
+        var resetLink = $"{webUiUrl.TrimEnd('/')}/Hesap/SifreSifirla?email={Uri.EscapeDataString(kullanici.Email!)}&token={encodedToken}";
 
         // Botanik Tasarım Diliyle E-Posta Şablonu
         var adSoyad = string.IsNullOrWhiteSpace(kullanici.Ad) ? "Değerli Müşterimiz" : $"{kullanici.Ad} {kullanici.Soyad}".Trim();

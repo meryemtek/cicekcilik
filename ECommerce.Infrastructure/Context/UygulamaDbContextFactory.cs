@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using System.IO;
@@ -9,9 +9,20 @@ public class UygulamaDbContextFactory : IDesignTimeDbContextFactory<UygulamaDbCo
 {
     public UygulamaDbContext CreateDbContext(string[] args)
     {
+        var currentDirectory = Directory.GetCurrentDirectory();
+        var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
+        var apiDirectory = new[]
+        {
+            Path.Combine(currentDirectory, "ECommerce.WebAPI"),
+            Path.GetFullPath(Path.Combine(currentDirectory, "..", "ECommerce.WebAPI"))
+        }.FirstOrDefault(Directory.Exists) ?? currentDirectory;
+
         var configuration = new ConfigurationBuilder()
-            .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../ECommerce.WebAPI"))
-            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .SetBasePath(apiDirectory)
+            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: false)
+            .AddJsonFile($"appsettings.{environmentName}.json", optional: true, reloadOnChange: false)
+            .AddUserSecrets(typeof(UygulamaDbContextFactory).Assembly, optional: true)
+            .AddEnvironmentVariables()
             .Build();
 
         var builder = new DbContextOptionsBuilder<UygulamaDbContext>();
@@ -19,12 +30,12 @@ public class UygulamaDbContextFactory : IDesignTimeDbContextFactory<UygulamaDbCo
         // appsettings.json dosyanızdaki anahtar adı "VarsayilanBaglanti" olduğu için burayı güncelledik
         var connectionString = configuration.GetConnectionString("VarsayilanBaglanti");
 
-        if (string.IsNullOrEmpty(connectionString))
+        if (string.IsNullOrWhiteSpace(connectionString))
         {
-            throw new InvalidOperationException("Bağlantı dizesi (ConnectionStrings:VarsayilanBaglanti) appsettings.json içinde bulunamadı.");
+            throw new InvalidOperationException("PostgreSQL connection string is missing. Configure User Secrets or ConnectionStrings__VarsayilanBaglanti.");
         }
 
-        builder.UseSqlServer(connectionString);
+        builder.UseNpgsql(connectionString);
 
         return new UygulamaDbContext(builder.Options);
     }

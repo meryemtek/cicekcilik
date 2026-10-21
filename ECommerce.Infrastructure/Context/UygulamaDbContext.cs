@@ -8,9 +8,55 @@ namespace ECommerce.Infrastructure.Context;
 
 public class UygulamaDbContext : IdentityDbContext<UygulamaKullanicisi, IdentityRole<Guid>, Guid>
 {
+    private static readonly TimeZoneInfo IstanbulTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Istanbul");
+
     public UygulamaDbContext(DbContextOptions<UygulamaDbContext> options)
         : base(options)
     {
+    }
+
+    public override int SaveChanges()
+    {
+        NormalizeDateTimeValuesToUtc();
+        return base.SaveChanges();
+    }
+
+    public override int SaveChanges(bool acceptAllChangesOnSuccess)
+    {
+        NormalizeDateTimeValuesToUtc();
+        return base.SaveChanges(acceptAllChangesOnSuccess);
+    }
+
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        NormalizeDateTimeValuesToUtc();
+        return base.SaveChangesAsync(cancellationToken);
+    }
+
+    public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+    {
+        NormalizeDateTimeValuesToUtc();
+        return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+    }
+
+    private void NormalizeDateTimeValuesToUtc()
+    {
+        foreach (var entry in ChangeTracker.Entries().Where(entry => entry.State is EntityState.Added or EntityState.Modified))
+        {
+            foreach (var property in entry.Properties)
+            {
+                var propertyType = Nullable.GetUnderlyingType(property.Metadata.ClrType) ?? property.Metadata.ClrType;
+                if (propertyType == typeof(DateTime) && property.CurrentValue is DateTime value)
+                {
+                    property.CurrentValue = value.Kind switch
+                    {
+                        DateTimeKind.Utc => value,
+                        DateTimeKind.Local => value.ToUniversalTime(),
+                        _ => TimeZoneInfo.ConvertTimeToUtc(value, IstanbulTimeZone)
+                    };
+                }
+            }
+        }
     }
 
     public DbSet<Kategori> Kategoriler { get; set; } = null!;
