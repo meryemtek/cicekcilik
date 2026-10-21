@@ -114,8 +114,9 @@
     .text-brand { color: var(--brand-color); }
     .bg-brand { background-color: var(--brand-color) !important; color: #fff; }
     .header-main { padding: 8px 0; }
-    .logo-wrapper { display: flex; align-items: center; }
-    .header-logo { height: auto; max-height: 64px; max-width: 180px; object-fit: contain; display: block; }
+    .logo-wrapper { display: flex; align-items: center; width: 100%; }
+    .logo-wrapper > a { width: 100%; }
+    .header-logo { display: block; width: 100%; height: auto; max-height: 64px; max-width: 180px; object-fit: contain; }
     .header-logo.brand-logo { width: 64px; height: 64px; max-width: none; max-height: none; object-fit: cover; object-position: center; }
     @@media (min-width: 992px) {
         .header-logo { max-height: 80px; max-width: 230px; }
