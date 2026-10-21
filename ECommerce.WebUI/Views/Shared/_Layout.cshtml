@@ -7,10 +7,10 @@
     try
     {
         var client = HttpClientFactory.CreateClient("ApiClient");
-        var response = client.GetAsync("siteayarlari/site-ayarlari").Result;
+        var response = await client.GetAsync("siteayarlari/site-ayarlari");
         if (response.IsSuccessStatusCode)
         {
-            var content = response.Content.ReadAsStringAsync().Result;
+            var content = await response.Content.ReadAsStringAsync();
             var ayarlar = JsonSerializer.Deserialize<SiteAyariDto>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             if (ayarlar != null && !string.IsNullOrEmpty(ayarlar.TemaRengiHex))
             {

@@ -19,7 +19,15 @@ namespace ECommerce.WebUI.ViewComponents
             var client = _httpClientFactory.CreateClient("ApiClient");
 
             // WebAPI tarafında aktif slider'ları çekeceğimiz endpoint (Daha önce yazdıysak veya API'ye ekleyeceğiz)
-            var sliderlar = await client.GetFromJsonAsync<List<SliderListeDto>>("slider/aktif");
+            List<SliderListeDto>? sliderlar = null;
+            try
+            {
+                sliderlar = await client.GetFromJsonAsync<List<SliderListeDto>>("slider/aktif");
+            }
+            catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or System.Text.Json.JsonException)
+            {
+                // API geçici olarak yanıt vermese de anasayfa gösterilir.
+            }
 
             return View(sliderlar ?? new List<SliderListeDto>());
         }

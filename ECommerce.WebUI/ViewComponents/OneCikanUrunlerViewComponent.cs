@@ -16,24 +16,30 @@ namespace ECommerce.WebUI.ViewComponents
         public async Task<IViewComponentResult> InvokeAsync()
         {
             var client = _httpClientFactory.CreateClient("ApiClient");
-            var response = await client.GetAsync("onecikanlar/urunler");
-
             var urunler = new List<UrunListeDto>();
-            if (response.IsSuccessStatusCode)
+            try
             {
-                urunler = await response.Content.ReadFromJsonAsync<List<UrunListeDto>>() ?? new List<UrunListeDto>();
+                var response = await client.GetAsync("onecikanlar/urunler");
+                if (response.IsSuccessStatusCode)
+                {
+                    urunler = await response.Content.ReadFromJsonAsync<List<UrunListeDto>>() ?? new List<UrunListeDto>();
 
                 // API'nin base adresini alıyoruz (Örn: https://localhost:7001)
                 var baseUrl = client.BaseAddress?.GetLeftPart(UriPartial.Authority) ?? "https://localhost:7001";
 
                 // Görsel URL'lerini tam adrese dönüştürüyoruz
-                foreach (var urun in urunler)
-                {
-                    if (!string.IsNullOrWhiteSpace(urun.GorselUrl) && !urun.GorselUrl.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+                    foreach (var urun in urunler)
                     {
-                        urun.GorselUrl = $"{baseUrl.TrimEnd('/')}/{urun.GorselUrl.TrimStart('/')}";
+                        if (!string.IsNullOrWhiteSpace(urun.GorselUrl) && !urun.GorselUrl.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+                        {
+                            urun.GorselUrl = $"{baseUrl.TrimEnd('/')}/{urun.GorselUrl.TrimStart('/')}";
+                        }
                     }
                 }
+            }
+            catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or System.Text.Json.JsonException)
+            {
+                // API geçici olarak yanıt vermese de anasayfa gösterilir.
             }
 
             return View(urunler);

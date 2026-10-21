@@ -24,7 +24,7 @@ namespace ECommerce.WebUI.ViewComponents
             {
                 duyurular = await client.GetFromJsonAsync<List<DuyuruDto>>("duyurular/aktif");
             }
-            catch (HttpRequestException)
+            catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or System.Text.Json.JsonException)
             {
                 // API erişilemiyorsa sayfanın geri kalanı gösterilmeye devam eder.
             }

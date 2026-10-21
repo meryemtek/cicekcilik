@@ -20,7 +20,15 @@ namespace ECommerce.WebUI.ViewComponents
             var client = _httpClientFactory.CreateClient("ApiClient");
 
             // API'den site ayarlarını (Logo dahil) çekiyoruz
-            var ayarlar = await client.GetFromJsonAsync<SiteAyariDto>("siteayarlari/site-ayarlari");
+            SiteAyariDto? ayarlar = null;
+            try
+            {
+                ayarlar = await client.GetFromJsonAsync<SiteAyariDto>("siteayarlari/site-ayarlari");
+            }
+            catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or System.Text.Json.JsonException)
+            {
+                // API geçici olarak yanıt vermese de mağaza başlığı gösterilir.
+            }
 
             var sepetAdedi = 0;
             if (HttpContext.Request.Cookies.TryGetValue("LidyaSepetId", out var sepetId)
@@ -32,7 +40,7 @@ namespace ECommerce.WebUI.ViewComponents
                         $"sepet/{Uri.EscapeDataString(sepetId)}");
                     sepetAdedi = sepet?.Kalemler.Sum(k => k.Miktar) ?? 0;
                 }
-                catch (HttpRequestException)
+                catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or System.Text.Json.JsonException)
                 {
                     // Sepet sayacı yüklenemese de başlık ve sayfa gösterilmeye devam etsin.
                 }

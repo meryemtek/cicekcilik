@@ -21,26 +21,32 @@ namespace ECommerce.WebUI.ViewComponents
         {
             var client = _httpClientFactory.CreateClient("ApiClient");
             // Sadece aktif ve süresi geçmemiş olanları listeleriz
-            var response = await client.GetAsync("kampanya/aktif-liste");
-
             List<KampanyaUrunDto> model = new();
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var content = await response.Content.ReadAsStringAsync();
-                model = JsonSerializer.Deserialize<List<KampanyaUrunDto>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new();
-
-                if (model.Any())
+                var response = await client.GetAsync("kampanya/aktif-liste");
+                if (response.IsSuccessStatusCode)
                 {
-                    var baseUrl = client.BaseAddress?.GetLeftPart(UriPartial.Authority) ?? "https://localhost:7001";
+                    var content = await response.Content.ReadAsStringAsync();
+                    model = JsonSerializer.Deserialize<List<KampanyaUrunDto>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new();
 
-                    foreach (var item in model)
+                    if (model.Any())
                     {
-                        if (!string.IsNullOrWhiteSpace(item.GorselUrl) && !item.GorselUrl.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+                        var baseUrl = client.BaseAddress?.GetLeftPart(UriPartial.Authority) ?? "https://localhost:7001";
+
+                        foreach (var item in model)
                         {
-                            item.GorselUrl = $"{baseUrl.TrimEnd('/')}/{item.GorselUrl.TrimStart('/')}";
+                            if (!string.IsNullOrWhiteSpace(item.GorselUrl) && !item.GorselUrl.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+                            {
+                                item.GorselUrl = $"{baseUrl.TrimEnd('/')}/{item.GorselUrl.TrimStart('/')}";
+                            }
                         }
                     }
                 }
+            }
+            catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or JsonException)
+            {
+                // API geçici olarak yanıt vermese de anasayfa gösterilir.
             }
 
             return View(model);
