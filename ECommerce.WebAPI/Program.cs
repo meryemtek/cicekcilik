@@ -15,6 +15,11 @@ using Microsoft.OpenApi.Models;
 using ECommerce.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+var port = Environment.GetEnvironmentVariable("PORT");
+if (!string.IsNullOrWhiteSpace(port))
+{
+    builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+}
 
 // 1. Veritaban� Ba�lant� Dizesini Al ve DbContext Servisini Kaydet
 var baglantiDizesi = builder.Configuration.GetConnectionString("VarsayilanBaglanti");
@@ -161,6 +166,13 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
+if (app.Configuration.GetValue<bool>("Database:ApplyMigrationsOnStartup"))
+{
+    await using var migrationScope = app.Services.CreateAsyncScope();
+    var dbContext = migrationScope.ServiceProvider.GetRequiredService<UygulamaDbContext>();
+    await dbContext.Database.MigrateAsync();
+}
+
 // 8. GLOBAL EXCEPTION MIDDLEWARE (Sistem ��kmelerini Engeller - En ba�ta olmal�)
 app.UseMiddleware<ExceptionMiddleware>();
 
@@ -171,7 +183,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+if (!app.Environment.IsProduction())
+{
+    app.UseHttpsRedirection();
+}
 
 // Statik dosyalar� (wwwroot resimlerini) d��a a�ar
 app.UseStaticFiles();
@@ -183,6 +198,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapGet("/health", () => Results.Ok(new { status = "ok" }));
 
 // 10. ROL SEEDING (Uygulama ilk aya�a kalkt���nda rollerin otomatik olu�turulmas�)
 using (var scope = app.Services.CreateScope())
@@ -199,13 +215,16 @@ using (var scope = app.Services.CreateScope())
 }
 
 // 11. SEED DATA �ALI�TIRICISI
-await app.SeedVerileriOlusturAsync();
+if (app.Configuration.GetValue<bool>("SeedData:Enabled"))
+{
+    await app.SeedVerileriOlusturAsync();
+}
 
 // 12. EXCEL'den ADRES VER�S� AKTARIMI
 var env = app.Services.GetRequiredService<IWebHostEnvironment>();
 
 var dosyaYolu = Path.Combine(
-    env.WebRootPath,
+    env.WebRootPath ?? Path.Combine(env.ContentRootPath, "wwwroot"),
     "data",
     "tum_adresler.xlsx"
 );

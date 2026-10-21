@@ -152,7 +152,7 @@ namespace ECommerce.WebUI.Controllers
             string gorselUrl = urun.GorselUrl;
             if (!string.IsNullOrEmpty(gorselUrl) && !gorselUrl.StartsWith("http"))
             {
-                var baseAddress = client.BaseAddress?.ToString().TrimEnd('/') ?? "https://localhost:7192";
+                var baseAddress = client.BaseAddress?.AbsoluteUri.TrimEnd('/') ?? "https://localhost:7192";
                 var uri = new Uri(baseAddress);
                 var rootUrl = $"{uri.Scheme}://{uri.Authority}";
                 gorselUrl = $"{rootUrl}/{gorselUrl.TrimStart('/')}";

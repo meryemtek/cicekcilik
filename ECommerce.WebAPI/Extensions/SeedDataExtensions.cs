@@ -4,6 +4,7 @@ using ECommerce.Application.Repositories;
 using ECommerce.Domain.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ECommerce.WebAPI.Extensions;
@@ -43,20 +44,26 @@ public static class SeedDataExtensions
         // 2. Varsayılan Admin Kullanıcısı Seed İşlemi
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<UygulamaKullanicisi>>();
 
-        var adminKullanici = await userManager.FindByEmailAsync("admin@lidya.com");
+        var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+        var adminEmail = configuration["SeedData:AdminEmail"];
+        var adminPassword = configuration["SeedData:AdminPassword"];
+        var adminKullanici = string.IsNullOrWhiteSpace(adminEmail)
+            ? null
+            : await userManager.FindByEmailAsync(adminEmail);
 
-        if (adminKullanici == null && !userManager.Users.Any())
+        if (adminKullanici == null && !string.IsNullOrWhiteSpace(adminEmail)
+            && !string.IsNullOrWhiteSpace(adminPassword) && !userManager.Users.Any())
         {
             var yeniAdmin = new UygulamaKullanicisi
             {
-                UserName = "admin@lidya.com",
-                Email = "admin@lidya.com",
+                UserName = adminEmail,
+                Email = adminEmail,
                 Ad = "Sistem",
                 Soyad = "Yöneticisi",
                 EmailConfirmed = true
             };
 
-            var sonuc = await userManager.CreateAsync(yeniAdmin, "Admin123!");
+            var sonuc = await userManager.CreateAsync(yeniAdmin, adminPassword);
             if (sonuc.Succeeded)
                 adminKullanici = yeniAdmin;
         }

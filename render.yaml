@@ -1,0 +1,46 @@
+services:
+  - type: web
+    name: cicekcilik-api
+    runtime: docker
+    dockerfilePath: ./ECommerce.WebAPI/Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: SeedData__Enabled
+        value: "true"
+      - key: Database__ApplyMigrationsOnStartup
+        value: "true"
+      - key: SeedData__AdminEmail
+        sync: false
+      - key: SeedData__AdminPassword
+        sync: false
+      - key: ConnectionStrings__VarsayilanBaglanti
+        sync: false
+      - key: ASPNETCORE_URLS
+        value: http://0.0.0.0:10000
+      - key: JwtSettings__Secret
+        generateValue: true
+      - key: JwtSettings__Issuer
+        value: ECommerceApi
+      - key: JwtSettings__Audience
+        value: ECommerceClient
+      - key: JwtSettings__ExpireDays
+        value: "7"
+      - key: ClientSettings__BaseUrl
+        sync: false
+
+  - type: web
+    name: cicekcilik-web
+    runtime: docker
+    dockerfilePath: ./ECommerce.WebUI/Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ApiSettings__ApiBaseUrl
+        sync: false
+      - key: ASPNETCORE_URLS
+        value: http://0.0.0.0:10000

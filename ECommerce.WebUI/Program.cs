@@ -4,29 +4,26 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 
-// 1. WebAPI Projesine �stek Atacak HttpClient Yap�land�rmas�
-// PORT NUMARASINI 7192 OLARAK G�NCELL�YORUZ
+var apiBaseUrl = builder.Configuration["ApiSettings:ApiBaseUrl"];
+if (string.IsNullOrWhiteSpace(apiBaseUrl))
+{
+    if (builder.Environment.IsProduction())
+    {
+        throw new InvalidOperationException("API adresini ApiSettings__ApiBaseUrl ortam değişkeniyle tanımlayın.");
+    }
+
+    apiBaseUrl = "https://localhost:7192";
+}
+
+apiBaseUrl = apiBaseUrl.TrimEnd('/');
+
 builder.Services.AddHttpClient("ApiClient", client =>
 {
-    client.BaseAddress = new Uri("https://localhost:7192/api/");
-})
-.ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
-{
-    ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+    client.BaseAddress = new Uri($"{apiBaseUrl}/api/");
 });
 
-//// 1. WebAPI Projesine �stek Atacak HttpClient Yap�land�rmas�
-//builder.Services.AddHttpClient("ApiClient", client =>
-//{
-//    // appsettings.json dosyas�ndan okur, e�er bulamazsa canl� adresinizi baz al�r
-//    var apiBaseUrl = builder.Configuration["ApiSettings:ApiBaseUrl"] ?? "https://api.demo.elaziglidyacicekcilik.com";
-//    client.BaseAddress = new Uri(apiBaseUrl.EndsWith("/") ? apiBaseUrl : apiBaseUrl + "/");
-//});
-
-// HttpContext'e ve taray�c�daki Cookie'lere eri�ebilmek i�in eklenen servis
 builder.Services.AddHttpContextAccessor();
 
-// 2. Taray�c�da Oturum Y�netimi (Cookie Authentication)
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -34,6 +31,11 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LogoutPath = "/Hesap/Cikis";
         options.AccessDeniedPath = "/Hesap/Giris";
         options.Cookie.Name = "ECommerceAuth";
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SecurePolicy = builder.Environment.IsProduction()
+            ? CookieSecurePolicy.Always
+            : CookieSecurePolicy.SameAsRequest;
+        options.Cookie.SameSite = SameSiteMode.Lax;
         options.ExpireTimeSpan = TimeSpan.FromDays(7);
     });
 
@@ -45,15 +47,16 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+if (!app.Environment.IsProduction())
+{
+    app.UseHttpsRedirection();
+}
+
 app.UseStaticFiles();
-
 app.UseRouting();
-
-app.UseAuthentication(); // Cookie'yi okumas� i�in eklendi
+app.UseAuthentication();
 app.UseAuthorization();
 
-// 3. Admin Paneli (Area) Y�nlendirmesi
 app.MapControllerRoute(
     name: "areas",
     pattern: "{area:exists}/{controller=Dashboard}/{action=Index}/{id?}");
@@ -61,5 +64,7 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapGet("/health", () => Results.Ok(new { status = "ok" }));
 
 app.Run();

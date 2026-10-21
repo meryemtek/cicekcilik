@@ -179,7 +179,7 @@ namespace ECommerce.WebUI.Controllers
             var siparis = await response.Content.ReadFromJsonAsync<SiparisDetayDto>();
             if (siparis != null && siparis.Kalemler != null)
             {
-                var baseAddress = client.BaseAddress?.ToString().TrimEnd('/') ?? "https://localhost:7192";
+                var baseAddress = client.BaseAddress?.AbsoluteUri.TrimEnd('/') ?? "https://localhost:7192";
                 var uri = new Uri(baseAddress);
                 var rootUrl = $"{uri.Scheme}://{uri.Authority}";
                 foreach (var kalem in siparis.Kalemler)
