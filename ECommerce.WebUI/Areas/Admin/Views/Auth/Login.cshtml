@@ -69,7 +69,7 @@
         .forgot-link { text-decoration: none; font-size: 0.85rem; color: #2e8b57; font-weight: 500; }
         .forgot-link:hover { color: #175231; }
         /* Dinamik Logo Sınıfı */
-        .dynamic-logo { max-height: 70px; object-fit: contain; margin-bottom: 10px; }
+        .dynamic-logo { max-height: 70px; max-width: 220px; object-fit: contain; margin-bottom: 10px; }
 
         /* "Beni Hatırla" Checkbox Düzeltmesi */
         .form-check-input {
@@ -95,11 +95,11 @@
             <!-- LOGO KONTROLÜ: Veritabanında logo varsa resmi bas, yoksa standart ikonu göster -->
             @if (!string.IsNullOrEmpty(Model.LogoUrl))
             {
-                <img src="@Model.LogoUrl" alt="@Model.FirmaAdi" class="dynamic-logo" />
+                <img src="@Model.LogoUrl" alt="@Model.FirmaAdi" class="dynamic-logo" onerror="this.onerror=null;this.src='/images/abc-cicekcilik.svg';" />
             }
             else
             {
-                <i class="bi bi-flower1" style="font-size: 3rem; color: #2e8b57;"></i>
+                <img src="~/images/abc-cicekcilik.svg" alt="ABC Çiçekçilik" class="dynamic-logo" />
             }
             
             <!-- FİRMA ADI KONTROLÜ: API'den gelen dinamik ismi basar -->

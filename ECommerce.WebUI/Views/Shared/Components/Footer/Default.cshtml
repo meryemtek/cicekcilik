@@ -82,19 +82,9 @@
                 <!-- 1. SÜTUN: Marka, Açıklama ve İletişim -->
                 <div class="col-lg-3 col-md-6">
                     <div class="footer-brand mb-3">
-                        @if (!string.IsNullOrEmpty(Model.LogoUrl))
-                        {
-                            <div class="logo-box d-inline-flex p-2 bg-white rounded-3 shadow-sm mb-3">
-                                <img src="@Model.LogoUrl" alt="@firma" style="max-height: 48px; width: auto; object-fit: contain;" />
-                            </div>
-                        }
-                        else
-                        {
-                            <div class="logo-box d-inline-flex align-items-center gap-2 p-2 px-3 bg-white text-dark rounded-3 shadow-sm mb-3">
-                                <i class="bi bi-flower2 text-success fs-4"></i>
-                                <span class="fw-bold fs-5 text-dark" style="font-family: 'Playfair Display', serif;">@firma</span>
-                            </div>
-                        }
+                        <div class="logo-box d-inline-flex p-2 bg-white rounded-3 shadow-sm mb-3">
+                            <img src="@(string.IsNullOrWhiteSpace(Model.LogoUrl) ? Url.Content("~/images/abc-cicekcilik.svg") : Model.LogoUrl)" alt="@firma" style="max-height: 48px; width: auto; object-fit: contain;" onerror="this.onerror=null;this.src='/images/abc-cicekcilik.svg';" />
+                        </div>
                         <p class="footer-text mb-4">
                             En taze çiçekler, özenle hazırlanan tasarım buketler ve hızlı teslimat güvencesiyle özel anlarınıza zarafet katıyoruz.
                         </p>
