@@ -23,7 +23,7 @@ namespace ECommerce.Application.DTOs.Kampanya
         public string KampanyaVaryasyonu { get; set; } = "DuzIndirim";
         public int Sira { get; set; } = 0;
         public bool AktifMi { get; set; } = true;
-        public DateTime BaslangicTarihi { get; set; } = DateTime.Now;
+        public DateTime BaslangicTarihi { get; set; } = DateTime.UtcNow;
         public DateTime? BitisTarihi { get; set; }
     }
 }

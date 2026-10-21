@@ -359,7 +359,7 @@ public class SepetServisi : ISepetServisi
         if (!kupon.AktifMi)
             throw new Exception("Bu indirim kuponu aktif değil.");
 
-        if (kupon.BitisTarihi < DateTime.Now)
+        if (kupon.BitisTarihi < DateTime.UtcNow)
             throw new Exception("Bu indirim kuponunun süresi dolmuş.");
 
         decimal araToplam = sepet.Kalemler.Sum(k => k.BirimFiyat * k.Miktar);

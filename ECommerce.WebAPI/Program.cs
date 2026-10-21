@@ -17,11 +17,15 @@ using ECommerce.Infrastructure.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // 1. Veritaban� Ba�lant� Dizesini Al ve DbContext Servisini Kaydet
-var baglantiDizesi = builder.Configuration.GetConnectionString("VarsayilanBaglanti")
-    ?? throw new InvalidOperationException("Ba�lant� dizesi 'VarsayilanBaglanti' bulunamad�.");
+var baglantiDizesi = builder.Configuration.GetConnectionString("VarsayilanBaglanti");
+
+if (string.IsNullOrWhiteSpace(baglantiDizesi))
+{
+    throw new InvalidOperationException("Neon PostgreSQL bağlantısını User Secrets veya ConnectionStrings__VarsayilanBaglanti ortam değişkeniyle tanımlayın.");
+}
 
 builder.Services.AddDbContext<UygulamaDbContext>(options =>
-    options.UseSqlServer(baglantiDizesi));
+    options.UseNpgsql(baglantiDizesi));
 
 // 2. ASP.NET Core Identity (Kimlik Do�rulama ve Yetkilendirme) Yap�land�rmas�
 builder.Services.AddIdentity<UygulamaKullanicisi, IdentityRole<Guid>>(options =>
