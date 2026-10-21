@@ -1,5 +1,6 @@
 ﻿using ECommerce.Application.DTOs.AnasayfaKategori;
 using ECommerce.Application.DTOs.Kategori;
+using ECommerce.WebUI.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -166,7 +167,7 @@ namespace ECommerce.WebUI.Areas.Admin.Controllers
                 SiraNo = item.SiraNo,
                 AktifMi = item.AktifMi
             };
-            ViewBag.GorselOnizlemeUrl = item.GorselUrl;
+            ViewBag.GorselOnizlemeUrl = GorselAdresi.GoruntulenebilirYap(item.GorselUrl, client.BaseAddress);
             ViewBag.VitrinGorselOverrideUrl = item.VitrinGorselUrl;
 
             await KategorileriYukleAsync(

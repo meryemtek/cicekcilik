@@ -15,13 +15,10 @@
         {
             <a href="/kategori/@kat.SeoUrl" class="cat-showcase-item" title="@kat.KategoriAdi">
                 <div class="cat-card-squircle">
+                    <i class="bi bi-flower2" aria-hidden="true"></i>
                     @if (!string.IsNullOrWhiteSpace(kat.GorselUrl))
                     {
-                        <img src="@kat.GorselUrl" alt="@kat.KategoriAdi" loading="lazy" />
-                    }
-                    else
-                    {
-                        <i class="bi bi-flower2" aria-hidden="true"></i>
+                        <img src="@kat.GorselUrl" alt="@kat.KategoriAdi" loading="lazy" onerror="this.remove()" />
                     }
                 </div>
                 <span class="cat-card-title">@kat.KategoriAdi</span>
@@ -109,8 +106,10 @@
 
     /* Çiçek Görseli */
     .cat-card-squircle img {
-        width: 100%;
-        height: 100%;
+        position: absolute;
+        inset: 6px;
+        width: calc(100% - 12px);
+        height: calc(100% - 12px);
         object-fit: cover;
         border-radius: 16px;
         transition: transform 0.35s ease;

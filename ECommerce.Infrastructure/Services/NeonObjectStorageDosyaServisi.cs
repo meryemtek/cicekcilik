@@ -9,14 +9,11 @@ namespace ECommerce.Infrastructure.Services;
 public sealed class NeonObjectStorageDosyaServisi : IDosyaServisi
 {
     private readonly IAmazonS3 _s3Client;
-    private readonly string _endpoint;
     private readonly string _publicBucket;
     private readonly string _privateBucket;
 
     public NeonObjectStorageDosyaServisi(IConfiguration configuration, IAmazonS3 s3Client)
     {
-        _endpoint = configuration["AWS_ENDPOINT_URL_S3"]?.TrimEnd('/')
-            ?? throw new InvalidOperationException("AWS_ENDPOINT_URL_S3 ayarı eksik.");
         _publicBucket = configuration["NEON_STORAGE_BUCKET"]
             ?? throw new InvalidOperationException("NEON_STORAGE_BUCKET ayarı eksik.");
         _privateBucket = configuration["NEON_PRIVATE_STORAGE_BUCKET"]
@@ -78,7 +75,7 @@ public sealed class NeonObjectStorageDosyaServisi : IDosyaServisi
             return $"neon-private://{Uri.EscapeDataString(key).Replace("%2F", "/", StringComparison.OrdinalIgnoreCase)}";
         }
 
-        return $"{_endpoint}/{bucket}/{Uri.EscapeDataString(key).Replace("%2F", "/", StringComparison.OrdinalIgnoreCase)}";
+        return $"/api/dosyalar/gorseller/{key}";
     }
 
     public async Task<(Stream Stream, string ContentType, string FileName)?> DosyaOkuAsync(string dosyaYolu)
@@ -97,6 +94,28 @@ public sealed class NeonObjectStorageDosyaServisi : IDosyaServisi
         return (stream, response.Headers.ContentType ?? "application/octet-stream", Path.GetFileName(key));
     }
 
+    public async Task<(Stream Stream, string ContentType)?> GorselOkuAsync(string anahtar)
+    {
+        if (!anahtar.StartsWith("images/", StringComparison.Ordinal) ||
+            anahtar.Split('/').Any(parca => string.IsNullOrWhiteSpace(parca) || parca is "." or ".."))
+        {
+            return null;
+        }
+
+        try
+        {
+            using var response = await _s3Client.GetObjectAsync(_publicBucket, anahtar);
+            var stream = new MemoryStream();
+            await response.ResponseStream.CopyToAsync(stream);
+            stream.Position = 0;
+            return (stream, response.Headers.ContentType ?? "application/octet-stream");
+        }
+        catch (Amazon.S3.AmazonS3Exception ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+        {
+            return null;
+        }
+    }
+
     public void GorselSil(string gorselUrl)
     {
         if (!Uri.TryCreate(gorselUrl, UriKind.Absolute, out var uri))
@@ -104,15 +123,16 @@ public sealed class NeonObjectStorageDosyaServisi : IDosyaServisi
             return;
         }
 
-        var prefix = $"/{_publicBucket}/";
         var path = Uri.UnescapeDataString(uri.AbsolutePath);
-        var bucketIndex = path.IndexOf(prefix, StringComparison.Ordinal);
-        if (bucketIndex < 0)
+        var prefix = path.StartsWith($"/{_publicBucket}/", StringComparison.Ordinal)
+            ? $"/{_publicBucket}/"
+            : "/api/dosyalar/gorseller/";
+        if (!path.StartsWith(prefix, StringComparison.Ordinal))
         {
             return;
         }
 
-        var key = path[(bucketIndex + prefix.Length)..];
+        var key = path[prefix.Length..];
         if (!string.IsNullOrWhiteSpace(key))
         {
             _s3Client.DeleteObjectAsync(_publicBucket, key).GetAwaiter().GetResult();

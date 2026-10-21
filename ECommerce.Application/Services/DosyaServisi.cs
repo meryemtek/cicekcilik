@@ -77,6 +77,12 @@ public class DosyaServisi : IDosyaServisi
         return (new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read), contentType, Path.GetFileName(filePath));
     }
 
+    public async Task<(Stream Stream, string ContentType)?> GorselOkuAsync(string anahtar)
+    {
+        var sonuc = await DosyaOkuAsync($"/uploads/{anahtar}");
+        return sonuc is null ? null : (sonuc.Value.Stream, sonuc.Value.ContentType);
+    }
+
     public void GorselSil(string gorselUrl)
     {
         if (string.IsNullOrEmpty(gorselUrl)) return;
