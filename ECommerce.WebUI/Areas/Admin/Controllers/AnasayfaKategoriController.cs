@@ -14,14 +14,10 @@ namespace ECommerce.WebUI.Areas.Admin.Controllers
     public class AnasayfaKategoriController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly IWebHostEnvironment _environment;
 
-        public AnasayfaKategoriController(
-            IHttpClientFactory httpClientFactory,
-            IWebHostEnvironment environment)
+        public AnasayfaKategoriController(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
-            _environment = environment;
         }
 
         private HttpClient CreateClientWithToken()
@@ -360,16 +356,8 @@ namespace ECommerce.WebUI.Areas.Admin.Controllers
             if (!string.Equals(dosya.ContentType, "image/webp", StringComparison.OrdinalIgnoreCase))
                 throw new InvalidOperationException("Lütfen kırpma penceresinden hazırlanmış bir görsel seçin.");
 
-            var klasor = Path.Combine(_environment.WebRootPath, "uploads", "anasayfa-kategoriler");
-            Directory.CreateDirectory(klasor);
-
-            var dosyaAdi = $"{Guid.NewGuid():N}.webp";
-            var dosyaYolu = Path.Combine(klasor, dosyaAdi);
-
-            await using var stream = System.IO.File.Create(dosyaYolu);
-            await dosya.CopyToAsync(stream);
-
-            return $"/uploads/anasayfa-kategoriler/{dosyaAdi}";
+            return await ECommerce.WebUI.Services.ApiGorselYukleyici.YukleAsync(
+                _httpClientFactory, User, dosya, "anasayfa-kategoriler");
         }
     }
 }

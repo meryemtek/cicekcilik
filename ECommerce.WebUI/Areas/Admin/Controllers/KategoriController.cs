@@ -13,12 +13,10 @@ namespace ECommerce.WebUI.Areas.Admin.Controllers;
 public class KategoriController : Controller
 {
     private readonly IHttpClientFactory _httpClientFactory;
-    private readonly IWebHostEnvironment _env; // WebUI wwwroot erişimi için eklendi
 
-    public KategoriController(IHttpClientFactory httpClientFactory, IWebHostEnvironment env)
+    public KategoriController(IHttpClientFactory httpClientFactory)
     {
         _httpClientFactory = httpClientFactory;
-        _env = env;
     }
 
     private HttpClient CreateClientWithToken()
@@ -92,21 +90,10 @@ public class KategoriController : Controller
             return View(model);
         }
 
-        // Slider'daki gibi doğrudan WebUI wwwroot klasörüne kaydediyoruz
         if (gorselDosyasi != null && gorselDosyasi.Length > 0)
         {
-            var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads", "kategoriler");
-            if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
-
-            var benzersizAd = Guid.NewGuid().ToString() + "_" + Path.GetFileName(gorselDosyasi.FileName);
-            var dosyaYolu = Path.Combine(uploadsFolder, benzersizAd);
-
-            using (var stream = new FileStream(dosyaYolu, FileMode.Create))
-            {
-                await gorselDosyasi.CopyToAsync(stream);
-            }
-
-            model.GorselUrl = $"/uploads/kategoriler/{benzersizAd}";
+            model.GorselUrl = await ECommerce.WebUI.Services.ApiGorselYukleyici.YukleAsync(
+                _httpClientFactory, User, gorselDosyasi, "kategoriler");
         }
 
         var client = CreateClientWithToken();
@@ -157,21 +144,10 @@ public class KategoriController : Controller
             return View(model);
         }
 
-        // Yeni görsel seçildiyse WebUI wwwroot klasörüne kaydediyoruz
         if (gorselDosyasi != null && gorselDosyasi.Length > 0)
         {
-            var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads", "kategoriler");
-            if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
-
-            var benzersizAd = Guid.NewGuid().ToString() + "_" + Path.GetFileName(gorselDosyasi.FileName);
-            var dosyaYolu = Path.Combine(uploadsFolder, benzersizAd);
-
-            using (var stream = new FileStream(dosyaYolu, FileMode.Create))
-            {
-                await gorselDosyasi.CopyToAsync(stream);
-            }
-
-            model.GorselUrl = $"/uploads/kategoriler/{benzersizAd}";
+            model.GorselUrl = await ECommerce.WebUI.Services.ApiGorselYukleyici.YukleAsync(
+                _httpClientFactory, User, gorselDosyasi, "kategoriler");
         }
 
         var client = CreateClientWithToken();

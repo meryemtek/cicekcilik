@@ -14,12 +14,10 @@ namespace ECommerce.WebUI.Areas.Admin.Controllers
     public class SliderController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly IWebHostEnvironment _env;
 
-        public SliderController(IHttpClientFactory httpClientFactory, IWebHostEnvironment env)
+        public SliderController(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
-            _env = env;
         }
 
         private HttpClient CreateClientWithToken()
@@ -201,13 +199,8 @@ namespace ECommerce.WebUI.Areas.Admin.Controllers
                 return null;
             }
 
-            var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads", "slider");
-            Directory.CreateDirectory(uploadsFolder);
-            var benzersizAd = $"{Guid.NewGuid():N}{uzanti}";
-            var dosyaYolu = Path.Combine(uploadsFolder, benzersizAd);
-            await using var stream = new FileStream(dosyaYolu, FileMode.CreateNew);
-            await dosya.CopyToAsync(stream);
-            return $"/uploads/slider/{benzersizAd}";
+            return await ECommerce.WebUI.Services.ApiGorselYukleyici.YukleAsync(
+                _httpClientFactory, User, dosya, "slider");
         }
 
         [HttpPost]

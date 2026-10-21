@@ -8,10 +8,12 @@ namespace ECommerce.Application.Services
     public class OdemeBildirimiServisi : IOdemeBildirimiServisi
     {
         private readonly IDepo<OdemeBildirimi> _depo;
+        private readonly IDosyaServisi _dosyaServisi;
 
-        public OdemeBildirimiServisi(IDepo<OdemeBildirimi> depo)
+        public OdemeBildirimiServisi(IDepo<OdemeBildirimi> depo, IDosyaServisi dosyaServisi)
         {
             _depo = depo;
+            _dosyaServisi = dosyaServisi;
         }
 
         public async Task<IReadOnlyList<OdemeBildirimiListeDto>> TumBildirimleriGetirAsync()
@@ -59,27 +61,13 @@ namespace ECommerce.Application.Services
             };
         }
 
-        public async Task<Guid> EkleAsync(OdemeBildirimiEkleDto dto, string webRootPath)
+        public async Task<Guid> EkleAsync(OdemeBildirimiEkleDto dto)
         {
             string? dekontYolu = null;
 
             if (dto.Dekont != null && dto.Dekont.Length > 0)
             {
-                var uploadsFolder = Path.Combine(webRootPath, "uploads", "dekontlar");
-                if (!Directory.Exists(uploadsFolder))
-                {
-                    Directory.CreateDirectory(uploadsFolder);
-                }
-
-                var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(dto.Dekont.FileName);
-                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await dto.Dekont.CopyToAsync(stream);
-                }
-
-                dekontYolu = "/uploads/dekontlar/" + uniqueFileName;
+                dekontYolu = await _dosyaServisi.DosyaYukleAsync(dto.Dekont, "dekontlar");
             }
 
             // Tarih dönüşüm güvenliği

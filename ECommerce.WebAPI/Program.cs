@@ -92,7 +92,14 @@ builder.Services.AddCors(options =>
 // 6. Ba��ml�l�k Enjeksiyonu (Dependency Injection - DI) Kay�tlar�
 builder.Services.AddScoped(typeof(IDepo<>), typeof(Depo<>));
 
-builder.Services.AddScoped<IDosyaServisi, DosyaServisi>();
+if (builder.Environment.IsProduction())
+{
+    builder.Services.AddNeonObjectStorage(builder.Configuration);
+}
+else
+{
+    builder.Services.AddScoped<IDosyaServisi, DosyaServisi>();
+}
 builder.Services.AddScoped<ITokenServisi, TokenServisi>();
 builder.Services.AddScoped<ISepetServisi, SepetServisi>();
 builder.Services.AddScoped<ISayfaServisi, SayfaServisi>();

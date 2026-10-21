@@ -20,6 +20,18 @@ services:
         sync: false
       - key: ConnectionStrings__VarsayilanBaglanti
         sync: false
+      - key: AWS_ENDPOINT_URL_S3
+        sync: false
+      - key: AWS_REGION
+        value: eu-central-1
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+      - key: NEON_STORAGE_BUCKET
+        value: cicekcilik-uploads
+      - key: NEON_PRIVATE_STORAGE_BUCKET
+        value: cicekcilik-private
       - key: ASPNETCORE_URLS
         value: http://0.0.0.0:10000
       - key: JwtSettings__Secret

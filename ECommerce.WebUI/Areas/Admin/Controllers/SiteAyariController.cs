@@ -14,12 +14,10 @@ namespace ECommerce.WebUI.Areas.Admin.Controllers
     public class SiteAyariController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly IWebHostEnvironment _env;
 
-        public SiteAyariController(IHttpClientFactory httpClientFactory, IWebHostEnvironment env)
+        public SiteAyariController(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
-            _env = env;
         }
 
         private HttpClient CreateClientWithToken()
@@ -75,24 +73,10 @@ namespace ECommerce.WebUI.Areas.Admin.Controllers
                 }
             }
 
-            // Eğer yeni bir logo dosyası yüklendiyse wwwroot altına kaydediyoruz
             if (logoDosyasi != null && logoDosyasi.Length > 0)
             {
-                var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads", "logo");
-                if (!Directory.Exists(uploadsFolder))
-                {
-                    Directory.CreateDirectory(uploadsFolder);
-                }
-
-                var benzersizAd = Guid.NewGuid().ToString() + "_" + Path.GetFileName(logoDosyasi.FileName);
-                var dosyaYolu = Path.Combine(uploadsFolder, benzersizAd);
-
-                using (var stream = new FileStream(dosyaYolu, FileMode.Create))
-                {
-                    await logoDosyasi.CopyToAsync(stream);
-                }
-
-                dto.LogoUrl = $"/uploads/logo/{benzersizAd}";
+                dto.LogoUrl = await ECommerce.WebUI.Services.ApiGorselYukleyici.YukleAsync(
+                    _httpClientFactory, User, logoDosyasi, "logo");
             }
 
             var client = CreateClientWithToken();

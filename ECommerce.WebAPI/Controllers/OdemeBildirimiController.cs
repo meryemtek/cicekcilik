@@ -10,20 +10,17 @@ namespace ECommerce.WebAPI.Controllers
     public class OdemeBildirimiController : ControllerBase
     {
         private readonly IOdemeBildirimiServisi _servis;
-        private readonly IWebHostEnvironment _environment;
 
-        public OdemeBildirimiController(IOdemeBildirimiServisi servis, IWebHostEnvironment environment)
+        public OdemeBildirimiController(IOdemeBildirimiServisi servis)
         {
             _servis = servis;
-            _environment = environment;
         }
 
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> Ekle([FromForm] OdemeBildirimiEkleDto dto)
         {
-            var webRootPath = _environment.WebRootPath;
-            var id = await _servis.EkleAsync(dto, webRootPath);
+            var id = await _servis.EkleAsync(dto);
             return Ok(new { Id = id, Mesaj = "Ödeme bildiriminiz başarıyla alındı." });
         }
     }

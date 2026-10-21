@@ -13,12 +13,10 @@ namespace ECommerce.WebUI.Areas.Admin.Controllers
     public class HakkimizdaAyariController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly IWebHostEnvironment _env;
 
-        public HakkimizdaAyariController(IHttpClientFactory httpClientFactory, IWebHostEnvironment env)
+        public HakkimizdaAyariController(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
-            _env = env;
         }
 
         private HttpClient CreateClientWithToken()
@@ -62,21 +60,10 @@ namespace ECommerce.WebUI.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Duzenle(HakkimizdaAyariDto dto, IFormFile? gorselDosyasi)
         {
-            // Eğer yeni bir görsel yüklendiyse kaydediyoruz
             if (gorselDosyasi != null && gorselDosyasi.Length > 0)
             {
-                var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads", "hakkimizda");
-                if (!Directory.Exists(uploadsFolder)) Directory.CreateDirectory(uploadsFolder);
-
-                var benzersizAd = Guid.NewGuid().ToString() + "_" + Path.GetFileName(gorselDosyasi.FileName);
-                var dosyaYolu = Path.Combine(uploadsFolder, benzersizAd);
-
-                using (var stream = new FileStream(dosyaYolu, FileMode.Create))
-                {
-                    await gorselDosyasi.CopyToAsync(stream);
-                }
-
-                dto.GorselUrl = $"/uploads/hakkimizda/{benzersizAd}";
+                dto.GorselUrl = await ECommerce.WebUI.Services.ApiGorselYukleyici.YukleAsync(
+                    _httpClientFactory, User, gorselDosyasi, "hakkimizda");
             }
 
             var client = CreateClientWithToken();
