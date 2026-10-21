@@ -8,7 +8,6 @@
 {
     <section class="announcement-bar" aria-label="Duyurular">
         <div class="announcement-inner">
-            <span class="announcement-badge"><i class="bi bi-stars"></i> LİDYA'DAN HABERLER</span>
             <div class="announcement-viewport">
                 <div class="announcement-track">
                     @foreach (var duyuru in duyurular)
@@ -52,22 +51,6 @@
             padding: 0 24px;
         }
 
-        .announcement-badge {
-            display: inline-flex;
-            flex: 0 0 auto;
-            align-items: center;
-            gap: 7px;
-            padding: 5px 10px;
-            color: #a76f82;
-            background: rgba(255, 255, 255, .58);
-            border: 1px solid rgba(214, 174, 187, .2);
-            border-radius: 999px;
-            font-size: .66rem;
-            font-weight: 700;
-            letter-spacing: .08em;
-        }
-
-        .announcement-badge i,
         .announcement-sparkle {
             color: #c38b9e;
         }
@@ -128,7 +111,6 @@
         @@media (max-width: 576px) {
             .announcement-bar { padding: 6px 0; }
             .announcement-inner { gap: 10px; padding: 0 12px; }
-            .announcement-badge { padding: 4px 8px; font-size: .58rem; }
             .announcement-item { padding: 0 20px; font-size: .92rem; }
             .announcement-sparkle { display: none; }
         }
