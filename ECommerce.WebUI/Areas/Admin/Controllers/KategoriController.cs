@@ -59,7 +59,16 @@ public class KategoriController : Controller
     public async Task<IActionResult> Index()
     {
         var client = CreateClientWithToken();
-        var response = await client.GetAsync("kategoriler");
+        HttpResponseMessage response;
+        try
+        {
+            response = await client.GetAsync("kategoriler");
+        }
+        catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
+        {
+            TempData["HataMesaji"] = "Kategoriler geçici bağlantı sorunu nedeniyle yüklenemedi. Boş görünmesi kayıtların silindiği anlamına gelmez; lütfen sayfayı yenileyin.";
+            return View(new List<KategoriListeDto>());
+        }
 
         if (response.IsSuccessStatusCode)
         {
@@ -68,6 +77,7 @@ public class KategoriController : Controller
             return View(kategoriler);
         }
 
+        TempData["HataMesaji"] = "Kategoriler API'den alınamadı. Lütfen sayfayı yenileyin.";
         return View(new List<KategoriListeDto>());
     }
 

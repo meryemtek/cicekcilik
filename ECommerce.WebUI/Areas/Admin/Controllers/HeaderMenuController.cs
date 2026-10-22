@@ -48,13 +48,23 @@ namespace ECommerce.WebUI.Areas.Admin.Controllers
         public async Task<IActionResult> Index()
         {
             var client = CreateClientWithToken();
-            var response = await client.GetAsync("kategoriler");
-
             var kategoriler = new List<KategoriListeDto>();
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var content = await response.Content.ReadAsStringAsync();
-                kategoriler = JsonSerializer.Deserialize<List<KategoriListeDto>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new();
+                var response = await client.GetAsync("kategoriler");
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    kategoriler = JsonSerializer.Deserialize<List<KategoriListeDto>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new();
+                }
+                else
+                {
+                    TempData["HataMesaji"] = "Alt kategoriler API'den yüklenemedi. Boş görünmesi kayıtların silindiği anlamına gelmez; lütfen sayfayı yenileyin.";
+                }
+            }
+            catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
+            {
+                TempData["HataMesaji"] = "Alt kategoriler geçici bağlantı sorunu nedeniyle yüklenemedi. Boş görünmesi kayıtların silindiği anlamına gelmez; lütfen sayfayı yenileyin.";
             }
 
             var model = new HeaderMenuYonetimViewModel();

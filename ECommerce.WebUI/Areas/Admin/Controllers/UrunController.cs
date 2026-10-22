@@ -185,7 +185,22 @@ namespace ECommerce.WebUI.Areas.Admin.Controllers
             var client = CreateClientWithToken();
 
             // API tarafındaki rotamız: api/admin/urunler
-            var response = await client.GetAsync("admin/urunler");
+            HttpResponseMessage response;
+            try
+            {
+                response = await client.GetAsync("admin/urunler");
+            }
+            catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
+            {
+                TempData["HataMesaji"] = "Ürünler geçici bağlantı sorunu nedeniyle yüklenemedi. Boş görünmesi kayıtların silindiği anlamına gelmez; lütfen sayfayı yenileyin.";
+                return View(new List<UrunListeDto>());
+            }
+
+            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                TempData["HataMesaji"] = "Yönetici oturumunuzun süresi doldu. Lütfen yeniden giriş yapın.";
+                return RedirectToAction("Giris", "Hesap", new { area = "" });
+            }
 
             if (response.IsSuccessStatusCode)
             {
@@ -203,6 +218,7 @@ namespace ECommerce.WebUI.Areas.Admin.Controllers
                 return View(urunler ?? new List<UrunListeDto>());
             }
 
+            TempData["HataMesaji"] = "Ürünler API'den alınamadı. Bu bir yükleme hatasıdır; lütfen sayfayı yenileyin.";
             return View(new List<UrunListeDto>());
         }
 
