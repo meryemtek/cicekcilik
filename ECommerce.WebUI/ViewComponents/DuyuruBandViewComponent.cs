@@ -9,10 +9,12 @@ namespace ECommerce.WebUI.ViewComponents
     public class DuyuruBandViewComponent : ViewComponent
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly ILogger<DuyuruBandViewComponent> _logger;
 
-        public DuyuruBandViewComponent(IHttpClientFactory httpClientFactory)
+        public DuyuruBandViewComponent(IHttpClientFactory httpClientFactory, ILogger<DuyuruBandViewComponent> logger)
         {
             _httpClientFactory = httpClientFactory;
+            _logger = logger;
         }
 
         public async Task<IViewComponentResult> InvokeAsync()
@@ -26,7 +28,8 @@ namespace ECommerce.WebUI.ViewComponents
             }
             catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or System.Text.Json.JsonException)
             {
-                // API erişilemiyorsa sayfanın geri kalanı gösterilmeye devam eder.
+                _logger.LogWarning(ex, "Duyurular API'den yüklenemedi.");
+                ViewData["ApiYuklenemedi"] = true;
             }
 
             return View(duyurular ?? new List<DuyuruDto>());

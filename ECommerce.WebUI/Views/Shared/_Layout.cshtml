@@ -474,5 +474,30 @@
 
     @await RenderSectionAsync("Scripts", required: false)
 
+    <script>
+        (() => {
+            const retryKey = 'abc-api-load-retries';
+            const failed = document.querySelector('[data-api-load-error]');
+            if (!failed) {
+                sessionStorage.removeItem(retryKey);
+                return;
+            }
+
+            const attempts = Number(sessionStorage.getItem(retryKey) || '0');
+            const notice = document.createElement('div');
+            notice.setAttribute('role', 'status');
+            notice.style.cssText = 'position:fixed;left:16px;right:16px;bottom:16px;z-index:99999;padding:14px 18px;border-radius:10px;background:#fff4db;color:#513b12;box-shadow:0 4px 18px #0002;font:600 14px/1.5 system-ui,sans-serif';
+            notice.textContent = attempts < 5
+                ? 'İçerikler geçici olarak yüklenemedi. Sayfa birazdan yeniden denenecek.'
+                : 'İçerikler şu anda yüklenemiyor. Lütfen sayfayı yenileyin.';
+            document.body.appendChild(notice);
+
+            if (attempts < 5) {
+                sessionStorage.setItem(retryKey, String(attempts + 1));
+                window.setTimeout(() => window.location.reload(), 10000);
+            }
+        })();
+    </script>
+
 </body>
 </html>

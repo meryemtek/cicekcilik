@@ -7,10 +7,12 @@ namespace ECommerce.WebUI.ViewComponents
     public class HeaderKategoriMenuViewComponent : ViewComponent
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly ILogger<HeaderKategoriMenuViewComponent> _logger;
 
-        public HeaderKategoriMenuViewComponent(IHttpClientFactory httpClientFactory)
+        public HeaderKategoriMenuViewComponent(IHttpClientFactory httpClientFactory, ILogger<HeaderKategoriMenuViewComponent> logger)
         {
             _httpClientFactory = httpClientFactory;
+            _logger = logger;
         }
 
         public async Task<IViewComponentResult> InvokeAsync()
@@ -24,8 +26,10 @@ namespace ECommerce.WebUI.ViewComponents
 
                 return View(aktifKategoriler);
             }
-            catch
+            catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or System.Text.Json.JsonException)
             {
+                _logger.LogWarning(ex, "Kategori menüsü API'den yüklenemedi.");
+                ViewData["ApiYuklenemedi"] = true;
                 return View(new List<KategoriListeDto>());
             }
         }

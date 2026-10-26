@@ -8,10 +8,12 @@ namespace ECommerce.WebUI.ViewComponents
     public class KategoriBandViewComponent : ViewComponent
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly ILogger<KategoriBandViewComponent> _logger;
 
-        public KategoriBandViewComponent(IHttpClientFactory httpClientFactory)
+        public KategoriBandViewComponent(IHttpClientFactory httpClientFactory, ILogger<KategoriBandViewComponent> logger)
         {
             _httpClientFactory = httpClientFactory;
+            _logger = logger;
         }
 
         public async Task<IViewComponentResult> InvokeAsync()
@@ -30,8 +32,10 @@ namespace ECommerce.WebUI.ViewComponents
 
                 return View(aktifKategoriler);
             }
-            catch
+            catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or System.Text.Json.JsonException)
             {
+                _logger.LogWarning(ex, "Anasayfa kategorileri API'den yüklenemedi.");
+                ViewData["ApiYuklenemedi"] = true;
                 return View(new List<AnasayfaKategoriDto>());
             }
         }

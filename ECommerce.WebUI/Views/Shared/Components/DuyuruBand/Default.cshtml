@@ -4,6 +4,11 @@
     var duyurular = Model?.ToList() ?? new List<ECommerce.Application.DTOs.Duyuru.DuyuruDto>();
 }
 
+@if (ViewData["ApiYuklenemedi"] is true)
+{
+    <span data-api-load-error hidden></span>
+}
+
 @if (duyurular.Any())
 {
     <section class="announcement-bar" aria-label="Duyurular">

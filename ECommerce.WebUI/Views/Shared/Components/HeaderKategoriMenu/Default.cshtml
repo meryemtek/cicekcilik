@@ -13,6 +13,11 @@
     };
 }
 
+@if (ViewData["ApiYuklenemedi"] is true)
+{
+    <span data-api-load-error hidden></span>
+}
+
 <ul class="flower-category-list">
     @foreach (var tanim in anaMenuTanimlari)
     {

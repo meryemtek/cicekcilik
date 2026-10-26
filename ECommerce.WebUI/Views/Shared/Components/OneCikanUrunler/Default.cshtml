@@ -11,6 +11,11 @@
     };
 }
 
+@if (ViewData["ApiYuklenemedi"] is true)
+{
+    <span data-api-load-error hidden></span>
+}
+
 <section class="bf-picks" aria-labelledby="floral-picks-title">
     <div class="bf-container">
         <div class="bf-section-head">

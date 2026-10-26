@@ -7,10 +7,12 @@ namespace ECommerce.WebUI.ViewComponents
     public class OneCikanUrunlerViewComponent : ViewComponent
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly ILogger<OneCikanUrunlerViewComponent> _logger;
 
-        public OneCikanUrunlerViewComponent(IHttpClientFactory httpClientFactory)
+        public OneCikanUrunlerViewComponent(IHttpClientFactory httpClientFactory, ILogger<OneCikanUrunlerViewComponent> logger)
         {
             _httpClientFactory = httpClientFactory;
+            _logger = logger;
         }
 
         public async Task<IViewComponentResult> InvokeAsync()
@@ -36,10 +38,16 @@ namespace ECommerce.WebUI.ViewComponents
                         }
                     }
                 }
+                else
+                {
+                    _logger.LogWarning("Öne çıkan ürünler API'den yüklenemedi: {StatusCode}", response.StatusCode);
+                    ViewData["ApiYuklenemedi"] = true;
+                }
             }
             catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or System.Text.Json.JsonException)
             {
-                // API geçici olarak yanıt vermese de anasayfa gösterilir.
+                _logger.LogWarning(ex, "Öne çıkan ürünler API'den yüklenemedi.");
+                ViewData["ApiYuklenemedi"] = true;
             }
 
             return View(urunler);

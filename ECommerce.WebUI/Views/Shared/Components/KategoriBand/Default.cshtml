@@ -5,6 +5,11 @@
     var kategoriler = Model?.Where(x => x.AktifMi).OrderBy(x => x.SiraNo).ToList() ?? new List<AnasayfaKategoriDto>();
 }
 
+@if (ViewData["ApiYuklenemedi"] is true)
+{
+    <span data-api-load-error hidden></span>
+}
+
 <!-- =========================================================
      SERBEST & ÇİZGİSİZ ÇİÇEK KATEGORİLERİ AKIŞI
 ========================================================= -->
